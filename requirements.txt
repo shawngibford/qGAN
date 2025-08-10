@@ -1,0 +1,29 @@
+# Core dependencies for PennyLane Quantum GAN
+pennylane>=0.32.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Data manipulation and analysis
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Scientific computing
+scipy>=1.10.0
+statsmodels>=0.14.0
+
+# Time series analysis extensions
+fastdtw>=0.3.4
+dtaidistance>=2.3.10
+
+# Optional: Jupyter notebook support (uncomment if needed)
+# jupyter>=1.0.0
+# ipykernel>=6.0.0
+
+# Development dependencies (optional)
+# pytest>=7.0.0
+# black>=23.0.0
+# flake8>=6.0.0
