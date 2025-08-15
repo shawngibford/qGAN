@@ -1013,18 +1013,24 @@ NUM_QUBITS = 5  # number of qubits
 NUM_LAYERS = 3 # number of layers for the PQC
 
 # training hyperparameters
-EPOCHS = 10 #2001
+EPOCHS = 100 #2001
 BATCH_SIZE = 20
-n_critic = 2 # number of iterations for the critic per epoch
+n_critic = 5 # number of iterations for the critic per epoch
 LAMBDA = 10  # gradient penalty strength
+
+# Learning rates for optimizers
+LR_CRITIC = 5e-5
+LR_GENERATOR = 5e-5
 
 # instantiate the QGAN model object
 qgan = qGAN(EPOCHS, BATCH_SIZE, WINDOW_LENGTH, n_critic, LAMBDA, NUM_LAYERS, NUM_QUBITS)
 
 # set the optimizers
-c_optimizer = torch.optim.Adam(qgan.critic.parameters())
-g_optimizer = torch.optim.Adam([qgan.params_pqc])  # Use the quantum parameters
+c_optimizer = torch.optim.Adam(qgan.critic.parameters(), lr=LR_CRITIC)
+g_optimizer = torch.optim.Adam([qgan.params_pqc], lr=LR_GENERATOR)  # Use the quantum parameters
 qgan.compile_QGAN(c_optimizer, g_optimizer)
+
+print(f"Optimizers configured: Critic LR={LR_CRITIC}, Generator LR={LR_GENERATOR}")
 
 ##################################################################################
 #
