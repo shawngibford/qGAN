@@ -26,6 +26,22 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
+
+# xLSTM imports
+import sys
+sys.path.append('/Users/shawngibford/dev/qGAN/xlstm-main copy')
+from xlstm import (
+    xLSTMBlockStack,
+    xLSTMBlockStackConfig,
+    mLSTMBlockConfig,
+    mLSTMLayerConfig,
+    sLSTMBlockConfig,
+    sLSTMLayerConfig,
+    FeedForwardConfig,
+)
+from dataclasses import dataclass, field
+from typing import Literal, Optional, Union
+
 # PennyLane imports
 import pennylane as qml
 # Set random seeds for reproducibility ### check source code for seed usage
@@ -33,6 +49,164 @@ seed = 42
 random.seed(seed)
 np.random.seed(seed)
 torch.manual_seed(seed)
+
+##################################################################
+#
+# xLSTM Critic Configuration and Implementation
+#
+##################################################################
+
+@dataclass
+class xLSTMCriticConfig:
+    """Configuration for xLSTM-based critic in Wasserstein GAN"""
+    # Sequence parameters
+    context_length: int = 10  # window_length
+    embedding_dim: int = 64   # Hidden dimension
+    
+    # xLSTM architecture
+    num_blocks: int = 2
+    mlstm_blocks: bool = True
+    slstm_blocks: bool = True
+    slstm_at: list = field(default_factory=lambda: [1])  # Place sLSTM at position 1
+    
+    # Layer configurations
+    num_heads: int = 4
+    conv1d_kernel_size: int = 4
+    feedforward_proj_factor: float = 1.3
+    dropout: float = 0.1
+    
+    # Output configuration
+    output_dim: int = 1  # Single score for WGAN
+
+class xLSTMCritic(nn.Module):
+    """
+    xLSTM-based critic for Wasserstein GAN with Gradient Penalty
+    
+    This critic uses xLSTM (Extended Long Short-Term Memory) for superior
+    temporal modeling of time series data, while maintaining compatibility
+    with the WGAN-GP framework.
+    """
+    
+    def __init__(self, config: xLSTMCriticConfig):
+        super().__init__()
+        self.config = config
+        
+        # Input projection: map from 1 feature to embedding_dim
+        self.input_projection = nn.Linear(1, config.embedding_dim)
+        
+        # xLSTM backbone configuration
+        xlstm_config = xLSTMBlockStackConfig(
+            mlstm_block=mLSTMBlockConfig(
+                mlstm=mLSTMLayerConfig(
+                    embedding_dim=config.embedding_dim,
+                    num_heads=config.num_heads,
+                    conv1d_kernel_size=config.conv1d_kernel_size
+                )
+            ) if config.mlstm_blocks else None,
+            slstm_block=sLSTMBlockConfig(
+                slstm=sLSTMLayerConfig(
+                    embedding_dim=config.embedding_dim,
+                    num_heads=config.num_heads,
+                    conv1d_kernel_size=config.conv1d_kernel_size,
+                    backend="vanilla"  # Use vanilla backend for compatibility
+                ),
+                feedforward=FeedForwardConfig(
+                    embedding_dim=config.embedding_dim,
+                    proj_factor=config.feedforward_proj_factor,
+                    act_fn="gelu"
+                )
+            ) if config.slstm_blocks else None,
+            context_length=config.context_length,
+            num_blocks=config.num_blocks,
+            embedding_dim=config.embedding_dim,
+            slstm_at=config.slstm_at,
+            dropout=config.dropout
+        )
+        
+        # xLSTM backbone
+        self.xlstm_stack = xLSTMBlockStack(xlstm_config)
+        
+        # Global pooling strategy
+        self.pooling_strategy = "mean"  # Options: "mean", "last", "max", "attention"
+        
+        # Output head for WGAN critic
+        self.output_head = nn.Sequential(
+            nn.LayerNorm(config.embedding_dim),
+            nn.Dropout(config.dropout),
+            nn.Linear(config.embedding_dim, config.embedding_dim // 2),
+            nn.GELU(),
+            nn.Dropout(config.dropout),
+            nn.Linear(config.embedding_dim // 2, config.output_dim)
+        )
+        
+        # Initialize to double precision to match existing code
+        self.double()
+        
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass through xLSTM critic
+        
+        Args:
+            x: Input tensor of shape [batch_size, 1, sequence_length]
+            
+        Returns:
+            Critic scores of shape [batch_size, 1]
+        """
+        # Input shape: [batch_size, 1, sequence_length]
+        # Convert to: [batch_size, sequence_length, features]
+        x = x.transpose(1, 2)  # [batch_size, sequence_length, 1]
+        
+        # Project to embedding dimension
+        x = self.input_projection(x)  # [batch_size, sequence_length, embedding_dim]
+        
+        # Pass through xLSTM stack
+        x = self.xlstm_stack(x)  # [batch_size, sequence_length, embedding_dim]
+        
+        # Global pooling
+        if self.pooling_strategy == "mean":
+            x = x.mean(dim=1)  # [batch_size, embedding_dim]
+        elif self.pooling_strategy == "last":
+            x = x[:, -1, :]    # [batch_size, embedding_dim]
+        elif self.pooling_strategy == "max":
+            x = x.max(dim=1)[0]  # [batch_size, embedding_dim]
+        
+        # Output head
+        score = self.output_head(x)  # [batch_size, 1]
+        
+        return score
+
+# Configuration presets for different computational budgets
+XLSTM_CONFIG_LIGHT = xLSTMCriticConfig(
+    embedding_dim=32,
+    num_blocks=1,
+    num_heads=2,
+    dropout=0.1,
+    mlstm_blocks=True,
+    slstm_blocks=False,
+    slstm_at=[]
+)
+
+XLSTM_CONFIG_STANDARD = xLSTMCriticConfig(
+    embedding_dim=64,
+    num_blocks=2,
+    num_heads=4,
+    dropout=0.1,
+    mlstm_blocks=True,
+    slstm_blocks=False,
+    slstm_at=[]
+)
+
+XLSTM_CONFIG_HEAVY = xLSTMCriticConfig(
+    embedding_dim=128,
+    num_blocks=3,
+    num_heads=8,
+    dropout=0.1,
+    mlstm_blocks=True,
+    slstm_blocks=False,
+    slstm_at=[]
+)
+
+##################################################################
 
 # Load and preprocess the data
 data = pd.read_csv('/Users/shawngibford/dev/Pennylane_QGAN/qGAN/data.csv', header=None, names=['value'])
@@ -453,29 +627,32 @@ class qGAN(nn.Module):
     #
     ####################################################################################
     def define_critic_model(self, window_length):
-        """Define the classical critic model"""
-        model = nn.Sequential(
-        nn.Conv1d(in_channels=1, out_channels=64, kernel_size=10, stride=1, padding=5),
-        nn.LeakyReLU(negative_slope=0.1),
+        """Define the xLSTM-based critic model for Wasserstein GAN with Gradient Penalty"""
         
-        nn.Conv1d(in_channels=64, out_channels=128, kernel_size=10, stride=1, padding=5),
-        nn.LeakyReLU(negative_slope=0.1),
-        
-        nn.Conv1d(in_channels=128, out_channels=128, kernel_size=10, stride=1, padding=5),
-        nn.LeakyReLU(negative_slope=0.1),
-        
-        # Add adaptive pooling to get fixed size
-        nn.AdaptiveAvgPool1d(output_size=1),  # This gives 128 * 1 = 128 features ### verify if this needs to be here
-        nn.Flatten(),
-        
-        nn.Linear(in_features=128, out_features=32),  # 128 -> 32
-        nn.LeakyReLU(negative_slope=0.1),
-        nn.Dropout(p=0.2),
-        
-        nn.Linear(in_features=32, out_features=1)
+        # Create xLSTM critic configuration
+        config = xLSTMCriticConfig(
+            context_length=window_length,
+            embedding_dim=64,  # Standard configuration
+            num_blocks=2,
+            num_heads=4,
+            conv1d_kernel_size=4,
+            feedforward_proj_factor=1.3,
+            dropout=0.1,
+            slstm_at=[],         # No sLSTM blocks for compatibility
+            mlstm_blocks=True,   # Use mLSTM for enhanced memory
+            slstm_blocks=False   # Disable sLSTM to avoid compatibility issues
         )
-    
-        model = model.double()
+        
+        # Create xLSTM critic model
+        model = xLSTMCritic(config)
+        
+        print(f"✅ xLSTM Critic initialized:")
+        print(f"   - Context length: {config.context_length}")
+        print(f"   - Embedding dimension: {config.embedding_dim}")
+        print(f"   - Number of blocks: {config.num_blocks}")
+        print(f"   - sLSTM positions: {config.slstm_at}")
+        print(f"   - Total parameters: {sum(p.numel() for p in model.parameters()):,}")
+        
         return model
     ####################################################################################
     #
@@ -883,20 +1060,23 @@ class qGAN(nn.Module):
 
 ##################################################################
 #
-# Hyperparameters
+# Hyperparameters for Quantum GAN with xLSTM Critic
 #
 ##################################################################
 WINDOW_LENGTH = 10  # this must be equal to the number of Pauli strings to measure
 NUM_QUBITS = 5  # number of qubits
 NUM_LAYERS = 3  # number of layers for the PQC
+
 # training hyperparameters
-EPOCHS = 100  # Increase from 10 to allow proper learning
+# NOTE: Using xLSTM (Extended Long Short-Term Memory) as the critic
+# for superior temporal modeling of time series data
+EPOCHS = 10  # Increase from 10 to allow proper learning
 BATCH_SIZE = 20
 n_critic = 2  # Critic iterations per generator update - back to standard
 LAMBDA = 0.1  # gradient penalty strength - much smaller to allow adversarial signal
 # Learning rates for optimizers - boost generator learning
 LR_CRITIC = 1e-4  # Critic learning rate
-LR_GENERATOR = 5e-5  # Generator learning rate - balanced with critic
+LR_GENERATOR = 5e-4  # Generator learning rate - balanced with critic
 # instantiate the QGAN model objec0
 qgan = qGAN(EPOCHS, BATCH_SIZE, WINDOW_LENGTH, n_critic, LAMBDA, NUM_LAYERS, NUM_QUBITS)
 # set the optimizers
