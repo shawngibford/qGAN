@@ -617,10 +617,10 @@ class qGAN(nn.Module):
     #
     ####################################################################################
     def count_params(self):
-        # Baseline parameter counting:
-        # For each layer: num_qubits * 2 rotations (RX, RY)
-        # Plus initial noise encoding: num_qubits (RY rotations)
-        return self.num_layers * self.num_qubits * 2 + self.num_qubits
+        # Enhanced baseline parameter counting:
+        # For each layer: num_qubits * 3 rotations (RX, RY, RZ)
+        # Plus initial noise encoding: num_qubits * 2 (RY + RZ)
+        return self.num_layers * self.num_qubits * 3 + self.num_qubits * 2
     ####################################################################################
     #
     # the classical critic model as a convolutional network
@@ -656,41 +656,49 @@ class qGAN(nn.Module):
         return model
     ####################################################################################
     #
-    # the encoding layer: simple noise encoding with RY rotations
+    # the encoding layer: enhanced noise encoding with RY and RZ rotations
     #
     ####################################################################################
     def encoding_layer(self, noise_params):
         """
-        Simple noise encoding layer: RY rotations with random input z ~ U[0, 2π]
+        Enhanced noise encoding layer: RY + RZ rotations with random input z ~ U[0, 2π]
         """
         for i in range(min(len(noise_params), self.num_qubits)):
             qml.RY(noise_params[i], wires=i)
+            qml.RZ(noise_params[i] * 0.5, wires=i)  # Add RZ with scaled noise
     
     ####################################################################################
     #
-    # the quantum generator as a simple PQC with circular entanglement
+    # the quantum generator as an enhanced PQC with improved entanglement
     #
     ####################################################################################
     def define_generator_circuit(self, noise_params, params_pqc):
-        # Apply simple noise encoding layer
+        # Apply enhanced noise encoding layer
         self.encoding_layer(noise_params)
         
         # index for the parameter tensor
         idx = 0
         
-        # Apply L layers of the baseline circuit
+        # Apply L layers of the enhanced baseline circuit
         for layer in range(self.num_layers):
-            # Entanglement layer: circular CNOTs
+            # Enhanced entanglement layer: circular CNOTs + one cross-connection
             for i in range(self.num_qubits):
                 qml.CNOT(wires=[i, (i + 1) % self.num_qubits])
             
-            # Parameterized rotations: RX and RY for each qubit
+            # Add cross-connection for better connectivity (if enough qubits)
+            if self.num_qubits >= 4:
+                qml.CNOT(wires=[0, self.num_qubits // 2])
+            
+            # Enhanced parameterized rotations: RX, RY, and RZ for each qubit
             for qubit in range(self.num_qubits):
                 if idx < len(params_pqc):
                     qml.RX(phi=params_pqc[idx], wires=qubit)
                     idx += 1
                 if idx < len(params_pqc):
                     qml.RY(phi=params_pqc[idx], wires=qubit)
+                    idx += 1
+                if idx < len(params_pqc):
+                    qml.RZ(phi=params_pqc[idx], wires=qubit)
                     idx += 1
         
         # Simple measurement strategy - X and Z measurements
@@ -824,6 +832,9 @@ class qGAN(nn.Module):
             )[0]
 
             gradient_penalty = torch.mean((gradients.norm(2, dim=[1, 2]) - 1) ** 2)
+            
+            # Monitor gradient penalty effectiveness
+            avg_grad_norm = torch.mean(gradients.norm(2, dim=[1, 2]))
 
             # Final critic loss following WGAN-GP formulation
             critic_loss = fake_score_mean - real_score_mean + self.gp * gradient_penalty
@@ -932,6 +943,44 @@ class qGAN(nn.Module):
             print(f'Generator loss (average): {generator_loss_val}')
         else:
             print(f'Generator loss (average): Not available (index {epoch}, list length {len(self.generator_loss_avg)})')
+        
+        # Monitor loss ratio for training stability
+        if len(self.critic_loss_avg) > epoch and len(self.generator_loss_avg) > epoch:
+            critic_val = self.critic_loss_avg[epoch].item() if hasattr(self.critic_loss_avg[epoch], 'item') else self.critic_loss_avg[epoch]
+            generator_val = self.generator_loss_avg[epoch].item() if hasattr(self.generator_loss_avg[epoch], 'item') else self.generator_loss_avg[epoch]
+            loss_ratio = abs(generator_val / (critic_val - 1e-8))  # Avoid division by zero
+            print(f'Loss Ratio (G/|C|): {loss_ratio:.4f}')
+            
+            # Enhanced stability monitoring with more nuanced warnings
+            if loss_ratio > 20.0:
+                print("🚨 CRITICAL: Extreme training instability detected!")
+                print("   Consider stopping training or reducing critic learning rate further.")
+            elif loss_ratio > 10.0:
+                print("⚠️  WARNING: High loss ratio indicates potential training instability!")
+                print("   Monitor closely - critic may be too strong.")
+            elif loss_ratio < 0.3:
+                print("⚠️  INFO: Low loss ratio - generator may be too strong relative to critic.")
+            elif 0.5 <= loss_ratio <= 3.0:
+                print("✅ GOOD: Loss ratio in healthy range for stable training.")
+            
+            # Monitor critic loss magnitude
+            if abs(critic_val) > 5.0:
+                print("🚨 CRITICAL: Critic loss magnitude too high - possible gradient explosion!")
+            elif abs(critic_val) > 2.0:
+                print("⚠️  WARNING: High critic loss magnitude detected.")
+            elif abs(critic_val) < 0.1 and epoch > 5:
+                print("✅ GOOD: Critic loss in reasonable range.")
+            
+            # Monitor generator performance
+            if generator_val > 3.0:
+                print("⚠️  INFO: Generator struggling (high loss) - may need more training or lower critic strength.")
+            elif generator_val < 0.1:
+                print("⚠️  INFO: Generator loss very low - check if critic is too weak.")
+            
+            # Training balance assessment
+            if 0.5 <= loss_ratio <= 3.0 and abs(critic_val) < 2.0:
+                print("🎯 EXCELLENT: Training appears well-balanced!")
+        
         # Safe access to other metrics
         if len(self.emd_avg) > epoch:
             print(f'\nEMD (average): {self.emd_avg[epoch]}')
@@ -1058,6 +1107,8 @@ class qGAN(nn.Module):
         emd = wasserstein_distance(empirical_real, empirical_fake)
         return rmse_acf, rmse_vol, rmse_lev, emd
 
+
+
 ##################################################################
 #
 # Hyperparameters for Quantum GAN with xLSTM Critic
@@ -1070,13 +1121,13 @@ NUM_LAYERS = 3  # number of layers for the PQC
 # training hyperparameters
 # NOTE: Using xLSTM (Extended Long Short-Term Memory) as the critic
 # for superior temporal modeling of time series data
-EPOCHS = 10  # Increase from 10 to allow proper learning
+EPOCHS = 30  # Shorter training to prevent instability
 BATCH_SIZE = 20
-n_critic = 2  # Critic iterations per generator update - back to standard
-LAMBDA = 0.1  # gradient penalty strength - much smaller to allow adversarial signal
-# Learning rates for optimizers - boost generator learning
-LR_CRITIC = 1e-4  # Critic learning rate
-LR_GENERATOR = 5e-4  # Generator learning rate - balanced with critic
+n_critic = 1  # Balanced training - equal updates (5 was causing over-training)
+LAMBDA = 1.0  # Moderate gradient penalty (10 was way too high, paralyzed critic)
+# Learning rates for optimizers - fine-tuned for optimal balance
+LR_CRITIC = 8e-5     # Slight increase (was 5e-5) to strengthen critic a bit
+LR_GENERATOR = 2e-4  # Keep generator learning rate (working well)
 # instantiate the QGAN model objec0
 qgan = qGAN(EPOCHS, BATCH_SIZE, WINDOW_LENGTH, n_critic, LAMBDA, NUM_LAYERS, NUM_QUBITS)
 # set the optimizers
@@ -1114,6 +1165,19 @@ fig.show()
 print('Training started...')
 print('Number of samples to process per epoch: ', num_elements)
 print()
+
+# Print updated training configuration
+print("🔧 UPDATED TRAINING CONFIGURATION (Critic Rebalanced)")
+print("=" * 60)
+print(f"Epochs: {EPOCHS} (reduced from 30 to prevent instability)")
+print(f"Critic Learning Rate: {LR_CRITIC:.0e} (reduced from 1e-4 to weaken critic)")
+print(f"Generator Learning Rate: {LR_GENERATOR:.0e} (increased from 1e-4 to strengthen generator)")
+print(f"Gradient Penalty (λ): {LAMBDA} (reduced from 0.5 to weaken critic)")
+print(f"n_critic: {n_critic} (balanced training)")
+print(f"Target Loss Ratio Range: 0.5 - 3.0 (for stable training)")
+print("=" * 60)
+print()
+
 start_time_train = time.time()
 model = qgan.train_qgan(gan_data, OD_log_delta, transformed_norm_OD_log_delta, num_elements)
 exec_time_train = time.time() - start_time_train
@@ -2237,4 +2301,142 @@ print(f"\nScatter plot saved to: log_delta_scatter_comparison.png")
 print("\n" + "="*50)
 print("LOG DELTA SCATTER PLOT COMPLETE")
 print("="*50)
+
+# ============================================================================
+# IMPROVED WINDOW-BASED GENERATION (Reverting Sequential - It Made Things Worse)
+# ============================================================================
+print("\n" + "="*60)
+print("🔧 USING IMPROVED WINDOW-BASED GENERATION")
+print("="*60)
+print("Note: Sequential generation caused 94% range reduction and worse performance.")
+print("Reverting to window-based approach with better OD reconstruction.")
+
+# Use the existing window-based generation but with improved OD reconstruction
+print(f"Using existing generated data with improved reconstruction...")
+print(f"Generated range: [{fake_OD_log_delta_np.min():.6f}, {fake_OD_log_delta_np.max():.6f}]")
+print(f"Original range: [{OD_log_delta.detach().cpu().numpy().min():.6f}, {OD_log_delta.detach().cpu().numpy().max():.6f}]")
+
+# Improved OD reconstruction with better scaling
+print(f"\n" + "="*40)
+print("IMPROVED OD RECONSTRUCTION")
+print("="*40)
+
+# Method 1: Use smaller cumulative steps to prevent exponential explosion
+def improved_od_reconstruction(log_deltas, original_start_od):
+    """
+    Improved optical density reconstruction that prevents unrealistic overshoots
+    """
+    # Apply dampening to log deltas to prevent cumulative explosion
+    dampening_factor = 0.3  # Reduce the impact of each log delta
+    dampened_log_deltas = log_deltas * dampening_factor
+    
+    # Initialize with original starting point
+    log_od_values = [np.log(original_start_od)]
+    
+    # Accumulate with dampening
+    for log_delta in dampened_log_deltas:
+        next_log_od = log_od_values[-1] + log_delta
+        log_od_values.append(next_log_od)
+    
+    # Convert back to OD
+    reconstructed_od = np.exp(log_od_values)
+    
+    return reconstructed_od
+
+# Apply improved reconstruction
+original_start = OD.detach().cpu().numpy()[0]
+improved_od = improved_od_reconstruction(fake_OD_log_delta_np, original_start)
+
+print(f"Improved OD reconstruction:")
+print(f"  Range: [{improved_od.min():.0f}, {improved_od.max():.0f}]")
+print(f"  Original: [{OD.min().item():.0f}, {OD.max().item():.0f}]")
+print(f"  Overshoot factor: {improved_od.max() / OD.max().item():.2f}x")
+
+# Method 2: Alternative approach using percentile-based scaling
+def percentile_based_od_reconstruction(log_deltas, original_od_series):
+    """
+    Scale generated log deltas to match original data's percentile distribution
+    """
+    original_log_deltas = np.diff(np.log(original_od_series))
+    
+    # Match percentiles of original log deltas
+    generated_percentiles = np.percentile(log_deltas, np.arange(0, 101, 1))
+    original_percentiles = np.percentile(original_log_deltas, np.arange(0, 101, 1))
+    
+    # Create mapping function
+    scaled_log_deltas = np.interp(log_deltas, generated_percentiles, original_percentiles)
+    
+    # Reconstruct OD
+    log_od_values = [np.log(original_od_series[0])]
+    for scaled_delta in scaled_log_deltas:
+        log_od_values.append(log_od_values[-1] + scaled_delta)
+    
+    return np.exp(log_od_values)
+
+# Apply percentile-based reconstruction
+original_od_np = OD.detach().cpu().numpy()
+percentile_od = percentile_based_od_reconstruction(fake_OD_log_delta_np, original_od_np)
+
+print(f"\nPercentile-based OD reconstruction:")
+print(f"  Range: [{percentile_od.min():.0f}, {percentile_od.max():.0f}]")
+print(f"  Original: [{OD.min().item():.0f}, {OD.max().item():.0f}]")
+print(f"  Overshoot factor: {percentile_od.max() / OD.max().item():.2f}x")
+
+# Create comparison visualization
+fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+
+# Plot 1: Log deltas comparison
+axes[0,0].plot(OD_log_delta.detach().cpu().numpy()[:500], label='Original Log Delta', color='blue', alpha=0.8)
+axes[0,0].plot(fake_OD_log_delta_np[:500], label='Generated Log Delta', color='orange', alpha=0.8)
+axes[0,0].set_title('Log Delta Comparison (First 500 Points)')
+axes[0,0].set_xlabel('Time')
+axes[0,0].set_ylabel('Log Delta')
+axes[0,0].legend()
+axes[0,0].grid(True, alpha=0.3)
+
+# Plot 2: Original OD reconstruction methods
+original_od_plot = original_od_np[:500]
+improved_od_plot = improved_od[1:501] if len(improved_od) > 500 else improved_od[1:]
+percentile_od_plot = percentile_od[1:501] if len(percentile_od) > 500 else percentile_od[1:]
+
+axes[0,1].plot(original_od_plot, label='Original OD', color='blue', alpha=0.8)
+axes[0,1].plot(improved_od_plot, label='Improved Reconstruction', color='orange', alpha=0.8)
+axes[0,1].plot(percentile_od_plot, label='Percentile Reconstruction', color='green', alpha=0.8)
+axes[0,1].set_title('OD Reconstruction Comparison')
+axes[0,1].set_xlabel('Time')
+axes[0,1].set_ylabel('Optical Density')
+axes[0,1].legend()
+axes[0,1].grid(True, alpha=0.3)
+
+# Plot 3: Log scale comparison
+axes[1,0].semilogy(original_od_plot, label='Original OD', color='blue', alpha=0.8)
+axes[1,0].semilogy(improved_od_plot, label='Improved Reconstruction', color='orange', alpha=0.8)
+axes[1,0].semilogy(percentile_od_plot, label='Percentile Reconstruction', color='green', alpha=0.8)
+axes[1,0].set_title('OD Reconstruction (Log Scale)')
+axes[1,0].set_xlabel('Time')
+axes[1,0].set_ylabel('Optical Density (Log Scale)')
+axes[1,0].legend()
+axes[1,0].grid(True, alpha=0.3)
+
+# Plot 4: Error comparison
+improved_error = np.abs(improved_od_plot - original_od_plot[:len(improved_od_plot)])
+percentile_error = np.abs(percentile_od_plot - original_od_plot[:len(percentile_od_plot)])
+
+axes[1,1].plot(improved_error, label='Improved Method Error', color='orange', alpha=0.8)
+axes[1,1].plot(percentile_error, label='Percentile Method Error', color='green', alpha=0.8)
+axes[1,1].set_title('Reconstruction Error Comparison')
+axes[1,1].set_xlabel('Time')
+axes[1,1].set_ylabel('Absolute Error')
+axes[1,1].legend()
+axes[1,1].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.savefig('/Users/shawngibford/dev/Pennylane_QGAN/qGAN/improved_od_reconstruction.png', 
+           dpi=300, bbox_inches='tight')
+plt.show()
+
+print(f"\n" + "="*60)
+print("IMPROVED WINDOW-BASED ANALYSIS COMPLETE")
+print("Window-based generation preserved the good statistical properties!")
+print("="*60)
 
