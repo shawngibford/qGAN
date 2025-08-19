@@ -439,29 +439,25 @@ class qGAN(nn.Module):
 # Part 2 - gen and critic models
     ####################################################################################
     #
-    # count the parameters of the quantum circuit - Complex IQP + Strongly Entangled
+    # count the parameters - CORRECTED for proper strongly entangled layers
     #
     ####################################################################################
     def count_params(self):
-        # Complex circuit parameter counting:
+        # Corrected parameter counting for proper strongly entangling layers:
         # 1. IQP encoding: num_qubits parameters for RZ rotations
         # 2. For each layer: 
-        #    - Strongly entangled layer: num_qubits * 3 (RX, RY, RZ)
-        #    - CNOT entangling (no parameters)
-        #    - IQP-style ZZ interactions: num_qubits * (num_qubits-1) / 2 parameters
+        #    - Strongly entangled layer: num_qubits * 3 (Rot gates: phi, theta, omega)
+        #    - CNOT entangling (no parameters) - range-based pattern
         # 3. Final measurement rotations: num_qubits * 2 (RX, RY)
         
         # IQP encoding parameters
         iqp_params = self.num_qubits
         
-        # Strongly entangled layers
-        rotation_params_per_layer = self.num_qubits * 3  # RX, RY, RZ per qubit
+        # Strongly entangled layers - each Rot gate needs 3 parameters
+        rotation_params_per_layer = self.num_qubits * 3  # phi, theta, omega for each qubit
         
-        # IQP-style ZZ interaction parameters per layer
-        zz_params_per_layer = (self.num_qubits * (self.num_qubits - 1)) // 2
-        
-        # Total parameters per layer
-        params_per_layer = rotation_params_per_layer + zz_params_per_layer
+        # Total parameters per layer (no additional ZZ interactions in standard version)
+        params_per_layer = rotation_params_per_layer
         
         # Main layers
         main_params = self.num_layers * params_per_layer
@@ -516,7 +512,7 @@ class qGAN(nn.Module):
     
     ####################################################################################
     #
-    # Complex quantum generator with IQP encoding + strongly entangled layers
+    # Complex quantum generator with IQP encoding + CORRECT strongly entangled layers
     #
     ####################################################################################
     def define_generator_circuit(self, noise_params, params_pqc):
@@ -536,41 +532,32 @@ class qGAN(nn.Module):
         # Step 3: Apply noise encoding (IQP-style)
         self.encoding_layer(noise_params)
         
-        # Step 4: Strongly entangled layers
+        # Step 4: CORRECT Strongly Entangled Layers (following PennyLane specification)
         for layer in range(self.num_layers):
             
-            # Strongly entangling rotations (RX, RY, RZ for each qubit)
+            # Strongly entangling rotations using Rot(phi, theta, lambda) gates
             for qubit in range(self.num_qubits):
-                if idx < len(params_pqc):
-                    qml.RX(phi=params_pqc[idx], wires=qubit)
-                    idx += 1
-                if idx < len(params_pqc):
-                    qml.RY(phi=params_pqc[idx], wires=qubit)
-                    idx += 1
-                if idx < len(params_pqc):
-                    qml.RZ(phi=params_pqc[idx], wires=qubit)
-                    idx += 1
+                if idx + 2 < len(params_pqc):
+                    # Use the official Rot gate: Rot(phi, theta, lambda) = RZ(phi) RY(theta) RZ(lambda)
+                    qml.Rot(phi=params_pqc[idx], 
+                           theta=params_pqc[idx + 1], 
+                           omega=params_pqc[idx + 2], 
+                           wires=qubit)
+                    idx += 3
             
-            # Circular CNOT entangling layer
-            for qubit in range(self.num_qubits):
-                qml.CNOT(wires=[qubit, (qubit + 1) % self.num_qubits])
-            
-            # IQP-style ZZ interactions (parameterized)
-            for qubit1 in range(self.num_qubits):
-                for qubit2 in range(qubit1 + 1, self.num_qubits):
-                    if idx < len(params_pqc):
-                        # Parameterized ZZ interaction via CNOT sandwich
-                        qml.CNOT(wires=[qubit1, qubit2])
-                        qml.RZ(phi=params_pqc[idx], wires=qubit2)
-                        qml.CNOT(wires=[qubit1, qubit2])
-                        idx += 1
+            # Range-based entangling CNOTs (following PennyLane strongly entangling pattern)
+            if self.num_qubits > 1:
+                # Use range pattern: r = (layer % (num_qubits - 1)) + 1
+                range_param = (layer % (self.num_qubits - 1)) + 1
+                for qubit in range(self.num_qubits):
+                    target_qubit = (qubit + range_param) % self.num_qubits
+                    qml.CNOT(wires=[qubit, target_qubit])
         
         # Step 5: Final measurement preparation rotations
         for qubit in range(self.num_qubits):
-            if idx < len(params_pqc):
+            if idx + 1 < len(params_pqc):
                 qml.RX(phi=params_pqc[idx], wires=qubit)
                 idx += 1
-            if idx < len(params_pqc):
                 qml.RY(phi=params_pqc[idx], wires=qubit)
                 idx += 1
         
@@ -946,10 +933,10 @@ class qGAN(nn.Module):
 ##################################################################
 WINDOW_LENGTH = 10  # Number of measurements (must match Pauli string count)
 NUM_QUBITS = 5      # Number of qubits
-NUM_LAYERS = 2      # Layers for complex circuit (fewer due to higher expressivity)
+NUM_LAYERS = 2      # Layers for complex circuit 
 
 # Training hyperparameters - optimized for complex quantum circuit
-EPOCHS = 20         # Reduced due to much higher expressivity
+EPOCHS = 2000         # Reduced due to much higher expressivity
 BATCH_SIZE = 12     # Smaller batch for stable training with complex circuit
 n_critic = 1        # Balanced adversarial training
 LAMBDA = 0.8        # Higher gradient penalty for complex circuit stability
@@ -958,16 +945,16 @@ LAMBDA = 0.8        # Higher gradient penalty for complex circuit stability
 LR_CRITIC = 3e-5    # Lower critic learning rate for stability
 LR_GENERATOR = 8e-5 # Lower generator learning rate to match complexity
 
-# Calculate expected parameters for verification
+# Calculate expected parameters for verification - CORRECTED
 # IQP encoding: NUM_QUBITS
-# Per layer: NUM_QUBITS*3 (rotations) + NUM_QUBITS*(NUM_QUBITS-1)/2 (ZZ interactions)
+# Per layer: NUM_QUBITS*3 (Rot gates: phi, theta, omega)
 # Final: NUM_QUBITS*2 (measurement prep)
 iqp_params = NUM_QUBITS
-per_layer_params = NUM_QUBITS * 3 + (NUM_QUBITS * (NUM_QUBITS - 1)) // 2
+per_layer_params = NUM_QUBITS * 3  # Only Rot parameters, no ZZ interactions
 final_params = NUM_QUBITS * 2
 expected_params = iqp_params + NUM_LAYERS * per_layer_params + final_params
 
-print("🚀 COMPLEX IQP + STRONGLY ENTANGLED QUANTUM GAN")
+print("🚀 CORRECTED IQP + STRONGLY ENTANGLED QUANTUM GAN")
 print("=" * 60)
 print(f"🧮 Circuit Architecture:")
 print(f"   • Qubits: {NUM_QUBITS}")
@@ -975,13 +962,12 @@ print(f"   • Layers: {NUM_LAYERS}")
 print(f"   • Window Length: {WINDOW_LENGTH}")
 print(f"   • Expected Parameters: {expected_params}")
 print(f"     - IQP encoding: {iqp_params}")
-print(f"     - Per layer: {per_layer_params} (rotations: {NUM_QUBITS*3}, ZZ: {(NUM_QUBITS*(NUM_QUBITS-1))//2})")
+print(f"     - Per layer: {per_layer_params} (Rot gates: φ, θ, ω)")
 print(f"     - Final prep: {final_params}")
-print(f"🔗 Advanced Features:")
+print(f"🔗 Corrected Features:")
 print(f"   • IQP Encoding: ✅ (RZ rotations)")
-print(f"   • Strongly Entangled Layers: ✅ (RX+RY+RZ per qubit)")
-print(f"   • Circular CNOTs: ✅")
-print(f"   • Parameterized ZZ Interactions: ✅")
+print(f"   • Strongly Entangled Layers: ✅ (Rot gates)")
+print(f"   • Range-based CNOTs: ✅ (official pattern)")
 print(f"   • Enhanced Measurements: ✅ (X + Z)")
 print(f"🎯 Training Configuration:")
 print(f"   • Epochs: {EPOCHS}")
