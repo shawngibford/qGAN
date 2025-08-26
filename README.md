@@ -14,6 +14,8 @@ This implementation features:
 
 Based on the work presented in Orlandi et al. (2023): [Enhancing Financial Time Series Prediction with Quantum-Enhanced Synthetic Data Generation: A Case Study on the S&P 500 Using a Quantum Wasserstein Generative Adversarial Network Approach with a Gradient Penalty](https://www.mdpi.com/2079-9292/13/11/2158)
 
+Github: (https://github.com/EBarbierato/Enhancing-Financial-Time-Series-Prediction-)
+
 ## Installation
 
 ### 1. Clone the repository
