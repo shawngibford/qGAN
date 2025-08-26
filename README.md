@@ -1,6 +1,6 @@
 # Quantum Generative Adversarial Network (qGAN)
 
-A novel quantum generative adversarial network implementation using PennyLane for synthetic time series generation. This repository contains the code for a Wasserstein GAN with Gradient Penalty utilizing quantum circuit as the generator component.
+A novel quantum generative adversarial network implementation using PennyLane for industrial bioengineering process synthetic time series data generation. This repository contains the code for a Wasserstein GAN with Gradient Penalty utilizing quantum circuit as the generator component.
 
 ## Overview
 
