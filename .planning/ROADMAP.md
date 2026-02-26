@@ -28,7 +28,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. All `torch.load` calls use `weights_only=True` and do not trigger a security warning
   4. All evaluation and inference forward passes are wrapped in `torch.no_grad()` so no gradients accumulate during non-training code paths
   5. The data file is loaded via `./data.csv` and the notebook runs correctly from any working directory
-**Plans**: TBD
+**Plans**: 3 plans
+  - [ ] 01-01-PLAN.md — Checkpoint system rewrite + unsafe code removal (BUG-01, BUG-07, QUAL-04, QUAL-05, QUAL-09)
+  - [ ] 01-02-PLAN.md — DataLoader restructuring + training loop bug fixes (BUG-04, BUG-05, BUG-06, PERF-02, PERF-03)
+  - [ ] 01-03-PLAN.md — Naming conventions + notebook organization (QUAL-01, QUAL-02, QUAL-07, QUAL-10)
 
 ### Phase 2: WGAN-GP Correctness and Quantum Circuit Redesign
 **Goal**: The notebook implements WGAN-GP per Gulrajani et al. (2017) with a well-designed quantum circuit supporting universal approximation via data re-uploading, and a fresh training run produces measurably better distributional fidelity
@@ -58,6 +61,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and Correctness Infrastructure | 0/TBD | Not started | - |
+| 1. Foundation and Correctness Infrastructure | 0/3 | Not started | - |
 | 2. WGAN-GP Correctness and Quantum Circuit Redesign | 0/TBD | Not started | - |
 | 3. Post-Processing Consistency and Cleanup | 0/TBD | Not started | - |
