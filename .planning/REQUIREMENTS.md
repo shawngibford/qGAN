@@ -9,13 +9,13 @@ Requirements for this remediation. Each maps to roadmap phases.
 
 ### Correctness Bugs
 
-- [ ] **BUG-01**: Checkpoint saves and loads `model.critic` (not `model.discriminator`)
+- [x] **BUG-01**: Checkpoint saves and loads `model.critic` (not `model.discriminator`)
 - [ ] **BUG-02**: Generator output scaling (`*0.1`) applied consistently across training, evaluation, and standalone generation
 - [ ] **BUG-03**: Denormalization strategy unified between training-time evaluation and standalone generation
 - [ ] **BUG-04**: Loss values stored as Python floats (`.item()`) not tensors retaining computation graphs
 - [ ] **BUG-05**: Epoch condition uses `self.num_epochs` instead of hardcoded `3000`
 - [ ] **BUG-06**: `delta` variable scoped inside class as `self.delta` (no global dependency)
-- [ ] **BUG-07**: `exit()` call removed from notebook cells
+- [x] **BUG-07**: `exit()` call removed from notebook cells
 
 ### Performance
 
@@ -49,12 +49,12 @@ Requirements for this remediation. Each maps to roadmap phases.
 - [ ] **QUAL-01**: Data path changed to relative `./data.csv`
 - [ ] **QUAL-02**: Duplicate imports removed (`numpy`, `random`)
 - [ ] **QUAL-03**: Dead code removed: unused `compute_gradient_penalty` method, Cell 50 `d`, Cell 49 data perturbation hack
-- [ ] **QUAL-04**: `eval()` replaced with `globals().get()` or explicit logic
-- [ ] **QUAL-05**: `torch.load` uses `weights_only=True`
+- [x] **QUAL-04**: `eval()` replaced with `globals().get()` or explicit logic
+- [x] **QUAL-05**: `torch.load` uses `weights_only=True`
 - [ ] **QUAL-06**: `normalize()` returns `(normalized_data, mu, sigma)` tuple
 - [ ] **QUAL-07**: Hyperparameter naming consistent (all UPPER_CASE: `N_CRITIC`, `LAMBDA`, etc.)
 - [ ] **QUAL-08**: Duplicate plotting cells consolidated
-- [ ] **QUAL-09**: Unused `self.measurements` removed from `__init__`
+- [x] **QUAL-09**: Unused `self.measurements` removed from `__init__`
 - [ ] **QUAL-10**: Variable `data` not silently overwritten (use distinct names)
 
 ## v2 Requirements
@@ -90,13 +90,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BUG-01 | Phase 1 | Pending |
+| BUG-01 | Phase 1 | Complete |
 | BUG-02 | Phase 2 | Pending |
 | BUG-03 | Phase 2 | Pending |
 | BUG-04 | Phase 1 | Pending |
 | BUG-05 | Phase 1 | Pending |
 | BUG-06 | Phase 1 | Pending |
-| BUG-07 | Phase 1 | Pending |
+| BUG-07 | Phase 1 | Complete |
 | PERF-01 | Phase 2 | Pending |
 | PERF-02 | Phase 1 | Pending |
 | PERF-03 | Phase 1 | Pending |
@@ -118,12 +118,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QUAL-01 | Phase 1 | Pending |
 | QUAL-02 | Phase 1 | Pending |
 | QUAL-03 | Phase 3 | Pending |
-| QUAL-04 | Phase 1 | Pending |
-| QUAL-05 | Phase 1 | Pending |
+| QUAL-04 | Phase 1 | Complete |
+| QUAL-05 | Phase 1 | Complete |
 | QUAL-06 | Phase 2 | Pending |
 | QUAL-07 | Phase 1 | Pending |
 | QUAL-08 | Phase 3 | Pending |
-| QUAL-09 | Phase 1 | Pending |
+| QUAL-09 | Phase 1 | Complete |
 | QUAL-10 | Phase 1 | Pending |
 
 **Coverage:**
