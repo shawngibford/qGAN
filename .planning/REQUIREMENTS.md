@@ -12,16 +12,16 @@ Requirements for this remediation. Each maps to roadmap phases.
 - [x] **BUG-01**: Checkpoint saves and loads `model.critic` (not `model.discriminator`)
 - [ ] **BUG-02**: Generator output scaling (`*0.1`) applied consistently across training, evaluation, and standalone generation
 - [ ] **BUG-03**: Denormalization strategy unified between training-time evaluation and standalone generation
-- [ ] **BUG-04**: Loss values stored as Python floats (`.item()`) not tensors retaining computation graphs
-- [ ] **BUG-05**: Epoch condition uses `self.num_epochs` instead of hardcoded `3000`
-- [ ] **BUG-06**: `delta` variable scoped inside class as `self.delta` (no global dependency)
+- [x] **BUG-04**: Loss values stored as Python floats (`.item()`) not tensors retaining computation graphs
+- [x] **BUG-05**: Epoch condition uses `self.num_epochs` instead of hardcoded `3000`
+- [x] **BUG-06**: `delta` variable scoped inside class as `self.delta` (no global dependency)
 - [x] **BUG-07**: `exit()` call removed from notebook cells
 
 ### Performance
 
 - [ ] **PERF-01**: Quantum circuit uses `diff_method='backprop'` on `default.qubit` simulator
-- [ ] **PERF-02**: All evaluation/inference forward passes wrapped in `torch.no_grad()`
-- [ ] **PERF-03**: DataLoader used with proper batch sampling (not flattened to list)
+- [x] **PERF-02**: All evaluation/inference forward passes wrapped in `torch.no_grad()`
+- [x] **PERF-03**: DataLoader used with proper batch sampling (not flattened to list)
 - [ ] **PERF-04**: Evaluation metrics computed every N epochs (not every epoch)
 - [ ] **PERF-05**: Parameter broadcasting used for batch quantum circuit execution where possible
 
@@ -93,13 +93,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BUG-01 | Phase 1 | Complete |
 | BUG-02 | Phase 2 | Pending |
 | BUG-03 | Phase 2 | Pending |
-| BUG-04 | Phase 1 | Pending |
-| BUG-05 | Phase 1 | Pending |
-| BUG-06 | Phase 1 | Pending |
+| BUG-04 | Phase 1 | Complete |
+| BUG-05 | Phase 1 | Complete |
+| BUG-06 | Phase 1 | Complete |
 | BUG-07 | Phase 1 | Complete |
 | PERF-01 | Phase 2 | Pending |
-| PERF-02 | Phase 1 | Pending |
-| PERF-03 | Phase 1 | Pending |
+| PERF-02 | Phase 1 | Complete |
+| PERF-03 | Phase 1 | Complete |
 | PERF-04 | Phase 2 | Pending |
 | PERF-05 | Phase 2 | Pending |
 | WGAN-01 | Phase 2 | Pending |
