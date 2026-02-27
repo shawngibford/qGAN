@@ -46,16 +46,16 @@ Requirements for this remediation. Each maps to roadmap phases.
 
 ### Code Quality
 
-- [ ] **QUAL-01**: Data path changed to relative `./data.csv`
-- [ ] **QUAL-02**: Duplicate imports removed (`numpy`, `random`)
+- [x] **QUAL-01**: Data path changed to relative `./data.csv`
+- [x] **QUAL-02**: Duplicate imports removed (`numpy`, `random`)
 - [ ] **QUAL-03**: Dead code removed: unused `compute_gradient_penalty` method, Cell 50 `d`, Cell 49 data perturbation hack
 - [x] **QUAL-04**: `eval()` replaced with `globals().get()` or explicit logic
 - [x] **QUAL-05**: `torch.load` uses `weights_only=True`
 - [ ] **QUAL-06**: `normalize()` returns `(normalized_data, mu, sigma)` tuple
-- [ ] **QUAL-07**: Hyperparameter naming consistent (all UPPER_CASE: `N_CRITIC`, `LAMBDA`, etc.)
+- [x] **QUAL-07**: Hyperparameter naming consistent (all UPPER_CASE: `N_CRITIC`, `LAMBDA`, etc.)
 - [ ] **QUAL-08**: Duplicate plotting cells consolidated
 - [x] **QUAL-09**: Unused `self.measurements` removed from `__init__`
-- [ ] **QUAL-10**: Variable `data` not silently overwritten (use distinct names)
+- [x] **QUAL-10**: Variable `data` not silently overwritten (use distinct names)
 
 ## v2 Requirements
 
@@ -115,16 +115,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QC-03 | Phase 2 | Pending |
 | QC-04 | Phase 2 | Pending |
 | QC-05 | Phase 2 | Pending |
-| QUAL-01 | Phase 1 | Pending |
-| QUAL-02 | Phase 1 | Pending |
+| QUAL-01 | Phase 1 | Complete |
+| QUAL-02 | Phase 1 | Complete |
 | QUAL-03 | Phase 3 | Pending |
 | QUAL-04 | Phase 1 | Complete |
 | QUAL-05 | Phase 1 | Complete |
 | QUAL-06 | Phase 2 | Pending |
-| QUAL-07 | Phase 1 | Pending |
+| QUAL-07 | Phase 1 | Complete |
 | QUAL-08 | Phase 3 | Pending |
 | QUAL-09 | Phase 1 | Complete |
-| QUAL-10 | Phase 1 | Pending |
+| QUAL-10 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 35 total
