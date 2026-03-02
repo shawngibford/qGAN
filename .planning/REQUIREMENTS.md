@@ -32,7 +32,7 @@ Requirements for this remediation. Each maps to roadmap phases.
 - [x] **WGAN-03**: Dropout removed from critic network
 - [x] **WGAN-04**: EMD computed on raw samples via `wasserstein_distance(real, fake)` (not histograms)
 - [x] **WGAN-05**: Hardcoded histogram bins removed; bins derived from data range where histograms are still used for visualization
-- [ ] **WGAN-06**: Early stopping monitors EMD (not critic loss)
+- [x] **WGAN-06**: Early stopping monitors EMD (not critic loss)
 - [x] **WGAN-07**: Learning rate ratio corrected (critic LR >= generator LR)
 - [x] **WGAN-08**: Stylized facts implementations audited for correctness
 
@@ -107,7 +107,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WGAN-03 | Phase 2 | Complete |
 | WGAN-04 | Phase 2 | Complete |
 | WGAN-05 | Phase 2 | Complete |
-| WGAN-06 | Phase 2 | Pending |
+| WGAN-06 | Phase 2 | Complete |
 | WGAN-07 | Phase 2 | Complete |
 | WGAN-08 | Phase 2 | Complete |
 | QC-01 | Phase 2 | Complete |
