@@ -27,13 +27,13 @@ Requirements for this remediation. Each maps to roadmap phases.
 
 ### ML Theory (WGAN-GP)
 
-- [ ] **WGAN-01**: `N_CRITIC = 5` (restored from 1)
-- [ ] **WGAN-02**: `LAMBDA = 10` (restored from 0.8)
+- [x] **WGAN-01**: `N_CRITIC = 5` (restored from 1)
+- [x] **WGAN-02**: `LAMBDA = 10` (restored from 0.8)
 - [ ] **WGAN-03**: Dropout removed from critic network
 - [ ] **WGAN-04**: EMD computed on raw samples via `wasserstein_distance(real, fake)` (not histograms)
 - [ ] **WGAN-05**: Hardcoded histogram bins removed; bins derived from data range where histograms are still used for visualization
 - [ ] **WGAN-06**: Early stopping monitors EMD (not critic loss)
-- [ ] **WGAN-07**: Learning rate ratio corrected (critic LR >= generator LR)
+- [x] **WGAN-07**: Learning rate ratio corrected (critic LR >= generator LR)
 - [ ] **WGAN-08**: Stylized facts implementations audited for correctness
 
 ### Quantum Circuit Design
@@ -42,7 +42,7 @@ Requirements for this remediation. Each maps to roadmap phases.
 - [ ] **QC-02**: Data re-uploading added — noise re-encoded between variational layers
 - [ ] **QC-03**: PauliX measurements added alongside PauliZ for richer output
 - [ ] **QC-04**: Noise range expanded from `[0, 2pi]` to `[0, 4pi]`
-- [ ] **QC-05**: `WINDOW_LENGTH = 2 * NUM_QUBITS` computed automatically (not independently set)
+- [x] **QC-05**: `WINDOW_LENGTH = 2 * NUM_QUBITS` computed automatically (not independently set)
 
 ### Code Quality
 
@@ -51,7 +51,7 @@ Requirements for this remediation. Each maps to roadmap phases.
 - [ ] **QUAL-03**: Dead code removed: unused `compute_gradient_penalty` method, Cell 50 `d`, Cell 49 data perturbation hack
 - [x] **QUAL-04**: `eval()` replaced with `globals().get()` or explicit logic
 - [x] **QUAL-05**: `torch.load` uses `weights_only=True`
-- [ ] **QUAL-06**: `normalize()` returns `(normalized_data, mu, sigma)` tuple
+- [x] **QUAL-06**: `normalize()` returns `(normalized_data, mu, sigma)` tuple
 - [x] **QUAL-07**: Hyperparameter naming consistent (all UPPER_CASE: `N_CRITIC`, `LAMBDA`, etc.)
 - [ ] **QUAL-08**: Duplicate plotting cells consolidated
 - [x] **QUAL-09**: Unused `self.measurements` removed from `__init__`
@@ -102,25 +102,25 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PERF-03 | Phase 1 | Complete |
 | PERF-04 | Phase 2 | Pending |
 | PERF-05 | Phase 2 | Pending |
-| WGAN-01 | Phase 2 | Pending |
-| WGAN-02 | Phase 2 | Pending |
+| WGAN-01 | Phase 2 | Complete |
+| WGAN-02 | Phase 2 | Complete |
 | WGAN-03 | Phase 2 | Pending |
 | WGAN-04 | Phase 2 | Pending |
 | WGAN-05 | Phase 2 | Pending |
 | WGAN-06 | Phase 2 | Pending |
-| WGAN-07 | Phase 2 | Pending |
+| WGAN-07 | Phase 2 | Complete |
 | WGAN-08 | Phase 2 | Pending |
 | QC-01 | Phase 2 | Pending |
 | QC-02 | Phase 2 | Pending |
 | QC-03 | Phase 2 | Pending |
 | QC-04 | Phase 2 | Pending |
-| QC-05 | Phase 2 | Pending |
+| QC-05 | Phase 2 | Complete |
 | QUAL-01 | Phase 1 | Complete |
 | QUAL-02 | Phase 1 | Complete |
 | QUAL-03 | Phase 3 | Pending |
 | QUAL-04 | Phase 1 | Complete |
 | QUAL-05 | Phase 1 | Complete |
-| QUAL-06 | Phase 2 | Pending |
+| QUAL-06 | Phase 2 | Complete |
 | QUAL-07 | Phase 1 | Complete |
 | QUAL-08 | Phase 3 | Pending |
 | QUAL-09 | Phase 1 | Complete |

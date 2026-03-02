@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 01
-current_phase_name: Foundation and Correctness Infrastructure
-current_plan: Not started
-status: completed
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-02T08:02:07.825Z"
-last_activity: 2026-02-27
+current_phase: 02
+current_phase_name: WGAN-GP Correctness and Quantum Circuit Redesign
+current_plan: 2
+status: executing
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-03-02T09:01:51.006Z"
+last_activity: 2026-03-02
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 100
+  total_plans: 7
+  completed_plans: 4
+  percent: 57
 ---
 
 # Project State
@@ -24,19 +24,19 @@ progress:
 See: .planning/PROJECT.md (updated 2026-02-26)
 
 **Core value:** The qGAN must produce correct, reproducible results with metrics that accurately reflect output quality
-**Current focus:** Phase 1 -- Foundation and Correctness Infrastructure
+**Current focus:** Phase 2 -- WGAN-GP Correctness and Quantum Circuit Redesign
 
 ## Current Position
 
-**Current Phase:** 01
-**Current Phase Name:** Foundation and Correctness Infrastructure
+**Current Phase:** 02
+**Current Phase Name:** WGAN-GP Correctness and Quantum Circuit Redesign
 **Total Phases:** 3
-**Current Plan:** Not started
-**Total Plans in Phase:** 3
-**Status:** Milestone complete
-**Progress:** [██████████] 100%
-**Last Activity:** 2026-02-27
-**Last Activity Description:** Phase 01 complete
+**Current Plan:** 2
+**Total Plans in Phase:** 4
+**Status:** In progress
+**Progress:** [██████░░░░] 57%
+**Last Activity:** 2026-03-02
+**Last Activity Description:** Completed 02-01 config and normalize updates
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ See: .planning/PROJECT.md (updated 2026-02-26)
 | Phase 01 P01 | 4min | 2 tasks | 1 files |
 | Phase 01 P02 | 3min | 2 tasks | 1 files |
 | Phase 01 P03 | 4min | 2 tasks | 1 files |
+| Phase 02 P01 | 2min | 2 tasks | 1 files |
 
 ### Decisions
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Store dataloader reference as self.dataloader on the model for potential reuse
 - [Phase 01]: Renamed cell 8 local data variable to od_numpy to avoid collision with raw_data
 - [Phase 01]: Kept function parameter names (data, delta) unchanged in utility functions since they are local scope
+- [Phase 02]: Moved NUM_QUBITS before WINDOW_LENGTH to avoid forward reference
+- [Phase 02]: Removed IQP params from expected parameter count (Plan 02-02 will remove IQP circuit)
 
 ### Pending Todos
 
@@ -73,12 +76,12 @@ None yet.
 ### Blockers/Concerns
 
 - Phase 2 circuit redesign invalidates all existing checkpoints in `checkpoints_phase2c/` -- must abandon them and run fresh training
-- normalize() signature change in Phase 2 is breaking; all call sites must be updated atomically in the same pass
-- WINDOW_LENGTH must be set to `2 * NUM_QUBITS` before circuit redesign or shape mismatch will silently corrupt forward passes
+- ~~normalize() signature change in Phase 2 is breaking~~ RESOLVED in 02-01: updated to 3-tuple return with call site unpacking
+- ~~WINDOW_LENGTH must be set to `2 * NUM_QUBITS` before circuit redesign~~ RESOLVED in 02-01: now computed dynamically
 - Noise range expansion `[0, 2pi]` to `[0, 4pi]` is theoretically correct but empirical training stability is medium-confidence -- monitor first Phase 2 training run carefully
 
 ## Session Continuity
 
-**Last Session:** 2026-03-02T08:02:07.815Z
-**Stopped At:** Phase 2 context gathered
-**Resume File:** .planning/phases/02-wgan-gp-correctness-and-quantum-circuit-redesign/02-CONTEXT.md
+**Last Session:** 2026-03-02T09:01:51.004Z
+**Stopped At:** Completed 02-01-PLAN.md
+**Resume File:** None
