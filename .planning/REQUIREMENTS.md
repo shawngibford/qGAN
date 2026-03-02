@@ -19,7 +19,7 @@ Requirements for this remediation. Each maps to roadmap phases.
 
 ### Performance
 
-- [ ] **PERF-01**: Quantum circuit uses `diff_method='backprop'` on `default.qubit` simulator
+- [x] **PERF-01**: Quantum circuit uses `diff_method='backprop'` on `default.qubit` simulator
 - [x] **PERF-02**: All evaluation/inference forward passes wrapped in `torch.no_grad()`
 - [x] **PERF-03**: DataLoader used with proper batch sampling (not flattened to list)
 - [ ] **PERF-04**: Evaluation metrics computed every N epochs (not every epoch)
@@ -29,7 +29,7 @@ Requirements for this remediation. Each maps to roadmap phases.
 
 - [x] **WGAN-01**: `N_CRITIC = 5` (restored from 1)
 - [x] **WGAN-02**: `LAMBDA = 10` (restored from 0.8)
-- [ ] **WGAN-03**: Dropout removed from critic network
+- [x] **WGAN-03**: Dropout removed from critic network
 - [ ] **WGAN-04**: EMD computed on raw samples via `wasserstein_distance(real, fake)` (not histograms)
 - [ ] **WGAN-05**: Hardcoded histogram bins removed; bins derived from data range where histograms are still used for visualization
 - [ ] **WGAN-06**: Early stopping monitors EMD (not critic loss)
@@ -38,10 +38,10 @@ Requirements for this remediation. Each maps to roadmap phases.
 
 ### Quantum Circuit Design
 
-- [ ] **QC-01**: Redundant IQP RZ gate removed (before noise encoding)
-- [ ] **QC-02**: Data re-uploading added — noise re-encoded between variational layers
-- [ ] **QC-03**: PauliX measurements added alongside PauliZ for richer output
-- [ ] **QC-04**: Noise range expanded from `[0, 2pi]` to `[0, 4pi]`
+- [x] **QC-01**: Redundant IQP RZ gate removed (before noise encoding)
+- [x] **QC-02**: Data re-uploading added — noise re-encoded between variational layers
+- [x] **QC-03**: PauliX measurements added alongside PauliZ for richer output
+- [x] **QC-04**: Noise range expanded from `[0, 2pi]` to `[0, 4pi]`
 - [x] **QC-05**: `WINDOW_LENGTH = 2 * NUM_QUBITS` computed automatically (not independently set)
 
 ### Code Quality
@@ -97,23 +97,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BUG-05 | Phase 1 | Complete |
 | BUG-06 | Phase 1 | Complete |
 | BUG-07 | Phase 1 | Complete |
-| PERF-01 | Phase 2 | Pending |
+| PERF-01 | Phase 2 | Complete |
 | PERF-02 | Phase 1 | Complete |
 | PERF-03 | Phase 1 | Complete |
 | PERF-04 | Phase 2 | Pending |
 | PERF-05 | Phase 2 | Pending |
 | WGAN-01 | Phase 2 | Complete |
 | WGAN-02 | Phase 2 | Complete |
-| WGAN-03 | Phase 2 | Pending |
+| WGAN-03 | Phase 2 | Complete |
 | WGAN-04 | Phase 2 | Pending |
 | WGAN-05 | Phase 2 | Pending |
 | WGAN-06 | Phase 2 | Pending |
 | WGAN-07 | Phase 2 | Complete |
 | WGAN-08 | Phase 2 | Pending |
-| QC-01 | Phase 2 | Pending |
-| QC-02 | Phase 2 | Pending |
-| QC-03 | Phase 2 | Pending |
-| QC-04 | Phase 2 | Pending |
+| QC-01 | Phase 2 | Complete |
+| QC-02 | Phase 2 | Complete |
+| QC-03 | Phase 2 | Complete |
+| QC-04 | Phase 2 | Complete |
 | QC-05 | Phase 2 | Complete |
 | QUAL-01 | Phase 1 | Complete |
 | QUAL-02 | Phase 1 | Complete |
