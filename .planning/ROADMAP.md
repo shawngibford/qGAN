@@ -43,7 +43,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. EMD is computed via `wasserstein_distance(real_samples, fake_samples)` on raw 1D arrays (not histogram bins), and the early stopping monitor is tracking this EMD value
   4. The quantum circuit uses `diff_method='backprop'` on an explicitly constructed `default.qubit` device, and generator parameter gradients are computed during a training step
   5. The generator output scaling and denormalization strategy are identical between the training loop evaluation path and the standalone generation path — running both produces numerically equivalent outputs for the same input noise
-**Plans**: TBD
+**Plans**: 4 plans
+  - [ ] 02-01-PLAN.md — Config cell overhaul + normalize() signature (QUAL-06, QC-05, WGAN-01, WGAN-02, WGAN-07)
+  - [ ] 02-02-PLAN.md — Quantum circuit redesign + critic architecture (QC-01, QC-02, QC-03, QC-04, PERF-01, WGAN-03)
+  - [ ] 02-03-PLAN.md — Training loop rewrite + evaluation pipeline (BUG-02, BUG-03, PERF-04, PERF-05, WGAN-04, WGAN-05, WGAN-08)
+  - [ ] 02-04-PLAN.md — Early stopping + standalone generation + post-training (WGAN-06, BUG-02, BUG-03)
 
 ### Phase 3: Post-Processing Consistency and Cleanup
 **Goal**: The notebook contains no dead code, debug artifacts, or duplicate visualization cells, and all known magic constants and debug hacks from prior experimental iterations are removed
@@ -62,5 +66,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and Correctness Infrastructure | 0/3 | Not started | - |
-| 2. WGAN-GP Correctness and Quantum Circuit Redesign | 0/TBD | Not started | - |
+| 2. WGAN-GP Correctness and Quantum Circuit Redesign | 0/4 | Not started | - |
 | 3. Post-Processing Consistency and Cleanup | 0/TBD | Not started | - |
