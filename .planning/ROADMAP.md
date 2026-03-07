@@ -50,12 +50,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   - [ ] 02-04-PLAN.md — Early stopping + standalone generation + post-training (WGAN-06, BUG-02, BUG-03)
 
 ### Phase 3: Post-Processing Consistency and Cleanup
-**Goal**: The notebook contains no dead code, debug artifacts, or duplicate visualization cells, and all known magic constants and debug hacks from prior experimental iterations are removed
+**Goal**: The notebook contains no dead code, debug artifacts, or duplicate visualization cells; normalization constants are protected from variable shadowing; and all edge cases in visualization cells are handled
 **Depends on**: Phase 2
 **Requirements**: QUAL-03, QUAL-08
+**Gap Closure:** Closes gaps from v1.0 milestone audit (2 requirements + 1 integration + 1 flow)
 **Success Criteria** (what must be TRUE):
-  1. The unused `compute_gradient_penalty` method, Cell 50 debug variable `d`, and Cell 49 data perturbation hack are absent from the notebook
+  1. The unused `compute_gradient_penalty` method, Cell 57 debug variable `d`, and Cell 49 data perturbation hack are absent from the notebook
   2. Duplicate plotting cells are consolidated so each visualization appears exactly once
+  3. Cells 16/18 use distinct variable names (e.g. `mu_viz`/`sigma_viz`) that do not shadow the normalization constants `mu`/`sigma` from Cell 15
+  4. Cell 36 loss visualization handles the edge case where `critic_loss_avg` has exactly 1 entry without raising a NameError
 **Plans**: TBD
 
 ## Progress
