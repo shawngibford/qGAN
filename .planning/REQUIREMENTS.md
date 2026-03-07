@@ -53,7 +53,7 @@ Requirements for this remediation. Each maps to roadmap phases.
 - [x] **QUAL-05**: `torch.load` uses `weights_only=True`
 - [x] **QUAL-06**: `normalize()` returns `(normalized_data, mu, sigma)` tuple
 - [x] **QUAL-07**: Hyperparameter naming consistent (all UPPER_CASE: `N_CRITIC`, `LAMBDA`, etc.)
-- [ ] **QUAL-08**: Duplicate plotting cells consolidated
+- [x] **QUAL-08**: Duplicate plotting cells consolidated
 - [x] **QUAL-09**: Unused `self.measurements` removed from `__init__`
 - [x] **QUAL-10**: Variable `data` not silently overwritten (use distinct names)
 
@@ -122,7 +122,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QUAL-05 | Phase 1 | Complete |
 | QUAL-06 | Phase 2 | Complete |
 | QUAL-07 | Phase 1 | Complete |
-| QUAL-08 | Phase 3 | Pending |
+| QUAL-08 | Phase 3 | Complete |
 | QUAL-09 | Phase 1 | Complete |
 | QUAL-10 | Phase 1 | Complete |
 
