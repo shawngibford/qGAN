@@ -59,15 +59,17 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Duplicate plotting cells are consolidated so each visualization appears exactly once
   3. Cells 16/18 use distinct variable names (e.g. `mu_viz`/`sigma_viz`) that do not shadow the normalization constants `mu`/`sigma` from Cell 15
   4. Cell 36 loss visualization handles the edge case where `critic_loss_avg` has exactly 1 entry without raising a NameError
-**Plans**: TBD
+**Plans**: 2 plans
+  - [ ] 03-01-PLAN.md — Variable shadowing fix + dead code removal + loss visualization edge case (QUAL-03)
+  - [ ] 03-02-PLAN.md — Duplicate plot consolidation + Cell 51 split + section headers (QUAL-08)
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3
+Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation and Correctness Infrastructure | 0/3 | Not started | - |
 | 2. WGAN-GP Correctness and Quantum Circuit Redesign | 0/4 | Not started | - |
-| 3. Post-Processing Consistency and Cleanup | 0/TBD | Not started | - |
+| 3. Post-Processing Consistency and Cleanup | 0/2 | Not started | - |
