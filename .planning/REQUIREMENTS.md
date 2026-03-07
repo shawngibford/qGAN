@@ -48,7 +48,7 @@ Requirements for this remediation. Each maps to roadmap phases.
 
 - [x] **QUAL-01**: Data path changed to relative `./data.csv`
 - [x] **QUAL-02**: Duplicate imports removed (`numpy`, `random`)
-- [ ] **QUAL-03**: Dead code removed: unused `compute_gradient_penalty` method, Cell 50 `d`, Cell 49 data perturbation hack
+- [x] **QUAL-03**: Dead code removed: unused `compute_gradient_penalty` method, Cell 50 `d`, Cell 49 data perturbation hack
 - [x] **QUAL-04**: `eval()` replaced with `globals().get()` or explicit logic
 - [x] **QUAL-05**: `torch.load` uses `weights_only=True`
 - [x] **QUAL-06**: `normalize()` returns `(normalized_data, mu, sigma)` tuple
@@ -117,7 +117,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | QC-05 | Phase 2 | Complete |
 | QUAL-01 | Phase 1 | Complete |
 | QUAL-02 | Phase 1 | Complete |
-| QUAL-03 | Phase 3 | Pending |
+| QUAL-03 | Phase 3 | Complete |
 | QUAL-04 | Phase 1 | Complete |
 | QUAL-05 | Phase 1 | Complete |
 | QUAL-06 | Phase 2 | Complete |
