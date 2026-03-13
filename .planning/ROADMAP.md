@@ -42,7 +42,11 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
   2. Evaluation cell generates fake samples using real PAR_LIGHT values from the dataset, not zeros -- EMD and moment statistics reflect conditioned generation
   3. Plotting cells can be re-executed without mu/sigma variable shadowing corrupting distribution overlays
   4. A 200-epoch validation run produces EMD within 2x of HPO baseline (best_emd=0.001137) -- confirming HPO hyperparameters transfer to corrected code
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 04-01-PLAN.md -- Apply all code regression fixes (noise range, par_zeros, mu/sigma, ACF removal, HPO hyperparameters)
+- [ ] 04-02-PLAN.md -- Execute 200-epoch validation run and capture baseline metrics to JSON
 
 ### Phase 5: Backprop and Broadcasting
 **Goal**: Training runs ~12x faster through batched quantum circuit execution, unblocking efficient iteration for spectral loss tuning and conditioning experiments
@@ -87,7 +91,7 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 1. Foundation and Correctness Infrastructure | v1.0 | 3/3 | Complete | 2026-03-01 |
 | 2. WGAN-GP Correctness and Quantum Circuit Redesign | v1.0 | 4/4 | Complete | 2026-03-05 |
 | 3. Post-Processing Consistency and Cleanup | v1.0 | 2/2 | Complete | 2026-03-07 |
-| 4. Code Regression Fixes | v1.1 | 0/? | Not started | - |
+| 4. Code Regression Fixes | v1.1 | 0/2 | Planning complete | - |
 | 5. Backprop and Broadcasting | v1.1 | 0/? | Not started | - |
 | 6. Spectral Loss | v1.1 | 0/? | Not started | - |
 | 7. Conditioning Verification | v1.1 | 0/? | Not started | - |
