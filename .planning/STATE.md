@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Post-HPO Improvements
-status: planning
-stopped_at: Phase 4 context gathered
-last_updated: "2026-03-13T16:04:49.270Z"
-last_activity: 2026-03-13 -- Roadmap created for v1.1
+status: executing
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-13T18:40:21.871Z"
+last_activity: 2026-03-13 -- Completed 04-01 code regression fixes
 progress:
   total_phases: 4
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 33
+  total_plans: 2
+  completed_plans: 1
+  percent: 50
 ---
 
 # Project State
@@ -26,17 +26,17 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 ## Current Position
 
 Phase: 4 of 7 (Code Regression Fixes) -- first phase of v1.1
-Plan: --
-Status: Ready to plan
-Last activity: 2026-03-13 -- Roadmap created for v1.1
+Plan: 1 of 2 complete
+Status: Executing
+Last activity: 2026-03-13 -- Completed 04-01 code regression fixes
 
-Progress: [###-------] 33% (v1.0 phases 1-3 complete, v1.1 phases 4-7 pending)
+Progress: [#####-----] 50% (1 of 2 plans complete in phase 4)
 
 ## Performance Metrics
 
 **Velocity:**
 - Total plans completed: 9 (v1.0)
-- v1.1 plans: 0 completed
+- v1.1 plans: 1 completed
 
 **By Phase (v1.0):**
 
@@ -45,12 +45,17 @@ Progress: [###-------] 33% (v1.0 phases 1-3 complete, v1.1 phases 4-7 pending)
 | 1. Foundation | 3 | Complete |
 | 2. WGAN-GP + Circuit | 4 | Complete |
 | 3. Post-Processing | 2 | Complete |
+| Phase 04 P01 | 3min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
 ### Decisions
 
 See PROJECT.md Key Decisions table for full log.
+
+- **04-01:** ACF loss fully removed (not zeroed) -- Phase 6 spectral loss replaces it
+- **04-01:** HPO-tuned values applied: N_CRITIC=9, LAMBDA=2.16, LR_CRITIC=1.8046e-05, LR_GENERATOR=6.9173e-05
+- **04-01:** self.acf_avg eval metric tracking preserved (stylized_facts monitoring)
 
 ### Pending Todos
 
@@ -64,6 +69,6 @@ None.
 
 ## Session Continuity
 
-**Last Session:** 2026-03-13T16:04:49.268Z
-**Stopped At:** Phase 4 context gathered
-**Resume File:** .planning/phases/04-code-regression-fixes/04-CONTEXT.md
+**Last Session:** 2026-03-13T18:40:21.868Z
+**Stopped At:** Completed 04-01-PLAN.md
+**Resume File:** None
