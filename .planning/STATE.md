@@ -1,53 +1,37 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: qGAN Code Review Remediation
-current_phase: 03
-current_phase_name: Post-Processing Consistency and Cleanup
-current_plan: completed
-status: milestone_complete
-stopped_at: "v1.0 milestone shipped"
-last_updated: "2026-03-07"
-last_activity: 2026-03-07
+milestone: v1.1
+milestone_name: Post-HPO Improvements
+current_phase: null
+current_phase_name: null
+current_plan: null
+status: defining_requirements
+stopped_at: null
+last_updated: "2026-03-13"
+last_activity: 2026-03-13
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-07)
+See: .planning/PROJECT.md (updated 2026-03-13)
 
-**Core value:** The qGAN must produce correct, reproducible results with metrics that accurately reflect output quality
-**Current focus:** v1.0 shipped — planning next milestone
+**Core value:** The qGAN must generate synthetic OD time series that capture real data's volatility structure
+**Current focus:** Defining requirements for v1.1
 
 ## Current Position
 
-**Milestone:** v1.0 qGAN Code Review Remediation — SHIPPED 2026-03-07
-**Total Phases:** 3
-**Total Plans:** 9
-**Status:** Milestone complete
-**Progress:** [██████████] 100%
-**Last Activity:** 2026-03-07
-
-## Performance Metrics
-
-| Phase | Duration | Tasks | Files |
-|-------|----------|-------|-------|
-| Phase 01 P01 | 4min | 2 tasks | 1 files |
-| Phase 01 P02 | 3min | 2 tasks | 1 files |
-| Phase 01 P03 | 4min | 2 tasks | 1 files |
-| Phase 02 P01 | 2min | 2 tasks | 1 files |
-| Phase 02 P02 | 3min | 2 tasks | 1 files |
-| Phase 02 P03 | 4min | 2 tasks | 1 files |
-| Phase 02 P04 | 3min | 2 tasks | 1 files |
-| Phase 03 P01 | 3min | 2 tasks | 1 files |
-| Phase 03 P02 | 3min | 2 tasks | 1 files |
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-13 — Milestone v1.1 started
 
 ## Accumulated Context
 
@@ -61,10 +45,11 @@ None.
 
 ### Blockers/Concerns
 
-None — milestone shipped.
+- Notebook has diverged from v1.0 state — PAR_LIGHT conditioning work reintroduced regressions
+- HPO training was done with regressed noise range [0, 2π] — results may need re-evaluation after fix
 
 ## Session Continuity
 
-**Last Session:** 2026-03-07
-**Stopped At:** v1.0 milestone shipped
+**Last Session:** 2026-03-13
+**Stopped At:** Defining v1.1 requirements
 **Resume File:** None

@@ -1,12 +1,25 @@
-# qGAN Code Review Remediation
+# qGAN Post-HPO Improvements
 
 ## What This Is
 
-A PennyLane-based Quantum GAN (`qgan_pennylane.ipynb`) for bioprocess time series synthesis of Optical Density data. The notebook implements a WGAN-GP with a quantum generator (parameterized quantum circuit using data re-uploading) and classical 1D-CNN critic. v1.0 addressed all 35 issues from a comprehensive code review — the training pipeline now follows WGAN-GP theory, the quantum circuit supports universal approximation, and metrics accurately reflect output quality.
+A PennyLane-based Quantum GAN (`qgan_pennylane.ipynb`) for bioprocess time series synthesis of Optical Density data. The notebook implements a WGAN-GP with a quantum generator (parameterized quantum circuit using data re-uploading) and classical 1D-CNN critic with PAR_LIGHT conditioning. v1.0 remediated all 35 code review issues. Post-HPO evaluation revealed persistent variance collapse (fake std 0.0104 vs real 0.0218), regressions from conditioning work (noise range, broadcasting), and identified high-impact improvements (spectral loss, circuit expressivity, critic balance).
 
 ## Core Value
 
-The qGAN must produce correct, reproducible results with a training pipeline where metrics accurately reflect output quality, model checkpoints actually save/restore, and WGAN-GP hyperparameters follow established theory.
+The qGAN must generate synthetic OD time series that capture real data's volatility structure — not just the mean trend — with variance, kurtosis, and spectral characteristics that match the training distribution.
+
+## Current Milestone: v1.1 Post-HPO Improvements
+
+**Goal:** Fix regressions from conditioning work and add high-impact improvements to address variance collapse
+
+**Target features:**
+- Fix noise range regression ([0, 2π] → [0, 4π] in training loop)
+- Restore broadcasting optimization (~12x training speedup)
+- Fix mu/sigma shadowing
+- Add spectral/PSD loss for mid-frequency volatility
+- Parameterize circuit layer count (4 → 6-8)
+- Verify PAR_LIGHT conditioning actually modulates output
+- Add simpler critic architecture option
 
 ## Requirements
 
@@ -28,7 +41,13 @@ The qGAN must produce correct, reproducible results with a training pipeline whe
 
 ### Active
 
-(None — next milestone not yet defined)
+- [ ] Fix noise range to [0, 4π] in all training loop locations
+- [ ] Restore broadcasting optimization for batched QNode calls
+- [ ] Clean up mu/sigma variable shadowing
+- [ ] Add spectral/PSD mismatch loss term
+- [ ] Make NUM_LAYERS configurable (support 6-8 layers)
+- [ ] Verify PAR_LIGHT conditioning modulates generator output
+- [ ] Add configurable critic architecture (simpler option)
 
 ### Out of Scope
 
@@ -48,8 +67,16 @@ Net change: 730 insertions, 1,576 deletions (substantial cleanup).
 PhD research project — the notebook has qutrit experimental variants (phase2, phase2b, phase2c) that were not in remediation scope.
 
 ### Known Tech Debt
+- Noise range regressed to [0, 2π] in training loop (3 locations) — PAR_LIGHT conditioning work reintroduced old values
+- Broadcasting optimization lost — per-sample Python loops instead of batched QNode calls (~12x slower)
 - Cell 10 mu/sigma shadowing on re-execution (non-blocking in linear execution)
-- Cell 37 diagnostic noise range mismatch (diagnostic-only cell)
+
+### Post-HPO Findings (2026-03-13)
+- Variance collapse persists: fake std 0.0104 vs real 0.0218 (48% of target)
+- Mean bias 62% off, kurtosis 84% off (0.22 vs 1.40)
+- EMD "EXCELLENT", JSD "GOOD" — but moments tell the real story
+- Generator learns drift but not volatility structure
+- Classical baselines (TinyVAE, FCVAE) also failed — all learned smooth mean curve
 
 ## Key Decisions
 
@@ -73,4 +100,4 @@ PhD research project — the notebook has qutrit experimental variants (phase2, 
 - **Quantum circuit**: Output dimensionality = 2 * NUM_QUBITS measurements
 
 ---
-*Last updated: 2026-03-07 after v1.0 milestone*
+*Last updated: 2026-03-13 after v1.1 milestone start*
