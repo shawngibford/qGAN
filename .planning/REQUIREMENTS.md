@@ -1,7 +1,7 @@
 # Requirements: qGAN Post-HPO Improvements
 
 **Defined:** 2026-03-13
-**Core Value:** The qGAN must generate synthetic OD time series that capture real data's volatility structure — not just the mean trend — with variance, kurtosis, and spectral characteristics that match the training distribution.
+**Core Value:** The qGAN must generate synthetic OD time series that capture real data's volatility structure -- not just the mean trend -- with variance, kurtosis, and spectral characteristics that match the training distribution.
 
 ## v1.1 Requirements
 
@@ -9,7 +9,7 @@ Requirements for post-HPO improvement milestone. Each maps to roadmap phases.
 
 ### Regression Fixes
 
-- [ ] **REG-01**: Training loop uses correct noise range [0, 4π] in all 3 locations (critic training, generator training, evaluation)
+- [ ] **REG-01**: Training loop uses correct noise range [0, 4pi] in all 3 locations (critic training, generator training, evaluation)
 - [ ] **REG-02**: QNode uses `diff_method='backprop'` instead of `parameter-shift` (prerequisite for broadcasting)
 - [ ] **REG-03**: Training loop uses batched/broadcasted QNode calls instead of per-sample Python loops (~12x speedup)
 - [ ] **REG-04**: Evaluation generation uses real PAR_LIGHT values instead of `torch.zeros` for conditioning
@@ -60,23 +60,23 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REG-01 | — | Pending |
-| REG-02 | — | Pending |
-| REG-03 | — | Pending |
-| REG-04 | — | Pending |
-| REG-05 | — | Pending |
-| SPEC-01 | — | Pending |
-| SPEC-02 | — | Pending |
-| SPEC-03 | — | Pending |
-| COND-01 | — | Pending |
-| COND-02 | — | Pending |
-| COND-03 | — | Pending |
+| REG-01 | Phase 4 | Pending |
+| REG-02 | Phase 5 | Pending |
+| REG-03 | Phase 5 | Pending |
+| REG-04 | Phase 4 | Pending |
+| REG-05 | Phase 4 | Pending |
+| SPEC-01 | Phase 6 | Pending |
+| SPEC-02 | Phase 6 | Pending |
+| SPEC-03 | Phase 6 | Pending |
+| COND-01 | Phase 7 | Pending |
+| COND-02 | Phase 7 | Pending |
+| COND-03 | Phase 7 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 11 total
-- Mapped to phases: 0
-- Unmapped: 11 ⚠️
+- Mapped to phases: 11
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after initial definition*
+*Last updated: 2026-03-13 after roadmap creation*
