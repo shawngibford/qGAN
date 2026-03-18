@@ -57,7 +57,11 @@ Plans:
   2. All three training loops (critic, generator, evaluation) use a single batched QNode call per step instead of per-sample Python loops
   3. Batched QNode output matches sequential per-sample output within 1e-6 tolerance -- verified by element-wise comparison on a test batch
   4. Epoch wall-clock time is less than 30% of pre-broadcasting time (measured over 10 consecutive epochs)
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 05-01-PLAN.md -- Switch QNode to backprop and convert all four per-sample loops to batched calls
+- [ ] 05-02-PLAN.md -- Validate equivalence, reproducibility, and SC4 timing gate (one-time cells, then delete)
 
 ### Phase 6: Spectral Loss
 **Goal**: Generator receives explicit gradient signal penalizing wrong frequency content, directly addressing the root cause of variance collapse where the generator learns mean drift but not volatility structure
@@ -91,7 +95,7 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 1. Foundation and Correctness Infrastructure | v1.0 | 3/3 | Complete | 2026-03-01 |
 | 2. WGAN-GP Correctness and Quantum Circuit Redesign | v1.0 | 4/4 | Complete | 2026-03-05 |
 | 3. Post-Processing Consistency and Cleanup | v1.0 | 2/2 | Complete | 2026-03-07 |
-| 4. Code Regression Fixes | v1.1 | 0/2 | Planning complete | - |
-| 5. Backprop and Broadcasting | v1.1 | 0/? | Not started | - |
+| 4. Code Regression Fixes | v1.1 | 2/2 | Complete | 2026-03-13 |
+| 5. Backprop and Broadcasting | v1.1 | 0/2 | Planning complete | - |
 | 6. Spectral Loss | v1.1 | 0/? | Not started | - |
 | 7. Conditioning Verification | v1.1 | 0/? | Not started | - |
