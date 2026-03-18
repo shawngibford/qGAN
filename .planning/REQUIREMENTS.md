@@ -10,8 +10,8 @@ Requirements for post-HPO improvement milestone. Each maps to roadmap phases.
 ### Regression Fixes
 
 - [x] **REG-01**: Training loop uses correct noise range [0, 4pi] in all 3 locations (critic training, generator training, evaluation)
-- [ ] **REG-02**: QNode uses `diff_method='backprop'` instead of `parameter-shift` (prerequisite for broadcasting)
-- [ ] **REG-03**: Training loop uses batched/broadcasted QNode calls instead of per-sample Python loops (~12x speedup)
+- [x] **REG-02**: QNode uses `diff_method='backprop'` instead of `parameter-shift` (prerequisite for broadcasting)
+- [x] **REG-03**: Training loop uses batched/broadcasted QNode calls instead of per-sample Python loops (~12x speedup)
 - [x] **REG-04**: Evaluation generation uses real PAR_LIGHT values instead of `torch.zeros` for conditioning
 - [x] **REG-05**: mu/sigma variable shadowing eliminated in plotting cells
 
@@ -61,8 +61,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | REG-01 | Phase 4 | Complete |
-| REG-02 | Phase 5 | Pending |
-| REG-03 | Phase 5 | Pending |
+| REG-02 | Phase 5 | Complete |
+| REG-03 | Phase 5 | Complete |
 | REG-04 | Phase 4 | Complete |
 | REG-05 | Phase 4 | Complete |
 | SPEC-01 | Phase 6 | Pending |
