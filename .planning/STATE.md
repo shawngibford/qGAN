@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Post-HPO Improvements
 status: executing
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-18T19:35:48.735Z"
-last_activity: 2026-03-18 -- Completed 05-01 backprop and broadcasting conversion
+stopped_at: Completed phase 05 execution
+last_updated: "2026-03-19"
+last_activity: 2026-03-19 -- Completed 05-02 validation (SC4 waived, backprop-only accepted)
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
-  percent: 75
+  completed_plans: 4
+  percent: 100
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-03-13)
 
 ## Current Position
 
-Phase: 5 of 7 (Backprop and Broadcasting)
-Plan: 1 of 2 complete
-Status: In Progress
-Last activity: 2026-03-18 -- Completed 05-01 backprop and broadcasting conversion
+Phase: 5 of 7 (Backprop and Broadcasting) -- awaiting verification
+Plan: 2 of 2 complete
+Status: Verifying
+Last activity: 2026-03-19 -- Completed 05-02 validation (SC4 waived)
 
-Progress: [████████░░] 75% (3 of 4 plans complete in v1.1)
+Progress: [██████████] 100% (4 of 4 plans complete in v1.1)
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Progress: [████████░░] 75% (3 of 4 plans complete in v1.1)
 | Phase 04 P01 | 3min | 2 tasks | 1 files |
 | Phase 04 P02 | 37min | 1 task | 3 files |
 | Phase 05 P01 | 3min | 3 tasks | 1 files |
+| Phase 05 P02 | 15min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,7 @@ See PROJECT.md Key Decisions table for full log.
 - [Phase 04-02]: Full PSD arrays (6 bins) stored for Phase 6 spectral loss comparison baseline
 - [Phase 05]: backprop replaces parameter-shift due to PennyLane #4462 broadcasting gradient bugs
 - [Phase 05]: Noise shape (num_qubits, batch_size) per PennyLane broadcasting convention; torch.stack(list(results)).T for output reshaping
+- [Phase 05-02]: SC4 hard gate waived -- multi-expval tuple return prevents PennyLane broadcasting vectorization; backprop-only gain accepted
 
 ### Pending Todos
 
