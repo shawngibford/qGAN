@@ -73,7 +73,10 @@ Plans:
   3. PSD loss is computed on the same batch of real/fake windows used for the WGAN loss (no separate forward pass or data sampling)
   4. After training with PSD loss enabled, fake sample standard deviation trends closer to real std (0.0218) compared to the Phase 5 baseline without PSD loss
   5. No single loss component (Wasserstein, ACF, PSD) exceeds 10x another at training equilibrium -- loss balance is maintained
-**Plans**: TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 06-01-PLAN.md -- Add lambda_psd hyperparameter and differentiable log-PSD MSE loss to generator training
 
 ### Phase 7: Conditioning Verification
 **Goal**: Empirical evidence determines whether PAR_LIGHT conditioning actually modulates generator output -- a thesis-critical question that has never been honestly measured due to the par_zeros bug fixed in Phase 4
@@ -97,5 +100,5 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 3. Post-Processing Consistency and Cleanup | v1.0 | 2/2 | Complete | 2026-03-07 |
 | 4. Code Regression Fixes | v1.1 | 2/2 | Complete | 2026-03-13 |
 | 5. Backprop and Broadcasting | v1.1 | 0/2 | Planning complete | - |
-| 6. Spectral Loss | v1.1 | 0/? | Not started | - |
+| 6. Spectral Loss | v1.1 | 0/1 | Planning complete | - |
 | 7. Conditioning Verification | v1.1 | 0/? | Not started | - |
