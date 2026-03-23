@@ -8,9 +8,10 @@ A PennyLane-based Quantum GAN (`qgan_pennylane.ipynb`) for bioprocess time serie
 
 The qGAN must generate synthetic OD time series that capture real data's volatility structure — not just the mean trend — with variance, kurtosis, and spectral characteristics that match the training distribution.
 
-## Current Milestone: v1.1 Post-HPO Improvements
+## Current Milestone: v1.1 Post-HPO Improvements — COMPLETE
 
 **Goal:** Fix regressions from conditioning work and add high-impact improvements to address variance collapse
+**Status:** All 4 phases (4-7) complete as of 2026-03-23
 
 **Target features:**
 - Fix noise range regression ([0, 2π] → [0, 4π] in training loop)
@@ -41,12 +42,13 @@ The qGAN must generate synthetic OD time series that capture real data's volatil
 
 ### Active
 
-- [ ] Fix noise range to [0, 4π] in all training loop locations
-- [ ] Restore broadcasting optimization for batched QNode calls
-- [ ] Clean up mu/sigma variable shadowing
-- [ ] Add spectral/PSD mismatch loss term
+- ✓ Fix noise range to [0, 4π] in all training loop locations — Phase 4
+- ✓ Restore broadcasting optimization for batched QNode calls — Phase 5
+- ✓ Clean up mu/sigma variable shadowing — Phase 4
+- ✓ Add spectral/PSD mismatch loss term — Phase 6
+- ✓ Verify PAR_LIGHT conditioning modulates generator output — Phase 7
+- ✓ Make critic dropout configurable — Phase 7
 - [ ] Make NUM_LAYERS configurable (support 6-8 layers)
-- [ ] Verify PAR_LIGHT conditioning modulates generator output
 - [ ] Add configurable critic architecture (simpler option)
 
 ### Out of Scope
@@ -100,4 +102,4 @@ PhD research project — the notebook has qutrit experimental variants (phase2, 
 - **Quantum circuit**: Output dimensionality = 2 * NUM_QUBITS measurements
 
 ---
-*Last updated: 2026-03-13 after v1.1 milestone start*
+*Last updated: 2026-03-23 after v1.1 milestone completion (Phase 7)*
