@@ -23,9 +23,9 @@ Requirements for post-HPO improvement milestone. Each maps to roadmap phases.
 
 ### Conditioning
 
-- [ ] **COND-01**: Intervention test cell generates samples at PAR_LIGHT=0 vs PAR_LIGHT=1 and reports KS test
-- [ ] **COND-02**: Sweep test cell generates across PAR_LIGHT grid [0, 0.2, 0.4, 0.6, 0.8, 1.0] with summary statistics
-- [ ] **COND-03**: Dropout rate is configurable as a hyperparameter (default matches current 0.2)
+- [x] **COND-01**: Intervention test cell generates samples at PAR_LIGHT=0 vs PAR_LIGHT=1 and reports KS test
+- [x] **COND-02**: Sweep test cell generates across PAR_LIGHT grid [0, 0.2, 0.4, 0.6, 0.8, 1.0] with summary statistics
+- [x] **COND-03**: Dropout rate is configurable as a hyperparameter (default matches current 0.2)
 
 ## v1.2 Requirements
 
@@ -68,9 +68,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SPEC-01 | Phase 6 | Pending |
 | SPEC-02 | Phase 6 | Pending |
 | SPEC-03 | Phase 6 | Pending |
-| COND-01 | Phase 7 | Pending |
-| COND-02 | Phase 7 | Pending |
-| COND-03 | Phase 7 | Pending |
+| COND-01 | Phase 7 | Complete |
+| COND-02 | Phase 7 | Complete |
+| COND-03 | Phase 7 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 11 total

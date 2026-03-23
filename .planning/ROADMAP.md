@@ -29,7 +29,7 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
 - [ ] **Phase 4: Code Regression Fixes** - Restore correct noise range, fix par_zeros eval bug, eliminate mu/sigma shadowing
 - [ ] **Phase 5: Backprop and Broadcasting** - Switch diff_method to backprop and restore batched QNode calls for ~12x speedup
 - [ ] **Phase 6: Spectral Loss** - Add differentiable PSD loss to give generator explicit frequency-domain gradient signal
-- [ ] **Phase 7: Conditioning Verification** - Verify PAR_LIGHT conditioning modulates output and make dropout configurable
+- [x] **Phase 7: Conditioning Verification** - Verify PAR_LIGHT conditioning modulates output and make dropout configurable (completed 2026-03-23)
 
 ## Phase Details
 
@@ -86,10 +86,10 @@ Plans:
   1. An intervention test cell generates samples at PAR_LIGHT=0 vs PAR_LIGHT=1 and reports a KS test statistic with p-value -- providing a binary answer on whether conditioning is effective (p < 0.05)
   2. A sweep test cell generates samples across PAR_LIGHT grid [0, 0.2, 0.4, 0.6, 0.8, 1.0] and displays summary statistics (mean, std, kurtosis) per level -- showing whether output varies monotonically or systematically with PAR_LIGHT
   3. Critic dropout rate is exposed as a configurable hyperparameter (default 0.2) that can be adjusted without code changes
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 07-01-PLAN.md -- Make dropout configurable and add intervention + sweep conditioning verification cells
+- [x] 07-01-PLAN.md -- Make dropout configurable and add intervention + sweep conditioning verification cells
 
 ## Progress
 
@@ -104,4 +104,4 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 4. Code Regression Fixes | v1.1 | 2/2 | Complete | 2026-03-13 |
 | 5. Backprop and Broadcasting | v1.1 | 0/2 | Planning complete | - |
 | 6. Spectral Loss | v1.1 | 0/1 | Planning complete | - |
-| 7. Conditioning Verification | v1.1 | 0/1 | Planning complete | - |
+| 7. Conditioning Verification | v1.1 | 1/1 | Complete   | 2026-03-23 |

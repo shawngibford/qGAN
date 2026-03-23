@@ -2,16 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Post-HPO Improvements
-status: executing
-stopped_at: Phase 7 context gathered
-last_updated: "2026-03-23T08:53:14.900Z"
-last_activity: 2026-03-19 -- Completed 06-01 PSD spectral loss (commit dbf9654)
+status: Phase complete — ready for verification
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-03-23T09:20:00.959Z"
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  completed_phases: 4
+  total_plans: 6
+  completed_plans: 6
 ---
 
 # Project State
@@ -21,16 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-13)
 
 **Core value:** The qGAN must generate synthetic OD time series that capture real data's volatility structure
-**Current focus:** Phase 7 -- Conditioning Verification
+**Current focus:** Phase 07 — conditioning-verification
 
 ## Current Position
 
-Phase: 6 of 7 (Spectral Loss) -- complete
-Plan: 1 of 1 complete
-Status: Executing
-Last activity: 2026-03-19 -- Completed 06-01 PSD spectral loss (commit dbf9654)
-
-Progress: [██████████] 100% (5 of 5 plans complete in v1.1)
+Phase: 07 (conditioning-verification) — EXECUTING
+Plan: 1 of 1
 
 ## Performance Metrics
 
@@ -50,6 +44,7 @@ Progress: [██████████] 100% (5 of 5 plans complete in v1.1)
 | Phase 04 P02 | 37min | 1 task | 3 files |
 | Phase 05 P01 | 3min | 3 tasks | 1 files |
 | Phase 05 P02 | 15min | 2 tasks | 1 files |
+| Phase 07 P01 | 2min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -65,6 +60,7 @@ See PROJECT.md Key Decisions table for full log.
 - [Phase 05]: backprop replaces parameter-shift due to PennyLane #4462 broadcasting gradient bugs
 - [Phase 05]: Noise shape (num_qubits, batch_size) per PennyLane broadcasting convention; torch.stack(list(results)).T for output reshaping
 - [Phase 05-02]: SC4 hard gate waived -- multi-expval tuple return prevents PennyLane broadcasting vectorization; backprop-only gain accepted
+- [Phase 07]: Dropout parameterized via __init__ kwarg with default 0.2 preserving backward compat
 
 ### Pending Todos
 
@@ -79,6 +75,6 @@ None.
 
 ## Session Continuity
 
-**Last Session:** 2026-03-23T08:53:14.896Z
-**Stopped At:** Phase 7 context gathered
-**Resume File:** .planning/phases/07-conditioning-verification/07-CONTEXT.md
+**Last Session:** 2026-03-23T09:20:00.956Z
+**Stopped At:** Completed 07-01-PLAN.md
+**Resume File:** None
