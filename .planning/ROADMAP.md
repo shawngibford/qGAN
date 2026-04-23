@@ -3,12 +3,17 @@
 ## Milestones
 
 - ✅ **v1.0 qGAN Code Review Remediation** -- Phases 1-3 (shipped 2026-03-07)
-- **v1.1 Post-HPO Improvements** -- Phases 4-7 (in progress)
+- ✅ **v1.1 Post-HPO Improvements** -- Phases 4-7 (shipped 2026-03-23)
+- 🚧 **v2.0 AIChE Major Revision Response** -- Phases 8-14 (in progress)
 
 ## Phases
 
+**Phase Numbering:**
+- Integer phases (8, 9, 10, ...): Planned milestone work
+- Decimal phases (8.1, 10.1): Urgent insertions (marked with INSERTED)
+
 <details>
-<summary>v1.0 qGAN Code Review Remediation (Phases 1-3) -- SHIPPED 2026-03-07</summary>
+<summary>✅ v1.0 qGAN Code Review Remediation (Phases 1-3) -- SHIPPED 2026-03-07</summary>
 
 - [x] Phase 1: Foundation and Correctness Infrastructure (3/3 plans) -- completed 2026-03-01
 - [x] Phase 2: WGAN-GP Correctness and Quantum Circuit Redesign (4/4 plans) -- completed 2026-03-05
@@ -18,83 +23,116 @@ Full details: `.planning/milestones/v1.0-ROADMAP.md`
 
 </details>
 
-### v1.1 Post-HPO Improvements
+<details>
+<summary>✅ v1.1 Post-HPO Improvements (Phases 4-7) -- SHIPPED 2026-03-23</summary>
 
-**Milestone Goal:** Fix regressions from conditioning work and add high-impact improvements to address variance collapse (fake std 0.0104 vs real 0.0218)
+- [x] Phase 4: Code Regression Fixes (2/2 plans) -- completed 2026-03-13
+- [x] Phase 5: Backprop and Broadcasting -- completed as part of v1.1
+- [x] Phase 6: Spectral Loss -- completed as part of v1.1
+- [x] Phase 7: Conditioning Verification (1/1 plans) -- completed 2026-03-23
 
-**Phase Numbering:**
-- Integer phases (4, 5, 6, 7): Planned milestone work
-- Decimal phases (4.1, 5.1): Urgent insertions (marked with INSERTED)
+Full details: `.planning/ROADMAP.md` (prior revision) and git history.
 
-- [ ] **Phase 4: Code Regression Fixes** - Restore correct noise range, fix par_zeros eval bug, eliminate mu/sigma shadowing
-- [ ] **Phase 5: Backprop and Broadcasting** - Switch diff_method to backprop and restore batched QNode calls for ~12x speedup
-- [ ] **Phase 6: Spectral Loss** - Add differentiable PSD loss to give generator explicit frequency-domain gradient signal
-- [x] **Phase 7: Conditioning Verification** - Verify PAR_LIGHT conditioning modulates output and make dropout configurable (completed 2026-03-23)
+</details>
+
+### 🚧 v2.0 AIChE Major Revision Response
+
+**Milestone Goal:** Address all reviewer concerns on AIChE Journal manuscript aic-4719598 so the QWGAN-GP bioprocess paper can be resubmitted — establishing quantum-vs-classical evidence, utility-oriented validation, and calibrated claims.
+
+**Dependency contract:** Group A (code) executes before Group B (paper). Paper Phase 14 reads JSON artifacts written by Phases 8-13.
+
+- [ ] **Phase 8: Core Module Extraction** - Extract shared logic into `revision/core/` and verify parity with main notebook
+- [ ] **Phase 9: Documentation Bridge** - Training protocol + dataset stats + differentiable inverse transform — cheap, paper-ready numbers that unblock paper drafting
+- [ ] **Phase 10: Classical Baselines** - Matched-parameter classical WGAN-GP + non-adversarial baseline (VAE/AR) + side-by-side comparison table
+- [ ] **Phase 11: Utility Evaluation** - TSTR, predictive/discriminative scores, real-only vs synthetic-augmented, fidelity metrics on both scales
+- [ ] **Phase 12: Sensitivity Analysis** - Shot-noise sweep, noise-model sensitivity, multi-seed (≥5) mean ± std across all headline results
+- [ ] **Phase 13: Architecture & Introspection** - 2–3 ansatz comparison + training-progression / parameter-trajectory / entanglement figures
+- [ ] **Phase 14: Paper Revision & Release Freeze** - All PAPER-* revisions to manuscript aic-4719598 + Zenodo DOI freeze
 
 ## Phase Details
 
-### Phase 4: Code Regression Fixes
-**Goal**: Training code produces correct results with trustworthy metrics -- noise range matches circuit design, evaluation reflects conditioned generation, and plotting cells are safe for re-execution
-**Depends on**: Phase 3 (v1.0 complete)
-**Requirements**: REG-01, REG-04, REG-05
+### Phase 8: Core Module Extraction
+**Goal**: `revision/core/` package exists and is a drop-in replacement for inline notebook logic, so every downstream v2.0 phase imports from a single verified codebase
+**Depends on**: Phase 7 (v1.1 complete)
+**Requirements**: INFRA-01, INFRA-02
 **Success Criteria** (what must be TRUE):
-  1. Running a training epoch uses noise sampled from [0, 4pi] in all three locations (critic training, generator training, evaluation) -- verified by inspecting generated noise tensor ranges
-  2. Evaluation cell generates fake samples using real PAR_LIGHT values from the dataset, not zeros -- EMD and moment statistics reflect conditioned generation
-  3. Plotting cells can be re-executed without mu/sigma variable shadowing corrupting distribution overlays
-  4. A 200-epoch validation run produces EMD within 2x of HPO baseline (best_emd=0.001137) -- confirming HPO hyperparameters transfer to corrected code
-**Plans:** 2 plans
+  1. `revision/core/` contains importable modules `data.py`, `eval.py`, `training.py`, `models/quantum.py`, `models/critic.py`, `models/classical_wgan.py`, `models/vae.py` — every function used by downstream revision notebooks is reachable via `from revision.core...` import
+  2. Main notebook `qgan_pennylane.ipynb` re-runs using imported `revision/core/` modules and produces EMD and moment (mean, std, kurtosis) metrics matching the pre-extraction baseline within numerical tolerance (≤1e-6 on float metrics, ≤1e-4 on EMD)
+  3. No business logic remains inline in a revision notebook — revision notebooks only orchestrate (call module functions), plot, and write JSON to `revision/results/`
+  4. A parity-check artifact (`revision/results/parity_check.json`) exists with the side-by-side metric comparison so future regressions are catchable
+**Plans**: TBD
 
-Plans:
-- [ ] 04-01-PLAN.md -- Apply all code regression fixes (noise range, par_zeros, mu/sigma, ACF removal, HPO hyperparameters)
-- [ ] 04-02-PLAN.md -- Execute 200-epoch validation run and capture baseline metrics to JSON
-
-### Phase 5: Backprop and Broadcasting
-**Goal**: Training runs ~12x faster through batched quantum circuit execution, unblocking efficient iteration for spectral loss tuning and conditioning experiments
-**Depends on**: Phase 4 (noise range must be correct before broadcasting it)
-**Requirements**: REG-02, REG-03
+### Phase 9: Documentation Bridge
+**Goal**: Paper-ready training protocol, dataset statistics, and a differentiable inverse-transform are available before any expensive code experiments run — so paper drafting can begin in parallel with Phases 10-13 and every downstream evaluation can round-trip between log-return and OD scales
+**Depends on**: Phase 8 (extraction must land first so protocol/stats reflect the canonical `revision/core/` code path)
+**Requirements**: DOC-01, DOC-02, EVAL-06
 **Success Criteria** (what must be TRUE):
-  1. QNode uses diff_method='backprop' on default.qubit with shots=None
-  2. All three training loops (critic, generator, evaluation) use a single batched QNode call per step instead of per-sample Python loops
-  3. Batched QNode output matches sequential per-sample output within 1e-6 tolerance -- verified by element-wise comparison on a test batch
-  4. Epoch wall-clock time is less than 30% of pre-broadcasting time (measured over 10 consecutive epochs)
-**Plans:** 2 plans
+  1. `revision/docs/training_protocol.md` exists and documents N_CRITIC, λ, optimizer, both learning rates, epochs, early-stopping rule, seeds, and shot/analytic distinction — numbers traceable to `revision/core/` defaults
+  2. `revision/docs/dataset_stats.md` exists and reports raw time-point count, rolling-window count, train/val/test split ratios and counts, and number of independent campaign runs
+  3. `revision/core/data.py` exposes a differentiable `inverse_transform` (log-return + Lambert W back-transform) verified round-trip on a held-out sample to match input within 1e-8
+  4. Both doc files are referenced from Phase 14 paper work without requiring rewrite (paper-ready prose + numbers)
+**Plans**: TBD
 
-Plans:
-- [ ] 05-01-PLAN.md -- Switch QNode to backprop and convert all four per-sample loops to batched calls
-- [ ] 05-02-PLAN.md -- Validate equivalence, reproducibility, and SC4 timing gate (one-time cells, then delete)
-
-### Phase 6: Spectral Loss
-**Goal**: Generator receives explicit gradient signal penalizing wrong frequency content, directly addressing the root cause of variance collapse where the generator learns mean drift but not volatility structure
-**Depends on**: Phase 5 (broadcasting speedup enables practical PSD loss tuning)
-**Requirements**: SPEC-01, SPEC-02, SPEC-03
+### Phase 10: Classical Baselines
+**Goal**: Matched-parameter classical WGAN-GP and a non-adversarial baseline (VAE or AR) are trained under identical conditions to the quantum generator, so the manuscript can report a fair quantum-vs-classical comparison in response to R1-M1 and R2-1
+**Depends on**: Phase 8 (uses shared training loop + critic + data modules), Phase 9 (inverse-transform required for OD-scale reporting)
+**Requirements**: BASE-01, BASE-02, BASE-03
 **Success Criteria** (what must be TRUE):
-  1. Generator loss includes a log-PSD MSE term computed via torch.fft.rfft that is fully differentiable (gradients flow back through PSD computation to generator parameters)
-  2. lambda_psd is exposed as a configurable hyperparameter with a sensible default, and training logs report PSD loss as a separate component alongside Wasserstein and ACF losses
-  3. PSD loss is computed on the same batch of real/fake windows used for the WGAN loss (no separate forward pass or data sampling)
-  4. After training with PSD loss enabled, fake sample standard deviation trends closer to real std (0.0218) compared to the Phase 5 baseline without PSD loss
-  5. No single loss component (Wasserstein, ACF, PSD) exceeds 10x another at training equilibrium -- loss balance is maintained
-**Plans:** 1 plan
+  1. Classical WGAN-GP generator has trainable parameter count within ±5% of the PQC; trained with identical critic architecture, optimizer, schedule, and seed set; training artifacts written to `revision/results/baseline_classical_wgan.json`
+  2. Non-adversarial baseline (VAE or AR — choice documented in phase summary) trained on same data with same evaluation metrics; artifacts in `revision/results/baseline_nonadversarial.json`
+  3. Side-by-side comparison table (quantum / classical WGAN-GP / VAE-or-AR) emitted as `revision/results/baseline_comparison.json` with a companion markdown rendering — every row carries parameter count and full fidelity metric suite
+  4. All three models use the same data split produced by `revision/core/data.py` — verifiable from a data-hash field in each JSON artifact
+**Plans**: TBD
 
-Plans:
-- [ ] 06-01-PLAN.md -- Add lambda_psd hyperparameter and differentiable log-PSD MSE loss to generator training
-
-### Phase 7: Conditioning Verification
-**Goal**: Empirical evidence determines whether PAR_LIGHT conditioning actually modulates generator output -- a thesis-critical question that has never been honestly measured due to the par_zeros bug fixed in Phase 4
-**Depends on**: Phase 6 (requires a well-trained model with spectral loss for meaningful conditioning measurement)
-**Requirements**: COND-01, COND-02, COND-03
+### Phase 11: Utility Evaluation
+**Goal**: Manuscript can answer "improves vs. what?" (R2-4) with concrete utility-oriented numbers — TSTR soft-sensor performance, predictive and discriminative scores, and real-only vs. synthetic-augmented training deltas — reported on both log-return and OD scales
+**Depends on**: Phase 10 (all utility metrics compute across quantum + both baselines, so baselines must exist)
+**Requirements**: EVAL-01, EVAL-02, EVAL-03, EVAL-04, EVAL-05
 **Success Criteria** (what must be TRUE):
-  1. An intervention test cell generates samples at PAR_LIGHT=0 vs PAR_LIGHT=1 and reports a KS test statistic with p-value -- providing a binary answer on whether conditioning is effective (p < 0.05)
-  2. A sweep test cell generates samples across PAR_LIGHT grid [0, 0.2, 0.4, 0.6, 0.8, 1.0] and displays summary statistics (mean, std, kurtosis) per level -- showing whether output varies monotonically or systematically with PAR_LIGHT
-  3. Critic dropout rate is exposed as a configurable hyperparameter (default 0.2) that can be adjusted without code changes
-**Plans:** 1/1 plans complete
+  1. TSTR pipeline trains a 1D-CNN or LSTM soft-sensor on synthetic OD windows, evaluates on held-out real data, and reports R², MAE, RMSE for quantum + both baselines to `revision/results/tstr.json`
+  2. TimeGAN-style predictive score and discriminative score computed for quantum + classical WGAN-GP + non-adversarial baseline; results in `revision/results/predictive_discriminative.json` with mean ± std across seeds
+  3. Real-only vs. synthetic-augmented training comparison (Orlandi et al. style) produces a delta table in `revision/results/augmentation.json` showing downstream-task lift from each generator
+  4. Every fidelity metric (EMD, ACF, moments, DTW) is reported on both transformed (log-return) and original OD scales — visible as explicit `scale: "log_return" | "OD"` fields in JSON outputs
+**Plans**: TBD
 
-Plans:
-- [x] 07-01-PLAN.md -- Make dropout configurable and add intervention + sweep conditioning verification cells
+### Phase 12: Sensitivity Analysis
+**Goal**: Quantum results are stress-tested under shot noise, hardware-style noise channels, and seed variation — so the manuscript reports calibrated uncertainty bars and directly addresses R1-M4 and R2-1 preliminary-result concerns
+**Depends on**: Phase 10 (baselines needed for multi-seed comparison tables); Phase 11 is parallel-safe but sensitivity results layer on top of utility metrics
+**Requirements**: SENS-01, SENS-02, SENS-03
+**Success Criteria** (what must be TRUE):
+  1. Shot-noise sweep at {analytic, 8192, 1024} shots run for quantum generator; metric degradation curve written to `revision/results/shot_noise_sensitivity.json`
+  2. Noise-model sensitivity results for depolarizing channel (p ∈ {0, 0.001, 0.01, 0.05}) and amplitude-damping (γ ∈ {0, 0.001, 0.01, 0.05}) written to `revision/results/noise_model_sensitivity.json`
+  3. Every headline comparison table (from Phases 10-11) re-emitted with ≥5 seeds, reporting mean ± std in every cell — `revision/results/multiseed_summary.json` consolidates the multi-seed roll-up
+  4. Compute budget respected — sensitivity sweeps complete on local Mac statevector simulator within the phase session (documented in phase summary)
+**Plans**: TBD
+
+### Phase 13: Architecture & Introspection
+**Goal**: Ansatz choice is justified empirically (2–3 variants compared) and the "black-box" feel (R2-6) is addressed with training-progression, parameter-trajectory, and entanglement-entropy figures — giving reviewers both "why this circuit?" and "what is it learning?" evidence
+**Depends on**: Phase 8 (shared PQC module), Phase 10 (classical baseline needed for training-progression side-by-side), Phase 12 (multi-seed framework reused for ansatz comparison)
+**Requirements**: ARCH-01, ARCH-02, INTRO-01, INTRO-02, INTRO-03
+**Success Criteria** (what must be TRUE):
+  1. 2–3 alternate ansatz variants (varying depth in {4, 6, 8} and/or entanglement topology) implemented in `revision/core/models/quantum.py` and selectable via config
+  2. Ansatz comparison table (identical training budget, multi-seed, full metric suite) written to `revision/results/ansatz_comparison.json`
+  3. Training-progression figure (`revision/results/figures/training_progression.*`) shows generated distribution at epochs {0, N/4, N/2, 3N/4, N} for quantum generator and classical WGAN-GP side-by-side
+  4. PQC parameter-trajectory plot (norms + angle histograms across epochs) and entanglement-entropy (or state-purity) trajectory saved as figure artifacts — each with underlying data in JSON for reproducibility
+**Plans**: TBD
+
+### Phase 14: Paper Revision & Release Freeze
+**Goal**: Manuscript aic-4719598 revised end-to-end — hypothesis reframed, claims calibrated, circuit rationale added, references corrected, methods sections complete, typos fixed — and the repository frozen with a tagged release + Zenodo DOI so reviewers can cite the exact code state
+**Depends on**: Phases 9-13 (paper reads numbers and figures from all upstream JSON artifacts)
+**Requirements**: PAPER-01, PAPER-02, PAPER-03, PAPER-04, PAPER-05, PAPER-06, PAPER-07, PAPER-08, PAPER-09, PAPER-10, PAPER-11, INFRA-03
+**Success Criteria** (what must be TRUE):
+  1. Hypothesis reframed in Section 1 (PAPER-01) and all overclaiming language (PAPER-02) softened or removed — reviewer-facing checklist maps each change to the reviewer comment it addresses
+  2. Manuscript contains the new "Circuit Design Rationale" subsection (PAPER-03), log-returns bioprocess justification (PAPER-04), and the "Outlook" section with decision-tree + Hybrid-GAN material moved out of main claims (PAPER-05)
+  3. Reference list corrected (PAPER-06) with Bernal et al. added (PAPER-07); Methods section now reports dataset details (PAPER-08) and per-metric evaluation scale (PAPER-09); Appendix A3 discrepancy clarified (PAPER-10); all typos and notation unified (PAPER-11)
+  4. Repository frozen at tag `v2.0-revision`, Zenodo DOI minted and cited in the manuscript (INFRA-03) — tag + DOI resolvable from `revision/docs/release.md`
+  5. All numbers cited in the revised manuscript trace back to a JSON artifact in `revision/results/` (no hand-typed numbers)
+**Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 4 -> 5 -> 6 -> 7
+Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -102,6 +140,13 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 2. WGAN-GP Correctness and Quantum Circuit Redesign | v1.0 | 4/4 | Complete | 2026-03-05 |
 | 3. Post-Processing Consistency and Cleanup | v1.0 | 2/2 | Complete | 2026-03-07 |
 | 4. Code Regression Fixes | v1.1 | 2/2 | Complete | 2026-03-13 |
-| 5. Backprop and Broadcasting | v1.1 | 0/2 | Planning complete | - |
-| 6. Spectral Loss | v1.1 | 0/1 | Planning complete | - |
-| 7. Conditioning Verification | v1.1 | 1/1 | Complete   | 2026-03-23 |
+| 5. Backprop and Broadcasting | v1.1 | 2/2 | Complete | 2026-03-18 |
+| 6. Spectral Loss | v1.1 | 1/1 | Complete | 2026-03-21 |
+| 7. Conditioning Verification | v1.1 | 1/1 | Complete | 2026-03-23 |
+| 8. Core Module Extraction | v2.0 | 0/TBD | Not started | - |
+| 9. Documentation Bridge | v2.0 | 0/TBD | Not started | - |
+| 10. Classical Baselines | v2.0 | 0/TBD | Not started | - |
+| 11. Utility Evaluation | v2.0 | 0/TBD | Not started | - |
+| 12. Sensitivity Analysis | v2.0 | 0/TBD | Not started | - |
+| 13. Architecture & Introspection | v2.0 | 0/TBD | Not started | - |
+| 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |

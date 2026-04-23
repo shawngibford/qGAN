@@ -130,44 +130,44 @@ See `.planning/MILESTONES.md` for shipped milestones. Legacy requirement IDs (RE
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01    | TBD   | Pending |
-| INFRA-02    | TBD   | Pending |
-| INFRA-03    | TBD   | Pending |
-| BASE-01     | TBD   | Pending |
-| BASE-02     | TBD   | Pending |
-| BASE-03     | TBD   | Pending |
-| EVAL-01     | TBD   | Pending |
-| EVAL-02     | TBD   | Pending |
-| EVAL-03     | TBD   | Pending |
-| EVAL-04     | TBD   | Pending |
-| EVAL-05     | TBD   | Pending |
-| EVAL-06     | TBD   | Pending |
-| SENS-01     | TBD   | Pending |
-| SENS-02     | TBD   | Pending |
-| SENS-03     | TBD   | Pending |
-| ARCH-01     | TBD   | Pending |
-| ARCH-02     | TBD   | Pending |
-| INTRO-01    | TBD   | Pending |
-| INTRO-02    | TBD   | Pending |
-| INTRO-03    | TBD   | Pending |
-| DOC-01      | TBD   | Pending |
-| DOC-02      | TBD   | Pending |
-| PAPER-01    | TBD   | Pending |
-| PAPER-02    | TBD   | Pending |
-| PAPER-03    | TBD   | Pending |
-| PAPER-04    | TBD   | Pending |
-| PAPER-05    | TBD   | Pending |
-| PAPER-06    | TBD   | Pending |
-| PAPER-07    | TBD   | Pending |
-| PAPER-08    | TBD   | Pending |
-| PAPER-09    | TBD   | Pending |
-| PAPER-10    | TBD   | Pending |
-| PAPER-11    | TBD   | Pending |
+| INFRA-01    | Phase 8  | Pending |
+| INFRA-02    | Phase 8  | Pending |
+| INFRA-03    | Phase 14 | Pending |
+| BASE-01     | Phase 10 | Pending |
+| BASE-02     | Phase 10 | Pending |
+| BASE-03     | Phase 10 | Pending |
+| EVAL-01     | Phase 11 | Pending |
+| EVAL-02     | Phase 11 | Pending |
+| EVAL-03     | Phase 11 | Pending |
+| EVAL-04     | Phase 11 | Pending |
+| EVAL-05     | Phase 11 | Pending |
+| EVAL-06     | Phase 9  | Pending |
+| SENS-01     | Phase 12 | Pending |
+| SENS-02     | Phase 12 | Pending |
+| SENS-03     | Phase 12 | Pending |
+| ARCH-01     | Phase 13 | Pending |
+| ARCH-02     | Phase 13 | Pending |
+| INTRO-01    | Phase 13 | Pending |
+| INTRO-02    | Phase 13 | Pending |
+| INTRO-03    | Phase 13 | Pending |
+| DOC-01      | Phase 9  | Pending |
+| DOC-02      | Phase 9  | Pending |
+| PAPER-01    | Phase 14 | Pending |
+| PAPER-02    | Phase 14 | Pending |
+| PAPER-03    | Phase 14 | Pending |
+| PAPER-04    | Phase 14 | Pending |
+| PAPER-05    | Phase 14 | Pending |
+| PAPER-06    | Phase 14 | Pending |
+| PAPER-07    | Phase 14 | Pending |
+| PAPER-08    | Phase 14 | Pending |
+| PAPER-09    | Phase 14 | Pending |
+| PAPER-10    | Phase 14 | Pending |
+| PAPER-11    | Phase 14 | Pending |
 
 **Coverage:**
 - v2.0 requirements: 33 total (22 code, 11 paper)
-- Mapped to phases: 0 (roadmap pending)
+- Mapped to phases: 33/33 ✓
 
 ---
 *Requirements defined: 2026-04-23*
-*Last updated: 2026-04-23*
+*Last updated: 2026-04-23 — roadmap complete, phase assignments filled*
