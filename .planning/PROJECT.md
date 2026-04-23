@@ -8,19 +8,35 @@ A PennyLane-based Quantum GAN (`qgan_pennylane.ipynb`) for bioprocess time serie
 
 The qGAN must generate synthetic OD time series that capture real data's volatility structure — not just the mean trend — with variance, kurtosis, and spectral characteristics that match the training distribution.
 
-## Current Milestone: v1.1 Post-HPO Improvements — COMPLETE
+## Current Milestone: v2.0 AIChE Major Revision Response
 
-**Goal:** Fix regressions from conditioning work and add high-impact improvements to address variance collapse
-**Status:** All 4 phases (4-7) complete as of 2026-03-23
+**Goal:** Address all reviewer concerns on AIChE Journal manuscript aic-4719598 so the QWGAN-GP bioprocess paper can be resubmitted — establishing quantum-vs-classical evidence, utility-oriented validation, and calibrated claims.
 
-**Target features:**
-- Fix noise range regression ([0, 2π] → [0, 4π] in training loop)
-- Restore broadcasting optimization (~12x training speedup)
-- Fix mu/sigma shadowing
-- Add spectral/PSD loss for mid-frequency volatility
-- Parameterize circuit layer count (4 → 6-8)
-- Verify PAR_LIGHT conditioning actually modulates output
-- Add simpler critic architecture option
+**Target features (Code — Group A, executes first):**
+- Extract shared modules from main notebook into `revision/core/` (data pipeline, PQC generator, critic, WGAN-GP training loop)
+- Matched-parameter classical WGAN-GP baseline
+- Non-adversarial baseline (VAE or AR)
+- TSTR evaluation + predictive score + discriminative score
+- Inverse-transform results on original OD scale, ACF on both scales
+- Shot-noise sensitivity (1024, 8192 shots) and multi-seed (≥5) sweeps
+- Depolarizing / amplitude-damping noise-model sensitivity
+- Training-progression + circuit-analysis figures (distributions at 0, N/4, N/2, 3N/4, N; parameter/entanglement evolution)
+- 2–3 ansatz comparison (depth, entanglement topology)
+- Extract full training protocol + dataset statistics → paper-ready tables
+- Zenodo DOI / tagged release freeze
+
+**Target features (Paper — Group B, reads numbers from Group A):**
+- Reframe hypothesis; tone down "industrial monitoring" / "computational advantages" language
+- Circuit design rationale subsection (why 5 qubits, why this ansatz, why classical critic + quantum generator)
+- Justify log-returns in bioprocess context (growth-rate interpretation)
+- Move decision-tree workflow + Hybrid-GAN mechanistic material to explicit Outlook section; caveat Table A2
+- Fix misplaced references [27][28][39][18][19][41][55–57][59]; add Bernal et al. AIChE perspective
+- Report dataset details (raw points, windows, train/val/test splits) in Methods
+- State evaluation scale per metric (transformed vs. OD) in Methods
+- Clarify Appendix A3 log-GAN vs. Wasserstein discrepancy
+- Typos / notation unification / figure sizing
+
+**Past milestones:** v1.0 Code Review Remediation (2026-03-07), v1.1 Post-HPO Improvements (2026-03-23 — all 4 phases complete)
 
 ## Requirements
 
@@ -40,7 +56,33 @@ The qGAN must generate synthetic OD time series that capture real data's volatil
 - ✓ WINDOW_LENGTH computed automatically from NUM_QUBITS — v1.0
 - ✓ All code quality issues resolved (dead code, duplicates, naming, eval() removal) — v1.0
 
-### Active
+### Active (v2.0 — Reviewer Response)
+
+Code group (Group A):
+- [ ] Extract shared modules (data, PQC, critic, training loop) into `revision/core/`
+- [ ] Matched-parameter classical WGAN-GP baseline
+- [ ] Non-adversarial baseline (VAE or AR)
+- [ ] TSTR + predictive + discriminative score evaluation
+- [ ] OD-scale inverse-transform results + ACF on both scales
+- [ ] Shot-noise sensitivity (1024, 8192) + multi-seed (≥5) sweeps
+- [ ] Depolarizing / amplitude-damping noise-model sensitivity
+- [ ] Training-progression + circuit-analysis figures
+- [ ] 2–3 ansatz comparison
+- [ ] Training-protocol + dataset-stats extraction
+- [ ] Zenodo / tagged-release repository freeze
+
+Paper group (Group B):
+- [ ] Reframe hypothesis + tone-down claims throughout
+- [ ] Circuit design rationale subsection
+- [ ] Log-returns bioprocess justification
+- [ ] Move decision-tree + Hybrid-GAN to Outlook
+- [ ] Fix misplaced references; add Bernal et al.
+- [ ] Report dataset details in Methods
+- [ ] Clarify evaluation scale per metric
+- [ ] Clarify A3 log-GAN vs Wasserstein discrepancy
+- [ ] Typos / notation / figure sizing
+
+### Previously Validated (from v1.1)
 
 - ✓ Fix noise range to [0, 4π] in all training loop locations — Phase 4
 - ✓ Restore broadcasting optimization for batched QNode calls — Phase 5
@@ -48,18 +90,16 @@ The qGAN must generate synthetic OD time series that capture real data's volatil
 - ✓ Add spectral/PSD mismatch loss term — Phase 6
 - ✓ Verify PAR_LIGHT conditioning modulates generator output — Phase 7
 - ✓ Make critic dropout configurable — Phase 7
-- [ ] Make NUM_LAYERS configurable (support 6-8 layers)
-- [ ] Add configurable critic architecture (simpler option)
 
 ### Out of Scope
 
-- Migrating to a .py module structure — user chose in-place notebook edits
+- ~~Migrating to a .py module structure~~ — v2.0 REINSTATES partial module extraction into `revision/core/` (shared modules only; main notebook unchanged)
 - Qutrit circuit architectures — separate experimental notebooks
-- Validation/test split — separate concern from code review fixes
-- Learning rate scheduling — not in review scope
-- Multiple training runs for statistical significance — too expensive for single remediation pass
-- Checkpoint compression / delta checkpointing — operational concern, not correctness
+- Hardware execution on real QPU — simulator-only (stated honestly in paper per R1-M5)
+- Implementing the full closed-loop decision pipeline — moved to Outlook per R2-3
+- First-principles Hybrid-GAN implementation — moved to Outlook per R2-5a
 - Full CSV schema validation — research tool, not production service
+- Checkpoint compression / delta checkpointing — operational concern, not correctness
 
 ## Context
 
@@ -96,10 +136,30 @@ PhD research project — the notebook has qutrit experimental variants (phase2, 
 
 ## Constraints
 
-- **Format**: All fixes in existing `qgan_pennylane.ipynb` — no new files
-- **Data path**: Relative `./data.csv`
+- **Main notebook untouched**: `qgan_pennylane.ipynb` stays as-is; revision work lives in `revision/`
+- **Code structure**: `revision/core/` shared Python modules + `revision/NN_topic.ipynb` parallel notebooks (notebooks orchestrate + plot + write JSON only)
+- **Compute**: Local Mac only — statevector simulator, multi-seed sweeps must be sized accordingly
+- **Data path**: Relative `./data.csv` (shared with main notebook)
 - **Compatibility**: PennyLane 0.44.0 and PyTorch 2.8.0 in qgan_env
-- **Quantum circuit**: Output dimensionality = 2 * NUM_QUBITS measurements
+- **Results contract**: Each revision notebook writes structured JSON to `revision/results/<name>.json` so paper-writing reads numbers from one place
+- **Paper scope**: Manuscript aic-4719598 — AIChE Journal Major Revision
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
 
 ---
-*Last updated: 2026-03-23 after v1.1 milestone completion (Phase 7)*
+*Last updated: 2026-04-23 — v2.0 AIChE Major Revision milestone opened*
