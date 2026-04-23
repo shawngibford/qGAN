@@ -60,7 +60,13 @@ Full details: `.planning/ROADMAP.md` (prior revision) and git history.
   2. Main notebook `qgan_pennylane.ipynb` re-runs using imported `revision/core/` modules and produces EMD and moment (mean, std, kurtosis) metrics matching the pre-extraction baseline within numerical tolerance (≤1e-6 on float metrics, ≤1e-4 on EMD)
   3. No business logic remains inline in a revision notebook — revision notebooks only orchestrate (call module functions), plot, and write JSON to `revision/results/`
   4. A parity-check artifact (`revision/results/parity_check.json`) exists with the side-by-side metric comparison so future regressions are catchable
-**Plans**: TBD
+**Plans:** 5 plans
+Plans:
+- [ ] 08-01-PLAN.md — Package scaffold (revision/core/ directory + signature stubs for all modules)
+- [ ] 08-02-PLAN.md — Extract data pipeline + evaluation metrics (data.py, eval.py)
+- [ ] 08-03-PLAN.md — Extract quantum generator + critic models (models/quantum.py, models/critic.py)
+- [ ] 08-04-PLAN.md — Extract WGAN-GP training loop with seed/spectral/callback hooks (training.py)
+- [ ] 08-05-PLAN.md — Parity check notebook + parity_check.json artifact (INFRA-02)
 
 ### Phase 9: Documentation Bridge
 **Goal**: Paper-ready training protocol, dataset statistics, and a differentiable inverse-transform are available before any expensive code experiments run — so paper drafting can begin in parallel with Phases 10-13 and every downstream evaluation can round-trip between log-return and OD scales
@@ -143,7 +149,7 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 5. Backprop and Broadcasting | v1.1 | 2/2 | Complete | 2026-03-18 |
 | 6. Spectral Loss | v1.1 | 1/1 | Complete | 2026-03-21 |
 | 7. Conditioning Verification | v1.1 | 1/1 | Complete | 2026-03-23 |
-| 8. Core Module Extraction | v2.0 | 0/TBD | Not started | - |
+| 8. Core Module Extraction | v2.0 | 0/5 | Not started | - |
 | 9. Documentation Bridge | v2.0 | 0/TBD | Not started | - |
 | 10. Classical Baselines | v2.0 | 0/TBD | Not started | - |
 | 11. Utility Evaluation | v2.0 | 0/TBD | Not started | - |

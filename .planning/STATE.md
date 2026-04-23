@@ -2,14 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
-status: Roadmap complete — ready to plan Phase 8
-stopped_at: Roadmap written; 33 v2.0 requirements mapped across Phases 8-14
-last_updated: "2026-04-23T00:00:00.000Z"
+status: planning
+stopped_at: v2.0 roadmap written (Phases 8-14), 33 requirements mapped, traceability table updated
+last_updated: "2026-04-23T16:46:36.429Z"
+last_activity: 2026-04-23 — v2.0 roadmap written; Phases 8-14 defined
 progress:
   total_phases: 7
   completed_phases: 0
-  total_plans: 0
+  total_plans: 5
   completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -51,12 +53,14 @@ Progress: [░░░░░░░░░░] 0% (v2.0 plans)
 See PROJECT.md Key Decisions table for full log.
 
 v2.0 roadmap decisions:
+
 - **Phase 8:** INFRA-01 + INFRA-02 isolated as foundational phase — every downstream phase imports from `revision/core/`, so extraction + parity check must land first with no other reqs bundled
 - **Phase 9:** DOC-01, DOC-02, EVAL-06 grouped as "Documentation Bridge" — cheap, paper-ready numbers front-loaded so Phase 14 paper drafting can begin in parallel with expensive experiments
 - **Phases 10-13 sequencing:** Baselines → Utility Eval → Sensitivity → Architecture, so each phase consumes artifacts from the prior one; compute budget (local Mac statevector) respected by separating sensitivity sweeps from architecture sweeps
 - **Phase 14:** All PAPER-* requirements plus INFRA-03 (Zenodo freeze) bundled — paper revision reads JSON from all upstream phases and the tag/DOI freeze is the final wrap-up step
 
 v1.1 highlights retained:
+
 - HPO-tuned values: N_CRITIC=9, LAMBDA=2.16, LR_CRITIC=1.8046e-05, LR_GENERATOR=6.9173e-05
 - backprop replaces parameter-shift due to PennyLane #4462 broadcasting gradient bugs
 
@@ -80,3 +84,5 @@ None.
 **Last Session:** 2026-04-23
 **Stopped At:** v2.0 roadmap written (Phases 8-14), 33 requirements mapped, traceability table updated
 **Resume File:** None — next action is `/gsd-plan-phase 8`
+
+**Planned Phase:** 8 (Core Module Extraction) — 5 plans — 2026-04-23T16:46:36.017Z
