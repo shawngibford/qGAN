@@ -1,0 +1,35 @@
+{
+  "pre": {
+    "emd": 0.12048789057906201,
+    "mean": 0.0017183494914040196,
+    "std": 0.1710686770721286,
+    "kurtosis": -0.039478752608490986
+  },
+  "post": {
+    "emd": 0.12048789057906201,
+    "mean": 0.0017183494914040196,
+    "std": 0.1710686770721286,
+    "kurtosis": -0.039478752608490986
+  },
+  "delta": {
+    "emd": 0.0,
+    "mean": 0.0,
+    "std": 0.0,
+    "kurtosis": 0.0
+  },
+  "pass": true,
+  "tolerance": {
+    "emd": 0.0001,
+    "mean": 1e-06,
+    "std": 1e-06,
+    "kurtosis": 1e-06
+  },
+  "seed": 42,
+  "git_sha_pre": "79a24cb173b3ac2128437d52bd3f85ec4011a3a8",
+  "git_sha_post": "79a24cb173b3ac2128437d52bd3f85ec4011a3a8",
+  "checkpoint": "best_checkpoint_par_conditioned.pt",
+  "num_fake_windows": 500,
+  "num_qubits": 5,
+  "num_layers": 4,
+  "notes": "Phase 8 INFRA-02 parity check: inline notebook path vs revision/core extracted modules. Both paths load the same checkpoint and run identical seeded forward passes; the delta measures any numerical drift introduced by the refactor."
+}
