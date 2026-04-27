@@ -66,7 +66,7 @@ Plans:
 - [x] 08-02-PLAN.md — Extract data pipeline + evaluation metrics (data.py, eval.py)
 - [x] 08-03-PLAN.md — Extract quantum generator + critic models (models/quantum.py, models/critic.py)
 - [x] 08-04-PLAN.md — Extract WGAN-GP training loop with seed/spectral/callback hooks (training.py)
-- [ ] 08-05-PLAN.md — Parity check notebook + parity_check.json artifact (INFRA-02)
+- [x] 08-05-PLAN.md — Parity check notebook + parity_check.json artifact (INFRA-02)
 
 ### Phase 9: Documentation Bridge
 **Goal**: Paper-ready training protocol, dataset statistics, and a differentiable inverse-transform are available before any expensive code experiments run — so paper drafting can begin in parallel with Phases 10-13 and every downstream evaluation can round-trip between log-return and OD scales
