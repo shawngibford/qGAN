@@ -62,10 +62,10 @@ Full details: `.planning/ROADMAP.md` (prior revision) and git history.
   4. A parity-check artifact (`revision/results/parity_check.json`) exists with the side-by-side metric comparison so future regressions are catchable
 **Plans:** 5 plans
 Plans:
-- [ ] 08-01-PLAN.md — Package scaffold (revision/core/ directory + signature stubs for all modules)
-- [ ] 08-02-PLAN.md — Extract data pipeline + evaluation metrics (data.py, eval.py)
-- [ ] 08-03-PLAN.md — Extract quantum generator + critic models (models/quantum.py, models/critic.py)
-- [ ] 08-04-PLAN.md — Extract WGAN-GP training loop with seed/spectral/callback hooks (training.py)
+- [x] 08-01-PLAN.md — Package scaffold (revision/core/ directory + signature stubs for all modules)
+- [x] 08-02-PLAN.md — Extract data pipeline + evaluation metrics (data.py, eval.py)
+- [x] 08-03-PLAN.md — Extract quantum generator + critic models (models/quantum.py, models/critic.py)
+- [x] 08-04-PLAN.md — Extract WGAN-GP training loop with seed/spectral/callback hooks (training.py)
 - [ ] 08-05-PLAN.md — Parity check notebook + parity_check.json artifact (INFRA-02)
 
 ### Phase 9: Documentation Bridge

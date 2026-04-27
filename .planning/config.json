@@ -6,7 +6,11 @@
   "workflow": {
     "research": true,
     "plan_check": true,
-    "verifier": true
+    "verifier": true,
+    "ui_phase": false,
+    "ui_safety_gate": false,
+    "nyquist_validation": false,
+    "_auto_chain_active": false
   },
   "granularity": "fine"
 }
