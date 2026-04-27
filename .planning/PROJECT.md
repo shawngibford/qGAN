@@ -59,7 +59,7 @@ The qGAN must generate synthetic OD time series that capture real data's volatil
 ### Active (v2.0 — Reviewer Response)
 
 Code group (Group A):
-- [ ] Extract shared modules (data, PQC, critic, training loop) into `revision/core/`
+- [x] Extract shared modules (data, PQC, critic, training loop) into `revision/core/` — Phase 8 (INFRA-01 + INFRA-02 validated 2026-04-27, parity check passes with zero numerical drift)
 - [ ] Matched-parameter classical WGAN-GP baseline
 - [ ] Non-adversarial baseline (VAE or AR)
 - [ ] TSTR + predictive + discriminative score evaluation
@@ -162,4 +162,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-23 — v2.0 AIChE Major Revision milestone opened*
+*Last updated: 2026-04-27 — Phase 8 (Core Module Extraction) complete; revision/core/ ready for downstream phases*
