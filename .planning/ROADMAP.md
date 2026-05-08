@@ -79,6 +79,16 @@ Plans:
   4. Both doc files are referenced from Phase 14 paper work without requiring rewrite (paper-ready prose + numbers)
 **Plans**: TBD
 
+### Phase 09.1: R1-M3 Preprocessing Ablation (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 9
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 09.1 to break down)
+
 ### Phase 10: Classical Baselines
 **Goal**: Matched-parameter classical WGAN-GP and a non-adversarial baseline (VAE or AR) are trained under identical conditions to the quantum generator, so the manuscript can report a fair quantum-vs-classical comparison in response to R1-M1 and R2-1
 **Depends on**: Phase 8 (uses shared training loop + critic + data modules), Phase 9 (inverse-transform required for OD-scale reporting)

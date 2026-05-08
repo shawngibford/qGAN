@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: ready_to_plan
-stopped_at: v2.0 roadmap written (Phases 8-14), 33 requirements mapped, traceability table updated
-last_updated: "2026-04-27T15:45:28.996Z"
-last_activity: 2026-04-27 -- Phase 08 execution started
+stopped_at: Phase 9 context gathered
+last_updated: "2026-05-08T19:25:15.702Z"
+last_activity: 2026-05-08 — Phase 09.1 (R1-M3 ablation) inserted as urgent decimal phase
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 1
   total_plans: 5
-  completed_plans: 3
-  percent: 14
+  completed_plans: 5
+  percent: 100
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 
 ## Current Position
 
-Phase: 9
+Phase: 09.1
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-04-27
+Status: ready_to_plan
+Last activity: 2026-05-08 — Phase 09.1 (R1-M3 ablation) inserted as urgent decimal phase
 
 Progress: [░░░░░░░░░░] 0% (v2.0 plans)
 
@@ -47,6 +47,10 @@ Progress: [░░░░░░░░░░] 0% (v2.0 plans)
 | v1.1 Post-HPO Improvements | 4 (phases 4-7) | Shipped 2026-03-23 |
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- Phase 09.1 inserted after Phase 9: R1-M3 Preprocessing Ablation — empirical 3-pipeline preprocessing comparison (raw OD vs log-returns vs log-returns+Lambert W) for reviewer rebuttal; spec at .planning/scratch/09.1-r1-m3-ablation-spec.md (URGENT)
 
 ### Decisions
 
@@ -81,8 +85,8 @@ None.
 
 ## Session Continuity
 
-**Last Session:** 2026-04-23
-**Stopped At:** v2.0 roadmap written (Phases 8-14), 33 requirements mapped, traceability table updated
-**Resume File:** None — next action is `/gsd-plan-phase 8`
+**Last Session:** 2026-05-08T19:25:15.694Z
+**Stopped At:** Phase 9 context gathered
+**Resume File:** .planning/phases/09-documentation-bridge/09-CONTEXT.md
 
 **Planned Phase:** 8 (Core Module Extraction) — 5 plans — 2026-04-23T16:46:36.017Z
