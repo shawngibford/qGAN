@@ -1,0 +1,23 @@
+{
+  "pipelines": {
+    "A": {
+      "max_abs_err": 0.0,
+      "tolerance": 1e-08,
+      "pass": true
+    },
+    "B": {
+      "max_abs_err": 4.440892098500626e-15,
+      "tolerance": 1e-08,
+      "pass": true
+    },
+    "C": {
+      "max_abs_err": 4.440892098500626e-16,
+      "tolerance": 1e-06,
+      "pass": true
+    }
+  },
+  "all_passed": true,
+  "seed": 42,
+  "git_sha": "bde33ef9ad0b899303624ed59a96a7c5dd1a2a97",
+  "notes": "Phase 09.1 ABL-01: forward/inverse round-trip for Pipelines A, B (new) and C (Phase 9 EVAL-06 re-export verification)."
+}
