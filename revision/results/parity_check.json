@@ -25,8 +25,8 @@
     "kurtosis": 1e-06
   },
   "seed": 42,
-  "git_sha_pre": "79a24cb173b3ac2128437d52bd3f85ec4011a3a8",
-  "git_sha_post": "79a24cb173b3ac2128437d52bd3f85ec4011a3a8",
+  "git_sha_pre": "0a638d0dcdbc1303ee4e11e721498e6482dfa3a5",
+  "git_sha_post": "0a638d0dcdbc1303ee4e11e721498e6482dfa3a5",
   "checkpoint": "best_checkpoint_par_conditioned.pt",
   "num_fake_windows": 500,
   "num_qubits": 5,
