@@ -77,7 +77,13 @@ Plans:
   2. `revision/docs/dataset_stats.md` exists and reports raw time-point count, rolling-window count, train/val/test split ratios and counts, and number of independent campaign runs
   3. `revision/core/data.py` exposes a differentiable `inverse_transform` (log-return + Lambert W back-transform) verified round-trip on a held-out sample to match input within 1e-8
   4. Both doc files are referenced from Phase 14 paper work without requiring rewrite (paper-ready prose + numbers)
-**Plans**: TBD
+**Plans:** 5 plans
+Plans:
+- [ ] 09-01-PLAN.md — Differentiable inverse Lambert W via torch.autograd.Function (EVAL-06 core)
+- [ ] 09-02-PLAN.md — preprocessing.py skeleton + module registration (D-06; Phase 09.1 contract)
+- [ ] 09-03-PLAN.md — training_protocol.md (DOC-01) — paper-ready hybrid format
+- [ ] 09-04-PLAN.md — dataset_stats.md (DOC-02) — paper-ready hybrid format
+- [ ] 09-05-PLAN.md — Round-trip verification notebook + eval06_roundtrip.json + Phase 8 parity regression (EVAL-06 acceptance)
 
 ### Phase 09.1: R1-M3 Preprocessing Ablation (INSERTED)
 
@@ -160,7 +166,7 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 6. Spectral Loss | v1.1 | 1/1 | Complete | 2026-03-21 |
 | 7. Conditioning Verification | v1.1 | 1/1 | Complete | 2026-03-23 |
 | 8. Core Module Extraction | v2.0 | 0/5 | Not started | - |
-| 9. Documentation Bridge | v2.0 | 0/TBD | Not started | - |
+| 9. Documentation Bridge | v2.0 | 0/5 | Not started | - |
 | 10. Classical Baselines | v2.0 | 0/TBD | Not started | - |
 | 11. Utility Evaluation | v2.0 | 0/TBD | Not started | - |
 | 12. Sensitivity Analysis | v2.0 | 0/TBD | Not started | - |
