@@ -98,10 +98,13 @@ Plans:
   4. `revision/results/transform_ablation/summary.md` answers the four R1-M3 rebuttal questions with numbers (mean ± std) and recommends a pipeline for the revised manuscript
   5. Pipeline C reproduces v1.1 published log-return EMD within 1–2% (sanity check that the ablation harness preserves baseline behavior)
 
-**Plans:** TBD
+**Plans:** 4 plans
 
 Plans:
-- [ ] TBD (running /gsd-plan-phase 09.1 now)
+- [ ] 09.1-01-PLAN.md — Implement Pipeline A/B preprocessing pure-functions + round-trip verification notebook (ABL-01 gate)
+- [ ] 09.1-02-PLAN.md — CLI driver (revision/run_ablation.py) + smoke notebook (3 pipelines × seed 42 × 100 epochs, Pipeline C parity gate)
+- [ ] 09.1-03-PLAN.md — Resumable multi-seed sweep (3 × 5 × 1000 epochs ≈ 24h wall-time) → ABL-02 gate
+- [ ] 09.1-04-PLAN.md — Analysis notebook: metrics.csv + 6 figures + TSTR-lite + summary.md answering R1-M3 Q1-Q4 (ABL-03 gate)
 
 ### Phase 10: Classical Baselines
 **Goal**: Matched-parameter classical WGAN-GP and a non-adversarial baseline (VAE or AR) are trained under identical conditions to the quantum generator, so the manuscript can report a fair quantum-vs-classical comparison in response to R1-M1 and R2-1
