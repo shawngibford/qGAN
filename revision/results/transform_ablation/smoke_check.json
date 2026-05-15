@@ -1,0 +1,58 @@
+{
+  "pipelines": {
+    "A": {
+      "shape": [
+        3850,
+        10
+      ],
+      "has_nan": false,
+      "has_inf": false,
+      "flat_fraction": 0.0,
+      "shape_ok": true,
+      "structural_pass": true,
+      "pass": true
+    },
+    "B": {
+      "shape": [
+        3840,
+        10
+      ],
+      "has_nan": false,
+      "has_inf": false,
+      "flat_fraction": 0.0,
+      "shape_ok": true,
+      "structural_pass": true,
+      "pass": true
+    },
+    "C": {
+      "shape": [
+        3840,
+        10
+      ],
+      "has_nan": false,
+      "has_inf": false,
+      "flat_fraction": 0.0,
+      "shape_ok": true,
+      "structural_pass": true,
+      "pass": true
+    }
+  },
+  "pipeline_C_parity_informational": {
+    "emd_C_smoke_100ep": 0.015502956293036,
+    "emd_v1_1_baseline_2000ep_forward_pass": 0.12048789057906201,
+    "rel_drift_informational": 0.8713318307878979,
+    "note": "Informational only. 100-epoch fresh-init EMD is NOT comparable to 2000-epoch converged baseline EMD; the latter measures converged model output, the former measures under-trained output. Pipeline C code-path identity vs v1.1 is verified by plan 09.1-01 ABL-01 round-trip (max_abs_err 4.44e-16)."
+  },
+  "parity_note": "Pipeline C EMD comparison vs v1.1 baseline (0.12048789) is informational ONLY. The baseline was measured at 2000-epoch convergence; this smoke is 100-epoch fresh-init. Pipeline C identity proof is plan 09.1-01 ABL-01 round-trip (max_abs_err 4.44e-16).",
+  "timings_seconds": {
+    "A": 27.16790509223938,
+    "B": 26.73935890197754,
+    "C": 26.22304368019104
+  },
+  "structural_pass": true,
+  "no_nan_inf_across_pipelines": true,
+  "all_passed": true,
+  "seed": 42,
+  "epochs": 100,
+  "git_sha": "c07bfe349b07199ed842422822e14959f5ead548"
+}
