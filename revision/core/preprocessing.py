@@ -26,16 +26,50 @@ from revision.core.data import (
 # ─────────────────────────────────────────────────────────────────────────────
 # Pipeline B — log-returns only
 # ─────────────────────────────────────────────────────────────────────────────
-def forward_logreturns(od: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
-    """Compute log-returns r_t = ln(OD_{t+1}/OD_t) and standardize; return (r_norm, (mu, sigma)). Phase 09.1."""
-    raise NotImplementedError("Phase 09.1")
+def forward_logreturns(
+    od: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Log-returns r_t = ln(OD_{t+1}/OD_t), then standardize to zero-mean / unit-std.
+
+    Length contract: returns length N-1 (drops one timestep). Returns
+    (r_norm, mu, sigma). Uses torch.std default ddof=1 to match v1.1
+    normalize() in data.py:36.
+
+    Per CONTEXT.md D-09.1-01 / RESEARCH.md Q3 — single global mu/sigma across
+    the full series; CD-5 anchors the inverse at a real per-window OD₀ supplied
+    by the caller (see ``inverse_logreturns``).
+    """
+    log_od = torch.log(od)
+    r = log_od[1:] - log_od[:-1]
+    mu = torch.mean(r)
+    sigma = torch.std(r)  # default ddof=1 — matches v1.1 normalize() at data.py:36
+    return (r - mu) / sigma, mu, sigma
 
 
 def inverse_logreturns(
-    r: torch.Tensor, od_start: torch.Tensor, mu: torch.Tensor, sigma: torch.Tensor
+    r_norm: torch.Tensor,
+    od_start: torch.Tensor,
+    mu: torch.Tensor,
+    sigma: torch.Tensor,
 ) -> torch.Tensor:
-    """Un-standardize log-returns and integrate cumulatively from od_start to recover OD. Phase 09.1."""
-    raise NotImplementedError("Phase 09.1")
+    """Un-standardize log-returns and cumulative-integrate from od_start.
+
+    OD_t = OD_0 * exp(cumsum(r_1, ..., r_t)) along the last dim.
+
+    Shape contract:
+      - r_norm: (..., L-1) — last dim is the standardized log-return sequence
+      - od_start: scalar OR (...,) broadcastable to r_norm.shape[:-1]
+      - Returns: (..., L) — first entry along last dim equals od_start
+    """
+    r = r_norm * sigma + mu                            # un-standardize
+    cum = torch.cumsum(r, dim=-1)                       # (..., L-1)
+    pad = torch.zeros_like(cum[..., :1])                # (..., 1)
+    cum_full = torch.cat([pad, cum], dim=-1)            # (..., L)
+    log_od_start = torch.log(od_start)
+    if log_od_start.dim() < cum_full.dim():
+        log_od_start = log_od_start.unsqueeze(-1)
+    log_od = log_od_start + cum_full
+    return torch.exp(log_od)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -44,15 +78,22 @@ def inverse_logreturns(
 def forward_minmax_od(
     od: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """Min-max normalize OD to [0, 1]; return (scaled, od_min, od_max). Phase 09.1."""
-    raise NotImplementedError("Phase 09.1")
+    """Min-max normalize OD to [0, 1] using GLOBAL extrema (per RESEARCH.md Q4).
+
+    Single-campaign data (revision/docs/dataset_stats.md: 1 campaign, 778 rows)
+    makes global min-max the natural choice. Returns (scaled, od_min, od_max).
+    """
+    od_min = torch.min(od)
+    od_max = torch.max(od)
+    scaled = (od - od_min) / (od_max - od_min)  # -> [0, 1]
+    return scaled, od_min, od_max
 
 
 def inverse_minmax_od(
-    scaled: torch.Tensor, od_min: torch.Tensor, od_max: torch.Tensor
+    scaled: torch.Tensor, od_min: torch.Tensor, od_max: torch.Tensor,
 ) -> torch.Tensor:
-    """Un-normalize scaled OD back to original units. Phase 09.1."""
-    raise NotImplementedError("Phase 09.1")
+    """Exact inverse of forward_minmax_od."""
+    return scaled * (od_max - od_min) + od_min
 
 
 __all__ = [
