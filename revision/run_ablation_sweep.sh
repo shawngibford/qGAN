@@ -86,6 +86,21 @@ OUT_ROOT="revision/results/transform_ablation"
 STATUS_FILE="${OUT_ROOT}/sweep_status.json"
 LOCK_FILE="${OUT_ROOT}/.status.lock"
 
+# Python interpreter — prefer project venv (qgan_env) over system python.
+# Venv's activate script has a hardcoded incorrect path from a different
+# machine, so we invoke the venv binary directly rather than sourcing.
+if [ -x "./qgan_env/bin/python" ]; then
+  PYTHON="./qgan_env/bin/python"
+elif command -v python3 >/dev/null 2>&1; then
+  PYTHON="python3"
+elif command -v python >/dev/null 2>&1; then
+  PYTHON="python"
+else
+  echo "ERROR: no python interpreter found (looked for ./qgan_env/bin/python, python3, python)" >&2
+  exit 2
+fi
+export PYTHON
+
 # -----------------------------------------------------------------------------
 # Argument parsing
 # -----------------------------------------------------------------------------
@@ -279,7 +294,7 @@ run_one() {
   # Disable -e for the python invocation only so a single-pair failure does NOT
   # abort the whole sweep. Capture rc explicitly.
   set +e
-  python -m revision.run_ablation \
+  "$PYTHON" -m revision.run_ablation \
     --pipeline "$p" \
     --seed "$s" \
     --epochs "$EPOCHS" \
