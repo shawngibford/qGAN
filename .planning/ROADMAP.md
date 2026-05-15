@@ -42,7 +42,7 @@ Full details: `.planning/ROADMAP.md` (prior revision) and git history.
 **Dependency contract:** Group A (code) executes before Group B (paper). Paper Phase 14 reads JSON artifacts written by Phases 8-13.
 
 - [ ] **Phase 8: Core Module Extraction** - Extract shared logic into `revision/core/` and verify parity with main notebook
-- [ ] **Phase 9: Documentation Bridge** - Training protocol + dataset stats + differentiable inverse transform — cheap, paper-ready numbers that unblock paper drafting
+- [x] **Phase 9: Documentation Bridge** - Training protocol + dataset stats + differentiable inverse transform — cheap, paper-ready numbers that unblock paper drafting
 - [ ] **Phase 10: Classical Baselines** - Matched-parameter classical WGAN-GP + non-adversarial baseline (VAE/AR) + side-by-side comparison table
 - [ ] **Phase 11: Utility Evaluation** - TSTR, predictive/discriminative scores, real-only vs synthetic-augmented, fidelity metrics on both scales
 - [ ] **Phase 12: Sensitivity Analysis** - Shot-noise sweep, noise-model sensitivity, multi-seed (≥5) mean ± std across all headline results
@@ -79,11 +79,11 @@ Plans:
   4. Both doc files are referenced from Phase 14 paper work without requiring rewrite (paper-ready prose + numbers)
 **Plans:** 5 plans
 Plans:
-- [ ] 09-01-PLAN.md — Differentiable inverse Lambert W via torch.autograd.Function (EVAL-06 core)
-- [ ] 09-02-PLAN.md — preprocessing.py skeleton + module registration (D-06; Phase 09.1 contract)
-- [ ] 09-03-PLAN.md — training_protocol.md (DOC-01) — paper-ready hybrid format
-- [ ] 09-04-PLAN.md — dataset_stats.md (DOC-02) — paper-ready hybrid format
-- [ ] 09-05-PLAN.md — Round-trip verification notebook + eval06_roundtrip.json + Phase 8 parity regression (EVAL-06 acceptance)
+- [x] 09-01-PLAN.md — Differentiable inverse Lambert W via torch.autograd.Function (EVAL-06 core)
+- [x] 09-02-PLAN.md — preprocessing.py skeleton + module registration (D-06; Phase 09.1 contract)
+- [x] 09-03-PLAN.md — training_protocol.md (DOC-01) — paper-ready hybrid format
+- [x] 09-04-PLAN.md — dataset_stats.md (DOC-02) — paper-ready hybrid format
+- [x] 09-05-PLAN.md — Round-trip verification notebook + eval06_roundtrip.json + Phase 8 parity regression (EVAL-06 acceptance)
 
 ### Phase 09.1: R1-M3 Preprocessing Ablation (INSERTED)
 
