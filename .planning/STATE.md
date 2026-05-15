@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 09.1 plan 02 complete — Wave 3 GO
-last_updated: "2026-05-15T19:18:51.318Z"
+stopped_at: Phase 09.1 plan 03 complete — Wave 4 (analysis) GO
+last_updated: "2026-05-15T20:15:00.000Z"
 last_activity: 2026-05-15
 progress:
   total_phases: 8
   completed_phases: 2
   total_plans: 14
-  completed_plans: 12
-  percent: 86
+  completed_plans: 13
+  percent: 93
 ---
 
 # Project State
@@ -26,18 +26,18 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 09.1 (r1-m3-preprocessing-ablation) — EXECUTING
-Plan: 3 of 4 (next: 09.1-03 multi-seed sweep)
-Status: Wave 2 smoke passed (structural_pass=true); Wave 3 GO
-Last activity: 2026-05-15 -- Plan 09.1-02 complete
+Plan: 4 of 4 (next: 09.1-04 analysis-figures-tstr-and-summary)
+Status: Wave 3 sweep complete (15/15 runs, 29.1 min wall @ parallel=2); ABL-02 GREEN; Wave 4 (analysis) GO
+Last activity: 2026-05-15 -- Plan 09.1-03 complete
 
-Progress: [█████████░] 86%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 24 (v1.0 + v1.1 + v2.0 phase 8 + v2.0 phase 9 + v2.0 phase 09.1 partial)
-- v2.0 plans: 12 completed (Phase 8: 5, Phase 9: 5, Phase 09.1: 2 of 4)
+- Total plans completed: 25 (v1.0 + v1.1 + v2.0 phase 8 + v2.0 phase 9 + v2.0 phase 09.1 partial)
+- v2.0 plans: 13 completed (Phase 8: 5, Phase 9: 5, Phase 09.1: 3 of 4)
 
 **Past milestones:**
 
@@ -51,6 +51,7 @@ Progress: [█████████░] 86%
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 09.1 P02 (cli-driver + smoke) | ~10 min | 2 | 18 |
+| Phase 09.1 P03 (multi-seed sweep resumable) | 29.1 min (sweep wall @ parallel=2) | 3 | 76 (1 driver script + 75 artifacts) |
 
 ## Accumulated Context
 
@@ -74,6 +75,7 @@ v1.1 highlights retained:
 - HPO-tuned values: N_CRITIC=9, LAMBDA=2.16, LR_CRITIC=1.8046e-05, LR_GENERATOR=6.9173e-05
 - backprop replaces parameter-shift due to PennyLane #4462 broadcasting gradient bugs
 - **Phase 09.1 P02:** Redefined Pipeline C smoke parity gate from 2% absolute-EMD to structural-evidence gate (Rule 4 deviation, user-approved). Rationale: the 0.12048789 baseline was measured at 2000-epoch convergence — comparing it to a 100-epoch fresh-init run is physically incoherent. Pipeline C code-path identity is independently proven by 09.1-01's ABL-01 round-trip (max_abs_err 4.44e-16).
+- **Phase 09.1 P03:** Archived (not deleted) wave-2 100-epoch smoke artifacts at A/42, B/42, C/42 before launching the 1000-epoch sweep — `is_complete()` checks file presence not epoch count, so silent mixed-budget contamination was the alternative. Sweep then ran clean: 15/15 in 29.1 min @ parallel=2 (vs plan estimate ~24 h; v2.0 PennyLane backprop path is ~50× faster per epoch than v1.1). The conditional +2 seeds gate (D-09.1-06) is deferred to plan 04 (analysis-time decision based on observed inter-seed spread).
 
 ### Pending Todos
 
@@ -92,8 +94,8 @@ None.
 
 ## Session Continuity
 
-**Last Session:** 2026-05-15T19:18:47.053Z
-**Stopped At:** Plan 09.1-02 complete — Wave 3 GO
-**Resume File:** .planning/phases/09.1-r1-m3-preprocessing-ablation/09.1-03-PLAN.md
+**Last Session:** 2026-05-15T20:15:00.000Z
+**Stopped At:** Plan 09.1-03 complete — Wave 4 (analysis) GO; ABL-02 GREEN
+**Resume File:** .planning/phases/09.1-r1-m3-preprocessing-ablation/09.1-04-PLAN.md
 
 **Planned Phase:** 8 (Core Module Extraction) — 5 plans — 2026-04-23T16:46:36.017Z
