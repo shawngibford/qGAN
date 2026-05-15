@@ -1,0 +1,19 @@
+pipeline: A
+seed: 43
+epochs: 1000
+num_qubits: 5
+num_layers: 4
+window_length: 10
+batch_size: 12
+n_critic: 9
+lambda_gp: 2.16
+lr_critic: 1.8046e-05
+lr_generator: 6.9173e-05
+noise_low: 0.0
+noise_high: 12.566370614359172
+eval_every: 10
+n_real_windows: 385
+inverse_kwargs_keys:
+- od_max
+- od_min
+csv_path: data.csv

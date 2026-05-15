@@ -1,0 +1,160 @@
+{
+  "started_at": "2026-05-15T19:40:58Z",
+  "epochs": 1000,
+  "parallel": 2,
+  "runs": [
+    {
+      "pipeline": "A",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-15T19:40:58Z",
+      "ended_at": "2026-05-15T19:44:50Z",
+      "wall_seconds": 232,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "A",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-15T19:40:58Z",
+      "ended_at": "2026-05-15T19:44:50Z",
+      "wall_seconds": 232,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "A",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-15T19:44:50Z",
+      "ended_at": "2026-05-15T19:48:34Z",
+      "wall_seconds": 224,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "A",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-15T19:44:51Z",
+      "ended_at": "2026-05-15T19:48:32Z",
+      "wall_seconds": 221,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "A",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-15T19:48:32Z",
+      "ended_at": "2026-05-15T19:52:03Z",
+      "wall_seconds": 211,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "B",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-15T19:48:34Z",
+      "ended_at": "2026-05-15T19:52:04Z",
+      "wall_seconds": 210,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "B",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-15T19:52:03Z",
+      "ended_at": "2026-05-15T19:55:38Z",
+      "wall_seconds": 215,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "B",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-15T19:52:04Z",
+      "ended_at": "2026-05-15T19:55:40Z",
+      "wall_seconds": 216,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "B",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-15T19:55:39Z",
+      "ended_at": "2026-05-15T19:59:22Z",
+      "wall_seconds": 223,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "B",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-15T19:55:40Z",
+      "ended_at": "2026-05-15T19:59:23Z",
+      "wall_seconds": 223,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "C",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-15T19:59:22Z",
+      "ended_at": "2026-05-15T20:03:00Z",
+      "wall_seconds": 218,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "C",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-15T19:59:24Z",
+      "ended_at": "2026-05-15T20:03:01Z",
+      "wall_seconds": 217,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "C",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-15T20:03:00Z",
+      "ended_at": "2026-05-15T20:06:46Z",
+      "wall_seconds": 225,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "C",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-15T20:03:01Z",
+      "ended_at": "2026-05-15T20:06:46Z",
+      "wall_seconds": 225,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "pipeline": "C",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-15T20:06:46Z",
+      "ended_at": "2026-05-15T20:10:01Z",
+      "wall_seconds": 195,
+      "return_code": 0,
+      "skipped_already_done": false
+    }
+  ],
+  "all_complete": true,
+  "completed_count": 15,
+  "total_count": 15
+}

@@ -1,6 +1,6 @@
 pipeline: C
 seed: 42
-epochs: 100
+epochs: 1000
 num_qubits: 5
 num_layers: 4
 window_length: 10
