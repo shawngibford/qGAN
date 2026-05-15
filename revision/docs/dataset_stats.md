@@ -15,9 +15,9 @@ verified against `wc -l data.csv` and direct inspection of the CSV.
 | Quantity | Value | Source / Derivation |
 |----------|-------|---------------------|
 | Raw CSV rows (excluding header) | 778 | `wc -l data.csv` − 1 |
-| OD rows after fillna + dropna | 778 | `revision/core/data.py:211-219` (10-row rolling-mean fillna, then dropna) |
-| Log-return rows (N − 1) | 777 | `revision/core/data.py:62` (`log_od[1:] - log_od[:-1]`) |
-| Rolling windows (length 10, stride 2) | 384 | `(777 − 10) // 2 + 1 = 384`; `revision/core/data.py:110-118` |
+| OD rows after fillna + dropna | 778 | `revision/core/data.py:255-258` (10-row rolling-mean fillna, then dropna) |
+| Log-return rows (N − 1) | 777 | `revision/core/data.py:64` (`log_od[1:] - log_od[:-1]`) |
+| Rolling windows (length 10, stride 2) | 384 | `(777 − 10) // 2 + 1 = 384`; `revision/core/data.py:150` (def), `:282` (applied) |
 | Independent campaigns | 1 | LUCY photobioreactor (Algenuity), single run |
 
 ## Sampling & Date Range
