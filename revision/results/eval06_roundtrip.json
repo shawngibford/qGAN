@@ -1,0 +1,18 @@
+{
+  "delta": {
+    "synthetic": 4.440892098500626e-16,
+    "real": 4.440892098500626e-16,
+    "full_pipeline": 4.803323072621879e-09,
+    "gradcheck_passed": true
+  },
+  "tolerance": {
+    "synthetic": 1e-08,
+    "real": 1e-08,
+    "full_pipeline": 1e-06,
+    "gradcheck": true
+  },
+  "pass": true,
+  "seed": 42,
+  "git_sha": "18c387d351bb3e5a26b3e18316adc8c688c0be40",
+  "notes": "Phase 9 EVAL-06: differentiable inverse Lambert W round-trip."
+}
