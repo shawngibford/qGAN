@@ -32,11 +32,11 @@ PAR_LIGHT_MAX = 12.5
 NOISE_LOW = 0.0
 NOISE_HIGH = 4 * math.pi
 
-from revision.core import data, eval, training  # noqa: F401,E402
+from revision.core import data, eval, training, preprocessing  # noqa: F401,E402
 from revision.core import models  # noqa: F401,E402
 
 __all__ = [
-    "data", "eval", "training", "models",
+    "data", "eval", "training", "models", "preprocessing",
     "N_CRITIC", "LAMBDA", "LR_CRITIC", "LR_GENERATOR",
     "NUM_QUBITS", "NUM_LAYERS", "WINDOW_LENGTH",
     "NUM_EPOCHS", "BATCH_SIZE", "GEN_SCALE", "EVAL_EVERY",
