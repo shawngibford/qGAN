@@ -4,9 +4,11 @@ Extracted verbatim from ``qgan_pennylane.ipynb`` (cells 5, 7, 9, 15, 17, 18,
 21, 22, 23, 30). Behavior is identical to v1.1 notebook; this module is a
 refactor, not a rewrite.
 
-Phase 9 (EVAL-06) will replace ``inverse_lambert_w_transform`` with a fully
-differentiable alternative; the present implementation is a scalar round-trip
-using ``scipy.special.lambertw`` and therefore non-differentiable.
+Phase 9 (EVAL-06) implements :func:`inverse_lambert_w_transform` as a
+custom :class:`torch.autograd.Function` (:class:`_InverseLambertW`):
+``scipy.special.lambertw`` is called only in the forward path (Phase 8
+parity preserved bit-identically), and the backward path is pure torch
+using the closed-form identity ``dW/dz = W/(z·(1+W))``.
 """
 from __future__ import annotations
 from pathlib import Path
@@ -65,26 +67,64 @@ def compute_log_delta(
 # ─────────────────────────────────────────────────────────────────────────────
 # Cell 17 — Lambert W transforms
 # ─────────────────────────────────────────────────────────────────────────────
+class _InverseLambertW(torch.autograd.Function):
+    """Differentiable inverse Lambert W transform.
+
+    Forward:  out = sign(x) * sqrt(W(δ·x²) / δ)   (matches data.py legacy lines 80–86 exactly)
+    Backward: out² = W(δ·x²)/δ  =>  d(out)/dx = W / (out · δ · x · (1 + W))
+              Limit at x→0: d(out)/dx → 1 (handled via torch.where mask).
+
+    Per D-05: scipy.special.lambertw is called ONLY in forward; backward is pure torch.
+    """
+
+    @staticmethod
+    def forward(ctx, data: torch.Tensor, delta: float) -> torch.Tensor:
+        # Verbatim preservation of legacy forward body (data.py:80–86) for Phase 8 parity = 0.0
+        data64 = data.double()
+        sign = torch.sign(data64)
+        data_squared = data64 ** 2
+        lambert_input = (delta * data_squared).cpu().numpy()
+        lambert_result = lambertw(lambert_input).real
+        lambert_tensor = torch.tensor(
+            lambert_result, dtype=torch.float64, device=data64.device
+        )
+        out = sign * torch.sqrt(lambert_tensor / delta)
+        # Save tensors for backward; delta is a Python float -> attach to ctx directly (Pitfall 6)
+        ctx.save_for_backward(data64, lambert_tensor, out)
+        ctx.delta = delta
+        return out
+
+    @staticmethod
+    def backward(ctx, grad_output: torch.Tensor):
+        data64, W, out = ctx.saved_tensors
+        delta = ctx.delta
+        # Closed-form via implicit differentiation of out² = W(δ·x²)/δ:
+        #   2·out·(d out/dx) = (1/δ)·dW/dz·dz/dx = (1/δ)·(W/(z(1+W)))·2δx = 2x·W/(z(1+W))
+        # With z = δ·x²:  d(out)/dx = W / (out · δ · x · (1 + W))
+        denom = out * delta * data64 * (1.0 + W)
+        # Mask near x=0 (data64≈0 → out≈0 → 0/0): analytic limit is 1
+        zero_mask = data64.abs() < 1e-300
+        safe_denom = torch.where(zero_mask, torch.ones_like(denom), denom)
+        deriv = torch.where(
+            zero_mask,
+            torch.ones_like(data64),
+            W / safe_denom,
+        )
+        grad_data = grad_output * deriv
+        # Cast back to caller dtype (Pitfall 2); delta is non-tensor → return None
+        return grad_data.to(grad_output.dtype), None
+
+
 def inverse_lambert_w_transform(data: torch.Tensor, delta: float) -> torch.Tensor:
-    """Inverse Lambert W transform (heavy-tail → Gaussian-ish).
+    """Inverse Lambert W transform (heavy-tail → Gaussian-ish), differentiable.
 
     Notebook cell 17. Uses ``scipy.special.lambertw`` on the principal branch
-    (``.real``). Promotes to float64 for numerical stability — the notebook
-    does the same (``data.double()``).
-
-    Note
-    ----
-    Non-differentiable. Phase 9 (EVAL-06) replaces this with a differentiable
-    alternative.
+    (``.real``) inside the forward path of a custom :class:`torch.autograd.Function`;
+    the backward path is pure torch using the closed-form identity
+    ``dW/dz = W/(z·(1+W))`` (Corless et al. 1996). Edge case ``x≈0`` masked with
+    analytic limit value 1.
     """
-    data = data.double()
-    sign = torch.sign(data)
-    data_squared = data ** 2
-    lambert_input = (delta * data_squared).cpu().numpy()
-    lambert_result = lambertw(lambert_input).real
-    lambert_tensor = torch.tensor(lambert_result, dtype=torch.float64, device=data.device)
-    transformed_data = sign * torch.sqrt(lambert_tensor / delta)
-    return transformed_data
+    return _InverseLambertW.apply(data, delta)
 
 
 def lambert_w_transform(
