@@ -87,13 +87,21 @@ Plans:
 
 ### Phase 09.1: R1-M3 Preprocessing Ablation (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
-**Depends on:** Phase 9
-**Plans:** 0 plans
+**Goal:** Run a controlled three-pipeline preprocessing ablation (A: raw normalized OD, B: log-returns only, C: log-returns + Lambert W) with identical training conditions and ≥5 seeds per pipeline; produce OD-scale comparison artifacts that answer reviewer R1-M3's "transformation strips temporal structure" claim and empirically justify the chosen pipeline for the revised manuscript.
+**Depends on:** Phase 9 (EVAL-06 differentiable inverse transform + `revision/core/preprocessing.py` contract are hard prerequisites)
+**Requirements**: ABL-01, ABL-02, ABL-03
+**Source spec:** `.planning/scratch/09.1-r1-m3-ablation-spec.md` (user-authored PRD, 2026-05-08)
+**Success Criteria** (what must be TRUE):
+  1. `revision/core/preprocessing.py` exposes three `forward_X`/`inverse_X` pairs (A/B/C) with verified ≤float-eps round-trip on real trajectories (max abs error printed)
+  2. `revision/results/transform_ablation/runs/<pipeline>/<seed>/` contains per-seed checkpoints, generated samples, and run config YAML for all 3 × ≥5 = ≥15 runs; smoke run completes successfully before full multi-seed launch
+  3. `revision/results/transform_ablation/metrics.csv` (long-form: pipeline, seed, metric_name, scale, value) + 6 figures (`fig_trajectories.png`, `fig_acf_od.png`, `fig_acf_transformed.png`, `fig_qq_od.png`, `fig_pdf_od.png`, `fig_dtw_distribution.png`) generated on OD scale
+  4. `revision/results/transform_ablation/summary.md` answers the four R1-M3 rebuttal questions with numbers (mean ± std) and recommends a pipeline for the revised manuscript
+  5. Pipeline C reproduces v1.1 published log-return EMD within 1–2% (sanity check that the ablation harness preserves baseline behavior)
+
+**Plans:** TBD
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 09.1 to break down)
+- [ ] TBD (running /gsd-plan-phase 09.1 now)
 
 ### Phase 10: Classical Baselines
 **Goal**: Matched-parameter classical WGAN-GP and a non-adversarial baseline (VAE or AR) are trained under identical conditions to the quantum generator, so the manuscript can report a fair quantum-vs-classical comparison in response to R1-M1 and R2-1

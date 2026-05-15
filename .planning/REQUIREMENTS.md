@@ -30,6 +30,12 @@
 - [ ] **EVAL-05**: All fidelity metrics (EMD, ACF, moments, DTW) reported on both transformed (log-return) and original OD scales.
 - [ ] **EVAL-06**: Differentiable `inverse_transform` exposed in `revision/core/data.py` (log-return + Lambert W back-transform to OD).
 
+### Preprocessing Ablation (addresses R1-M3, Phase 09.1)
+
+- [ ] **ABL-01**: Three preprocessing pipelines implemented as `forward_X` / `inverse_X` pairs in `revision/core/preprocessing.py` — A (raw normalized OD), B (log-returns only), C (log-returns + Lambert W, current paper). Each pair has a verified ≤float-eps round-trip on a real trajectory.
+- [ ] **ABL-02**: All three pipelines trained ≥5 seeds with identical circuit architecture, hyperparameters, optimizer, schedule, and seed set; per-seed checkpoints, generated samples, and run config YAML written to `revision/results/transform_ablation/runs/<pipeline>/<seed>/`.
+- [ ] **ABL-03**: OD-scale comparison artifacts (`metrics.csv` + 6 figures: trajectories, ACF (OD + transformed supplementary), Q-Q, PDF/CDF, DTW + `summary.md`) answering the four R1-M3 rebuttal questions; written to `revision/results/transform_ablation/`.
+
 ### Sensitivity (addresses R1-M4, R2-1)
 
 - [ ] **SENS-01**: Shot-noise sweep at {analytic, 8192, 1024} shots; metric degradation reported.
@@ -84,7 +90,7 @@
 |---------------|--------------|
 | R1-M1 (No classical baseline) | BASE-01, BASE-02, BASE-03 |
 | R1-M2 (Utility-oriented tests) | EVAL-01, EVAL-02, EVAL-03, EVAL-04 |
-| R1-M3 (Signal transformation) | EVAL-05, EVAL-06, PAPER-04 |
+| R1-M3 (Signal transformation) | EVAL-05, EVAL-06, ABL-01, ABL-02, ABL-03, PAPER-04 |
 | R1-M4 (Training details) | SENS-01, SENS-03, DOC-01, PAPER-10 |
 | R1-M5 (Claim calibration) | PAPER-01, PAPER-02, PAPER-05, PAPER-11 |
 | R1-m1 (Misplaced refs) | PAPER-06 |
