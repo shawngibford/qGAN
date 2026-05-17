@@ -1,3 +1,3 @@
-"""revision.core.models — PQC generator and classical critic."""
-from revision.core.models import quantum, critic  # noqa: F401
-__all__ = ["quantum", "critic"]
+"""revision.core.models — PQC generator, classical critic, classical + non-adversarial baselines."""
+from revision.core.models import quantum, critic, classical, nonadversarial  # noqa: F401
+__all__ = ["quantum", "critic", "classical", "nonadversarial"]
