@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 09.1 plan 03 complete — Wave 4 (analysis) GO
-last_updated: "2026-05-15T20:15:00.000Z"
-last_activity: 2026-05-15
+stopped_at: Phase 09.1 plan 04 complete — verification pending
+last_updated: "2026-05-17T22:15:00.000Z"
+last_activity: 2026-05-17
 progress:
   total_phases: 8
   completed_phases: 2
   total_plans: 14
-  completed_plans: 13
-  percent: 93
+  completed_plans: 14
+  percent: 100
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 09.1 (r1-m3-preprocessing-ablation) — EXECUTING
-Plan: 4 of 4 (next: 09.1-04 analysis-figures-tstr-and-summary)
-Status: Wave 3 sweep complete (15/15 runs, 29.1 min wall @ parallel=2); ABL-02 GREEN; Wave 4 (analysis) GO
-Last activity: 2026-05-15 -- Plan 09.1-03 complete
+Plan: 4 of 4 complete (verification pending)
+Status: Wave 4 analysis complete; ABL-01/02/03 all GREEN; recommendation = Pipeline B (drop Lambert W)
+Last activity: 2026-05-17 -- Plan 09.1-04 complete
 
-Progress: [█████████░] 93%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
