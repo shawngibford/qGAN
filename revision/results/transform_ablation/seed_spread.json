@@ -1,0 +1,28 @@
+{
+  "per_pipeline": {
+    "A": {
+      "emd_OD_mean": 1.0516055388421166,
+      "emd_OD_std": 0.0007291456677429265,
+      "rel_std": 0.0006933642328907486,
+      "exceeds_30pct_gate": false,
+      "n_seeds": 5
+    },
+    "B": {
+      "emd_OD_mean": 0.02758597806884494,
+      "emd_OD_std": 0.004576289824053756,
+      "rel_std": 0.16589188219583656,
+      "exceeds_30pct_gate": false,
+      "n_seeds": 5
+    },
+    "C": {
+      "emd_OD_mean": 0.026082535359880376,
+      "emd_OD_std": 0.006513126213397446,
+      "rel_std": 0.24971215886534573,
+      "exceeds_30pct_gate": false,
+      "n_seeds": 5
+    }
+  },
+  "recommend_plus_2_seeds": false,
+  "gate_threshold_rel_std": 0.3,
+  "rationale": "D-09.1-06 conditional gate: if any pipeline's per-seed OD-scale EMD std exceeds 30% of its mean, the operator may run +2 additional seeds (47, 48) on the high-spread pipeline(s). Executing the +2 seeds is OUT OF SCOPE for Plan 04; the operator can re-invoke run_ablation_sweep.sh with SEEDS=\"47 48\" and re-execute this notebook."
+}
