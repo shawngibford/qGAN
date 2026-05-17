@@ -32,9 +32,9 @@
 
 ### Preprocessing Ablation (addresses R1-M3, Phase 09.1)
 
-- [ ] **ABL-01**: Three preprocessing pipelines implemented as `forward_X` / `inverse_X` pairs in `revision/core/preprocessing.py` — A (raw normalized OD), B (log-returns only), C (log-returns + Lambert W, current paper). Each pair has a verified ≤float-eps round-trip on a real trajectory.
-- [ ] **ABL-02**: All three pipelines trained ≥5 seeds with identical circuit architecture, hyperparameters, optimizer, schedule, and seed set; per-seed checkpoints, generated samples, and run config YAML written to `revision/results/transform_ablation/runs/<pipeline>/<seed>/`.  _Partial: Wave 2 smoke (1 seed × 100 epochs) complete via plan 09.1-02 (structural_pass=true); full 5-seed × 1000-epoch sweep is Wave 3 (plan 09.1-03)._
-- [ ] **ABL-03**: OD-scale comparison artifacts (`metrics.csv` + 6 figures: trajectories, ACF (OD + transformed supplementary), Q-Q, PDF/CDF, DTW + `summary.md`) answering the four R1-M3 rebuttal questions; written to `revision/results/transform_ablation/`.
+- [x] **ABL-01**: Three preprocessing pipelines implemented as `forward_X` / `inverse_X` pairs in `revision/core/preprocessing.py` — A (raw normalized OD), B (log-returns only), C (log-returns + Lambert W, current paper). Each pair has a verified ≤float-eps round-trip on a real trajectory.
+- [x] **ABL-02**: All three pipelines trained ≥5 seeds with identical circuit architecture, hyperparameters, optimizer, schedule, and seed set; per-seed checkpoints, generated samples, and run config YAML written to `revision/results/transform_ablation/runs/<pipeline>/<seed>/`.  _Partial: Wave 2 smoke (1 seed × 100 epochs) complete via plan 09.1-02 (structural_pass=true); full 5-seed × 1000-epoch sweep is Wave 3 (plan 09.1-03)._
+- [x] **ABL-03**: OD-scale comparison artifacts (`metrics.csv` + 6 figures: trajectories, ACF (OD + transformed supplementary), Q-Q, PDF/CDF, DTW + `summary.md`) answering the four R1-M3 rebuttal questions; written to `revision/results/transform_ablation/`.
 
 ### Sensitivity (addresses R1-M4, R2-1)
 
