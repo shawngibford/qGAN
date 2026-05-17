@@ -586,19 +586,19 @@ config["data_hash"] = data_hash                         # NEW field; 09.1 has no
 | A4 | VAE/AR samples emitted in `[-1,1]` window space (no `*0.1`) reconstruct comparably to WGAN samples via the shared `reconstruct_od` | Pitfall 3 | HIGH-IMPACT if wrong → invalid BASE-03 table. Mitigation: mandatory Wave-2 smoke reconstruction gate across all 3 families. Surfaced as the phase's top risk. |
 | A5 | The 09.1 quantum runs at `runs/{A,B}/{seed}/` are present, complete, and reconstructable with the copied `reconstruct_od` | Comparison Table | If 09.1 outputs were not committed/retained, the quantum column cannot be built — verify the 50→ + 10 quantum dirs exist as a Wave-0/Wave-1 precondition. (09.1-04-SUMMARY says ABL-02 GREEN, full sweep complete — likely present.) |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **`params_pqc` contract resolution (Pitfall 1 / A1).**
+1. **`params_pqc` contract resolution (Pitfall 1 / A1).** — **RESOLVED: single-flat-`nn.Parameter` functional design, locked in Plan 01 Task 1.**
    - Known: `train_wgan_gp:234` optimizes `[generator.params_pqc]`; D-10-08/13 demand the loop stay unchanged and live outside `core/`.
    - Unclear: single-flat-`nn.Parameter`+functional-forward vs a local optimizer-adapter in `run_baselines.py`.
    - Recommendation: single-flat-`nn.Parameter` functional design (only approach keeping the loop truly verbatim). Planner should lock this in the architecture plan; acceptance test asserts `params_pqc.numel() == count_params() == <74|73|78>` and `torch.allclose(params_pqc_before, params_pqc_after) is False` post-smoke.
 
-2. **VAE/AR sample-space canonicalization (Pitfall 3 / A4).**
+2. **VAE/AR sample-space canonicalization (Pitfall 3 / A4).** — **RESOLVED: mandatory Wave-2 cross-family reconstruction smoke gate, Plan 02 Task 2.**
    - Known: WGAN path applies `*0.1`; VAE/AR do not pass through it.
    - Unclear: whether emitting VAE/AR in plain `[-1,1]` reconstructs onto the same OD scale as WGAN/quantum.
    - Recommendation: define one canonical saved-sample space; add a mandatory cross-family reconstruction smoke gate in Wave 2; document the `*0.1` asymmetry in every `train_protocol_notes`. This is the planner's must-include verification step.
 
-3. **Existence/retention of Phase 09.1 quantum runs (A5).**
+3. **Existence/retention of Phase 09.1 quantum runs (A5).** — **RESOLVED: Wave-1 precondition gate, Plan 01 Task 3.**
    - Known: 09.1-04-SUMMARY reports ABL-02 GREEN, full 3×5×1000 sweep complete.
    - Unclear: whether all `runs/{A,B}/{42..46}/` dirs (10 quantum runs) are retained on disk in this checkout.
    - Recommendation: Wave-1 precondition check — assert the 10 quantum run dirs exist with their 5-file bundles before the comparison plan; if missing, the phase is BLOCKED on re-running the 09.1 quantum sweep (out of D-10-04's "reuse as-is" assumption).
