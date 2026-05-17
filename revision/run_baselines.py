@@ -186,6 +186,12 @@ def generate_wgan_samples(
     quantum/WGAN-output scaling that feeds the critic — RESEARCH Pitfall 3).
     Uses ``np.random.default_rng(seed)`` (no global ``np.random.seed`` here).
     """
+    # train_wgan_gp moves the generator onto MPS/CUDA when available. Sample
+    # generation runs on CPU in float64 (the canonical *0.1 sample space the
+    # shared reconstruct_od inverse consumes; MPS has no float64). Moving the
+    # trained generator back to CPU here keeps samples.npy bit-identical to the
+    # pre-MPS-fix CPU path (Phase-10 split-mode Rule-1 fix).
+    generator = generator.to("cpu")
     rng = np.random.default_rng(seed)
     out_parts: list[np.ndarray] = []
     remaining = n

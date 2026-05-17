@@ -221,6 +221,35 @@ def train_wgan_gp(
         else ("mps" if torch.backends.mps.is_available() else "cpu")
     )
 
+    # Compute dtype: the notebook/CPU path runs the critic in float64 (the
+    # ``.double()`` cast below + ``*0.1`` float64 generator scaling). Apple MPS
+    # does NOT implement float64, so on MPS we run the WGAN-GP loop in float32.
+    # This is the only behavioural change vs. the CPU path; per-seed
+    # reproducibility is preserved (same RNG draws, same architecture, same
+    # optimizer schedule — only the numeric precision of the critic forward /
+    # gradient-penalty double-backward differs, which is acceptable for
+    # baseline training that is evaluated by distributional metrics, not
+    # bit-identical weight reproduction). The CPU/CUDA path keeps float64 so
+    # prior 09.1-style runs reproduce exactly.
+    compute_dtype = torch.float32 if device.type == "mps" else torch.float64
+
+    # Move the model + critic onto the selected device. Without this the
+    # ``device`` variable above was dead code and the loop always ran on CPU
+    # regardless of MPS availability (Phase-10 split-mode Rule-1 fix).
+    #
+    # The generator is float32 by construction (params_pqc is a float32
+    # nn.Parameter); its output is explicitly recast to ``compute_dtype`` via
+    # ``.to(compute_dtype) * 0.1`` below, so we only change its DEVICE here and
+    # never its dtype (changing it would break the CPU path's reproducibility).
+    generator = generator.to(device)
+    # The Critic is constructed as float64 (``critic.py:67`` ``.net.double()``)
+    # to match the notebook's CPU path. MPS cannot hold float64, so on MPS we
+    # cast the critic to float32 *and* move it in one ``.to`` call (a bare
+    # ``.to(mps)`` on a float64 module raises "Cannot convert a MPS Tensor to
+    # float64"). On CPU/CUDA ``compute_dtype`` is float64 so this is a no-op
+    # cast and the critic stays bit-identical to the pre-fix path.
+    critic = critic.to(device=device, dtype=compute_dtype)
+
     # ── 3. Constants from notebook ──────────────────────────────────────────
     from revision.core import NOISE_LOW, NOISE_HIGH, NUM_QUBITS, BATCH_SIZE, WINDOW_LENGTH
     from revision.core.eval import compute_emd, compute_moments
@@ -268,7 +297,7 @@ def train_wgan_gp(
             )
             real_batch_tensor = real_log_returns.reshape(
                 batch_size, 1, window_length
-            ).double()
+            ).to(device=device, dtype=compute_dtype)
 
             # Generate fakes via batched QNode (v1.1 Phase 5 broadcasting,
             # NOT per-sample loop). Noise range [0, 4π] (v1.1 Phase 4).
@@ -278,9 +307,10 @@ def train_wgan_gp(
                         NOISE_LOW, NOISE_HIGH, size=(num_qubits, batch_size)
                     ),
                     dtype=torch.float32,
+                    device=device,
                 )
                 generated_samples = generator(noise_batch)  # (batch, window_length)
-                generated_samples = generated_samples.to(torch.float64) * 0.1
+                generated_samples = generated_samples.to(compute_dtype) * 0.1
                 fake_batch_tensor = generated_samples.reshape(
                     batch_size, 1, window_length
                 )
@@ -309,11 +339,12 @@ def train_wgan_gp(
         noise_batch_g = torch.tensor(
             np.random.uniform(NOISE_LOW, NOISE_HIGH, size=(num_qubits, batch_size)),
             dtype=torch.float32,
+            device=device,
         )
 
         g_opt.zero_grad()
         gen_out = generator(noise_batch_g)  # gradient flows through params_pqc.
-        gen_out = gen_out.to(torch.float64) * 0.1
+        gen_out = gen_out.to(compute_dtype) * 0.1
         generated_samples_input = gen_out.reshape(batch_size, 1, window_length)
 
         fake_scores = critic(generated_samples_input)
@@ -345,9 +376,10 @@ def train_wgan_gp(
                         NOISE_LOW, NOISE_HIGH, size=(num_qubits, batch_size)
                     ),
                     dtype=torch.float32,
+                    device=device,
                 )
                 eval_gen = generator(eval_noise)
-                eval_gen = eval_gen.to(torch.float64) * 0.1
+                eval_gen = eval_gen.to(compute_dtype) * 0.1
                 fake_flat = eval_gen.reshape(-1).cpu().numpy()
                 real_flat = real_log_returns.reshape(-1).cpu().numpy()
 
