@@ -182,9 +182,18 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 12-01-PLAN.md — run_sensitivity.py inference driver: trained-params reload, set_shots/default.mixed QNodes, *0.1+reconstruction contracts, harness-faithfulness smoke gate (wave 1)
-- [ ] 12-02-PLAN.md — run_sensitivity_sweep.sh + full SENS-01/02 grid execution; shot_noise_sensitivity.json + noise_model_sensitivity.json emitted (wave 2, depends on 12-01)
 - [ ] 12-03-PLAN.md — run_multiseed_rollup.py SENS-03 aggregator: D-10-15 cross-artifact data_hash gate, mean±std roll-up -> multiseed_summary.json (wave 1, parallel-safe)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 12-02-PLAN.md — run_sensitivity_sweep.sh + full SENS-01/02 grid execution; shot_noise_sensitivity.json + noise_model_sensitivity.json emitted (wave 2, depends on 12-01)
+
+**Cross-cutting constraints:**
+
+- revision/core/ is byte-untouched
 
 ### Phase 13: Architecture & Introspection
 
