@@ -105,10 +105,30 @@ def main() -> None:
             buckets[key].append((r["seed"], r["value"]))
 
     # ── Per-cell mean ± std (n) ───────────────────────────────────────────────
+    # Some frozen headline cells carry `value: null` for intentionally-undefined
+    # metrics (e.g. fidelity_dualscale.json quantum/log_return cells have no
+    # defined fidelity metric — 168 fully-null buckets, no mixed buckets). Null
+    # values must be excluded from the mean/std math (statistics.fmean raises on
+    # NoneType) while the cell is still emitted so no headline cell is silently
+    # dropped (Success Criterion: roll-up covers every source combination). `n`
+    # counts only the numeric values; `n_null` records the excluded count for
+    # provenance. A fully-null cell -> mean/std null, n 0.
+    def _is_num(x: object) -> bool:
+        return isinstance(x, (int, float)) and not isinstance(x, bool)
+
     rollup = []
     for (src, mk, pl, metric, scale, ratio), pairs in buckets.items():
         seeds = sorted({s for s, _ in pairs})
-        vals = [v for _, v in pairs]
+        num_vals = [v for _, v in pairs if _is_num(v)]
+        n_null = len(pairs) - len(num_vals)
+        if num_vals:
+            cell_mean: float | None = statistics.fmean(num_vals)
+            cell_std: float | None = (
+                statistics.stdev(num_vals) if len(num_vals) > 1 else 0.0
+            )
+        else:
+            cell_mean = None
+            cell_std = None
         rollup.append(
             {
                 "source": src,
@@ -117,9 +137,10 @@ def main() -> None:
                 "metric_name": metric,
                 "scale": scale,
                 "injection_ratio": ratio,
-                "mean": statistics.fmean(vals),
-                "std": statistics.stdev(vals) if len(vals) > 1 else 0.0,
-                "n": len(vals),
+                "mean": cell_mean,
+                "std": cell_std,
+                "n": len(num_vals),
+                "n_null": n_null,
                 "seeds": seeds,
             }
         )
