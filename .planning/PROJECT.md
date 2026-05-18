@@ -62,8 +62,8 @@ Code group (Group A):
 - [x] Extract shared modules (data, PQC, critic, training loop) into `revision/core/` — Phase 8 (INFRA-01 + INFRA-02 validated 2026-04-27, parity check passes with zero numerical drift)
 - [x] Matched-parameter classical WGAN-GP baseline — Phase 10 (BASE-01 validated 2026-05-18; wgan_mlp/cnn/lstm at 74/73/78 params, identical critic/optimizer/seed set)
 - [x] Non-adversarial baseline (VAE or AR) — Phase 10 (BASE-02 validated 2026-05-18; VAE 562p + AR p=2, same data/metrics; BASE-03 comparison table emitted)
-- [ ] TSTR + predictive + discriminative score evaluation
-- [ ] OD-scale inverse-transform results + ACF on both scales
+- [x] TSTR + predictive + discriminative score evaluation — Phase 11 (EVAL-01..04 validated 2026-05-18; tstr.json, predictive_discriminative.json, augmentation.json; CR-01 + WR-01..06 gap closure complete, suite 23 passed)
+- [x] OD-scale inverse-transform results + ACF on both scales — Phase 11 (EVAL-05 validated 2026-05-18; fidelity_dualscale.json dual-scale OD + log_return, 3360 rows; CR-01 portability fix applied)
 - [ ] Shot-noise sensitivity (1024, 8192) + multi-seed (≥5) sweeps
 - [ ] Depolarizing / amplitude-damping noise-model sensitivity
 - [ ] Training-progression + circuit-analysis figures
@@ -162,4 +162,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-18 — Phase 10 (Classical Baselines) complete; BASE-01/02/03 validated, apples-to-apples quantum-vs-classical comparison table delivered (R1-M1/R2-1)*
+*Last updated: 2026-05-18 — Phase 11 (Utility Evaluation) complete; EVAL-01..05 validated (TSTR, predictive/discriminative, Orlandi augmentation, dual-scale fidelity), CR-01 + WR-01..06 code-review gap closure complete with the data_hash 91e447d4624e25b3 invariant held and the test suite at 23 passed*
