@@ -58,9 +58,28 @@ def test_scores_deterministic():
     assert a == b, (a, b)
 
 
+def test_discriminative_score_deterministic():
+    """WR-06: lock discriminative_score determinism in the COLLECTED suite.
+
+    Mirrors ``test_scores_deterministic`` for the riskier discriminative path
+    (the WR-05 single-Generator fix in 11-07). Two identical seeded calls must
+    return the EXACT same value (bit-deterministic — not approximate); this
+    would fail against the old mixed-global-RNG implementation.
+    """
+    rng = np.random.default_rng(2)
+    real = rng.random((160, 10)).astype("float64")
+    synth = rng.random((160, 10)).astype("float64")
+    a = m.discriminative_score(real, synth, 42, 10, iters=40, bs=32)
+    b = m.discriminative_score(real, synth, 42, 10, iters=40, bs=32)
+    assert a == b, (a, b)
+    assert np.isfinite(a), a
+    assert 0.0 <= a <= 0.5 + 1e-6, a
+
+
 if __name__ == "__main__":
     test_gru_nets_not_degenerate()
     test_predictive_score_finite_nonnegative()
     test_discriminative_score_in_range()
     test_scores_deterministic()
+    test_discriminative_score_deterministic()
     print("all timegan-score tests passed")
