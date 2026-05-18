@@ -17,9 +17,9 @@
 
 ### Baselines (addresses R1-M1, R2-1)
 
-- [ ] **BASE-01**: Classical WGAN-GP generator matched within ±5% of PQC trainable-parameter count, trained with identical critic architecture, optimizer, schedule, and seed set; full metric suite reported alongside quantum.
-- [ ] **BASE-02**: Non-adversarial baseline (VAE or AR) trained on same data with same evaluation metrics.
-- [ ] **BASE-03**: Parameter-count / expressibility-controlled comparison table produced as JSON + markdown (quantum, classical WGAN-GP, VAE/AR side-by-side).
+- [x] **BASE-01**: Classical WGAN-GP generator matched within ±5% of PQC trainable-parameter count, trained with identical critic architecture, optimizer, schedule, and seed set; full metric suite reported alongside quantum.
+- [x] **BASE-02**: Non-adversarial baseline (VAE or AR) trained on same data with same evaluation metrics.
+- [x] **BASE-03**: Parameter-count / expressibility-controlled comparison table produced as JSON + markdown (quantum, classical WGAN-GP, VAE/AR side-by-side).
 
 ### Evaluation (addresses R1-M2, R1-M3, R2-4, R1-m3)
 
@@ -139,9 +139,9 @@ See `.planning/MILESTONES.md` for shipped milestones. Legacy requirement IDs (RE
 | INFRA-01    | Phase 8  | Pending |
 | INFRA-02    | Phase 8  | Pending |
 | INFRA-03    | Phase 14 | Pending |
-| BASE-01     | Phase 10 | Pending |
-| BASE-02     | Phase 10 | Pending |
-| BASE-03     | Phase 10 | Pending |
+| BASE-01     | Phase 10 | Complete |
+| BASE-02     | Phase 10 | Complete |
+| BASE-03     | Phase 10 | Complete |
 | EVAL-01     | Phase 11 | Pending |
 | EVAL-02     | Phase 11 | Pending |
 | EVAL-03     | Phase 11 | Pending |
