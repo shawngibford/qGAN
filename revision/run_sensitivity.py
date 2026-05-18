@@ -548,12 +548,19 @@ def compute_dualscale_metrics(
     # log-return / transformed scale (Pipeline B exposes a transformed array;
     # Pipeline A has no separate log-return scale -> OD is its only scale).
     if recon.get("transformed") is not None:
-        # Real log-returns: the same forward transform the 09.1 B runs used.
-        from revision.core.preprocessing import forward_logreturns
-
+        # CR-01 fix: the log-return real reference MUST be the frozen Phase 11
+        # recipe. run_dualscale_fidelity.build_real_references uses
+        # `d_real["log_delta"]` (raw 1D, un-windowed, un-standardized) as the
+        # Pipeline-B scale="log_return" reference so the numbers reconcile with
+        # fidelity_dualscale.json / baseline_comparison.json's
+        # scale="transformed" rows. The previous forward_logreturns(d_real["OD"])
+        # + rolling_window construction is a DIFFERENT transform (standardized,
+        # no dither) and did not reconcile with the frozen headline artifacts.
+        # compute_emd/compute_moments flatten their inputs, so the raw 1D real
+        # reference vs the (N,W) fake array reproduces the frozen emd/moment
+        # rows exactly (same invariance proven on the OD scale to <1e-17).
         d_real = load_and_preprocess(str(csv_path))
-        r_norm_real, _, _ = forward_logreturns(d_real["OD"])
-        real_lr = rolling_window(r_norm_real, WINDOW_LENGTH, 2).cpu().numpy()
+        real_lr = d_real["log_delta"].cpu().numpy()
         fake_lr = np.asarray(recon["transformed"], dtype=np.float64)
         lr_metrics = full_metric_suite(real_lr, fake_lr)  # UNCHANGED (D-12-03)
         summary["log_return"] = lr_metrics

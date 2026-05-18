@@ -23,7 +23,7 @@
     "shots_8192": 8192,
     "shots_1024": 1024
   },
-  "generated_at": "2026-05-18T21:08:43Z",
+  "generated_at": "2026-05-18T22:06:24Z",
   "rows": [
     {
       "model_kind": "quantum",
@@ -431,7 +431,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.7004622848880278,
+      "value": 0.12094375219747686,
       "condition": "analytic",
       "shots": null
     },
@@ -441,7 +441,7 @@
       "seed": 42,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "analytic",
       "shots": null
     },
@@ -461,7 +461,7 @@
       "seed": 42,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "analytic",
       "shots": null
     },
@@ -481,7 +481,7 @@
       "seed": 42,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "analytic",
       "shots": null
     },
@@ -501,7 +501,7 @@
       "seed": 42,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "analytic",
       "shots": null
     },
@@ -521,7 +521,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.7104168674503973,
+      "value": 0.6861909152453346,
       "condition": "analytic",
       "shots": null
     },
@@ -631,7 +631,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.697989979243558,
+      "value": 0.12175977586360172,
       "condition": "analytic",
       "shots": null
     },
@@ -641,7 +641,7 @@
       "seed": 43,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "analytic",
       "shots": null
     },
@@ -661,7 +661,7 @@
       "seed": 43,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "analytic",
       "shots": null
     },
@@ -681,7 +681,7 @@
       "seed": 43,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "analytic",
       "shots": null
     },
@@ -701,7 +701,7 @@
       "seed": 43,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "analytic",
       "shots": null
     },
@@ -721,7 +721,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.7067664173761192,
+      "value": 0.6812601501963786,
       "condition": "analytic",
       "shots": null
     },
@@ -831,7 +831,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.6932093541510298,
+      "value": 0.1221281463066824,
       "condition": "analytic",
       "shots": null
     },
@@ -841,7 +841,7 @@
       "seed": 44,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "analytic",
       "shots": null
     },
@@ -861,7 +861,7 @@
       "seed": 44,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "analytic",
       "shots": null
     },
@@ -881,7 +881,7 @@
       "seed": 44,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "analytic",
       "shots": null
     },
@@ -901,7 +901,7 @@
       "seed": 44,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "analytic",
       "shots": null
     },
@@ -921,7 +921,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6961654100054181,
+      "value": 0.6698928649776886,
       "condition": "analytic",
       "shots": null
     },
@@ -931,7 +931,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 1.0517449721591667,
+      "value": 1.051692442558642,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -951,7 +951,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 2.1347953559170225,
+      "value": 2.1347790454718356,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -971,7 +971,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.029156486267065906,
+      "value": 0.029194566045193653,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -991,7 +991,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": -0.025124191056006086,
+      "value": -0.026098361665350598,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1011,7 +1011,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": -0.06495179989895217,
+      "value": -0.05085219920599604,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1021,7 +1021,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.8233713346485871,
+      "value": 0.8232794536666377,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1031,7 +1031,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 1.0511660822778415,
+      "value": 1.0511437747243786,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1051,7 +1051,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 2.1351503593871066,
+      "value": 2.1351213283150687,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1071,7 +1071,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.030317210470083913,
+      "value": 0.030317669773956616,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1091,7 +1091,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 0.008423485176570916,
+      "value": 0.00799992109256413,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1111,7 +1111,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": -0.138219601969519,
+      "value": -0.14052472363038415,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1121,7 +1121,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.8229277342983669,
+      "value": 0.823046634982494,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1131,7 +1131,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 1.0500419707878537,
+      "value": 1.0500395297113863,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1151,7 +1151,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 2.1351693474144384,
+      "value": 2.1351463472372028,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1171,7 +1171,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.03211903607619214,
+      "value": 0.03209622440029559,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1191,7 +1191,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 0.013541707511149163,
+      "value": 0.014748218909058735,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1211,7 +1211,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": -0.11303709961389874,
+      "value": -0.10538148756857257,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1221,7 +1221,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.8224301023605775,
+      "value": 0.8223454282923411,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1231,7 +1231,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.02293749624376055,
+      "value": 0.02295332392488561,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1251,7 +1251,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4070383713619459,
+      "value": 1.4070533788542283,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1271,7 +1271,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8839904966885302,
+      "value": 0.8840258758561532,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1291,7 +1291,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3656140173714937,
+      "value": 1.3656271646245597,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1311,7 +1311,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.777014943878608,
+      "value": 0.7770606749169584,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1321,7 +1321,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.2075542717601091,
+      "value": 0.21390124476004502,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1331,7 +1331,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.6994761770900078,
+      "value": 0.12100406978270313,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1341,7 +1341,7 @@
       "seed": 42,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1351,7 +1351,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12335676563189191,
+      "value": 0.12332627420819335,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1361,7 +1361,7 @@
       "seed": 42,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1371,7 +1371,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07321625136287715,
+      "value": 0.07314323776010861,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1381,7 +1381,7 @@
       "seed": 42,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1391,7 +1391,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.026754528184925516,
+      "value": -0.029041234806467146,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1401,7 +1401,7 @@
       "seed": 42,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1411,7 +1411,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.08801609286252621,
+      "value": -0.08447742476052555,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1421,7 +1421,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.7086963124941631,
+      "value": 0.6839733561981879,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1431,7 +1431,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.03429088850597941,
+      "value": 0.03429942243396128,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1451,7 +1451,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3946387616022111,
+      "value": 1.3946415570908792,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1471,7 +1471,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8584172781938012,
+      "value": 0.8584459506935477,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1491,7 +1491,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.369652160254112,
+      "value": 1.3696716152528678,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1511,7 +1511,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8380272073654318,
+      "value": 0.8379848845119047,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1521,7 +1521,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.2020706334007307,
+      "value": 0.20194675312234084,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1531,7 +1531,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.6972525184158997,
+      "value": 0.12179980534345397,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1541,7 +1541,7 @@
       "seed": 43,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1551,7 +1551,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12420644462542986,
+      "value": 0.12410839910722281,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1561,7 +1561,7 @@
       "seed": 43,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1571,7 +1571,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07582551880538382,
+      "value": 0.07599222497961455,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1581,7 +1581,7 @@
       "seed": 43,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1591,7 +1591,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.009546834570629718,
+      "value": 0.007890069899172136,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1601,7 +1601,7 @@
       "seed": 43,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1611,7 +1611,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.1289013460162045,
+      "value": -0.13459564228227272,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1621,7 +1621,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.7044803242481673,
+      "value": 0.6778606687568527,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1631,7 +1631,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.03178796598188761,
+      "value": 0.03179428213199142,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1651,7 +1651,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.39410050508036,
+      "value": 1.3940828892735238,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1671,7 +1671,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.869367942809764,
+      "value": 0.8693312752456523,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1691,7 +1691,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.384673360825057,
+      "value": 1.3846134071939422,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1711,7 +1711,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8500003439273747,
+      "value": 0.8499028122043253,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1721,7 +1721,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.2048022349762275,
+      "value": 0.20254037624205026,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1731,7 +1731,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.6923515400129376,
+      "value": 0.12226400825240338,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1741,7 +1741,7 @@
       "seed": 44,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1751,7 +1751,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12416299905535562,
+      "value": 0.12418888642056847,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1761,7 +1761,7 @@
       "seed": 44,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1771,7 +1771,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.08219238217032587,
+      "value": 0.08211699763446044,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1781,7 +1781,7 @@
       "seed": 44,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1791,7 +1791,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.004656575608424717,
+      "value": 0.013339281102511251,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1801,7 +1801,7 @@
       "seed": 44,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1811,7 +1811,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.10809322472277483,
+      "value": -0.10365747860567964,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1821,7 +1821,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6938300348740158,
+      "value": 0.6683147627075942,
       "condition": "shots_1024",
       "shots": 1024
     },
@@ -1831,7 +1831,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 1.0519716617961956,
+      "value": 1.05197633911832,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1851,7 +1851,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 2.1348019875784807,
+      "value": 2.1348156267764944,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1871,7 +1871,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.028776959223939375,
+      "value": 0.02879033777255718,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1891,7 +1891,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": -0.028720761539312484,
+      "value": -0.029435005743125568,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1911,7 +1911,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": -0.05126771305881839,
+      "value": -0.04826858728385419,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1921,7 +1921,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.8233846177886036,
+      "value": 0.8233999864374414,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1931,7 +1931,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 1.0514070783967624,
+      "value": 1.0514147637754856,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1951,7 +1951,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 2.1351510235034983,
+      "value": 2.1351564853065117,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1971,7 +1971,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.02990907967874277,
+      "value": 0.029901142315473427,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -1991,7 +1991,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 0.009596272149171624,
+      "value": 0.009715213516042447,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2011,7 +2011,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": -0.13588762203175753,
+      "value": -0.1346420557395871,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2021,7 +2021,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.8231182299892821,
+      "value": 0.8231493491083597,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2031,7 +2031,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 1.0502504410410056,
+      "value": 1.0502503058949035,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2051,7 +2051,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 2.1351689007988046,
+      "value": 2.1351731304494663,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2071,7 +2071,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.03175737767853153,
+      "value": 0.031762521631006575,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2091,7 +2091,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 0.012483030515256496,
+      "value": 0.011668643815226752,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2111,7 +2111,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": -0.10469087297441337,
+      "value": -0.10189607594324546,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2121,7 +2121,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.8224753098908654,
+      "value": 0.8225669708864503,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2131,7 +2131,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.02293616395491033,
+      "value": 0.022942445275507782,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2151,7 +2151,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4070349683030048,
+      "value": 1.4070363930346987,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2171,7 +2171,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8839937273382352,
+      "value": 0.8839946107969717,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2191,7 +2191,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3655829978672036,
+      "value": 1.365604349125002,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2211,7 +2211,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.7768209572715263,
+      "value": 0.7769599156858114,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2221,7 +2221,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.21280906248184966,
+      "value": 0.2123595763691755,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2231,7 +2231,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.7003154515990037,
+      "value": 0.12095605651002382,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2241,7 +2241,7 @@
       "seed": 42,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2251,7 +2251,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12330458019852175,
+      "value": 0.12328876944313107,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2261,7 +2261,7 @@
       "seed": 42,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2271,7 +2271,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.0722432679187432,
+      "value": 0.07222740332905546,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2281,7 +2281,7 @@
       "seed": 42,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2291,7 +2291,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.03202893239948128,
+      "value": -0.033480866916866504,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2301,7 +2301,7 @@
       "seed": 42,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2311,7 +2311,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.08426156540675178,
+      "value": -0.08127490064038012,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2321,7 +2321,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.7103413318814513,
+      "value": 0.6846753206009937,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2331,7 +2331,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.03430245872394014,
+      "value": 0.034300435792934764,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2351,7 +2351,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3946268060425502,
+      "value": 1.394628675113956,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2371,7 +2371,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8584098972663116,
+      "value": 0.8584231988632094,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2391,7 +2391,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3696430625864673,
+      "value": 1.369690305260552,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2411,7 +2411,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8379447359588195,
+      "value": 0.8381182853532732,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2421,7 +2421,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.2072476298627544,
+      "value": 0.20240458600282565,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2431,7 +2431,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.6978817702616074,
+      "value": 0.12176654905213224,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2441,7 +2441,7 @@
       "seed": 43,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2451,7 +2451,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12410938531747798,
+      "value": 0.1241048335778387,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2461,7 +2461,7 @@
       "seed": 43,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2471,7 +2471,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.0749903500605037,
+      "value": 0.07503618744475177,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2481,7 +2481,7 @@
       "seed": 43,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2491,7 +2491,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.00892078878660169,
+      "value": 0.00927164249240202,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2501,7 +2501,7 @@
       "seed": 43,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2511,7 +2511,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.1344721894578811,
+      "value": -0.13600305443291694,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2521,7 +2521,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.7064868878960681,
+      "value": 0.6799371399745953,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2531,7 +2531,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.031785602796287685,
+      "value": 0.031780632330722765,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2551,7 +2551,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3940933467984544,
+      "value": 1.3941021186506637,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2571,7 +2571,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8693738056636061,
+      "value": 0.8693769740768185,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2591,7 +2591,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3846920574156112,
+      "value": 1.384630643462559,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2611,7 +2611,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8501303128462951,
+      "value": 0.8498464298354027,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2621,7 +2621,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.20301624885245412,
+      "value": 0.2025201269337377,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2631,7 +2631,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.6931459886162432,
+      "value": 0.12214443639160961,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2641,7 +2641,7 @@
       "seed": 44,
       "metric_name": "mean_real",
       "scale": "log_return",
-      "value": -0.009524782188236713,
+      "value": 0.0024491515941917896,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2651,7 +2651,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12411590424574295,
+      "value": 0.1241356990812892,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2661,7 +2661,7 @@
       "seed": 44,
       "metric_name": "std_real",
       "scale": "log_return",
-      "value": 0.9923165440559387,
+      "value": 0.02174459770321846,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2671,7 +2671,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.08124301867448006,
+      "value": 0.08129821462862612,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2681,7 +2681,7 @@
       "seed": 44,
       "metric_name": "skew_real",
       "scale": "log_return",
-      "value": -0.03239129059618533,
+      "value": 0.02361487409865046,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2691,7 +2691,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.01628522185351491,
+      "value": 0.013364062016853678,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2701,7 +2701,7 @@
       "seed": 44,
       "metric_name": "kurt_real",
       "scale": "log_return",
-      "value": 1.3252764049298404,
+      "value": 1.3986060992165337,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2711,7 +2711,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.10034497512122753,
+      "value": -0.10358210088047537,
       "condition": "shots_8192",
       "shots": 8192
     },
@@ -2721,7 +2721,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6958849451924906,
+      "value": 0.67090521787876,
       "condition": "shots_8192",
       "shots": 8192
     }
