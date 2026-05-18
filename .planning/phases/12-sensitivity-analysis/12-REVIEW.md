@@ -15,11 +15,14 @@ findings:
 status: resolved
 resolution:
   critical_resolved: 3
+  warnings_resolved: 5
+  info_resolved: 4
   resolved_in:
     - "CR-01: 80208f6 — log_return real reference aligned to frozen Phase 11 recipe (d_real['log_delta']); full 66-cell sweep re-run + headline JSONs re-aggregated; B/42 log_return EMD reconciles to 1.53e-16 (was 0.58); OD unchanged (6.94e-18)"
     - "CR-02: 0607f08 — --seed choices=[42..46] + fail-fast checkpoint-exists guard before any artifact path is built"
     - "CR-03: 0607f08 — is_complete() content-validates metrics.json/samples.npy instead of non-emptiness only; all 66 bundles pass"
-  warnings_status: "advisory — not addressed this pass; tracked as review debt"
+    - "WR-01..05 + IN-01..04: c12b2cc — explicit raises over assert; SENS-dimension collapse guard; regen-shape assertion; symmetric emit-rollup guard; sentinel-delimited usage(); pinned circuit-drift sha256; hoisted imports; non-finite sanitizer + finite _is_num; explicit `complete` grid marker. No regression: rollup byte-identical, reconciliation preserved."
+  warnings_status: "all 5 WARNING + 4 INFO resolved in c12b2cc"
 ---
 
 # Phase 12: Code Review Report
@@ -30,7 +33,9 @@ resolution:
 > full sweep was re-run, and the two headline JSONs were re-aggregated and
 > reconciled against the frozen artifacts to floating-point precision. CR-02
 > and CR-03 are harness-robustness hardening (no scientific output change).
-> The 5 WARNING / 4 INFO findings remain advisory review debt.
+> **UPDATE: all 5 WARNING + 4 INFO findings are also now resolved (c12b2cc)** —
+> hardening only, verified with zero regression (multiseed rollup byte-identical,
+> CR-01 reconciliation preserved). No outstanding review debt.
 
 **Reviewed:** 2026-05-18
 **Depth:** standard
