@@ -1,0 +1,141 @@
+{
+  "condition": "ampdamp_0.01",
+  "pipeline": "A",
+  "seed": 43,
+  "metric_suite": {
+    "OD": {
+      "emd": 1.0531997686178425,
+      "mean_real": 1.4042103290557861,
+      "mean_fake": 2.135847449666592,
+      "std_real": 0.8812640905380249,
+      "std_fake": 0.027553312285972017,
+      "skew_real": 1.3128113157699812,
+      "skew_fake": 0.00657144982784229,
+      "kurt_real": 0.5972872940747962,
+      "kurt_fake": -0.12546765970649876,
+      "jsd": 0.8239611949106326
+    }
+  },
+  "rows": [
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 1.0531997686178425,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "mean_real",
+      "scale": "OD",
+      "value": 1.4042103290557861,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "mean_fake",
+      "scale": "OD",
+      "value": 2.135847449666592,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "std_real",
+      "scale": "OD",
+      "value": 0.8812640905380249,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "std_fake",
+      "scale": "OD",
+      "value": 0.027553312285972017,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "skew_real",
+      "scale": "OD",
+      "value": 1.3128113157699812,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "skew_fake",
+      "scale": "OD",
+      "value": 0.00657144982784229,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "kurt_real",
+      "scale": "OD",
+      "value": 0.5972872940747962,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "kurt_fake",
+      "scale": "OD",
+      "value": -0.12546765970649876,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "jsd",
+      "scale": "OD",
+      "value": 0.8239611949106326,
+      "condition": "ampdamp_0.01",
+      "shots": null,
+      "noise_model": "amplitude_damping",
+      "noise_level": 0.01
+    }
+  ]
+}
