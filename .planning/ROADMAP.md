@@ -184,8 +184,8 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 12-01-PLAN.md — run_sensitivity.py inference driver: trained-params reload, set_shots/default.mixed QNodes, *0.1+reconstruction contracts, harness-faithfulness smoke gate (wave 1)
-- [ ] 12-03-PLAN.md — run_multiseed_rollup.py SENS-03 aggregator: D-10-15 cross-artifact data_hash gate, mean±std roll-up -> multiseed_summary.json (wave 1, parallel-safe)
+- [x] 12-01-PLAN.md — run_sensitivity.py inference driver: trained-params reload, set_shots/default.mixed QNodes, *0.1+reconstruction contracts, harness-faithfulness smoke gate (wave 1)
+- [x] 12-03-PLAN.md — run_multiseed_rollup.py SENS-03 aggregator: D-10-15 cross-artifact data_hash gate, mean±std roll-up -> multiseed_summary.json (wave 1, parallel-safe)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -242,6 +242,6 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 9. Documentation Bridge | v2.0 | 0/5 | Not started | - |
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
-| 12. Sensitivity Analysis | v2.0 | 0/TBD | Not started | - |
+| 12. Sensitivity Analysis | v2.0 | 2/3 | In Progress|  |
 | 13. Architecture & Introspection | v2.0 | 0/TBD | Not started | - |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
