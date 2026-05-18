@@ -110,6 +110,10 @@ None. All deliverables are populated from real on-disk run artifacts; no placeho
 - Phase 11 (utility) can consume `baseline_comparison.json` long-form rows + tstr block directly.
 - Phase 14 owns the headline baseline recommendation (deliberately not made here).
 
+## Self-Check: PASSED
+
+All 6 created deliverables + SUMMARY verified present on disk; all 3 commits (af01662, 4e34944, 9468c7b) verified in git log. STATE.md and ROADMAP.md confirmed untouched (orchestrator owns those).
+
 ---
 *Phase: 10-classical-baselines*
 *Completed: 2026-05-17*
