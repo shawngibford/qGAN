@@ -108,6 +108,14 @@ None - no external service configuration required (local, offline, no network/au
 - The reference implementation, locked H, and univariate-adaptation rationale are all machine-readable in `predictive_discriminative.json["metadata"]`, so the paper can cite them directly.
 - No blockers. Pipeline B `discriminative_score` is identical (0.40888) across most seeds — expected: the verbatim Pipeline-B `reconstruct_od` od_start draw + the GRU classifier converging to the majority class on the harder log-return-reconstructed pool; the score is faithful (`|0.5−acc|`) and the per-seed rows + std=0 are recorded honestly.
 
+## Self-Check: PASSED
+
+- `revision/run_timegan_scores.py` — FOUND
+- `revision/results/predictive_discriminative.json` — FOUND
+- `revision/tests/test_timegan_scores.py` — FOUND
+- `.planning/phases/11-utility-evaluation/11-02-SUMMARY.md` — FOUND
+- Commits `2c86f82`, `8cb24f5`, `1712c01`, `67fafb5` — all FOUND on `worktree-agent-a6f428bc693505641`
+
 ---
 *Phase: 11-utility-evaluation*
 *Completed: 2026-05-18*
