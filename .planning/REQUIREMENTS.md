@@ -38,9 +38,9 @@
 
 ### Sensitivity (addresses R1-M4, R2-1)
 
-- [ ] **SENS-01**: Shot-noise sweep at {analytic, 8192, 1024} shots; metric degradation reported.
-- [ ] **SENS-02**: Noise-model sensitivity — depolarizing channel at p ∈ {0, 0.001, 0.01, 0.05} and amplitude-damping at γ ∈ {0, 0.001, 0.01, 0.05}.
-- [ ] **SENS-03**: Multi-seed runs (≥5 seeds) for every headline result; mean ± std reported in every comparison table.
+- [x] **SENS-01**: Shot-noise sweep at {analytic, 8192, 1024} shots; metric degradation reported.
+- [x] **SENS-02**: Noise-model sensitivity — depolarizing channel at p ∈ {0, 0.001, 0.01, 0.05} and amplitude-damping at γ ∈ {0, 0.001, 0.01, 0.05}.
+- [x] **SENS-03**: Multi-seed runs (≥5 seeds) for every headline result; mean ± std reported in every comparison table.
 
 ### Architecture Study (addresses R2-5b)
 
@@ -148,9 +148,9 @@ See `.planning/MILESTONES.md` for shipped milestones. Legacy requirement IDs (RE
 | EVAL-04     | Phase 11 | Complete |
 | EVAL-05     | Phase 11 | Complete |
 | EVAL-06     | Phase 9  | Pending |
-| SENS-01     | Phase 12 | Pending |
-| SENS-02     | Phase 12 | Pending |
-| SENS-03     | Phase 12 | Pending |
+| SENS-01     | Phase 12 | Complete |
+| SENS-02     | Phase 12 | Complete |
+| SENS-03     | Phase 12 | Complete |
 | ARCH-01     | Phase 13 | Pending |
 | ARCH-02     | Phase 13 | Pending |
 | INTRO-01    | Phase 13 | Pending |
