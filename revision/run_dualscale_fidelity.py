@@ -57,6 +57,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import sys
@@ -106,10 +107,22 @@ NLAGS = 9
 DTW_N_PAIRS = 100  # matches 09.1 / baseline notebook (bounded runtime)
 
 # Baseline run dirs are git-ignored (results/) and may be absent from a fresh
-# worktree checkout. D-11-08 forbids regeneration, so fall back to the canonical
-# primary checkout where the frozen bundles live. The quantum
-# transform_ablation runs are git-tracked and present in-tree.
-_CANONICAL_REPO_FALLBACK = Path("/Users/shawngibford/dev/phd/qGAN")
+# worktree checkout. D-11-08 forbids regeneration, so an OPT-IN fallback to a
+# canonical primary checkout (where the frozen bundles live) is supported via
+# the QGAN_CANONICAL_REPO env var only — no machine-specific path is baked in,
+# so the driver is portable across machines/CI. The quantum transform_ablation
+# runs are git-tracked and present in-tree.
+_CANONICAL_REPO_FALLBACK = (
+    Path(os.environ["QGAN_CANONICAL_REPO"]).resolve()
+    if os.environ.get("QGAN_CANONICAL_REPO")
+    else None
+)
+
+# CR-01 single-root provenance guard: every run dir resolved during one
+# fidelity emission records its resolved root here; emit_rows asserts the set
+# never exceeds one distinct root so frozen artifacts from two different
+# checkouts can never be silently assembled into one fidelity_dualscale.json.
+_RESOLVED_ROOTS: set = set()
 
 
 def _find_repo_root() -> Path:
@@ -141,13 +154,23 @@ def _resolve_run_dir(rel: Path) -> Path:
     repo = _find_repo_root()
     in_tree = repo / rel
     if in_tree.exists():
+        _RESOLVED_ROOTS.add(repo)
         return in_tree
-    fallback = _CANONICAL_REPO_FALLBACK / rel
-    if fallback.exists():
-        return fallback
+    if _CANONICAL_REPO_FALLBACK is not None:
+        fallback = _CANONICAL_REPO_FALLBACK / rel
+        if fallback.exists():
+            _RESOLVED_ROOTS.add(_CANONICAL_REPO_FALLBACK)
+            return fallback
     raise FileNotFoundError(
-        f"frozen run dir not found in worktree ({in_tree}) nor canonical "
-        f"checkout ({fallback}); D-11-08 forbids regeneration"
+        f"frozen run dir not found in this checkout ({in_tree}). "
+        f"D-11-08 forbids regeneration. To consume frozen bundles from "
+        f"another checkout, set the QGAN_CANONICAL_REPO env var to the "
+        f"absolute path of a checkout that contains "
+        f"'{rel}' (e.g. "
+        f"QGAN_CANONICAL_REPO=/path/to/qGAN python -m "
+        f"revision.run_dualscale_fidelity ...). "
+        f"QGAN_CANONICAL_REPO is currently "
+        f"{'set to ' + str(_CANONICAL_REPO_FALLBACK) if _CANONICAL_REPO_FALLBACK else 'unset'}."
     )
 
 
@@ -514,6 +537,14 @@ def emit_rows(real_OD_flat, real_windowed_OD, real_log_delta) -> list:
                 rows.extend(
                     _log_return_rows(mk, p, s, r, real_log_delta)
                 )
+    # CR-01: refuse to assemble one fidelity emission from frozen artifacts
+    # that resolved to more than one distinct checkout root. Raise BEFORE any
+    # JSON is written by the caller.
+    assert len(_RESOLVED_ROOTS) <= 1, (
+        f"fidelity emission mixed frozen artifacts from multiple checkouts: "
+        f"{sorted(str(r) for r in _RESOLVED_ROOTS)} — refusing to assemble "
+        f"fidelity_dualscale.json from inconsistent provenance"
+    )
     return rows
 
 
