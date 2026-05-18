@@ -12,5 +12,9 @@
     "nyquist_validation": false,
     "_auto_chain_active": false
   },
-  "granularity": "fine"
+  "granularity": "fine",
+  "executor": {
+    "stall_threshold_minutes": 45,
+    "stall_detect_interval_minutes": 10
+  }
 }
