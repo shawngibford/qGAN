@@ -12,10 +12,25 @@ findings:
   warning: 5
   info: 4
   total: 12
-status: issues_found
+status: resolved
+resolution:
+  critical_resolved: 3
+  resolved_in:
+    - "CR-01: 80208f6 — log_return real reference aligned to frozen Phase 11 recipe (d_real['log_delta']); full 66-cell sweep re-run + headline JSONs re-aggregated; B/42 log_return EMD reconciles to 1.53e-16 (was 0.58); OD unchanged (6.94e-18)"
+    - "CR-02: 0607f08 — --seed choices=[42..46] + fail-fast checkpoint-exists guard before any artifact path is built"
+    - "CR-03: 0607f08 — is_complete() content-validates metrics.json/samples.npy instead of non-emptiness only; all 66 bundles pass"
+  warnings_status: "advisory — not addressed this pass; tracked as review debt"
 ---
 
 # Phase 12: Code Review Report
+
+> **RESOLUTION (2026-05-18):**   All 3 BLOCKER findings fixed and verified.
+> CR-01 (numerical faithfulness) was the critical one: the log_return real
+> reference now matches `run_dualscale_fidelity.build_real_references`, the
+> full sweep was re-run, and the two headline JSONs were re-aggregated and
+> reconciled against the frozen artifacts to floating-point precision. CR-02
+> and CR-03 are harness-robustness hardening (no scientific output change).
+> The 5 WARNING / 4 INFO findings remain advisory review debt.
 
 **Reviewed:** 2026-05-18
 **Depth:** standard
