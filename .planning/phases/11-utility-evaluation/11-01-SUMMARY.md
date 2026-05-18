@@ -113,6 +113,17 @@ None - plan executed exactly as written. The repo-root path anchoring is an expl
 - The verbatim-reuse approach is proven (Phase-10 anchor reproduced to 4 decimal places) — Phase 11 plans 02 (TimeGAN scores) and 03 (dual-scale fidelity) can safely follow the same `reconstruct_od`/long-form-JSON contract.
 - No blockers.
 
+## Self-Check: PASSED
+
+- FOUND: revision/run_utility.py
+- FOUND: revision/results/tstr.json
+- FOUND: revision/results/augmentation.json
+- FOUND: .planning/phases/11-utility-evaluation/11-01-SUMMARY.md
+- FOUND commit 14699e7 (Task 1)
+- FOUND commit 98d1e0e (Task 2)
+- FOUND commit 79c4822 (Task 3)
+- FOUND commit c846d59 (plan metadata)
+
 ---
 *Phase: 11-utility-evaluation*
 *Completed: 2026-05-17*
