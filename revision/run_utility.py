@@ -26,6 +26,7 @@ import argparse
 import hashlib
 import json
 import sys
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -450,8 +451,20 @@ def run_augmentation(csv_path: Path, out_dir: Path, epochs: int,
             # ── real + synthetic @ +25% / +50% / +100% ──────────────────────
             for label, ratio in _INJECTION_GRID.items():
                 n_synth = int(round(ratio * n_real_train))
-                # Subsample synthetic pool with a RECORDED seed (reproducible).
-                sub_rng = np.random.default_rng(int(ratio * 1000) + 1)
+                # WR-04: a shrunken synth_pool must fail loudly, never silently
+                # collapse +100% into an identical-to-synthetic_only training
+                # set. Always passes at the documented pool size (~3840).
+                assert n_synth < synth_pool.shape[0], (
+                    label, n_synth, synth_pool.shape,
+                    "injection grid collapsed — +100% would equal synthetic_only",
+                )
+                # WR-03: collision-free subsample seed fully qualified by
+                # (model_kind, pipeline, label) — the old int(ratio*1000)+1
+                # was lossy and not qualified by run identity.
+                seed_int = zlib.crc32(
+                    f"augsub|{mk}|{p}|{label}".encode()
+                ) & 0xFFFFFFFF
+                sub_rng = np.random.default_rng(seed_int)
                 if n_synth >= synth_pool.shape[0]:
                     synth_sel = synth_pool
                 else:
@@ -467,7 +480,9 @@ def run_augmentation(csv_path: Path, out_dir: Path, epochs: int,
                     "ratio": float(ratio),
                     "n_train": int(mixed.shape[0]),
                     "n_synth_added": int(synth_sel.shape[0]),
-                    "subsample_rng_seed": int(int(ratio * 1000) + 1),
+                    "subsample_rng_seed": int(seed_int),
+                    "subsample_rng_seed_derivation":
+                        "crc32('augsub|{mk}|{p}|{label}') & 0xFFFFFFFF",
                     "metrics": m,
                 }
                 print(f"    {label} R2={m['r2']:.3f} "
