@@ -46,7 +46,7 @@ Full details: `.planning/ROADMAP.md` (prior revision) and git history.
 - [x] **Phase 9: Documentation Bridge** - Training protocol + dataset stats + differentiable inverse transform — cheap, paper-ready numbers that unblock paper drafting
 - [x] **Phase 10: Classical Baselines** - Matched-parameter classical WGAN-GP + non-adversarial baseline (VAE/AR) + side-by-side comparison table (completed 2026-05-18)
 - [x] **Phase 11: Utility Evaluation** - TSTR, predictive/discriminative scores, real-only vs synthetic-augmented, fidelity metrics on both scales (all 4 plans executed + verified 5/5 on 2026-05-18; gap-closure pending for CR-01 + 6 code-review warnings) (completed 2026-05-18)
-- [ ] **Phase 12: Sensitivity Analysis** - Shot-noise sweep, noise-model sensitivity, multi-seed (≥5) mean ± std across all headline results
+- [x] **Phase 12: Sensitivity Analysis** - Shot-noise sweep, noise-model sensitivity, multi-seed (≥5) mean ± std across all headline results (completed 2026-05-18)
 - [ ] **Phase 13: Architecture & Introspection** - 2–3 ansatz comparison + training-progression / parameter-trajectory / entanglement figures
 - [ ] **Phase 14: Paper Revision & Release Freeze** - All PAPER-* revisions to manuscript aic-4719598 + Zenodo DOI freeze
 
@@ -189,7 +189,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 12-02-PLAN.md — run_sensitivity_sweep.sh + full SENS-01/02 grid execution; shot_noise_sensitivity.json + noise_model_sensitivity.json emitted (wave 2, depends on 12-01)
+- [x] 12-02-PLAN.md — run_sensitivity_sweep.sh + full SENS-01/02 grid execution; shot_noise_sensitivity.json + noise_model_sensitivity.json emitted (wave 2, depends on 12-01)
 
 **Cross-cutting constraints:**
 
@@ -242,6 +242,6 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 9. Documentation Bridge | v2.0 | 0/5 | Not started | - |
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
-| 12. Sensitivity Analysis | v2.0 | 2/3 | In Progress|  |
+| 12. Sensitivity Analysis | v2.0 | 3/3 | Complete   | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 0/TBD | Not started | - |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
