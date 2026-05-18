@@ -126,7 +126,12 @@ Plans:
   2. TimeGAN-style predictive score and discriminative score computed for quantum + classical WGAN-GP + non-adversarial baseline; results in `revision/results/predictive_discriminative.json` with mean ± std across seeds
   3. Real-only vs. synthetic-augmented training comparison (Orlandi et al. style) produces a delta table in `revision/results/augmentation.json` showing downstream-task lift from each generator
   4. Every fidelity metric (EMD, ACF, moments, DTW) is reported on both transformed (log-return) and original OD scales — visible as explicit `scale: "log_return" | "OD"` fields in JSON outputs
-**Plans**: TBD
+**Plans:** 4 plans
+Plans:
+- [ ] 11-01-PLAN.md — run_utility.py: EVAL-01 TSTR soft-sensor + EVAL-04 Orlandi augmentation lift (tstr.json, augmentation.json)
+- [ ] 11-02-PLAN.md — run_timegan_scores.py: EVAL-02/03 faithful TimeGAN predictive + discriminative scores (predictive_discriminative.json)
+- [ ] 11-03-PLAN.md — run_dualscale_fidelity.py: EVAL-05 dual-scale (OD + log_return) fidelity re-emit (fidelity_dualscale.json)
+- [ ] 11-04-PLAN.md — test_utility.py: cross-artifact scientific-integrity verification suite + Phase 11 closeout
 
 ### Phase 12: Sensitivity Analysis
 **Goal**: Quantum results are stress-tested under shot noise, hardware-style noise channels, and seed variation — so the manuscript reports calibrated uncertainty bars and directly addresses R1-M4 and R2-1 preliminary-result concerns
@@ -179,7 +184,7 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 8. Core Module Extraction | v2.0 | 0/5 | Not started | - |
 | 9. Documentation Bridge | v2.0 | 0/5 | Not started | - |
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
-| 11. Utility Evaluation | v2.0 | 0/TBD | Not started | - |
+| 11. Utility Evaluation | v2.0 | 0/4 | Planned | - |
 | 12. Sensitivity Analysis | v2.0 | 0/TBD | Not started | - |
 | 13. Architecture & Introspection | v2.0 | 0/TBD | Not started | - |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
