@@ -23,11 +23,11 @@
 
 ### Evaluation (addresses R1-M2, R1-M3, R2-4, R1-m3)
 
-- [ ] **EVAL-01**: TSTR pipeline — train 1D-CNN or LSTM soft-sensor on synthetic OD windows, evaluate on held-out real data; report R², MAE, RMSE.
-- [ ] **EVAL-02**: TimeGAN-style predictive score computed for quantum, classical WGAN-GP, and non-adversarial baselines.
-- [ ] **EVAL-03**: TimeGAN-style discriminative score computed for the same three models.
-- [ ] **EVAL-04**: Real-only vs. synthetic-augmented training comparison (Orlandi et al. [26] style).
-- [ ] **EVAL-05**: All fidelity metrics (EMD, ACF, moments, DTW) reported on both transformed (log-return) and original OD scales.
+- [x] **EVAL-01**: TSTR pipeline — train 1D-CNN or LSTM soft-sensor on synthetic OD windows, evaluate on held-out real data; report R², MAE, RMSE.
+- [x] **EVAL-02**: TimeGAN-style predictive score computed for quantum, classical WGAN-GP, and non-adversarial baselines.
+- [x] **EVAL-03**: TimeGAN-style discriminative score computed for the same three models.
+- [x] **EVAL-04**: Real-only vs. synthetic-augmented training comparison (Orlandi et al. [26] style).
+- [x] **EVAL-05**: All fidelity metrics (EMD, ACF, moments, DTW) reported on both transformed (log-return) and original OD scales.
 - [ ] **EVAL-06**: Differentiable `inverse_transform` exposed in `revision/core/data.py` (log-return + Lambert W back-transform to OD).
 
 ### Preprocessing Ablation (addresses R1-M3, Phase 09.1)
@@ -142,11 +142,11 @@ See `.planning/MILESTONES.md` for shipped milestones. Legacy requirement IDs (RE
 | BASE-01     | Phase 10 | Complete |
 | BASE-02     | Phase 10 | Complete |
 | BASE-03     | Phase 10 | Complete |
-| EVAL-01     | Phase 11 | Pending |
-| EVAL-02     | Phase 11 | Pending |
-| EVAL-03     | Phase 11 | Pending |
-| EVAL-04     | Phase 11 | Pending |
-| EVAL-05     | Phase 11 | Pending |
+| EVAL-01     | Phase 11 | Complete |
+| EVAL-02     | Phase 11 | Complete |
+| EVAL-03     | Phase 11 | Complete |
+| EVAL-04     | Phase 11 | Complete |
+| EVAL-05     | Phase 11 | Complete |
 | EVAL-06     | Phase 9  | Pending |
 | SENS-01     | Phase 12 | Pending |
 | SENS-02     | Phase 12 | Pending |
