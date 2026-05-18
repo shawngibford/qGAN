@@ -143,7 +143,7 @@ Plans:
   3. Real-only vs. synthetic-augmented training comparison (Orlandi et al. style) produces a delta table in `revision/results/augmentation.json` showing downstream-task lift from each generator
   4. Every fidelity metric (EMD, ACF, moments, DTW) is reported on both transformed (log-return) and original OD scales — visible as explicit `scale: "log_return" | "OD"` fields in JSON outputs
 
-**Plans:** 4/4 plans complete
+**Plans:** 8 plans (4 executed + 4 gap-closure for CR-01 + WR-01..06)
 Plans:
 **Wave 1**
 
@@ -154,6 +154,13 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 11-04-PLAN.md — test_utility.py: cross-artifact scientific-integrity verification suite + Phase 11 closeout
+
+**Gap closure** *(from 11-VERIFICATION.md — CR-01 + WR-01..06)*
+
+- [ ] 11-05-PLAN.md — run_utility.py correctness: WR-01 shape comment, WR-02 NaN-on-degenerate R2, WR-03 collision-free subsample seed, WR-04 grid-collapse guard (gap, wave 1)
+- [ ] 11-06-PLAN.md — run_dualscale_fidelity.py portability: CR-01 env-var QGAN_CANONICAL_REPO resolver + fail-loud + single-root provenance assertion (gap, wave 1, closes HUMAN-UAT)
+- [ ] 11-07-PLAN.md — run_timegan_scores.py: WR-05 single-Generator discriminative_score + logits/labels shape contract (gap, wave 1)
+- [ ] 11-08-PLAN.md — test_timegan_scores.py: WR-06 collected test_discriminative_score_deterministic (gap, wave 2 — depends on 11-07)
 
 **Cross-cutting constraints:**
 
