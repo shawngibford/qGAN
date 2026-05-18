@@ -59,8 +59,30 @@ import hashlib
 import json
 from pathlib import Path
 
+import sys
+
 import numpy as np
 import torch
+
+
+def _bootstrap_repo_on_path() -> Path:
+    """Ensure the repo root is importable when run as a bare script.
+
+    ``python revision/run_dualscale_fidelity.py`` does not put the repo root
+    on ``sys.path`` (only the script's own dir). Walk up to the dir holding
+    ``revision/core/preprocessing.py`` and prepend it (same bootstrap the
+    notebook generators use).
+    """
+    here = Path(__file__).resolve()
+    for cand in [here.parent, *here.parents]:
+        if (cand / "revision" / "core" / "preprocessing.py").exists():
+            if str(cand) not in sys.path:
+                sys.path.insert(0, str(cand))
+            return cand
+    raise RuntimeError("repo root not found for sys.path bootstrap")
+
+
+_bootstrap_repo_on_path()
 
 from revision.core import WINDOW_LENGTH
 from revision.core.data import load_and_preprocess, rolling_window
@@ -335,9 +357,164 @@ def main() -> None:
     )
 
 
+_PIPELINE_A_NA_REASON = (
+    "Pipeline A is raw-OD; no log-return space (D-11-09)"
+)
+
+
+def _od_scale_rows(mk: str, p: str, s: int, od: np.ndarray,
+                    real_OD_flat: np.ndarray,
+                    real_windowed_OD: np.ndarray) -> list:
+    """Emit every eval.py metric on the OD scale for one run.
+
+    Structure copied from ``_build_baseline_notebook.py:249-284`` (same metric
+    suite + DTW sub-sample recipe). NO new metric math (D-11-10). Every row
+    carries ``scale="OD"``.
+    """
+    out = []
+    synth_flat = od.reshape(-1)
+    # EMD on OD scale (pooled across windows)
+    out.append(dict(model_kind=mk, pipeline=p, seed=s, metric_name="emd",
+                     scale="OD", value=compute_emd(real_OD_flat, synth_flat)))
+    # Moments (mean/std/skewness/kurtosis) — each its own metric_name
+    for k, v in compute_moments(synth_flat).items():
+        out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                         metric_name=f"moment_{k}", scale="OD", value=v))
+    # ACF per window aggregated (lags 0..NLAGS), mean + std
+    acfs = np.stack([compute_acf(w, nlags=NLAGS) for w in od])
+    for lag in range(NLAGS + 1):
+        out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                         metric_name=f"acf_lag{lag}_mean", scale="OD",
+                         value=float(acfs[:, lag].mean())))
+        out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                         metric_name=f"acf_lag{lag}_std", scale="OD",
+                         value=float(acfs[:, lag].std())))
+    # DTW nearest-neighbor sub-sampled — verbatim recipe (DTW_N_PAIRS=100,
+    # np.random.default_rng(s*31)); do NOT change seed or pair count (T-11-03).
+    rng = np.random.default_rng(s * 31)
+    synth_idx = rng.choice(od.shape[0],
+                           size=min(DTW_N_PAIRS, od.shape[0]), replace=False)
+    real_idx = rng.choice(real_windowed_OD.shape[0],
+                          size=min(64, real_windowed_OD.shape[0]),
+                          replace=False)
+    dtw_vals = []
+    for i in synth_idx:
+        best = min(compute_dtw(od[i], real_windowed_OD[j]) for j in real_idx)
+        dtw_vals.append(best)
+    out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                     metric_name="dtw_mean", scale="OD",
+                     value=float(np.mean(dtw_vals))))
+    out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                     metric_name="dtw_median", scale="OD",
+                     value=float(np.median(dtw_vals))))
+    out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                     metric_name="dtw_std", scale="OD",
+                     value=float(np.std(dtw_vals))))
+    return out
+
+
+def _log_return_rows(mk: str, p: str, s: int, r: dict,
+                      real_log_delta: np.ndarray) -> list:
+    """Emit the SAME metric set on the log-return scale.
+
+    Pipeline B: real values vs ``r["transformed"]`` (log-return array). The
+    real reference is ``real_log_delta`` (= ``d_real["log_delta"]``) — the
+    EXACT array ``_build_baseline_notebook.py:290`` uses for its
+    ``scale="transformed"`` EMD, so numbers reconcile with
+    ``baseline_comparison.json``.
+
+    Pipeline A: explicit ``value: null`` rows with ``scale_na_reason`` — no
+    silent omission (T-11-08 / T-11-09, RESEARCH Open Question 3). The metric
+    name set mirrors the OD-scale set so the schema stays rectangular.
+    """
+    metric_names = ["emd"]
+    metric_names += [f"moment_{k}"
+                     for k in ("mean", "std", "skewness", "kurtosis")]
+    for lag in range(NLAGS + 1):
+        metric_names += [f"acf_lag{lag}_mean", f"acf_lag{lag}_std"]
+    metric_names += ["dtw_mean", "dtw_median", "dtw_std"]
+
+    if p == "A" or r["transformed"] is None:
+        return [
+            dict(model_kind=mk, pipeline=p, seed=s, metric_name=name,
+                 scale="log_return", value=None,
+                 scale_na_reason=_PIPELINE_A_NA_REASON)
+            for name in metric_names
+        ]
+
+    out = []
+    trans = r["transformed"]
+    trans_flat = trans.reshape(-1)
+    out.append(dict(model_kind=mk, pipeline=p, seed=s, metric_name="emd",
+                     scale="log_return",
+                     value=compute_emd(real_log_delta, trans_flat)))
+    for k, v in compute_moments(trans_flat).items():
+        out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                         metric_name=f"moment_{k}", scale="log_return",
+                         value=v))
+    acfs = np.stack([compute_acf(w, nlags=NLAGS) for w in trans])
+    for lag in range(NLAGS + 1):
+        out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                         metric_name=f"acf_lag{lag}_mean",
+                         scale="log_return",
+                         value=float(acfs[:, lag].mean())))
+        out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                         metric_name=f"acf_lag{lag}_std",
+                         scale="log_return",
+                         value=float(acfs[:, lag].std())))
+    # DTW on log-return windows — verbatim recipe (rng seed s*31, 100 pairs).
+    rng = np.random.default_rng(s * 31)
+    synth_idx = rng.choice(trans.shape[0],
+                           size=min(DTW_N_PAIRS, trans.shape[0]),
+                           replace=False)
+    # Real log-return reference reshaped into NLAGS+1-length windows for the
+    # DTW nearest-neighbour pairing (same window length as OD windows).
+    wl = trans.shape[1]
+    n_full = real_log_delta.shape[0] // wl
+    real_lr_windows = real_log_delta[: n_full * wl].reshape(n_full, wl)
+    real_idx = rng.choice(real_lr_windows.shape[0],
+                          size=min(64, real_lr_windows.shape[0]),
+                          replace=False)
+    dtw_vals = []
+    for i in synth_idx:
+        best = min(compute_dtw(trans[i], real_lr_windows[j])
+                   for j in real_idx)
+        dtw_vals.append(best)
+    out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                     metric_name="dtw_mean", scale="log_return",
+                     value=float(np.mean(dtw_vals))))
+    out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                     metric_name="dtw_median", scale="log_return",
+                     value=float(np.median(dtw_vals))))
+    out.append(dict(model_kind=mk, pipeline=p, seed=s,
+                     metric_name="dtw_std", scale="log_return",
+                     value=float(np.std(dtw_vals))))
+    return out
+
+
 def emit_rows(real_OD_flat, real_windowed_OD, real_log_delta) -> list:
-    """Scale-tagged metric loop — placeholder filled by Task 2."""
-    raise NotImplementedError("emit_rows is implemented in Task 2")
+    """Scale-tagged metric loop over all 60 frozen artifacts.
+
+    For each (model_kind, pipeline, seed): reconstruct OD, emit every
+    ``revision.core.eval`` metric on ``scale="OD"``, then the same metric set
+    on ``scale="log_return"`` (real values for Pipeline B; explicit nulls with
+    a reason for Pipeline A). NO new metric math (D-11-10).
+    """
+    rows = []
+    for mk in MODEL_KINDS:
+        for p in PIPELINES:
+            for s in SEEDS:
+                print(f"  metrics: model={mk} pipeline={p} seed={s}")
+                r = reconstruct_od(mk, p, s)
+                od = r["od_samples"]
+                rows.extend(
+                    _od_scale_rows(mk, p, s, od, real_OD_flat,
+                                   real_windowed_OD)
+                )
+                rows.extend(
+                    _log_return_rows(mk, p, s, r, real_log_delta)
+                )
+    return rows
 
 
 if __name__ == "__main__":
