@@ -373,7 +373,253 @@ comparison = {
 }
 (out_dir / "baseline_comparison.json").write_text(json.dumps(comparison, indent=2))
 print("wrote revision/results/baseline_comparison.json "
-      f"({len(comparison['rows'])} rows, {len(models)} models)")
+      f"({len(comparison['rows'])} rows, {len(models)} models) "
+      "[partial — TSTR-lite block + md added below]")
+"""))
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Task 2 — TSTR-lite (VERBATIM from _build_analysis_notebook.py:432-477) +
+# emit BASE-01/02/03 artifacts.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Cell 9 — TSTR-lite definitions (VERBATIM, D-10-13: not promoted to core)
+CELLS.append(md("""\
+## TSTR-lite — copied VERBATIM (D-10-13)
+
+`TSTRLiteLSTM`, `r2_score_inline`, and `train_eval_tstr` are byte-identical
+copies of `_build_analysis_notebook.py:432-477`. sklearn is **not** installed
+(R²computed inline). These are NOT promoted to `revision/core/` (D-10-13).
+"""))
+CELLS.append(code("""\
+# Task 2 — TSTR-lite LSTM forecaster
+class TSTRLiteLSTM(torch.nn.Module):
+    def __init__(self, hidden: int = 32):
+        super().__init__()
+        self.lstm = torch.nn.LSTM(input_size=1, hidden_size=hidden,
+                                  num_layers=1, batch_first=True)
+        self.fc = torch.nn.Linear(hidden, 1)
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        return self.fc(out[:, -1, :])
+
+def r2_score_inline(y_true, y_pred):
+    ss_res = float(np.sum((y_true - y_pred) ** 2))
+    ss_tot = float(np.sum((y_true - y_true.mean()) ** 2))
+    return 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+
+def train_eval_tstr(train_windows: np.ndarray, eval_windows: np.ndarray,
+                    lstm_seed: int = 40, hidden: int = 32,
+                    epochs: int = 50, bs: int = 64) -> dict:
+    torch.manual_seed(lstm_seed)
+    rng = np.random.default_rng(lstm_seed)
+    Xtr = torch.tensor(train_windows[:, :9], dtype=torch.float32).unsqueeze(-1)
+    ytr = torch.tensor(train_windows[:, 9:10], dtype=torch.float32)
+    Xev = torch.tensor(eval_windows[:, :9], dtype=torch.float32).unsqueeze(-1)
+    yev = torch.tensor(eval_windows[:, 9:10], dtype=torch.float32)
+    model = TSTRLiteLSTM(hidden=hidden)
+    opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+    loss_fn = torch.nn.MSELoss()
+    n = Xtr.shape[0]
+    for epoch in range(epochs):
+        idx = rng.permutation(n)
+        for start in range(0, n, bs):
+            j = idx[start:start + bs]
+            xb, yb = Xtr[j], ytr[j]
+            opt.zero_grad()
+            yp = model(xb)
+            loss = loss_fn(yp, yb)
+            loss.backward()
+            opt.step()
+    model.eval()
+    with torch.no_grad():
+        yev_pred = model(Xev).cpu().numpy()
+    yev_np = yev.cpu().numpy()
+    return {
+        "mse": float(np.mean((yev_np - yev_pred) ** 2)),
+        "r2": r2_score_inline(yev_np, yev_pred),
+    }
+print("TSTR-lite definitions OK")
+"""))
+
+# Cell 10 — TSTR-lite run per (model_kind, pipeline) (D-10-21).
+# Mirrors _build_analysis_notebook.py:482-521 (HELD_OUT_N=320, init seeds
+# {40,41,42}, pool synthetic OD across the 5 training seeds).
+CELLS.append(md("""\
+## Run TSTR-lite per (model_kind, pipeline) — D-10-21
+
+`HELD_OUT_N = 320`: eval on `real_windowed_OD[:320]`, train the real-only
+baseline on `real_windowed_OD[320:]`. For each (model_kind, pipeline) the
+synthetic OD windows are pooled across the 5 training seeds, then 3 LSTMs are
+trained with init seeds {40,41,42} (NOT training seeds). Reports
+`mse_mean/std`, `r2_mean/std`, `per_init_seed` — the 09.1 `tstr_lite.json`
+schema.
+"""))
+CELLS.append(code("""\
+HELD_OUT_N = 320
+real_eval = real_windowed_OD[:HELD_OUT_N]
+real_train_for_baseline = real_windowed_OD[HELD_OUT_N:]
+print(f"TSTR: real_eval={real_eval.shape}, "
+      f"real_train_for_baseline={real_train_for_baseline.shape}")
+
+tstr = {}
+for mk in MODEL_KINDS:
+    for p in PIPELINES:
+        print(f"  TSTR model={mk} pipeline={p} ...")
+        synth_pool = np.concatenate(
+            [recon_cache[(mk, p, s)]["od_samples"] for s in SEEDS], axis=0
+        )
+        per_seed = []
+        for lstm_seed in (40, 41, 42):
+            res = train_eval_tstr(synth_pool, real_eval, lstm_seed=lstm_seed)
+            per_seed.append(res)
+            print(f"    init_seed={lstm_seed} mse={res['mse']:.4f} r2={res['r2']:.3f}")
+        mses = [x["mse"] for x in per_seed]; r2s = [x["r2"] for x in per_seed]
+        tstr[f"{mk}|{p}"] = {
+            "model_kind": mk,
+            "pipeline": p,
+            "n_train_synth": int(synth_pool.shape[0]),
+            "n_eval_real": HELD_OUT_N,
+            "mse_mean": float(np.mean(mses)),
+            "mse_std": float(np.std(mses)),
+            "r2_mean": float(np.mean(r2s)),
+            "r2_std": float(np.std(r2s)),
+            "per_init_seed": {str(k): v for k, v in zip([40, 41, 42], per_seed)},
+        }
+
+print("  TSTR real-only baseline ...")
+per_seed_real = [train_eval_tstr(real_train_for_baseline, real_eval, lstm_seed=ls)
+                 for ls in (40, 41, 42)]
+mses_r = [x["mse"] for x in per_seed_real]; r2s_r = [x["r2"] for x in per_seed_real]
+tstr["real_only_baseline"] = {
+    "n_train_real": int(real_train_for_baseline.shape[0]),
+    "n_eval_real": HELD_OUT_N,
+    "mse_mean": float(np.mean(mses_r)),
+    "mse_std": float(np.std(mses_r)),
+    "r2_mean": float(np.mean(r2s_r)),
+    "r2_std": float(np.std(r2s_r)),
+    "per_init_seed": {str(k): v for k, v in zip([40, 41, 42], per_seed_real)},
+}
+print("TSTR-lite complete:", list(tstr.keys()))
+"""))
+
+# Cell 11 — emit BASE-01/02/03 artifacts + finalize comparison.json
+CELLS.append(md("""\
+## Emit BASE-01 / BASE-02 / BASE-03 artifacts
+
+* **BASE-01** `baseline_classical_wgan.json` — rows[]+models[] filtered to
+  {wgan_mlp, wgan_cnn, wgan_lstm}.
+* **BASE-02** `baseline_nonadversarial.json` — rows[]+models[] filtered to
+  {vae, ar}, carrying each model's `train_protocol_notes` (ELBO/beta/KL-warmup,
+  AR p=2, the `*0.1` asymmetry note).
+* **BASE-03** `baseline_comparison.json` (finalized with the `tstr` block) +
+  `baseline_comparison.md` (one row per model per pipeline, no recommendation
+  prose beyond the Phase-14 deferral caption — D-10-19).
+"""))
+CELLS.append(code("""\
+# Finalize comparison.json with the TSTR-lite block (D-10-21)
+comparison["tstr"] = tstr
+(out_dir / "baseline_comparison.json").write_text(json.dumps(comparison, indent=2))
+print(f"finalized baseline_comparison.json ({len(comparison['rows'])} rows, "
+      f"{len(models)} models, tstr keys={len(tstr)})")
+
+def _subset(kinds: set) -> dict:
+    return {
+        "schema": comparison["schema"],
+        "data_hash": expected_data_hash,
+        "metric_helpers": comparison["metric_helpers"],
+        "recommendation": comparison["recommendation"],
+        "models": [m for m in models if m["kind"] in kinds],
+        "rows": [r for r in comparison["rows"] if r["model_kind"] in kinds],
+        "tstr": {k: v for k, v in tstr.items()
+                 if v.get("model_kind") in kinds},
+    }
+
+# BASE-01 — classical WGAN-GP variants
+wgan_kinds = {"wgan_mlp", "wgan_cnn", "wgan_lstm"}
+(out_dir / "baseline_classical_wgan.json").write_text(
+    json.dumps(_subset(wgan_kinds), indent=2))
+print("wrote baseline_classical_wgan.json (BASE-01):", sorted(wgan_kinds))
+
+# BASE-02 — non-adversarial baselines
+na_kinds = {"vae", "ar"}
+(out_dir / "baseline_nonadversarial.json").write_text(
+    json.dumps(_subset(na_kinds), indent=2))
+print("wrote baseline_nonadversarial.json (BASE-02):", sorted(na_kinds))
+"""))
+
+# Cell 12 — render baseline_comparison.md (D-10-17/18)
+CELLS.append(code("""\
+# BASE-03 markdown render: one row per model per pipeline (D-10-17/18).
+def _agg(mk: str, p: str, metric_name: str, scale: str = "OD"):
+    vals = [r["value"] for r in comparison["rows"]
+            if r["model_kind"] == mk and r["pipeline"] == p
+            and r["metric_name"] == metric_name and r["scale"] == scale]
+    if not vals:
+        return None, None
+    return float(np.mean(vals)), float(np.std(vals))
+
+param_of = {m["kind"]: m["parameter_count"] for m in models}
+lines = []
+lines.append("# BASE-03 — Classical Baselines Apples-to-Apples Comparison\\n")
+lines.append(
+    "Quantum reference (reused from Phase 09.1, D-10-18) + 3 matched-parameter "
+    "classical WGAN-GP variants + 2 non-adversarial baselines, across pipelines "
+    "A and B (Pipeline C dropped, D-10-05), 5 training seeds (42-46).\\n")
+lines.append(
+    f"`data_hash` = `{expected_data_hash}` recomputed once and verified equal "
+    "across all 50 new configs; quantum equivalence by construction "
+    "(D-10-15).\\n")
+
+for p in PIPELINES:
+    lines.append(f"\\n## Pipeline {p}\\n")
+    lines.append("| model | parameter_count | OD-EMD (mean±std) | OD-ACF lag-1 "
+                 "| OD-DTW mean | transformed-EMD (Pipeline B) | TSTR-lite R² |")
+    lines.append("|---|---|---|---|---|---|---|")
+    for mk in MODEL_KINDS:
+        emd_m, emd_s = _agg(mk, p, "emd", "OD")
+        acf1_m, _ = _agg(mk, p, "acf_lag1_mean", "OD")
+        dtw_m, _ = _agg(mk, p, "dtw_mean", "OD")
+        temd_m, temd_s = _agg(mk, p, "emd", "transformed")
+        t = tstr.get(f"{mk}|{p}")
+        emd_c = f"{emd_m:.4f} ± {emd_s:.4f}" if emd_m is not None else "—"
+        acf_c = f"{acf1_m:.4f}" if acf1_m is not None else "—"
+        dtw_c = f"{dtw_m:.4f}" if dtw_m is not None else "—"
+        temd_c = (f"{temd_m:.4f} ± {temd_s:.4f}"
+                  if temd_m is not None else "— (n/a for Pipeline A)")
+        tstr_c = (f"{t['r2_mean']:.3f} ± {t['r2_std']:.3f}"
+                  if t is not None else "—")
+        lines.append(f"| {mk} | {param_of.get(mk, '—')} | {emd_c} | {acf_c} "
+                     f"| {dtw_c} | {temd_c} | {tstr_c} |")
+
+rb = tstr["real_only_baseline"]
+lines.append(
+    f"\\n_TSTR-lite real-only reference: R² = {rb['r2_mean']:.3f} ± "
+    f"{rb['r2_std']:.3f} (train on real_windowed_OD[320:], eval on [:320], "
+    "init seeds {40,41,42})._\\n")
+lines.append(
+    "\\n_No recommendation is made here: per **D-10-19** Phase 14 owns the "
+    "headline baseline decision, driven by Phase 11 utility numbers. This table "
+    "is the apples-to-apples fidelity comparison only._\\n")
+
+(out_dir / "baseline_comparison.md").write_text("\\n".join(lines) + "\\n")
+print("wrote baseline_comparison.md")
+print("\\n".join(lines[:14]))
+"""))
+
+# Cell 13 — final artifact presence check
+CELLS.append(code("""\
+required = [
+    "revision/results/baseline_comparison.json",
+    "revision/results/baseline_comparison.md",
+    "revision/results/baseline_classical_wgan.json",
+    "revision/results/baseline_nonadversarial.json",
+]
+print("Final artifact check:")
+for r in required:
+    sz = Path(r).stat().st_size
+    print(f"  {sz:>10} bytes  {r}")
+    assert sz > 0, r
+print("\\nALL BASE-01/02/03 ARTIFACTS PRESENT")
 """))
 
 nb = {

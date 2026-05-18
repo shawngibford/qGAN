@@ -1,0 +1,7014 @@
+{
+  "schema": "long-form rows[] + models[] aggregate (D-10-16)",
+  "data_hash": "91e447d4624e25b3",
+  "metric_helpers": "revision.core.eval ONLY (D-10-20): compute_emd / compute_moments / compute_acf / compute_dtw",
+  "recommendation": "NONE \u2014 Phase 14 owns the highlight decision (D-10-19)",
+  "models": [
+    {
+      "kind": "wgan_mlp",
+      "parameter_count": 74,
+      "family": "adversarial-classical",
+      "train_protocol_notes": "WGAN-GP via train_wgan_gp UNCHANGED (D-10-08); shared Critic(window_length=WINDOW_LENGTH); generator output is scaled by *0.1 (quantum/WGAN-output magnitude artifact, training.py:283) before saving samples."
+    },
+    {
+      "kind": "wgan_cnn",
+      "parameter_count": 73,
+      "family": "adversarial-classical",
+      "train_protocol_notes": "WGAN-GP via train_wgan_gp UNCHANGED (D-10-08); shared Critic(window_length=WINDOW_LENGTH); generator output is scaled by *0.1 (quantum/WGAN-output magnitude artifact, training.py:283) before saving samples."
+    },
+    {
+      "kind": "wgan_lstm",
+      "parameter_count": 78,
+      "family": "adversarial-classical",
+      "train_protocol_notes": "WGAN-GP via train_wgan_gp UNCHANGED (D-10-08); shared Critic(window_length=WINDOW_LENGTH); generator output is scaled by *0.1 (quantum/WGAN-output magnitude artifact, training.py:283) before saving samples."
+    }
+  ],
+  "rows": [
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.9670233984847213
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.0839258953011046
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.12347746401628469
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 0.047499807248315595
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.19269563692961222
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.1135404769783006
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.24045914529373785
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.025487462429000286
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.1820738139791963
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.2294319300369383
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.16365243144801653
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.2703171381077347
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.10517256221115942
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.3129057956023846
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.20492406360664478
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.06627542226293406
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.0967934677574144
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": 0.151479375059239
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.06622243687645499
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.013194087846988684
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.07050202044282748
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": 0.07522888369646308
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.07097950639219884
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 1.234111351865201
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 1.1393733728537638
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.21267485199562394
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.9097337306338462
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.0769327600823573
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.18583795552496649
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 0.6161578720420898
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.5621848574839587
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": -0.11328583932155342
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.11433477010023113
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.05441308783537241
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.15819242119294596
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.24432462519560685
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.08928953641503229
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": 0.12154289010825581
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.22671076251668845
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.16610132902857505
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.14388410541751703
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": 0.16429112740877855
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.11048098062961798
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": 0.002316932394691306
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.16366326744488158
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.1016209908769789
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.11120052525416554
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.10840507765363899
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.07053759547766487
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 1.622297207688118
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 1.717727274931008
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.28031501208905835
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.9810746223994038
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.115638208853065
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.1439136647748384
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": -0.40632703223298977
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.20505504481287806
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": -0.2874051533620102
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.20613117332456612
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.22726274720923617
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.20747425799661423
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.13387559605808547
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.16150843282182978
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": 0.05741328225240854
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.19663459155167218
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.10857215193840125
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.28993939828035914
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": 0.04923853093834544
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.1221106636337251
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.15429688082907658
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.07843772333635605
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.09966190253980024
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.150579541700642
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.05010287567261638
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.05524217764532832
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 2.4902141302143104
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 2.6631413536173705
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.24100810053617905
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.9463882710398704
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.0819737051208262
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.17246982068781175
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": -0.23215523285609713
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.009690602385441505
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": -0.3995749045420087
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.08436183143389152
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.028056007224510307
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.029807551010596303
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.021963279243105573
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.0776638923175987
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.051791325565229605
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.07350548792547533
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.2921557599208307
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.10423848632869501
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": 0.3399946060692597
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.030546634316938312
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.18220043589081023
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.057823815039456786
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.019297569347777956
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.08954251978816502
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": 0.016410964034225765
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.023881304852951063
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 1.5887438575940425
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 1.7217283535001977
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.2543995682355362
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.9727969995359164
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.095601252579824
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.11987272162242424
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 0.1919352063873424
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.29059795977037517
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.062326003246446
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.38746235096254417
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.006669267244012842
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.18969916441210832
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.19390434156137937
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.13888609375227395
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.11374688619570797
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.2675231636195307
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.13247347415603106
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.20364982708173815
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.1368428113188897
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.138802184637477
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.03507265608835328
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.10264040096606913
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.026728473302828553
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.14432707165478745
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": 0.029654960015099634
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.08355487601208884
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 3.0714813954358804
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 3.177107854008468
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.26762721982491283
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.02281764322055929
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.406130093796647
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8839225884910196
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3688796448075304
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.7919117982892052
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.5703395129265334
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.051039994677322675
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.170928760838958
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.1260232948251366
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.09475310499556754
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.1691099277463178
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.14841012449974073
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.06199210721337756
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.06191332180007332
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.09379876137829271
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.17207116062374356
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.12149173939840464
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.264492171551675
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.07917934552019643
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.30355489086549337
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.06608700909118742
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.19607349942919786
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.04789016239912126
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.2942041320540265
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.20052068901935882
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.287427792221291
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.2221003784860527
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.037374246809644296
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.4059861152035782
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8645413764759364
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3668888146536784
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.8309968703004187
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.5776080015339253
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.07956914720397187
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.38276155695823066
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.06567674244564817
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.06863405848997498
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.06930480014075524
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.13479831519426963
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.047267686193540985
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.3658697920972171
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.09206771658506047
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.3322479375045976
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.06840902568798583
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.32641352119055145
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.060362768843913873
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.21897798601414106
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.07199754063575303
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.1506960649813541
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.0444538552826608
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.29936813413311575
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.17753385075626338
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.38315533498084553
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.33955731842687187
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.03116779554356882
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.3840234571078316
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8629457740833517
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3857929868252203
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.8565477463630433
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.5800574881272396
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.10395507444290082
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.3935013002862117
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.11854169529300583
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.08420480802034873
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.07806547157766915
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.11780618100307513
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.03742111866087125
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.2983040478377241
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.07865347046310052
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.33935742673604524
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.07030834620103722
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.3996538756624703
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.08005427515910743
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.2352848612453107
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.07290193015836935
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.1673572039491746
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.07809190362594148
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.28249831381113183
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.1941265927709615
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.3328752540918709
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.29863996648332497
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.020132275012509162
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.4038131895598809
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8806220829928766
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3581212660776254
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.7778001054407451
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.6323270736464356
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.09706115291642924
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.26733111880813826
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.14307669668040532
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.11159247313928136
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.05812323423950728
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.1277584759313305
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.06308472622572457
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.30514133428386625
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.1430555245408254
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.2892899103020531
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.12681166573750138
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.31575494308842333
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.06047743251425387
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.33980145946481605
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.05338872670246453
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.13350454252336594
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.044934754672269955
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.3453551561925384
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.15953635944066846
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.7095261606215129
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.2981471801322841
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.026410439141243656
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.4111836967680647
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8821358398357618
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.33074808412842
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.7013769367102682
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.7086199269514518
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.08480530527102648
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.3679112336006917
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.12186801691428267
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.08171424511232918
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.0598392253072545
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.1444643352094581
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.09185760572707331
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.30288513813237095
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.15358735807614346
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.37643370780226315
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.12139277876241869
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.3707336166933397
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.017410233351664077
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.29848291336064936
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.07220072585651192
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.16524569446639165
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.05484922902626303
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.3160303892942331
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.20666607888759464
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.4556489874709125
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.26561827738050653
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 1.280955905515639
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.6851662963357703
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8103434620509524
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 0.7748835195986903
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.16793847957764196
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.36654348698794054
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.3150457761397221
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.284810271394262
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.16237366207663903
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.19084536387202297
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.11978038707363464
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.1736830055033221
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.1672819950869434
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.28972727788862745
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.08957381856364224
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.24320227798652166
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.10436231371747735
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.17198001572698213
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.09727300626854431
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.06578548264784047
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.060319758516103106
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.016130334756885707
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.02778274584158615
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 6.30371519361645
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 6.261884755044034
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 1.3825275541360074
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.7468857297250163
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.0422561295497093
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.4186013674374545
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 0.7322785210402588
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.6136021906138938
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.310041613820809
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.19173567292635532
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.04852138905233472
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.186533440230188
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.21230927142027992
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.1322639453122671
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.0893034020301715
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.1791243904197286
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.30188971744127147
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.10067973215581898
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.1365130041028532
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.09187473341303075
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.03846169046941903
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.07166638462717811
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.026442299011571815
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.05421865408477306
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.009485438316050978
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.018107181562729207
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 2.976130467838169
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 3.025459444744456
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.6476764173203879
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 1.054762922133464
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.3798659923725394
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.3835933065659962
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": -0.40464147175450677
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.9542035797898425
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.02563835501589889
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.325970971946297
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.05322735816364143
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.14344011212201072
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.021762804205123623
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.26442932160687477
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.38206379213641234
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.14054205292550792
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.17975843902687508
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.18065931683511127
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.09107159894769219
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.10390364890408692
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": 0.0673038956814476
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.09269135966161621
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.06599036779550295
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.07466766965836458
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": 0.02542576557664808
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.03328030071735811
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 2.7357632329382375
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 2.6621009859274247
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.612656698227484
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.4281609384152401
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.3343107532858176
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.4657075497517186
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": -0.7621099244959751
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.6824928264677714
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": -0.010124537175947556
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.23788854065739118
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.06874496963821584
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.21952236786708954
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.08989814866815421
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.180243087844217
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.1710486547033329
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.17141782119361026
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.0187219514499594
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.20377651699307073
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.11255250239627962
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.16684754864978862
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.051233421434328276
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.11642526695369963
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.008982170663312456
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.11989736580069957
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": 0.031306356129530255
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.07258828612416471
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 3.1751740940854973
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 3.147660690765026
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.7846866635328819
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.4680832103117064
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.5553479191360757
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.6036264342931617
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": -0.5055361490123575
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.7187953626284189
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.3431195873148185
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.2504526041939858
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.14247299026914945
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.12535939856857514
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.29520962916375965
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.12696257620934623
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.3923586982658089
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.16762307281032376
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.3271134785962066
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.08308501123374538
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.13972641184171478
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.07106782440617398
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.03432403854963551
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.09939266443654522
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.08768451613564529
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.07177532394481004
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": 0.11545516269751219
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.053537940958636114
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 5.074671939111669
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 4.98737219435883
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 1.0267023260454773
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.3280541540065395
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.7322645448266711
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 1.1202927633142008
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.459352943682357
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 1.3315542424987443
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.6946143867364482
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.0641566547949726
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.365958566246778
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.08118820501867112
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.029656182230815852
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.06650751148861708
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.16473323598144982
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.05015814520854291
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.3292328072384608
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.07762635793355725
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.35074618514483563
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.07208818696865225
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.34496714437521603
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.03776282415801113
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.25576046314183043
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.024200891106673266
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.1447892993322493
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.017667183127454085
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 1.8757761540229843
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.861805431166881
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 2.5174393134053035
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 1.7795267766156582
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.03418733875708429
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.3988914952611495
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8613188979526872
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3706387709577053
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.8456462621396974
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.2985141769167869
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.19727260141132846
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.029080597950908522
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.18501450962008856
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.0444559174882616
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.11735769482902468
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.012258575295919439
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.07569322351064561
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.053585139772362504
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.12474585933320981
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.13079526253816942
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.13189325077036956
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.1342239495636162
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.17372320758445858
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.27848705546674046
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.09964654855225269
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.26270070971914905
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.038952565888798134
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.3144134211238818
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.1861712626514031
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.36785941348732243
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.7243838186402316
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.0681205944938741
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.4618971739206434
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.9184631967904148
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.421115698739315
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 1.0836250916091839
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.7079419672014448
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.116290845402335
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.42259958943335224
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.08065118106713247
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.12371499144265777
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.04441234901895119
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.16693296915076092
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.04369684782141523
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.3316836015027883
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.05996849812789159
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.41690744440237004
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.06336538411693958
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.394345522753686
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.055833484670519795
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.284747471376603
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.06049979443207717
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.15963953889124655
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.033760246749915894
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.613807407886362
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.28737161537875666
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.8309713486176122
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.9554924063227391
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.0849818049829876
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.319368521117857
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8313842937445424
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3684982553741907
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.83915015533751
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.6274195663982635
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.09567393727560898
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.20320508897936934
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.19679088712125575
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.0633910925924653
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.21293335080969286
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.13948991574462705
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.07203803160168201
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.16533316109110502
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.1640195077867534
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.22953395653747594
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.17661111380391345
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.3012240292846921
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.12369254047332127
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.28249803263960993
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.09293561834007615
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.1491544674876574
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.05251542162885145
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.5332675970661108
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.2858097253746774
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.5895630155422729
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.8917030533768214
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.04982149442276524
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.3555007921446456
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8484380907103058
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3326041264220465
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.7125235884308303
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.5604097349510341
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.13326986697691917
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.07106646832246329
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.17115058109979528
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.36274878120457416
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.18462757450646505
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.4232684509903569
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.15288650901194864
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.2768839406842343
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.1287849752356878
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.10153883038090887
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.17063969287278988
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": 0.01522319896307574
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.17052593856402135
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.01722953738541425
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.1180022745328925
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": 0.0005110636380868474
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.060451168660450506
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.3710166899690307
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.2202321457093795
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.5561669846906877
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.9069895473401379
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 1.0084552643553575
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.1076254099776315
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.08535720256053288
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": -0.06043566908849773
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -1.3627667819948424
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": -0.1879870116279175
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.011514697935281327
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.16514267653844864
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.008392108482411996
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.23378184570150032
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.01002467624858845
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": 0.1638573916906656
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.010320048036699803
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.46691501115631195
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.011549063163321953
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": 0.0791475359109782
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.010130937073335875
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": 0.03292521126156301
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.0045005461120592345
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.14600081182926153
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.0027094486037546476
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.043666473412767484
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.0021987178843007452
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 1.1353429808327575
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 1.1417592762819435
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.022622221330891066
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.9977643890417268
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.0666883470979114
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.06821489784083251
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": -1.0804743058942068
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.8935719858619202
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": -0.2945846229189264
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.11733156744832741
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.11155559578789233
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.03632962050195936
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.11110041368854667
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.05733099946383937
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.010804602550168489
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.11500959601480219
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.15780854476920358
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.08431836863316262
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.10497248503396854
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.06034726318014793
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": 0.2903841252464746
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.07450793082936519
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.208514603337135
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.060529370666014645
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.013244084537727034
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.03792920004580864
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.8150971264256444
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.8243735934933244
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 43,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.030928278574015658
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.9771508255264525
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.1005477905228895
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.11132520150019694
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 0.30578509262002135
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.29046115172588305
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": -0.21813061451475396
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.12786034352413583
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.2428850048791761
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.028542628753176456
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.0067671897595438365
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.02885672431942535
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.14892940822438433
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.012986463609645246
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.12051677639332073
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.006612141742249775
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": 0.008864193972620175
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.0974473452874763
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.2817980198019484
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.037635807854513245
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.03808208341847377
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.008177296477550094
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.013689273576318751
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.006024061112928918
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 2.559949893546778
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 2.4661150738723094
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 44,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.1728537151755704
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 1.0408995621935253
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.1428121929819817
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.057163982905354675
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 0.20753708393383874
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.5418746998741204
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.002861721813970311
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.10586108498263934
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.1783115951537082
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.06799697771394084
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": -0.37432371302660616
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.07198810590970822
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": 0.061251543604491546
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.052773867079705106
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.021301761544981382
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.05743673853658371
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": 0.06287435387888839
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.030668838336290798
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.1890077630659147
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.08765574824574068
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.10078698814475298
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.03862276736273159
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": 0.03517022534910732
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.027950358311161272
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.9458009390062938
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.9225746285927412
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 45,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.04938809283863617
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.9853502569730079
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 2.0566273043417924
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.06478097951860012
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": -0.006150485206546959
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": -0.4966343241125295
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": -0.08944950792402666
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.028602052302335014
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": -0.5024478155249666
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.035408644913928596
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.3021420008760237
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.04910742886867906
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": 0.17011101446132576
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.04369798117307063
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.2870144751652454
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.01875254491652414
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.21349582324377325
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.0167092329212684
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": 0.15934351493481877
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.05090383777183539
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": 0.05314072439547132
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.048607105233663184
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.09232963280962764
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.02491060979670605
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 3.4872916584447897
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 3.5024890944547855
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 46,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.09206073816161062
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.023252722701694623
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.4072252512029368
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8840655958007879
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3651275464166686
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.7740283695374006
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.6920919555358789
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.005035170794774629
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.3976524886492729
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.003156648223563856
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.20039295281691108
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.0019086716035230946
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.12116807386457154
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.003803348565345942
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.35260770336157354
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.005574258981068505
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.4055702472529649
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.0017328069164210616
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.3619838109493079
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.006632907167373091
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.35790626515287394
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.00599975420646045
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.19090129642077078
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.0023290314243911737
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.2721923086129192
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.20061754991066566
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.252049764605801
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.17739676346860855
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.03484475749934947
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.374033673112877
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8453196533689651
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3676328891676475
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.8279961345414377
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.7061870605547899
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.05454843692999302
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.4380550107321915
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.04167808387793043
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.0845568060025446
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.04477138188707296
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.16321155345490843
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.004944874612301553
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.33063193020730697
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.008264548090500813
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.4315332231694243
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.03006843578171075
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.4146120007737244
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.04145978168307992
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.24981857315779582
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.041688854188029756
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.13899159652636608
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.02114188413741702
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.3031792011350314
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.18520626955836644
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.341096368094732
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 43,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.11084458843634971
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.030916487607214514
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.3831923505863644
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8624888939747114
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3845071550002714
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.8502944283608462
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.7178102974661277
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.009821925279741371
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.398348934462973
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.008152590859271355
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.16519004917092103
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.02416717966718773
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.14385040501768606
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.012128677602721247
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.3382618785591916
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.006060785830117656
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.4086456227294249
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.004981617878061758
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.39494940311760024
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.007095175607824118
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.3356895524941987
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.021609210185959158
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.15995241918192005
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.018469682878273462
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.28585475215464184
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.19042090085928448
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.32583597577865686
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 44,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.19405255503688273
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.032226592314656
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.423477796333739
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.8931345992561327
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3587710606195007
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.7810151592527239
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.7230458187864567
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.006730953806453875
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.4303678719517202
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.011621931033984467
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.1583816343218374
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.0036713328668279595
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.11668552429676705
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.010699608827527424
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.30223369431276353
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.022691064530618678
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.41872003605297076
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.01214756454741343
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.41164874184856226
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.005830403021530631
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.352570067481935
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.012840067083716633
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.20993726106701563
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.006697005924524399
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.3548706552177581
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.1656494622400287
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.7915905303864845
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 45,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.18573519495037852
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "OD",
+      "value": 0.025047478318069933
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_mean",
+      "scale": "OD",
+      "value": 1.38256968820572
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_std",
+      "scale": "OD",
+      "value": 0.863778657059987
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_skewness",
+      "scale": "OD",
+      "value": 1.3270399899379377
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "moment_kurtosis",
+      "scale": "OD",
+      "value": 0.6821063687227746
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag0_mean",
+      "scale": "OD",
+      "value": 1.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag0_std",
+      "scale": "OD",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag1_mean",
+      "scale": "OD",
+      "value": 0.742235352438226
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag1_std",
+      "scale": "OD",
+      "value": 0.023406913467192127
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag2_mean",
+      "scale": "OD",
+      "value": 0.39191122921898197
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag2_std",
+      "scale": "OD",
+      "value": 0.02204456735866583
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag3_mean",
+      "scale": "OD",
+      "value": 0.09826306104234978
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag3_std",
+      "scale": "OD",
+      "value": 0.0076509685264293265
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag4_mean",
+      "scale": "OD",
+      "value": -0.13579585459203874
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag4_std",
+      "scale": "OD",
+      "value": 0.024090053831325196
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag5_mean",
+      "scale": "OD",
+      "value": -0.30639762219117006
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag5_std",
+      "scale": "OD",
+      "value": 0.03538375411072511
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag6_mean",
+      "scale": "OD",
+      "value": -0.4217244593680513
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag6_std",
+      "scale": "OD",
+      "value": 0.036291819423777835
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag7_mean",
+      "scale": "OD",
+      "value": -0.4503743849033615
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag7_std",
+      "scale": "OD",
+      "value": 0.010038423414392508
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag8_mean",
+      "scale": "OD",
+      "value": -0.2987826679236037
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag8_std",
+      "scale": "OD",
+      "value": 0.036566426545471216
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag9_mean",
+      "scale": "OD",
+      "value": -0.11933465372133246
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "acf_lag9_std",
+      "scale": "OD",
+      "value": 0.02886197295006334
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_mean",
+      "scale": "OD",
+      "value": 0.27718227445797516
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_median",
+      "scale": "OD",
+      "value": 0.18323096458543098
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "dtw_std",
+      "scale": "OD",
+      "value": 0.47566319538822427
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 46,
+      "metric_name": "emd",
+      "scale": "transformed",
+      "value": 0.12777464800955202
+    }
+  ],
+  "tstr": {
+    "wgan_mlp|A": {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "mse_mean": 0.29550750615696114,
+      "mse_std": 0.3767680314355919,
+      "r2_mean": -0.2529255154747557,
+      "r2_std": 1.5974629083716951,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.82777339220047,
+          "r2": -2.5096854828649855
+        },
+        "41": {
+          "mse": 0.050611186772584915,
+          "r2": 0.7854130742747437
+        },
+        "42": {
+          "mse": 0.008137939497828484,
+          "r2": 0.9654958621659745
+        }
+      }
+    },
+    "wgan_mlp|B": {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "mse_mean": 0.0006084567673193911,
+      "mse_std": 8.160380165038576e-05,
+      "r2_mean": 0.9974201974921777,
+      "r2_std": 0.0003459929186551021,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0006092974217608571,
+          "r2": 0.9974166332415005
+        },
+        "41": {
+          "mse": 0.0007079776260070503,
+          "r2": 0.996998237807298
+        },
+        "42": {
+          "mse": 0.0005080952541902661,
+          "r2": 0.9978457214277345
+        }
+      }
+    },
+    "wgan_cnn|A": {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "mse_mean": 0.21807346741358438,
+      "mse_std": 0.01842441483756309,
+      "r2_mean": 0.07538791767526572,
+      "r2_std": 0.07811788348236223,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.24371500313282013,
+          "r2": -0.033329916580691954
+        },
+        "41": {
+          "mse": 0.2092617303133011,
+          "r2": 0.11274889476139038
+        },
+        "42": {
+          "mse": 0.20124366879463196,
+          "r2": 0.14674477484509874
+        }
+      }
+    },
+    "wgan_cnn|B": {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "mse_mean": 0.000722897801703463,
+      "mse_std": 0.0002591457564822882,
+      "r2_mean": 0.9969349776556508,
+      "r2_std": 0.0010987549621294744,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0005396633641794324,
+          "r2": 0.9977118754500914
+        },
+        "41": {
+          "mse": 0.000539644795935601,
+          "r2": 0.997711954029716
+        },
+        "42": {
+          "mse": 0.0010893852449953556,
+          "r2": 0.9953811034871448
+        }
+      }
+    },
+    "wgan_lstm|A": {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "mse_mean": 0.4134417672952016,
+      "mse_std": 0.08793835765205368,
+      "r2_mean": -0.7529562491900376,
+      "r2_std": 0.3728507810189788,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.33011487126350403,
+          "r2": -0.3996576575593025
+        },
+        "41": {
+          "mse": 0.535056471824646,
+          "r2": -1.2685917338442692
+        },
+        "42": {
+          "mse": 0.37515395879745483,
+          "r2": -0.5906193561665409
+        }
+      }
+    },
+    "wgan_lstm|B": {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "mse_mean": 0.0007790687959641218,
+      "mse_std": 2.8960561160687973e-05,
+      "r2_mean": 0.9966968176212371,
+      "r2_std": 0.00012279026023761302,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0007759569562040269,
+          "r2": 0.996710011495591
+        },
+        "41": {
+          "mse": 0.0008159914868883789,
+          "r2": 0.9965402686474836
+        },
+        "42": {
+          "mse": 0.0007452579447999597,
+          "r2": 0.9968401727206369
+        }
+      }
+    }
+  }
+}
