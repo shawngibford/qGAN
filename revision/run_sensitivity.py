@@ -762,7 +762,7 @@ def main() -> None:
         )
     )
     ap.add_argument("--pipeline", choices=["A", "B"])
-    ap.add_argument("--seed", type=int)
+    ap.add_argument("--seed", type=int, choices=[42, 43, 44, 45, 46])
     ap.add_argument(
         "--condition",
         choices=CONDITIONS,
@@ -815,6 +815,20 @@ def main() -> None:
         ap.error(
             "per-cell mode requires --pipeline, --seed and --condition "
             "(or use --emit-rollup for aggregation)"
+        )
+
+    # CR-02: fail fast with a clear message if no frozen run exists for this
+    # (pipeline, seed) BEFORE any artifact path/dir is created — otherwise a
+    # mis-typed seed dies deep inside torch.load with a raw FileNotFoundError
+    # and the sweep retries the opaque failure forever.
+    _ck_path = (
+        REPO / "revision" / "results" / "transform_ablation" / "runs"
+        / args.pipeline / str(args.seed) / "checkpoint.pt"
+    )
+    if not _ck_path.exists():
+        ap.error(
+            f"no frozen run for pipeline={args.pipeline} seed={args.seed}: "
+            f"{_ck_path} not found"
         )
 
     run_dir = out_root / "runs" / args.condition / args.pipeline / str(args.seed)

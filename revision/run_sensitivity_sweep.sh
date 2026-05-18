@@ -184,11 +184,32 @@ mkdir -p "${OUT_ROOT}/runs"
 # exactly these three — there is no checkpoint.pt, this is inference-only).
 # -----------------------------------------------------------------------------
 is_complete() {
+  # CR-03: a non-empty check alone is unsafe — a worker killed (thermal /
+  # OOM / Ctrl-C) after the three write calls return but before the OS
+  # flushes can leave truncated-but-nonempty bundles that this would mark
+  # complete, permanently skipping regeneration on resume and silently
+  # defeating numerical faithfulness. Validate that metrics.json actually
+  # parses with the expected keys and samples.npy loads, not just that the
+  # files are non-empty.
   local c="$1" p="$2" s="$3"
   local d="${OUT_ROOT}/runs/${c}/${p}/${s}"
   [[ -s "${d}/config.yaml" \
      && -s "${d}/samples.npy" \
-     && -s "${d}/metrics.json" ]]
+     && -s "${d}/metrics.json" ]] || return 1
+  "$PYTHON" - "$d" <<'PY' || return 1
+import json, sys
+import numpy as np
+d = sys.argv[1]
+try:
+    m = json.load(open(d + "/metrics.json"))
+    assert isinstance(m, dict) and "rows" in m and "condition" in m
+    assert len(m["rows"]) > 0
+    arr = np.load(d + "/samples.npy")
+    assert arr.ndim == 2 and arr.shape[0] > 0
+except Exception as e:
+    print(f"is_complete: corrupt bundle {d}: {e}", file=sys.stderr)
+    sys.exit(1)
+PY
 }
 
 iso_now() {

@@ -39,7 +39,7 @@
   },
   "channel_insertion": "per-layer (after each entangling block)",
   "zero_anchor_note": "depol_0.0 and ampdamp_0.0 are the same physical p=0/gamma=0 baseline; kept as two distinct rows (one per noise_model) so each degradation curve owns its own zero anchor",
-  "generated_at": "2026-05-18T22:06:24Z",
+  "generated_at": "2026-05-18T22:11:15Z",
   "rows": [
     {
       "model_kind": "quantum",
