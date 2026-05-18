@@ -184,7 +184,9 @@ def reconstruct_od(model_kind: str, pipeline: str, seed: int,
 # ─────────────────────────────────────────────────────────────────────────────
 def _real_windowed_od(csv_path: Path) -> np.ndarray:
     d_real = load_and_preprocess(str(csv_path))
-    return rolling_window(d_real["OD"], WINDOW_LENGTH, 2).cpu().numpy()  # (384,10)
+    # shape == ((len(OD)-WINDOW_LENGTH)//2 + 1, WINDOW_LENGTH) == (385, 10);
+    # downstream [HELD_OUT_N:] with HELD_OUT_N=320 leaves 65 training windows.
+    return rolling_window(d_real["OD"], WINDOW_LENGTH, 2).cpu().numpy()
 
 
 def _resolve_csv(csv_arg: Path) -> Path:
@@ -216,7 +218,7 @@ class TSTRLiteLSTM(torch.nn.Module):
 def r2_score_inline(y_true, y_pred):
     ss_res = float(np.sum((y_true - y_pred) ** 2))
     ss_tot = float(np.sum((y_true - y_true.mean()) ** 2))
-    return 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+    return 1.0 - ss_res / ss_tot if ss_tot > 0 else float("nan")
 
 
 def train_eval_tstr(train_windows: np.ndarray, eval_windows: np.ndarray,
@@ -224,6 +226,12 @@ def train_eval_tstr(train_windows: np.ndarray, eval_windows: np.ndarray,
                     epochs: int = 50, bs: int = 64) -> dict:
     torch.manual_seed(lstm_seed)
     rng = np.random.default_rng(lstm_seed)
+    # WR-02: fail loudly at the true cause if a future eval slice is degenerate
+    # (zero-variance target) — otherwise R2 is undefined and would masquerade as
+    # a confusing <0 leakage-sentinel failure. Current data is non-degenerate so
+    # every computed number stays byte-identical.
+    assert eval_windows[:, 9:10].std() > 0.0, \
+        "degenerate (zero-variance) eval target — TSTR R2 undefined"
     Xtr = torch.tensor(train_windows[:, :9], dtype=torch.float32).unsqueeze(-1)
     ytr = torch.tensor(train_windows[:, 9:10], dtype=torch.float32)
     Xev = torch.tensor(eval_windows[:, :9], dtype=torch.float32).unsqueeze(-1)
