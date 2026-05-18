@@ -1,0 +1,142 @@
+"""Phase 12 SENS-03 driver — the multi-seed headline roll-up aggregator.
+
+This is a **pure consumer / pure aggregator** (D-12-03): it reads the five
+frozen Phase 10/11 headline JSONs, asserts their `data_hash` fields are
+mutually equal (D-10-15 hard cross-artifact gate, expected
+`91e447d4624e25b3`), groups every long-form `rows[]` element by
+`(source_filename, model_kind, pipeline, metric_name, scale, injection_ratio)`,
+and emits `revision/results/multiseed_summary.json` with `{mean, std, n,
+seeds}` per cell plus a provenance header.
+
+NO new training, NO new seeds, NO device, NO model, NO torch, NO pennylane,
+NO `revision.core` model code (D-12-03 / D-10-13). Single invocation, stdlib
+only — `statistics.fmean`/`statistics.stdev` (RESEARCH Open Q3: zero new
+dependency; pandas/numpy are NOT required).
+
+`revision/core/` is NEVER modified by this driver (D-10-13 invariant).
+
+Pattern source: `revision/run_utility.py:38-58` (verbatim repo-root resolver +
+`sys.path.insert`) and 12-RESEARCH.md Code Example 4 (groupby + cross-artifact
+data_hash assertion). Anti-Pattern (forbidden): re-deriving `data_hash` from
+`transform_ablation` configs — only mutual equality of the five frozen
+`data_hash` fields is asserted; the existing `data_hash_verification`
+quantum-equivalence blocks already encode by-construction equivalence.
+"""
+
+from __future__ import annotations
+
+import json
+import statistics
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Repo-root resolution (copied verbatim from run_utility.py:38-58 — the driver
+# may run from a worktree / arbitrary cwd; results paths are repo-root anchored).
+# This driver is a pure aggregator: it imports NO torch/pennylane/core, so the
+# sys.path.insert exists only to keep the resolver shape identical to peers.
+# ─────────────────────────────────────────────────────────────────────────────
+def _find_repo_root() -> Path:
+    p = Path(__file__).resolve().parent
+    for cand in [p, *p.parents]:
+        if (cand / "revision" / "core" / "preprocessing.py").exists():
+            return cand
+    # Fallback: walk up from cwd (covers exotic invocations).
+    p = Path.cwd().resolve()
+    for cand in [p, *p.parents]:
+        if (cand / "revision" / "core" / "preprocessing.py").exists():
+            return cand
+    raise RuntimeError("repo root not found (revision/core/preprocessing.py)")
+
+
+REPO = _find_repo_root()
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
+RESULTS = REPO / "revision/results"
+
+# The five frozen Phase 10/11 headline comparison JSONs (verified row counts:
+# baseline_comparison 1710, tstr 144, predictive_discriminative 120,
+# augmentation 180, fidelity_dualscale 3360 — 12-RESEARCH.md Code Example 4).
+HEADLINE = [
+    "baseline_comparison.json",
+    "tstr.json",
+    "predictive_discriminative.json",
+    "augmentation.json",
+    "fidelity_dualscale.json",
+]
+
+# Canonical training seed set re-emitted as mean ± std (n) per headline cell.
+SEED_SET = [42, 43, 44, 45, 46]
+
+
+def main() -> None:
+    # Load all five frozen headline JSONs.
+    docs = {f: json.loads((RESULTS / f).read_text()) for f in HEADLINE}
+
+    # ── D-10-15 cross-artifact invariant (HARD gate, before any roll-up math) ──
+    # Every headline JSON must agree on `data_hash`. We assert ONLY mutual
+    # equality of the five frozen `data_hash` fields — we do NOT re-derive the
+    # hash from transform_ablation configs (Anti-Pattern): the existing
+    # `data_hash_verification` blocks already encode by-construction equivalence.
+    hashes = {f: d["data_hash"] for f, d in docs.items()}
+    assert len(set(hashes.values())) == 1, (
+        f"data_hash mismatch across headline artifacts: {hashes}"
+    )
+    canonical_hash = next(iter(hashes.values()))  # expect "91e447d4624e25b3"
+
+    # ── Long-form groupby ─────────────────────────────────────────────────────
+    # Concatenate every `rows[]` element across the five files; bucket by the
+    # aggregation key. augmentation.json adds `injection_ratio`; for the other
+    # four files `r.get("injection_ratio")` -> None so the key is well-defined.
+    buckets: dict[tuple, list[tuple]] = defaultdict(list)
+    for f, d in docs.items():
+        for r in d["rows"]:
+            key = (
+                f,
+                r["model_kind"],
+                r["pipeline"],
+                r["metric_name"],
+                r["scale"],
+                r.get("injection_ratio"),
+            )
+            buckets[key].append((r["seed"], r["value"]))
+
+    # ── Per-cell mean ± std (n) ───────────────────────────────────────────────
+    rollup = []
+    for (src, mk, pl, metric, scale, ratio), pairs in buckets.items():
+        seeds = sorted({s for s, _ in pairs})
+        vals = [v for _, v in pairs]
+        rollup.append(
+            {
+                "source": src,
+                "model_kind": mk,
+                "pipeline": pl,
+                "metric_name": metric,
+                "scale": scale,
+                "injection_ratio": ratio,
+                "mean": statistics.fmean(vals),
+                "std": statistics.stdev(vals) if len(vals) > 1 else 0.0,
+                "n": len(vals),
+                "seeds": seeds,
+            }
+        )
+
+    out = {
+        "schema": "SENS-03 multi-seed roll-up: mean ± std per headline cell",
+        "data_hash": canonical_hash,
+        "consumed_artifacts": {f: docs[f]["data_hash"] for f in HEADLINE},
+        "seed_set": SEED_SET,
+        "rollup": rollup,
+    }
+    (RESULTS / "multiseed_summary.json").write_text(json.dumps(out, indent=2))
+    print(
+        f"multiseed_summary.json written: {len(rollup)} cells, "
+        f"data_hash={canonical_hash}"
+    )
+
+
+if __name__ == "__main__":
+    main()
