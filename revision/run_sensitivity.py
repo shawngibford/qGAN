@@ -297,3 +297,409 @@ def _resolve_csv(csv_arg: Path) -> Path:
     if csv_arg.is_absolute():
         return csv_arg
     return (REPO / csv_arg).resolve()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SENS-01 — finite-shot QNode via the 0.44 ``qml.set_shots`` transform
+# (RESEARCH Code Example 2). NO ``shots=`` device kwarg (Pitfall 1 — deprecated
+# in 0.44, emits PennyLaneDeprecationWarning). ``diff_method=None`` — inference
+# only, NOT backprop (Pitfall 2).
+# ─────────────────────────────────────────────────────────────────────────────
+def make_shot_qnode(g: QuantumGenerator, shots: int | None):
+    """Build an analytic-or-finite-shot QNode on ``default.qubit``.
+
+    ``shots is None`` -> exact analytic expectations (the {analytic} reference
+    device). ``shots`` an int -> the 0.44 ``qml.set_shots`` transform wraps the
+    analytic QNode (the deprecation-free finite-shot path).
+    """
+    dev = qml.device("default.qubit", wires=NUM_QUBITS)  # analytic device; shot count via transform only (Pitfall 1)
+    qn = qml.QNode(
+        g.generator_circuit, dev, interface="torch", diff_method=None
+    )  # NOT backprop (Pitfall 2)
+    if shots is not None:
+        qn = qml.set_shots(qn, shots=shots)  # 0.44 transform API
+    return qn
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SENS-02 — noise-channel QNode on ``default.mixed`` (RESEARCH Code Example 3).
+#
+# DELIBERATE, DOCUMENTED DUPLICATION (D-10-13 NOT violated): the gate body
+# below is a verbatim copy of ``QuantumGenerator.generator_circuit``
+# (revision/core/models/quantum.py:122-171) reproduced in THIS driver — not in
+# ``core/`` — purely for the noise study. ``g.generator_circuit`` ends with
+# ``qml.expval`` returns, so channels cannot be appended after calling it
+# inside another QNode; the body must be re-emitted with channel insertion.
+#
+# Channel-insertion strategy: **PER-LAYER** — one channel on every wire
+# immediately AFTER each entangling (range-based CNOT) block. This is the
+# conventional NISQ deployment-noise model and the documented default
+# (RESEARCH Assumption A1 / Open Q2 RESOLVED: per-layer). ``level`` is the
+# depolarizing ``p`` or amplitude-damping ``gamma``; ``level == 0.0`` reduces
+# the mixed-device circuit to the analytic result (sanity-checkable).
+# ─────────────────────────────────────────────────────────────────────────────
+def make_noisy_qnode(g: QuantumGenerator, channel: str, level: float):
+    """Build a ``default.mixed`` QNode with per-layer noise channels.
+
+    ``channel`` in {'depolarizing', 'amplitude_damping'}; ``level`` is ``p``
+    (depolarizing) or ``gamma`` (amplitude damping). Per-layer insertion: the
+    channel is applied to every wire after each entangling block (Assumption
+    A1, RESOLVED default). ``diff_method=None`` (Pitfall 2).
+    """
+    if channel not in ("depolarizing", "amplitude_damping"):
+        raise ValueError(
+            f"unknown channel {channel!r} "
+            f"(expected 'depolarizing' or 'amplitude_damping')"
+        )
+    dev = qml.device("default.mixed", wires=NUM_QUBITS)
+
+    def _apply_channel() -> None:
+        for q in range(NUM_QUBITS):
+            if channel == "depolarizing":
+                qml.DepolarizingChannel(level, wires=q)
+            else:
+                qml.AmplitudeDamping(level, wires=q)
+
+    def noisy_generator_circuit(noise_params, params_pqc):
+        # ── verbatim copy of quantum.py:122-171 generator_circuit body ──
+        idx = 0
+
+        # Step 1: Hadamard initialization for superposition.
+        for qubit in range(NUM_QUBITS):
+            qml.Hadamard(wires=qubit)
+
+        # Step 2: IQP encoding with parameterized RZ rotations.
+        for qubit in range(NUM_QUBITS):
+            if idx < len(params_pqc):
+                qml.RZ(phi=params_pqc[idx], wires=qubit)
+                idx += 1
+
+        # Step 3: Apply noise encoding (IQP-style) — reuse g.encoding_layer
+        # (reads params only; does not touch core/ state).
+        g.encoding_layer(noise_params)
+
+        # Step 4: Strongly Entangled Layers (+ per-layer noise channel).
+        for layer in range(NUM_LAYERS):
+            for qubit in range(NUM_QUBITS):
+                if idx + 2 < len(params_pqc):
+                    qml.Rot(
+                        phi=params_pqc[idx],
+                        theta=params_pqc[idx + 1],
+                        omega=params_pqc[idx + 2],
+                        wires=qubit,
+                    )
+                    idx += 3
+
+            if NUM_QUBITS > 1:
+                range_param = (layer % (NUM_QUBITS - 1)) + 1
+                for qubit in range(NUM_QUBITS):
+                    target_qubit = (qubit + range_param) % NUM_QUBITS
+                    qml.CNOT(wires=[qubit, target_qubit])
+
+            # PER-LAYER noise insertion: channel on every wire after each
+            # entangling block (Assumption A1 — documented default).
+            _apply_channel()
+
+        # Step 5: Final measurement-preparation rotations.
+        for qubit in range(NUM_QUBITS):
+            if idx + 1 < len(params_pqc):
+                qml.RX(phi=params_pqc[idx], wires=qubit)
+                idx += 1
+                qml.RY(phi=params_pqc[idx], wires=qubit)
+                idx += 1
+
+        # Step 6: Pauli-X and Pauli-Z expectations on each qubit.
+        measurements = []
+        for i in range(NUM_QUBITS):
+            measurements.append(qml.expval(qml.PauliX(i)))
+            measurements.append(qml.expval(qml.PauliZ(i)))
+        return (*measurements,)
+
+    qn = qml.QNode(
+        noisy_generator_circuit, dev, interface="torch", diff_method=None
+    )  # NOT backprop (Pitfall 2)
+    return qn
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Condition parsing — the 11 canonical tokens (D-12-02 / ROADMAP SC-2).
+#   analytic
+#   shots_8192  shots_1024
+#   depol_{0.0,0.001,0.01,0.05}      (depolarizing p)
+#   ampdamp_{0.0,0.001,0.01,0.05}    (amplitude-damping gamma)
+# ─────────────────────────────────────────────────────────────────────────────
+_SHOT_LEVELS = {"shots_8192": 8192, "shots_1024": 1024}
+_DEPOL_LEVELS = {
+    "depol_0.0": 0.0,
+    "depol_0.001": 0.001,
+    "depol_0.01": 0.01,
+    "depol_0.05": 0.05,
+}
+_AMPDAMP_LEVELS = {
+    "ampdamp_0.0": 0.0,
+    "ampdamp_0.001": 0.001,
+    "ampdamp_0.01": 0.01,
+    "ampdamp_0.05": 0.05,
+}
+CONDITIONS: list[str] = (
+    ["analytic"]
+    + list(_SHOT_LEVELS)
+    + list(_DEPOL_LEVELS)
+    + list(_AMPDAMP_LEVELS)
+)
+
+
+def _build_qnode_for_condition(g: QuantumGenerator, condition: str):
+    """Return the QNode for a non-analytic condition (analytic handled upstream)."""
+    if condition in _SHOT_LEVELS:
+        return make_shot_qnode(g, _SHOT_LEVELS[condition])
+    if condition in _DEPOL_LEVELS:
+        return make_noisy_qnode(g, "depolarizing", _DEPOL_LEVELS[condition])
+    if condition in _AMPDAMP_LEVELS:
+        return make_noisy_qnode(g, "amplitude_damping", _AMPDAMP_LEVELS[condition])
+    raise ValueError(f"unknown condition {condition!r}; expected one of {CONDITIONS}")
+
+
+def _condition_dims(condition: str) -> dict:
+    """Extra long-form row dimensions for a condition (SENS-01 vs SENS-02)."""
+    if condition == "analytic":
+        return {"shots": None, "noise_model": None, "noise_level": None}
+    if condition in _SHOT_LEVELS:
+        return {
+            "shots": _SHOT_LEVELS[condition],
+            "noise_model": None,
+            "noise_level": None,
+        }
+    if condition in _DEPOL_LEVELS:
+        return {
+            "shots": None,
+            "noise_model": "depolarizing",
+            "noise_level": _DEPOL_LEVELS[condition],
+        }
+    if condition in _AMPDAMP_LEVELS:
+        return {
+            "shots": None,
+            "noise_model": "amplitude_damping",
+            "noise_level": _AMPDAMP_LEVELS[condition],
+        }
+    raise ValueError(f"unknown condition {condition!r}")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Dual-scale fidelity recompute (EVAL-05). ``full_metric_suite`` is reused
+# UNCHANGED (D-12-03) — this driver only emits long-form rows tagging each
+# metric with ``scale`` ∈ {"OD", "log_return"} plus the condition dims.
+# ─────────────────────────────────────────────────────────────────────────────
+def _emit_rows(
+    metric_dict: dict,
+    *,
+    pipeline: str,
+    seed: int,
+    scale: str,
+    condition: str,
+) -> list[dict]:
+    dims = _condition_dims(condition)
+    rows: list[dict] = []
+    for metric_name, value in metric_dict.items():
+        rows.append(
+            {
+                "model_kind": "quantum",
+                "pipeline": pipeline,
+                "seed": int(seed),
+                "metric_name": metric_name,
+                "scale": scale,
+                "value": float(value),
+                "condition": condition,
+                **dims,
+            }
+        )
+    return rows
+
+
+def compute_dualscale_metrics(
+    pipeline: str,
+    seed: int,
+    condition: str,
+    fake_samples_pm1: np.ndarray,
+    csv_path: Path,
+    inverse_kwargs_path: Path,
+) -> tuple[dict, list[dict]]:
+    """Recompute the unchanged fidelity suite on OD scale AND log-return scale.
+
+    Returns ``(metrics_summary, long_form_rows)`` where ``metrics_summary``
+    nests the raw ``full_metric_suite`` output per scale and ``long_form_rows``
+    is the EVAL-05 dual-scale long-form list.
+    """
+    # Real reference windows (OD scale) — the (385,10) matrix the 09.1 runs used.
+    real_od = real_windowed_od(csv_path)
+    recon = reconstruct_od(pipeline, seed, fake_samples_pm1, inverse_kwargs_path)
+    fake_od = recon["od_samples"]
+
+    rows: list[dict] = []
+    summary: dict = {}
+
+    # OD scale (always available, both pipelines).
+    od_metrics = full_metric_suite(real_od, fake_od)  # UNCHANGED (D-12-03)
+    summary["OD"] = od_metrics
+    rows += _emit_rows(
+        od_metrics, pipeline=pipeline, seed=seed, scale="OD", condition=condition
+    )
+
+    # log-return / transformed scale (Pipeline B exposes a transformed array;
+    # Pipeline A has no separate log-return scale -> OD is its only scale).
+    if recon.get("transformed") is not None:
+        # Real log-returns: the same forward transform the 09.1 B runs used.
+        from revision.core.preprocessing import forward_logreturns
+
+        d_real = load_and_preprocess(str(csv_path))
+        r_norm_real, _, _ = forward_logreturns(d_real["OD"])
+        real_lr = rolling_window(r_norm_real, WINDOW_LENGTH, 2).cpu().numpy()
+        fake_lr = np.asarray(recon["transformed"], dtype=np.float64)
+        lr_metrics = full_metric_suite(real_lr, fake_lr)  # UNCHANGED (D-12-03)
+        summary["log_return"] = lr_metrics
+        rows += _emit_rows(
+            lr_metrics,
+            pipeline=pipeline,
+            seed=seed,
+            scale="log_return",
+            condition=condition,
+        )
+
+    return summary, rows
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Idempotent per-cell run-dir bundle (copied shape from
+# run_baselines.py:456-522): rmtree on rerun (no stale partial bundle), then
+# write config.yaml / samples.npy / metrics.json.
+# ─────────────────────────────────────────────────────────────────────────────
+def _write_bundle(
+    run_dir: Path,
+    *,
+    config: dict,
+    samples: np.ndarray,
+    metrics: dict,
+) -> None:
+    import yaml
+
+    if run_dir.exists():
+        shutil.rmtree(run_dir)  # idempotent — no stale partial bundle
+    run_dir.mkdir(parents=True, exist_ok=True)
+    (run_dir / "config.yaml").write_text(yaml.safe_dump(config, sort_keys=False))
+    np.save(run_dir / "samples.npy", samples)
+    (run_dir / "metrics.json").write_text(
+        json.dumps(metrics, indent=2, default=float)
+    )
+
+
+def _frozen_analytic_paths(pipeline: str, seed: int) -> tuple[Path, Path]:
+    """Frozen 09.1 ``samples.npy`` + ``inverse_kwargs.npz`` for a (pipeline, seed)."""
+    base = (
+        REPO
+        / "revision"
+        / "results"
+        / "transform_ablation"
+        / "runs"
+        / pipeline
+        / str(seed)
+    )
+    return base / "samples.npy", base / "inverse_kwargs.npz"
+
+
+def main() -> None:
+    """CLI entry point — one (pipeline, seed, condition) cell per invocation."""
+    ap = argparse.ArgumentParser(
+        description=(
+            "Phase 12 SENS-01/02 per-cell inference driver — one "
+            "(pipeline, seed, condition) cell per invocation. Requires "
+            "PennyLane 0.44.0 (asserted at import; do NOT run via ./qgan_env)."
+        )
+    )
+    ap.add_argument("--pipeline", required=True, choices=["A", "B"])
+    ap.add_argument("--seed", required=True, type=int)
+    ap.add_argument(
+        "--condition",
+        required=True,
+        choices=CONDITIONS,
+        help="One of the 11 tokens: analytic / shots_* / depol_* / ampdamp_*.",
+    )
+    ap.add_argument(
+        "--out-root",
+        type=Path,
+        default=Path("revision/results/sensitivity"),
+        help="Root under which runs/<condition>/<pipeline>/<seed>/ is created.",
+    )
+    ap.add_argument(
+        "--csv-path",
+        type=Path,
+        default=Path("./data.csv"),
+        help="Path to the OD CSV (same data the 09.1 quantum runs used).",
+    )
+    args = ap.parse_args()
+
+    out_root = (
+        args.out_root
+        if Path(args.out_root).is_absolute()
+        else (REPO / args.out_root)
+    )
+    run_dir = out_root / "runs" / args.condition / args.pipeline / str(args.seed)
+    csv_path = _resolve_csv(args.csv_path)
+    frozen_samples, frozen_inv = _frozen_analytic_paths(args.pipeline, args.seed)
+
+    if args.condition == "analytic":
+        # No regeneration (no-regeneration invariant, mirrors D-11-08): reuse
+        # the frozen 09.1 samples.npy as the analytic reference column.
+        samples = np.load(frozen_samples).astype(np.float64)
+        regenerated = False
+    else:
+        g = load_trained_generator(args.pipeline, args.seed)
+        qnode = _build_qnode_for_condition(g, args.condition)
+        samples = generate_samples_on_qnode(
+            g, qnode, n=int(np.load(frozen_samples).shape[0]), seed=args.seed
+        )
+        regenerated = True
+
+    metrics_summary, long_form_rows = compute_dualscale_metrics(
+        args.pipeline,
+        args.seed,
+        args.condition,
+        samples,
+        csv_path,
+        frozen_inv,
+    )
+
+    dims = _condition_dims(args.condition)
+    config = {
+        "pipeline": args.pipeline,
+        "seed": int(args.seed),
+        "condition": args.condition,
+        "regenerated": regenerated,
+        "num_qubits": int(NUM_QUBITS),
+        "num_layers": int(NUM_LAYERS),
+        "window_length": int(WINDOW_LENGTH),
+        "batch_size": int(BATCH_SIZE),
+        "noise_low": float(NOISE_LOW),
+        "noise_high": float(NOISE_HIGH),
+        "pennylane_version": qml.__version__,
+        "channel_insertion": "per-layer (after each entangling block)",
+        "csv_path": str(csv_path),
+        **dims,
+    }
+    metrics = {
+        "condition": args.condition,
+        "pipeline": args.pipeline,
+        "seed": int(args.seed),
+        "metric_suite": metrics_summary,
+        "rows": long_form_rows,
+    }
+    _write_bundle(run_dir, config=config, samples=samples, metrics=metrics)
+
+    print(
+        f"[run_sensitivity] pipeline={args.pipeline} seed={args.seed} "
+        f"condition={args.condition} regenerated={regenerated} -> {run_dir} "
+        f"(n_synth={samples.shape[0]}, samples.shape={samples.shape})"
+    )
+
+
+if __name__ == "__main__":
+    main()
