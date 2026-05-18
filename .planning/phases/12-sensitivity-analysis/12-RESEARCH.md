@@ -440,19 +440,32 @@ augmentation 180. `data_hash` is `91e447d4624e25b3` in all five `[VERIFIED]`.
 | A4 | SENS-03 should assert mutual equality of the five JSON `data_hash` fields rather than re-derive from transform_ablation | Pattern 2 | Low — the existing `data_hash_verification.quantum_equivalence` blocks already document by-construction equivalence; re-deriving would duplicate Phase 11 logic |
 | A5 | Channels modeled as a deployment-noise layer on the *trained* unitary (not noise-during-training) | Architecture | None — this IS D-12-01 (inference-only robustness narrative); locked, not assumed |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **PennyLane version skew between system Python (0.44.0) and `qgan_env` (0.43.0).**
+   RESOLVED: startup assert + no venv upgrade. New drivers add a startup assertion
+   `assert qml.__version__ == "0.44.0"` (fail loud); the new sweep wrapper deliberately
+   does NOT prefer `./qgan_env` and selects an explicit 0.44.0 interpreter (system
+   python3). `qgan_env` is NOT upgraded (preserves the frozen 09.1/10 reproduction
+   baseline). Implemented by Plan 01 Task 1 (version gate) and Plan 02 Task 1 (interpreter
+   deviation from the analog sweep).
    - What we know: `run_baselines_sweep.sh` prefers `./qgan_env/bin/python`; that venv has PennyLane 0.43.0. CONTEXT.md pins 0.44.0. `qml.set_shots` and the `shots=` deprecation differ between the two.
    - What's unclear: which interpreter the Phase 12 sweep should use, and whether upgrading `qgan_env` would invalidate the "09.1/10 reproduce exactly" cross-cutting constraint.
    - Recommendation: New drivers add a startup assertion `assert qml.__version__ == "0.44.0"` (fail loud). The new sweep wrapper selects a 0.44.0 interpreter explicitly (do NOT silently prefer the 0.43 venv). Do not upgrade `qgan_env` in this phase — that is a separate, risky change touching the frozen reproduction baseline. Planner should make the interpreter selection an explicit, documented decision.
 
 2. **Channel-insertion strategy (per-gate vs per-layer vs readout-only).**
+   RESOLVED: per-layer default. The channel is inserted after each entangling block
+   (conventional NISQ model, mid-cost, defensible). Implemented by Plan 01 Task 2
+   (`make_noisy_qnode` per-layer insertion); recorded in the driver docstring and in the
+   `noise_model_sensitivity.json` provenance block (Plan 02 Task 3).
    - What we know: all three work on 0.44.0; CONTEXT.md grants this to Claude's discretion.
    - What's unclear: which the planner wants as the documented default.
    - Recommendation: per-layer (channel after each entangling block) — conventional NISQ model, mid-cost, defensible. Document the choice in the driver docstring and in `noise_model_sensitivity.json` metadata.
 
 3. **Pandas vs stdlib for SENS-03.**
+   RESOLVED: stdlib. SENS-03 aggregation uses pure stdlib (`statistics.fmean/stdev`) —
+   zero new dependency, dependency-audit-clean. Codified in the SENS-03 plan (Phase 12
+   Plan 03) per Code Example 4.
    - What we know: Example 4 works with pure stdlib (`statistics.fmean/stdev`).
    - Recommendation: prefer stdlib (zero new dependency, dependency-audit-clean). Use pandas only if a `revision/run_*.py` already imports it (verify at plan time).
 
