@@ -64,8 +64,8 @@ Code group (Group A):
 - [x] Non-adversarial baseline (VAE or AR) — Phase 10 (BASE-02 validated 2026-05-18; VAE 562p + AR p=2, same data/metrics; BASE-03 comparison table emitted)
 - [x] TSTR + predictive + discriminative score evaluation — Phase 11 (EVAL-01..04 validated 2026-05-18; tstr.json, predictive_discriminative.json, augmentation.json; CR-01 + WR-01..06 gap closure complete, suite 23 passed)
 - [x] OD-scale inverse-transform results + ACF on both scales — Phase 11 (EVAL-05 validated 2026-05-18; fidelity_dualscale.json dual-scale OD + log_return, 3360 rows; CR-01 portability fix applied)
-- [ ] Shot-noise sensitivity (1024, 8192) + multi-seed (≥5) sweeps
-- [ ] Depolarizing / amplitude-damping noise-model sensitivity
+- [x] Shot-noise sensitivity (1024, 8192) + multi-seed (≥5) sweeps — Phase 12 (SENS-01 + SENS-03 validated 2026-05-18; shot_noise_sensitivity.json 270 rows, multiseed_summary.json 1266 cells over seeds {42..46}; CR-01 log_return-reference fix reconciled to 1.5e-16, CR-02/03 hardening)
+- [x] Depolarizing / amplitude-damping noise-model sensitivity — Phase 12 (SENS-02 validated 2026-05-18; noise_model_sensitivity.json 720 rows, depol+ampdamp p/γ ∈ {0,0.001,0.01,0.05}, per-layer channels; sweep 8m22s, core/ byte-untouched)
 - [ ] Training-progression + circuit-analysis figures
 - [ ] 2–3 ansatz comparison
 - [ ] Training-protocol + dataset-stats extraction
@@ -162,4 +162,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-18 — Phase 11 (Utility Evaluation) complete; EVAL-01..05 validated (TSTR, predictive/discriminative, Orlandi augmentation, dual-scale fidelity), CR-01 + WR-01..06 code-review gap closure complete with the data_hash 91e447d4624e25b3 invariant held and the test suite at 23 passed*
+*Last updated: 2026-05-18 — Phase 12 (Sensitivity Analysis) complete; SENS-01/02/03 validated (shot-noise + depol/ampdamp noise-model degradation + ≥5-seed mean±std roll-up). Code review found 3 BLOCKERs, all fixed: CR-01 aligned the log_return real reference to the frozen Phase 11 recipe (reconciled to 1.5e-16, full 66-cell sweep re-run), CR-02/03 hardened seed validation and resume-completeness. data_hash 91e447d4624e25b3 invariant held; revision/core/ byte-untouched*
