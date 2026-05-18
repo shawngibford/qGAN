@@ -45,7 +45,7 @@ Full details: `.planning/ROADMAP.md` (prior revision) and git history.
 - [ ] **Phase 8: Core Module Extraction** - Extract shared logic into `revision/core/` and verify parity with main notebook
 - [x] **Phase 9: Documentation Bridge** - Training protocol + dataset stats + differentiable inverse transform — cheap, paper-ready numbers that unblock paper drafting
 - [x] **Phase 10: Classical Baselines** - Matched-parameter classical WGAN-GP + non-adversarial baseline (VAE/AR) + side-by-side comparison table (completed 2026-05-18)
-- [x] **Phase 11: Utility Evaluation** - TSTR, predictive/discriminative scores, real-only vs synthetic-augmented, fidelity metrics on both scales (completed 2026-05-18)
+- [ ] **Phase 11: Utility Evaluation** - TSTR, predictive/discriminative scores, real-only vs synthetic-augmented, fidelity metrics on both scales (all 4 plans executed + verified 5/5 on 2026-05-18; gap-closure pending for CR-01 + 6 code-review warnings)
 - [ ] **Phase 12: Sensitivity Analysis** - Shot-noise sweep, noise-model sensitivity, multi-seed (≥5) mean ± std across all headline results
 - [ ] **Phase 13: Architecture & Introspection** - 2–3 ansatz comparison + training-progression / parameter-trajectory / entanglement figures
 - [ ] **Phase 14: Paper Revision & Release Freeze** - All PAPER-* revisions to manuscript aic-4719598 + Zenodo DOI freeze
