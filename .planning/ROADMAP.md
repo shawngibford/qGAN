@@ -143,13 +143,13 @@ Plans:
   3. Real-only vs. synthetic-augmented training comparison (Orlandi et al. style) produces a delta table in `revision/results/augmentation.json` showing downstream-task lift from each generator
   4. Every fidelity metric (EMD, ACF, moments, DTW) is reported on both transformed (log-return) and original OD scales — visible as explicit `scale: "log_return" | "OD"` fields in JSON outputs
 
-**Plans:** 4 plans
+**Plans:** 3/4 plans executed
 Plans:
 **Wave 1**
 
-- [ ] 11-01-PLAN.md — run_utility.py: EVAL-01 TSTR soft-sensor + EVAL-04 Orlandi augmentation lift (tstr.json, augmentation.json)
-- [ ] 11-02-PLAN.md — run_timegan_scores.py: EVAL-02/03 faithful TimeGAN predictive + discriminative scores (predictive_discriminative.json)
-- [ ] 11-03-PLAN.md — run_dualscale_fidelity.py: EVAL-05 dual-scale (OD + log_return) fidelity re-emit (fidelity_dualscale.json)
+- [x] 11-01-PLAN.md — run_utility.py: EVAL-01 TSTR soft-sensor + EVAL-04 Orlandi augmentation lift (tstr.json, augmentation.json)
+- [x] 11-02-PLAN.md — run_timegan_scores.py: EVAL-02/03 faithful TimeGAN predictive + discriminative scores (predictive_discriminative.json)
+- [x] 11-03-PLAN.md — run_dualscale_fidelity.py: EVAL-05 dual-scale (OD + log_return) fidelity re-emit (fidelity_dualscale.json)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -220,7 +220,7 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 8. Core Module Extraction | v2.0 | 0/5 | Not started | - |
 | 9. Documentation Bridge | v2.0 | 0/5 | Not started | - |
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
-| 11. Utility Evaluation | v2.0 | 0/4 | Planned | - |
+| 11. Utility Evaluation | v2.0 | 3/4 | In Progress|  |
 | 12. Sensitivity Analysis | v2.0 | 0/TBD | Not started | - |
 | 13. Architecture & Introspection | v2.0 | 0/TBD | Not started | - |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
