@@ -271,19 +271,25 @@ def discriminative_score(real_windows: np.ndarray, synth_windows: np.ndarray,
     Lower is better.
     """
     torch.manual_seed(seed)
-    np.random.seed(seed)            # train_test_divide uses np.random.permutation
+    # WR-05: one explicit Generator drives BOTH 80/20 pool splits AND the
+    # minibatch index draws. No legacy global np.random.seed — the splits are
+    # no longer correlated through global-RNG order and are immune to upstream
+    # global-RNG mutation or call reordering.
+    g = np.random.default_rng(seed)
 
     rw = np.asarray(real_windows, dtype=np.float64)
     sw = np.asarray(synth_windows, dtype=np.float64)
 
-    def _split(pool: np.ndarray, rate: float = 0.8):
+    def _split(pool: np.ndarray, g: np.random.Generator, rate: float = 0.8):
         n = pool.shape[0]
-        perm = np.random.permutation(n)
+        perm = g.permutation(n)
         cut = int(n * rate)
         return pool[perm[:cut]], pool[perm[cut:]]
 
-    r_tr, r_te = _split(rw)
-    s_tr, s_te = _split(sw)
+    # Split order is LOAD-BEARING: _split(rw) then _split(sw) consume `g`
+    # sequentially in this exact order — reordering changes the streams.
+    r_tr, r_te = _split(rw, g)
+    s_tr, s_te = _split(sw, g)
 
     def _to_xy(real_part: np.ndarray, synth_part: np.ndarray):
         X = np.concatenate([real_part, synth_part], axis=0)
@@ -302,11 +308,11 @@ def discriminative_score(real_windows: np.ndarray, synth_windows: np.ndarray,
     opt = torch.optim.Adam(model.parameters(), lr=1e-3)
     loss_fn = torch.nn.BCEWithLogitsLoss()
     n = Xtr.shape[0]
-    rng = np.random.default_rng(seed)
-
+    # WR-05: reuse the SAME Generator `g` (no second Generator) — minibatch
+    # draws continue the single explicit stream after the two splits.
     model.train()
     for _ in range(int(iters)):
-        idx = rng.integers(0, n, size=min(bs, n))
+        idx = g.integers(0, n, size=min(bs, n))
         xb, yb = Xtr[idx], ytr[idx]
         opt.zero_grad()
         loss = loss_fn(model(xb), yb)
@@ -316,6 +322,11 @@ def discriminative_score(real_windows: np.ndarray, synth_windows: np.ndarray,
     model.eval()
     with torch.no_grad():
         logits = model(Xte)
+        # WR-06 shape contract: the GRU may emit (B,1); reconcile to (B,) and
+        # assert logits/labels share shape so a (B,1) vs (B,) broadcast can
+        # never silently produce a meaningless (B,B) accuracy.
+        logits = logits.squeeze(-1)
+        assert logits.shape == yte.shape, (logits.shape, yte.shape)
         preds = (torch.sigmoid(logits) > 0.5).float()
         acc = float((preds == yte).float().mean().item())
     return float(abs(0.5 - acc))
