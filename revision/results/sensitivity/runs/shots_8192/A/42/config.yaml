@@ -1,0 +1,16 @@
+pipeline: A
+seed: 42
+condition: shots_8192
+regenerated: true
+num_qubits: 5
+num_layers: 4
+window_length: 10
+batch_size: 12
+noise_low: 0.0
+noise_high: 12.566370614359172
+pennylane_version: 0.44.0
+channel_insertion: per-layer (after each entangling block)
+csv_path: /Users/shawngibford/dev/phd/qGAN/.claude/worktrees/agent-a49d8c3170e8558b6/data.csv
+shots: 8192
+noise_model: null
+noise_level: null

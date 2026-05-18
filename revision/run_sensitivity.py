@@ -592,6 +592,145 @@ def _write_bundle(
     )
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Headline aggregation (Plan 12-02 Task 3 — SENS-01 / SENS-02 deliverables).
+#
+# Walks every per-cell metrics.json under ``<out_root>/runs/*/{B,A}/{42,43,44}``
+# and partitions the already-extended long-form ``rows[]`` (each row carries
+# {model_kind,pipeline,seed,metric_name,scale,value,condition,shots,
+# noise_model,noise_level} — emitted by the per-cell driver) into the two
+# headline JSONs anchored at REPO/revision/results:
+#
+#   shot_noise_sensitivity.json   — SENS-01: conditions analytic/shots_8192/
+#                                    shots_1024. Row keys include ``shots``
+#                                    (None|8192|1024); noise_model/noise_level
+#                                    dropped (not meaningful for SENS-01).
+#   noise_model_sensitivity.json  — SENS-02: conditions depol_*/ampdamp_*.
+#                                    Row keys include ``noise_model`` ∈
+#                                    {depolarizing, amplitude_damping} and
+#                                    ``noise_level`` (p or γ). depol_0.0 and
+#                                    ampdamp_0.0 are the same physical p=0/γ=0
+#                                    baseline but are kept as TWO distinct rows
+#                                    (one per noise_model) so each degradation
+#                                    curve owns its own zero anchor (documented
+#                                    choice — Plan 12-02 Task 1 header note).
+#
+# This is an EXTEND-not-replace aggregation: the canonical baseline_comparison
+# six-key contract {model_kind,pipeline,seed,metric_name,scale,value} is left
+# byte-intact in every row; only condition + the relevant SENS dims are added.
+# No mean±std here — the 3-seed degradation grids are RAW per-seed rows
+# (D-12-02; the 5-seed mean±std roll-up is Plan 12-03 territory only).
+# ─────────────────────────────────────────────────────────────────────────────
+_SHOT_CONDITIONS = ("analytic",) + tuple(_SHOT_LEVELS)
+_NOISE_CONDITIONS = tuple(_DEPOL_LEVELS) + tuple(_AMPDAMP_LEVELS)
+
+
+def aggregate(out_root: Path) -> tuple[Path, Path]:
+    """Aggregate per-cell bundles into the two headline SENS deliverables.
+
+    Returns the (shot_noise_path, noise_model_path) written under
+    REPO/revision/results. Idempotent — fully recomputed from the per-cell
+    metrics.json bundles on every call.
+    """
+    import datetime as _dt
+
+    runs_root = out_root / "runs"
+    shot_rows: list[dict] = []
+    noise_rows: list[dict] = []
+
+    for metrics_path in sorted(runs_root.glob("*/*/*/metrics.json")):
+        doc = json.loads(metrics_path.read_text())
+        condition = doc["condition"]
+        for row in doc["rows"]:
+            if condition in _SHOT_CONDITIONS:
+                # SENS-01: keep the six-key contract + condition + shots.
+                shot_rows.append(
+                    {
+                        "model_kind": row["model_kind"],
+                        "pipeline": row["pipeline"],
+                        "seed": row["seed"],
+                        "metric_name": row["metric_name"],
+                        "scale": row["scale"],
+                        "value": row["value"],
+                        "condition": row["condition"],
+                        "shots": row["shots"],
+                    }
+                )
+            elif condition in _NOISE_CONDITIONS:
+                # SENS-02: keep the six-key contract + condition +
+                # noise_model + noise_level.
+                noise_rows.append(
+                    {
+                        "model_kind": row["model_kind"],
+                        "pipeline": row["pipeline"],
+                        "seed": row["seed"],
+                        "metric_name": row["metric_name"],
+                        "scale": row["scale"],
+                        "value": row["value"],
+                        "condition": row["condition"],
+                        "noise_model": row["noise_model"],
+                        "noise_level": row["noise_level"],
+                    }
+                )
+            else:  # pragma: no cover - defensive; CONDITIONS is closed
+                raise ValueError(f"unpartitionable condition {condition!r}")
+
+    generated_at = _dt.datetime.now(_dt.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%SZ"
+    )
+    seeds = sorted({r["seed"] for r in shot_rows} | {r["seed"] for r in noise_rows})
+    pipelines = sorted(
+        {r["pipeline"] for r in shot_rows} | {r["pipeline"] for r in noise_rows}
+    )
+
+    shot_doc = {
+        "schema": (
+            "long-form; extends baseline_comparison six-key contract "
+            "{model_kind,pipeline,seed,metric_name,scale,value} with "
+            "{condition,shots}"
+        ),
+        "deliverable": "SENS-01 shot-noise degradation",
+        "model_kinds": sorted({r["model_kind"] for r in shot_rows}),
+        "pipelines": pipelines,
+        "seeds": seeds,
+        "conditions": list(_SHOT_CONDITIONS),
+        "shot_levels": {"analytic": None, **_SHOT_LEVELS},
+        "generated_at": generated_at,
+        "rows": shot_rows,
+    }
+    noise_doc = {
+        "schema": (
+            "long-form; extends baseline_comparison six-key contract "
+            "{model_kind,pipeline,seed,metric_name,scale,value} with "
+            "{condition,noise_model,noise_level}"
+        ),
+        "deliverable": "SENS-02 noise-channel degradation",
+        "model_kinds": sorted({r["model_kind"] for r in noise_rows}),
+        "pipelines": pipelines,
+        "seeds": seeds,
+        "conditions": list(_NOISE_CONDITIONS),
+        "noise_models": {
+            "depolarizing": sorted(set(_DEPOL_LEVELS.values())),
+            "amplitude_damping": sorted(set(_AMPDAMP_LEVELS.values())),
+        },
+        "channel_insertion": "per-layer (after each entangling block)",
+        "zero_anchor_note": (
+            "depol_0.0 and ampdamp_0.0 are the same physical p=0/gamma=0 "
+            "baseline; kept as two distinct rows (one per noise_model) so "
+            "each degradation curve owns its own zero anchor"
+        ),
+        "generated_at": generated_at,
+        "rows": noise_rows,
+    }
+
+    results_dir = REPO / "revision" / "results"
+    shot_path = results_dir / "shot_noise_sensitivity.json"
+    noise_path = results_dir / "noise_model_sensitivity.json"
+    shot_path.write_text(json.dumps(shot_doc, indent=2, default=float))
+    noise_path.write_text(json.dumps(noise_doc, indent=2, default=float))
+    return shot_path, noise_path
+
+
 def _frozen_analytic_paths(pipeline: str, seed: int) -> tuple[Path, Path]:
     """Frozen 09.1 ``samples.npy`` + ``inverse_kwargs.npz`` for a (pipeline, seed)."""
     base = (
@@ -615,13 +754,23 @@ def main() -> None:
             "PennyLane 0.44.0 (asserted at import; do NOT run via ./qgan_env)."
         )
     )
-    ap.add_argument("--pipeline", required=True, choices=["A", "B"])
-    ap.add_argument("--seed", required=True, type=int)
+    ap.add_argument("--pipeline", choices=["A", "B"])
+    ap.add_argument("--seed", type=int)
     ap.add_argument(
         "--condition",
-        required=True,
         choices=CONDITIONS,
         help="One of the 11 tokens: analytic / shots_* / depol_* / ampdamp_*.",
+    )
+    ap.add_argument(
+        "--emit-rollup",
+        action="store_true",
+        help=(
+            "Aggregation mode (NOT a third driver file): walk every per-cell "
+            "metrics.json under <out-root>/runs and emit the two headline "
+            "deliverables shot_noise_sensitivity.json + "
+            "noise_model_sensitivity.json. Mutually exclusive with the "
+            "per-cell --pipeline/--seed/--condition args."
+        ),
     )
     ap.add_argument(
         "--out-root",
@@ -642,6 +791,25 @@ def main() -> None:
         if Path(args.out_root).is_absolute()
         else (REPO / args.out_root)
     )
+
+    if args.emit_rollup:
+        if args.pipeline or args.seed is not None or args.condition:
+            ap.error(
+                "--emit-rollup is mutually exclusive with "
+                "--pipeline/--seed/--condition"
+            )
+        shot_path, noise_path = aggregate(out_root)
+        print(
+            f"[run_sensitivity] emit-rollup -> {shot_path} , {noise_path}"
+        )
+        return
+
+    if not (args.pipeline and args.seed is not None and args.condition):
+        ap.error(
+            "per-cell mode requires --pipeline, --seed and --condition "
+            "(or use --emit-rollup for aggregation)"
+        )
+
     run_dir = out_root / "runs" / args.condition / args.pipeline / str(args.seed)
     csv_path = _resolve_csv(args.csv_path)
     frozen_samples, frozen_inv = _frozen_analytic_paths(args.pipeline, args.seed)
