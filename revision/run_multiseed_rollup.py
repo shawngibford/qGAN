@@ -26,6 +26,7 @@ quantum-equivalence blocks already encode by-construction equivalence.
 from __future__ import annotations
 
 import json
+import math
 import statistics
 import sys
 from collections import defaultdict
@@ -82,9 +83,12 @@ def main() -> None:
     # hash from transform_ablation configs (Anti-Pattern): the existing
     # `data_hash_verification` blocks already encode by-construction equivalence.
     hashes = {f: d["data_hash"] for f, d in docs.items()}
-    assert len(set(hashes.values())) == 1, (
-        f"data_hash mismatch across headline artifacts: {hashes}"
-    )
+    # WR-01: explicit raise, NOT assert — `python -O` strips asserts, which
+    # would silently disable the D-10-15 cross-artifact integrity gate.
+    if len(set(hashes.values())) != 1:
+        raise AssertionError(
+            f"data_hash mismatch across headline artifacts: {hashes}"
+        )
     canonical_hash = next(iter(hashes.values()))  # expect "91e447d4624e25b3"
 
     # ── Long-form groupby ─────────────────────────────────────────────────────
@@ -94,6 +98,24 @@ def main() -> None:
     buckets: dict[tuple, list[tuple]] = defaultdict(list)
     for f, d in docs.items():
         for r in d["rows"]:
+            # WR-02: the 6-key groupby intentionally omits the SENS dimensions
+            # (condition/shots/noise_model/noise_level). That is correct ONLY
+            # while HEADLINE holds the five frozen Phase 10/11 files (all rows
+            # have these unset). If a SENS file is ever folded into HEADLINE,
+            # rows differing only by condition/shots/noise_* would be silently
+            # averaged into one cell — a faithfulness-destroying collapse.
+            # Fail loud instead of silently mis-aggregating.
+            if any(
+                r.get(k) is not None
+                for k in ("condition", "shots", "noise_model", "noise_level")
+            ):
+                raise AssertionError(
+                    f"{f} carries a SENS dimension "
+                    f"(condition/shots/noise_*) but the roll-up groupby key "
+                    f"omits it — refusing to silently average distinct "
+                    f"sensitivity cells. Extend the groupby key before adding "
+                    f"SENS files to HEADLINE."
+                )
             key = (
                 f,
                 r["model_kind"],
@@ -114,7 +136,13 @@ def main() -> None:
     # counts only the numeric values; `n_null` records the excluded count for
     # provenance. A fully-null cell -> mean/std null, n 0.
     def _is_num(x: object) -> bool:
-        return isinstance(x, (int, float)) and not isinstance(x, bool)
+        # IN-03: reject non-finite — a stray nan/inf would otherwise pass and
+        # poison statistics.fmean (nan propagates through the whole cell).
+        return (
+            isinstance(x, (int, float))
+            and not isinstance(x, bool)
+            and math.isfinite(x)
+        )
 
     rollup = []
     for (src, mk, pl, metric, scale, ratio), pairs in buckets.items():

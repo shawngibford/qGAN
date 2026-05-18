@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# HELP-START
 # =============================================================================
 # revision/run_sensitivity_sweep.sh  —  Phase 12 SENS-01/02 grid sweep driver
 # =============================================================================
@@ -84,6 +85,7 @@
 #   --dry-run      : print all 66 (condition, pipeline, seed) triples with
 #                    their current would-run / already-complete status, exit 0.
 # =============================================================================
+# HELP-END
 
 set -euo pipefail
 
@@ -134,7 +136,10 @@ PARALLEL=1
 DRY_RUN=0
 
 usage() {
-  sed -n '2,84p' "$0"
+  # WR-05: print the help block delimited by sentinels (drift-proof — no
+  # hardcoded line numbers), stripping the markers and the leading "# ".
+  sed -n '/^# HELP-START/,/^# HELP-END/p' "$0" \
+    | sed '1d;$d;s/^# \{0,1\}//'
 }
 
 while [[ $# -gt 0 ]]; do

@@ -75,10 +75,16 @@ Each run writes ``out_root/runs/<condition>/<pipeline>/<seed>/`` with::
 from __future__ import annotations
 
 import argparse
+import datetime as _dt
+import hashlib
+import inspect
 import json
+import math
 import shutil
 import sys
 from pathlib import Path
+
+import yaml
 
 import numpy as np
 import torch
@@ -90,11 +96,15 @@ import pennylane as qml
 # Fail LOUD if not exactly 0.44.0 — the set_shots transform / shots= kwarg
 # deprecation differ between 0.43 and 0.44. Do NOT run via ./qgan_env (0.43.0).
 # ─────────────────────────────────────────────────────────────────────────────
-assert qml.__version__ == "0.44.0", (
-    f"Phase 12 requires PennyLane 0.44.0 (set_shots transform / default.mixed "
-    f"API); got {qml.__version__}. Do NOT run via ./qgan_env (0.43.0) — that "
-    f"venv carries PennyLane 0.43.0 and silently changes shot/noise semantics."
-)
+# WR-01: explicit raise, NOT assert — `python -O` / PYTHONOPTIMIZE strips
+# assert statements, which would silently disable this load-bearing guard.
+if qml.__version__ != "0.44.0":
+    raise RuntimeError(
+        f"Phase 12 requires PennyLane 0.44.0 (set_shots transform / "
+        f"default.mixed API); got {qml.__version__}. Do NOT run via "
+        f"./qgan_env (0.43.0) — that venv carries PennyLane 0.43.0 and "
+        f"silently changes shot/noise semantics."
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -130,6 +140,31 @@ from revision.core.models.quantum import QuantumGenerator  # noqa: E402
 from revision.core.preprocessing import inverse_logreturns  # noqa: E402
 from revision.core.data import load_and_preprocess, rolling_window  # noqa: E402
 from revision.core.eval import full_metric_suite  # noqa: E402
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# IN-01: circuit-drift guard. ``noisy_generator_circuit`` below is a verbatim
+# copy of ``QuantumGenerator.generator_circuit`` (D-10-13 — copied into THIS
+# driver, never edited in core/). If core/ ever changes that circuit, the
+# noise-study numbers would silently stop sharing the trained topology. Pin a
+# hash of the core source so drift fails LOUD and forces a re-review + a
+# deliberate re-copy + pin bump rather than a silent divergence.
+# ─────────────────────────────────────────────────────────────────────────────
+_REVIEWED_GENERATOR_CIRCUIT_SHA256 = (
+    "b363a41abe332032457d7145207991adac274498f2f28c47a0c01ac32185bba8"
+)
+_live_circuit_sha = hashlib.sha256(
+    inspect.getsource(QuantumGenerator.generator_circuit).encode()
+).hexdigest()
+if _live_circuit_sha != _REVIEWED_GENERATOR_CIRCUIT_SHA256:
+    raise RuntimeError(
+        "core/ QuantumGenerator.generator_circuit has changed "
+        f"(sha256 {_live_circuit_sha} != reviewed "
+        f"{_REVIEWED_GENERATOR_CIRCUIT_SHA256}). The verbatim copy in "
+        "run_sensitivity.noisy_generator_circuit may now be stale — "
+        "re-review the gate body, re-copy it, and update "
+        "_REVIEWED_GENERATOR_CIRCUIT_SHA256 deliberately."
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -576,6 +611,24 @@ def compute_dualscale_metrics(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# IN-03: sanitize non-finite metric values before serialization. EMD/JSD on a
+# degenerate distribution (e.g. all samples collapse under heavy depolarizing
+# noise) can return nan/inf. json.dumps would emit bare NaN/Infinity tokens —
+# invalid JSON that breaks strict consumers and poisons downstream means. Map
+# any non-finite float to None (consistent with the rollup's null-cell
+# handling) so the cell is explicit-missing, not silently corrupt.
+# ─────────────────────────────────────────────────────────────────────────────
+def _finite_sanitize(obj):
+    if isinstance(obj, dict):
+        return {k: _finite_sanitize(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_finite_sanitize(v) for v in obj]
+    if isinstance(obj, float) and not math.isfinite(obj):
+        return None
+    return obj
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Idempotent per-cell run-dir bundle (copied shape from
 # run_baselines.py:456-522): rmtree on rerun (no stale partial bundle), then
 # write config.yaml / samples.npy / metrics.json.
@@ -587,15 +640,14 @@ def _write_bundle(
     samples: np.ndarray,
     metrics: dict,
 ) -> None:
-    import yaml
-
     if run_dir.exists():
         shutil.rmtree(run_dir)  # idempotent — no stale partial bundle
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "config.yaml").write_text(yaml.safe_dump(config, sort_keys=False))
     np.save(run_dir / "samples.npy", samples)
     (run_dir / "metrics.json").write_text(
-        json.dumps(metrics, indent=2, default=float)
+        json.dumps(_finite_sanitize(metrics), indent=2, default=float,
+                   allow_nan=False)
     )
 
 
@@ -639,8 +691,6 @@ def aggregate(out_root: Path) -> tuple[Path, Path]:
     REPO/revision/results. Idempotent — fully recomputed from the per-cell
     metrics.json bundles on every call.
     """
-    import datetime as _dt
-
     runs_root = out_root / "runs"
     shot_rows: list[dict] = []
     noise_rows: list[dict] = []
@@ -689,6 +739,14 @@ def aggregate(out_root: Path) -> tuple[Path, Path]:
     pipelines = sorted(
         {r["pipeline"] for r in shot_rows} | {r["pipeline"] for r in noise_rows}
     )
+    # IN-04: the seeds/pipelines headers are derived from whatever cells are
+    # present. A partial sweep (some cells failed) would otherwise emit a
+    # headline JSON silently claiming an incomplete grid as authoritative.
+    # Stamp an explicit `complete` marker against the D-12-02 grid contract
+    # ({42,43,44} x {A,B}) so a short grid is unmistakable to any consumer.
+    _grid_complete = (
+        set(seeds) >= {42, 43, 44} and set(pipelines) == {"A", "B"}
+    )
 
     shot_doc = {
         "schema": (
@@ -702,6 +760,7 @@ def aggregate(out_root: Path) -> tuple[Path, Path]:
         "seeds": seeds,
         "conditions": list(_SHOT_CONDITIONS),
         "shot_levels": {"analytic": None, **_SHOT_LEVELS},
+        "complete": _grid_complete,
         "generated_at": generated_at,
         "rows": shot_rows,
     }
@@ -726,6 +785,7 @@ def aggregate(out_root: Path) -> tuple[Path, Path]:
             "baseline; kept as two distinct rows (one per noise_model) so "
             "each degradation curve owns its own zero anchor"
         ),
+        "complete": _grid_complete,
         "generated_at": generated_at,
         "rows": noise_rows,
     }
@@ -733,8 +793,14 @@ def aggregate(out_root: Path) -> tuple[Path, Path]:
     results_dir = REPO / "revision" / "results"
     shot_path = results_dir / "shot_noise_sensitivity.json"
     noise_path = results_dir / "noise_model_sensitivity.json"
-    shot_path.write_text(json.dumps(shot_doc, indent=2, default=float))
-    noise_path.write_text(json.dumps(noise_doc, indent=2, default=float))
+    shot_path.write_text(
+        json.dumps(_finite_sanitize(shot_doc), indent=2, default=float,
+                   allow_nan=False)
+    )
+    noise_path.write_text(
+        json.dumps(_finite_sanitize(noise_doc), indent=2, default=float,
+                   allow_nan=False)
+    )
     return shot_path, noise_path
 
 
@@ -800,7 +866,11 @@ def main() -> None:
     )
 
     if args.emit_rollup:
-        if args.pipeline or args.seed is not None or args.condition:
+        # WR-04: explicit, symmetric None-check (a future empty-string default
+        # on --pipeline/--condition would slip past a truthiness test).
+        if any(
+            v is not None for v in (args.pipeline, args.seed, args.condition)
+        ):
             ap.error(
                 "--emit-rollup is mutually exclusive with "
                 "--pipeline/--seed/--condition"
@@ -843,9 +913,23 @@ def main() -> None:
     else:
         g = load_trained_generator(args.pipeline, args.seed)
         qnode = _build_qnode_for_condition(g, args.condition)
+        _frozen_shape = np.load(frozen_samples).shape
         samples = generate_samples_on_qnode(
-            g, qnode, n=int(np.load(frozen_samples).shape[0]), seed=args.seed
+            g, qnode, n=int(_frozen_shape[0]), seed=args.seed
         )
+        # WR-03: the contract is "same N (and window width) as the frozen
+        # analytic column". A device/batching regression (e.g. default.mixed
+        # batching differing from default.qubit) could yield a wrong shape
+        # that the `[:n]` truncation would silently hide, producing
+        # plausible-but-wrong fidelity numbers. Fail loud instead.
+        if samples.shape != _frozen_shape:
+            raise RuntimeError(
+                f"regenerated samples shape {samples.shape} != frozen "
+                f"analytic shape {_frozen_shape} for "
+                f"pipeline={args.pipeline} seed={args.seed} "
+                f"condition={args.condition} — device/batching contract "
+                f"regression; refusing to emit wrong fidelity numbers."
+            )
         regenerated = True
 
     metrics_summary, long_form_rows = compute_dualscale_metrics(

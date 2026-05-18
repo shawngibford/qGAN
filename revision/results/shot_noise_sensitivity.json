@@ -23,7 +23,8 @@
     "shots_8192": 8192,
     "shots_1024": 1024
   },
-  "generated_at": "2026-05-18T22:11:15Z",
+  "complete": true,
+  "generated_at": "2026-05-18T22:43:20Z",
   "rows": [
     {
       "model_kind": "quantum",
