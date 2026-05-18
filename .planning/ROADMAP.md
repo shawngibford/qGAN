@@ -178,7 +178,7 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 7. Conditioning Verification | v1.1 | 1/1 | Complete | 2026-03-23 |
 | 8. Core Module Extraction | v2.0 | 0/5 | Not started | - |
 | 9. Documentation Bridge | v2.0 | 0/5 | Not started | - |
-| 10. Classical Baselines | v2.0 | 2/4 | In Progress|  |
+| 10. Classical Baselines | v2.0 | 3/4 | In Progress|  |
 | 11. Utility Evaluation | v2.0 | 0/TBD | Not started | - |
 | 12. Sensitivity Analysis | v2.0 | 0/TBD | Not started | - |
 | 13. Architecture & Introspection | v2.0 | 0/TBD | Not started | - |
