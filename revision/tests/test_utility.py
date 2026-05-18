@@ -34,7 +34,32 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import pytest
+
+try:
+    import pytest
+
+    _HAVE_PYTEST = True
+except ModuleNotFoundError:  # qgan_env ships no pytest; system pytest is on
+    # PATH for the real CI run. This shim keeps the plain-script fallback
+    # (./qgan_env/bin/python revision/tests/test_utility.py) runnable so the
+    # suite is genuinely dual-mode rather than dead code (Rule-3).
+    _HAVE_PYTEST = False
+
+    class _PytestShim:
+        class mark:
+            @staticmethod
+            def skipif(_cond, reason=""):  # noqa: D401
+                return lambda fn: fn
+
+            @staticmethod
+            def parametrize(_argnames, _argvalues):
+                return lambda fn: fn
+
+        @staticmethod
+        def skip(msg=""):
+            raise RuntimeError(f"pytest.skip outside pytest: {msg}")
+
+    pytest = _PytestShim()  # type: ignore[assignment]
 
 
 # ── Repo-root bootstrap (so `import revision.*` works under pytest AND in
