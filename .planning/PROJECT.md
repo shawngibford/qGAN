@@ -60,8 +60,8 @@ The qGAN must generate synthetic OD time series that capture real data's volatil
 
 Code group (Group A):
 - [x] Extract shared modules (data, PQC, critic, training loop) into `revision/core/` — Phase 8 (INFRA-01 + INFRA-02 validated 2026-04-27, parity check passes with zero numerical drift)
-- [ ] Matched-parameter classical WGAN-GP baseline
-- [ ] Non-adversarial baseline (VAE or AR)
+- [x] Matched-parameter classical WGAN-GP baseline — Phase 10 (BASE-01 validated 2026-05-18; wgan_mlp/cnn/lstm at 74/73/78 params, identical critic/optimizer/seed set)
+- [x] Non-adversarial baseline (VAE or AR) — Phase 10 (BASE-02 validated 2026-05-18; VAE 562p + AR p=2, same data/metrics; BASE-03 comparison table emitted)
 - [ ] TSTR + predictive + discriminative score evaluation
 - [ ] OD-scale inverse-transform results + ACF on both scales
 - [ ] Shot-noise sensitivity (1024, 8192) + multi-seed (≥5) sweeps
@@ -162,4 +162,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-27 — Phase 8 (Core Module Extraction) complete; revision/core/ ready for downstream phases*
+*Last updated: 2026-05-18 — Phase 10 (Classical Baselines) complete; BASE-01/02/03 validated, apples-to-apples quantum-vs-classical comparison table delivered (R1-M1/R2-1)*
