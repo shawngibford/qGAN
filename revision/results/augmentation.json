@@ -1,0 +1,2788 @@
+{
+  "schema": "long-form rows[] + lift block (EVAL-04, Orlandi-style)",
+  "model_kinds": [
+    "quantum",
+    "wgan_mlp",
+    "wgan_cnn",
+    "wgan_lstm",
+    "vae",
+    "ar"
+  ],
+  "pipelines": [
+    "A",
+    "B"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "data_hash": "91e447d4624e25b3",
+  "data_hash_verification": {
+    "recomputed_from": "load_and_preprocess('data.csv')['OD'].tobytes() sha256[:16]",
+    "n_new_configs_checked": 50,
+    "all_equal": true,
+    "quantum_equivalence": "Quantum (09.1) data equivalence established BY CONSTRUCTION: the 09.1 transform_ablation runs used the identical load_and_preprocess(data.csv) OD tensor; 09.1 wrote no data_hash field, so no grep is performed (D-10-15, RESEARCH Pitfall 4)."
+  },
+  "soft_sensor": "Same one-step-ahead OD TSTRLiteLSTM as EVAL-01 (D-11-06). Eval set is always real_windowed_OD[:320]; the real portion mixed in is always real_windowed_OD[320:] (T-11-02 leakage guard asserted).",
+  "init_seeds": [
+    40,
+    41,
+    42
+  ],
+  "epochs": 50,
+  "injection_grid": {
+    "real_only": "real_windowed_OD[320:] only (Phase-10 anchor)",
+    "+25%": "real_train + round(0.25*|real_train|) synthetic windows",
+    "+50%": "real_train + round(0.50*|real_train|) synthetic windows",
+    "+100%": "real_train + round(1.00*|real_train|) synthetic windows",
+    "synthetic_only": "full pooled synthetic (5 training seeds)"
+  },
+  "metadata": {
+    "caveat": "LOWER BOUND, NOT a matched-budget comparison. The pooled synthetic set (~3840 windows x 5 seeds) is ~60x larger than the real train partition (~65 windows). Per Phase 09.1 FLAG-E / RESEARCH Orlandi section, the reported lift is a lower bound on the achievable augmentation benefit and MUST NOT be read as a budget-matched gain.",
+    "partition_guard": "T-11-02: eval=real_windowed_OD[:320], train=real_windowed_OD[320:]; index-set disjointness asserted at runtime (raises on overlap). A positive real_only R2 is the leakage sentinel (Pitfall 5).",
+    "downstream_task": "one-step-ahead OD forecast (D-11-01/D-11-06)"
+  },
+  "rows": [
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 4.046489670792852
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.28351668516794826
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.2810485363006592
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 6.054460071875806
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.4470245838165283
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.4409667650858562
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 10.28751205214005
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.8651913007100422
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.8664458592732748
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 8.781801795864059
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -0.7174516518910725
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -0.6932087739308677
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 14.135295310242489
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.6017044881979623
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.625281242032846
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 14.288579293486652
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.6991862853368123
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.7177902286251387
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 14.325736082537086
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.7415538020431995
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.7580239921808243
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 14.348253204666104
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7721356550852456
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.8022940854231517
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 4.250266146161131
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.29887918631235744
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.2965763409932456
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 6.4840449445168575
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.48339883486429835
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.47771267096201586
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 10.40228973644572
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.8871696392695109
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.8887542684872946
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 13.101227837144698
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.4321444866557915
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.431254267692566
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 14.142336255204398
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.6053430140018463
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.6289391219615936
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 14.291005868095759
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.7014098763465881
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.720073089003563
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 14.325513935700759
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.7404880970716476
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.7576940779884658
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 14.351573550111631
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7824287184824545
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.8149768058210611
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 3.6266849324780264
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.24971163272857666
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.24932499726613377
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 6.077601798168851
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.4460831483205159
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.44275077184041356
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 10.086606929430445
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.8446145256360371
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.8565630118052165
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 13.42954127029472
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.3635613123575845
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.3730116486549377
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 14.053441911599647
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.5630454396208127
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.5875276029109955
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 14.264696829583768
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.6776588757832844
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.6975985417763393
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 14.330194013888123
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.7509099530677
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.765025518834591
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 14.351088330275104
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7806407250463963
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.813098811854919
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 4.17126812942767
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.2927567958831787
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.2905432383219402
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 6.294506960235133
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.46702257792154933
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.4613760709762573
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 10.661806656144147
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.9112547437349955
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.914089322090149
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 12.601197103429417
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.1849958499272664
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.200077772140503
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 14.150506065839476
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.6095058992505074
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.6329942643642426
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 14.292790373725685
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.7034544100364049
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.7217852572600048
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 14.323475175362976
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.736992993702491
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.7549366702636084
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 14.35085017024069
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7799446433782578
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.8116807341575623
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 12.840809400396303
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.2406998177369435
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.2666323681672416
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 14.185896194337342
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.6228814522425332
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.6474667390187583
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 14.314627834093544
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.72292830919226
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.7436240911483765
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 14.347594077590427
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7707654734452565
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.8002697142461936
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 14.164354278650398
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.616758202513059
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.640208214521408
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 14.297313379009319
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.7078526765108109
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.7262436946233115
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 14.322278540620877
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.7346882820129395
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.753372627000014
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 14.34716052234339
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7699631905804076
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7989814057946205
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 4.063466416185676
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.28408829371134425
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -0.2823345263799033
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 6.434001850976885
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.4775879383087158
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -0.47348475456237793
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 10.792713973797214
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.9279104669888814
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -0.9326749245325725
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 14.345636845126833
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7662119014809528
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7962930804739397
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "real_only",
+      "value": 0.0
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": 14.117126680686809
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.5930430342753727
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+25%",
+      "value": -1.6166231905420623
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": 14.295876472783814
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.706415278216203
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+50%",
+      "value": -1.7247793450951576
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": 14.329324675786735
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.749636635184288
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "+100%",
+      "value": -1.763429972032706
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "r2_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": 14.351806202003935
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "mae_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.7833581740657487
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 0,
+      "metric_name": "rmse_delta",
+      "scale": "OD",
+      "injection_ratio": "synthetic_only",
+      "value": -1.816102013612787
+    }
+  ],
+  "lift": {
+    "quantum|A": {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": -9.307663681826602,
+            "mae": 1.5182823340098064,
+            "rmse": 1.5585391918818157
+          },
+          "deltas": {
+            "r2_delta": 4.046489670792852,
+            "mae_delta": -0.28351668516794826,
+            "rmse_delta": -0.2810485363006592
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": -7.299693280743647,
+            "mae": 1.3547744353612263,
+            "rmse": 1.3986209630966187
+          },
+          "deltas": {
+            "r2_delta": 6.054460071875806,
+            "mae_delta": -0.4470245838165283,
+            "rmse_delta": -0.4409667650858562
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": -3.0666413004794038,
+            "mae": 0.9366077184677124,
+            "rmse": 0.9731418689092001
+          },
+          "deltas": {
+            "r2_delta": 10.28751205214005,
+            "mae_delta": -0.8651913007100422,
+            "rmse_delta": -0.8664458592732748
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19250,
+          "n_synth_added": 19250,
+          "metrics": {
+            "r2": -4.572351556755396,
+            "mae": 1.0843473672866821,
+            "rmse": 1.1463789542516072
+          },
+          "deltas": {
+            "r2_delta": 8.781801795864059,
+            "mae_delta": -0.7174516518910725,
+            "rmse_delta": -0.6932087739308677
+          }
+        }
+      }
+    },
+    "quantum|B": {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": 0.7811419576230346,
+            "mae": 0.20009453097979227,
+            "rmse": 0.21430648614962897
+          },
+          "deltas": {
+            "r2_delta": 14.135295310242489,
+            "mae_delta": -1.6017044881979623,
+            "rmse_delta": -1.625281242032846
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": 0.9344259408671988,
+            "mae": 0.10261273384094238,
+            "rmse": 0.12179749955733617
+          },
+          "deltas": {
+            "r2_delta": 14.288579293486652,
+            "mae_delta": -1.6991862853368123,
+            "rmse_delta": -1.7177902286251387
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": 0.971582729917632,
+            "mae": 0.06024521713455518,
+            "rmse": 0.0815637360016505
+          },
+          "deltas": {
+            "r2_delta": 14.325736082537086,
+            "mae_delta": -1.7415538020431995,
+            "rmse_delta": -1.7580239921808243
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19200,
+          "n_synth_added": 19200,
+          "metrics": {
+            "r2": 0.9940998520466501,
+            "mae": 0.029663364092508953,
+            "rmse": 0.03729364275932312
+          },
+          "deltas": {
+            "r2_delta": 14.348253204666104,
+            "mae_delta": -1.7721356550852456,
+            "rmse_delta": -1.8022940854231517
+          }
+        }
+      }
+    },
+    "wgan_mlp|A": {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": -9.103887206458323,
+            "mae": 1.5029198328653972,
+            "rmse": 1.5430113871892293
+          },
+          "deltas": {
+            "r2_delta": 4.250266146161131,
+            "mae_delta": -0.29887918631235744,
+            "rmse_delta": -0.2965763409932456
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": -6.870108408102596,
+            "mae": 1.3184001843134563,
+            "rmse": 1.361875057220459
+          },
+          "deltas": {
+            "r2_delta": 6.4840449445168575,
+            "mae_delta": -0.48339883486429835,
+            "rmse_delta": -0.47771267096201586
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": -2.951863616173734,
+            "mae": 0.9146293799082438,
+            "rmse": 0.9508334596951803
+          },
+          "deltas": {
+            "r2_delta": 10.40228973644572,
+            "mae_delta": -0.8871696392695109,
+            "rmse_delta": -0.8887542684872946
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19250,
+          "n_synth_added": 19250,
+          "metrics": {
+            "r2": -0.2529255154747557,
+            "mae": 0.3696545325219631,
+            "rmse": 0.4083334604899089
+          },
+          "deltas": {
+            "r2_delta": 13.101227837144698,
+            "mae_delta": -1.4321444866557915,
+            "rmse_delta": -1.431254267692566
+          }
+        }
+      }
+    },
+    "wgan_mlp|B": {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": 0.7881829025849453,
+            "mae": 0.19645600517590842,
+            "rmse": 0.21064860622088113
+          },
+          "deltas": {
+            "r2_delta": 14.142336255204398,
+            "mae_delta": -1.6053430140018463,
+            "rmse_delta": -1.6289391219615936
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": 0.9368525154763058,
+            "mae": 0.10038914283116658,
+            "rmse": 0.11951463917891185
+          },
+          "deltas": {
+            "r2_delta": 14.291005868095759,
+            "mae_delta": -1.7014098763465881,
+            "rmse_delta": -1.720073089003563
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": 0.9713605830813057,
+            "mae": 0.06131092210610708,
+            "rmse": 0.08189365019400914
+          },
+          "deltas": {
+            "r2_delta": 14.325513935700759,
+            "mae_delta": -1.7404880970716476,
+            "rmse_delta": -1.7576940779884658
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19200,
+          "n_synth_added": 19200,
+          "metrics": {
+            "r2": 0.9974201974921777,
+            "mae": 0.019370300695300102,
+            "rmse": 0.02461092236141364
+          },
+          "deltas": {
+            "r2_delta": 14.351573550111631,
+            "mae_delta": -1.7824287184824545,
+            "rmse_delta": -1.8149768058210611
+          }
+        }
+      }
+    },
+    "wgan_cnn|A": {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": -9.727468420141427,
+            "mae": 1.552087386449178,
+            "rmse": 1.590262730916341
+          },
+          "deltas": {
+            "r2_delta": 3.6266849324780264,
+            "mae_delta": -0.24971163272857666,
+            "rmse_delta": -0.24932499726613377
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": -7.276551554450603,
+            "mae": 1.3557158708572388,
+            "rmse": 1.3968369563420613
+          },
+          "deltas": {
+            "r2_delta": 6.077601798168851,
+            "mae_delta": -0.4460831483205159,
+            "rmse_delta": -0.44275077184041356
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": -3.267546423189008,
+            "mae": 0.9571844935417175,
+            "rmse": 0.9830247163772583
+          },
+          "deltas": {
+            "r2_delta": 10.086606929430445,
+            "mae_delta": -0.8446145256360371,
+            "rmse_delta": -0.8565630118052165
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19250,
+          "n_synth_added": 19250,
+          "metrics": {
+            "r2": 0.07538791767526572,
+            "mae": 0.4382377068201701,
+            "rmse": 0.46657607952753705
+          },
+          "deltas": {
+            "r2_delta": 13.42954127029472,
+            "mae_delta": -1.3635613123575845,
+            "rmse_delta": -1.3730116486549377
+          }
+        }
+      }
+    },
+    "wgan_cnn|B": {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": 0.699288558980193,
+            "mae": 0.23875357955694199,
+            "rmse": 0.2520601252714793
+          },
+          "deltas": {
+            "r2_delta": 14.053441911599647,
+            "mae_delta": -1.5630454396208127,
+            "rmse_delta": -1.5875276029109955
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": 0.9105434769643144,
+            "mae": 0.12414014339447021,
+            "rmse": 0.14198918640613556
+          },
+          "deltas": {
+            "r2_delta": 14.264696829583768,
+            "mae_delta": -1.6776588757832844,
+            "rmse_delta": -1.6975985417763393
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": 0.9760406612686693,
+            "mae": 0.05088906611005465,
+            "rmse": 0.07456220934788386
+          },
+          "deltas": {
+            "r2_delta": 14.330194013888123,
+            "mae_delta": -1.7509099530677,
+            "rmse_delta": -1.765025518834591
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19200,
+          "n_synth_added": 19200,
+          "metrics": {
+            "r2": 0.9969349776556508,
+            "mae": 0.021158294131358463,
+            "rmse": 0.026488916327555973
+          },
+          "deltas": {
+            "r2_delta": 14.351088330275104,
+            "mae_delta": -1.7806407250463963,
+            "rmse_delta": -1.813098811854919
+          }
+        }
+      }
+    },
+    "wgan_lstm|A": {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": -9.182885223191784,
+            "mae": 1.509042223294576,
+            "rmse": 1.5490444898605347
+          },
+          "deltas": {
+            "r2_delta": 4.17126812942767,
+            "mae_delta": -0.2927567958831787,
+            "rmse_delta": -0.2905432383219402
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": -7.0596463923843205,
+            "mae": 1.3347764412562053,
+            "rmse": 1.3782116572062175
+          },
+          "deltas": {
+            "r2_delta": 6.294506960235133,
+            "mae_delta": -0.46702257792154933,
+            "rmse_delta": -0.4613760709762573
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": -2.6923466964753064,
+            "mae": 0.8905442754427592,
+            "rmse": 0.9254984060923258
+          },
+          "deltas": {
+            "r2_delta": 10.661806656144147,
+            "mae_delta": -0.9112547437349955,
+            "rmse_delta": -0.914089322090149
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19250,
+          "n_synth_added": 19250,
+          "metrics": {
+            "r2": -0.7529562491900376,
+            "mae": 0.6168031692504883,
+            "rmse": 0.6395099560419718
+          },
+          "deltas": {
+            "r2_delta": 12.601197103429417,
+            "mae_delta": -1.1849958499272664,
+            "rmse_delta": -1.200077772140503
+          }
+        }
+      }
+    },
+    "wgan_lstm|B": {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": 0.7963527132200227,
+            "mae": 0.19229311992724737,
+            "rmse": 0.2065934638182322
+          },
+          "deltas": {
+            "r2_delta": 14.150506065839476,
+            "mae_delta": -1.6095058992505074,
+            "rmse_delta": -1.6329942643642426
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": 0.9386370211062313,
+            "mae": 0.09834460914134979,
+            "rmse": 0.11780247092247009
+          },
+          "deltas": {
+            "r2_delta": 14.292790373725685,
+            "mae_delta": -1.7034544100364049,
+            "rmse_delta": -1.7217852572600048
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": 0.969321822743523,
+            "mae": 0.0648060254752636,
+            "rmse": 0.08465105791886647
+          },
+          "deltas": {
+            "r2_delta": 14.323475175362976,
+            "mae_delta": -1.736992993702491,
+            "rmse_delta": -1.7549366702636084
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19200,
+          "n_synth_added": 19200,
+          "metrics": {
+            "r2": 0.9966968176212371,
+            "mae": 0.021854375799496967,
+            "rmse": 0.027906994024912517
+          },
+          "deltas": {
+            "r2_delta": 14.35085017024069,
+            "mae_delta": -1.7799446433782578,
+            "rmse_delta": -1.8116807341575623
+          }
+        }
+      }
+    },
+    "vae|A": {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": -0.5133439522231503,
+            "mae": 0.5610992014408112,
+            "rmse": 0.5729553600152334
+          },
+          "deltas": {
+            "r2_delta": 12.840809400396303,
+            "mae_delta": -1.2406998177369435,
+            "rmse_delta": -1.2666323681672416
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": 0.8317428417178894,
+            "mae": 0.17891756693522134,
+            "rmse": 0.19212098916371664
+          },
+          "deltas": {
+            "r2_delta": 14.185896194337342,
+            "mae_delta": -1.6228814522425332,
+            "rmse_delta": -1.6474667390187583
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": 0.9604744814740909,
+            "mae": 0.07887070998549461,
+            "rmse": 0.09596363703409831
+          },
+          "deltas": {
+            "r2_delta": 14.314627834093544,
+            "mae_delta": -1.72292830919226,
+            "rmse_delta": -1.7436240911483765
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19250,
+          "n_synth_added": 19250,
+          "metrics": {
+            "r2": 0.9934407249709728,
+            "mae": 0.03103354573249817,
+            "rmse": 0.039318013936281204
+          },
+          "deltas": {
+            "r2_delta": 14.347594077590427,
+            "mae_delta": -1.7707654734452565,
+            "rmse_delta": -1.8002697142461936
+          }
+        }
+      }
+    },
+    "vae|B": {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": 0.8102009260309444,
+            "mae": 0.18504081666469574,
+            "rmse": 0.19937951366106668
+          },
+          "deltas": {
+            "r2_delta": 14.164354278650398,
+            "mae_delta": -1.616758202513059,
+            "rmse_delta": -1.640208214521408
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": 0.9431600263898652,
+            "mae": 0.09394634266694386,
+            "rmse": 0.1133440335591634
+          },
+          "deltas": {
+            "r2_delta": 14.297313379009319,
+            "mae_delta": -1.7078526765108109,
+            "rmse_delta": -1.7262436946233115
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": 0.9681251880014227,
+            "mae": 0.06711073716481526,
+            "rmse": 0.08621510118246078
+          },
+          "deltas": {
+            "r2_delta": 14.322278540620877,
+            "mae_delta": -1.7346882820129395,
+            "rmse_delta": -1.753372627000014
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19200,
+          "n_synth_added": 19200,
+          "metrics": {
+            "r2": 0.9930071697239358,
+            "mae": 0.03183582859734694,
+            "rmse": 0.040606322387854256
+          },
+          "deltas": {
+            "r2_delta": 14.34716052234339,
+            "mae_delta": -1.7699631905804076,
+            "rmse_delta": -1.7989814057946205
+          }
+        }
+      }
+    },
+    "ar|A": {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": -9.290686936433778,
+            "mae": 1.5177107254664104,
+            "rmse": 1.5572532018025715
+          },
+          "deltas": {
+            "r2_delta": 4.063466416185676,
+            "mae_delta": -0.28408829371134425,
+            "rmse_delta": -0.2823345263799033
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": -6.920151501642569,
+            "mae": 1.3242110808690388,
+            "rmse": 1.366102973620097
+          },
+          "deltas": {
+            "r2_delta": 6.434001850976885,
+            "mae_delta": -0.4775879383087158,
+            "rmse_delta": -0.47348475456237793
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": -2.5614393788222394,
+            "mae": 0.8738885521888733,
+            "rmse": 0.9069128036499023
+          },
+          "deltas": {
+            "r2_delta": 10.792713973797214,
+            "mae_delta": -0.9279104669888814,
+            "rmse_delta": -0.9326749245325725
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19250,
+          "n_synth_added": 19250,
+          "metrics": {
+            "r2": 0.9914834925073799,
+            "mae": 0.03558711769680182,
+            "rmse": 0.043294647708535194
+          },
+          "deltas": {
+            "r2_delta": 14.345636845126833,
+            "mae_delta": -1.7662119014809528,
+            "rmse_delta": -1.7962930804739397
+          }
+        }
+      }
+    },
+    "ar|B": {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "n_real_train": 65,
+      "real_only_metrics": {
+        "r2": -13.354153352619454,
+        "mae": 1.8017990191777546,
+        "rmse": 1.8395877281824748
+      },
+      "conditions": {
+        "real_only": {
+          "injection_ratio": "real_only",
+          "n_train": 65,
+          "n_synth_added": 0,
+          "metrics": {
+            "r2": -13.354153352619454,
+            "mae": 1.8017990191777546,
+            "rmse": 1.8395877281824748
+          },
+          "deltas": {
+            "r2_delta": 0.0,
+            "mae_delta": 0.0,
+            "rmse_delta": 0.0
+          }
+        },
+        "+25%": {
+          "injection_ratio": "+25%",
+          "ratio": 0.25,
+          "n_train": 81,
+          "n_synth_added": 16,
+          "subsample_rng_seed": 251,
+          "metrics": {
+            "r2": 0.762973328067356,
+            "mae": 0.2087559849023819,
+            "rmse": 0.22296453764041266
+          },
+          "deltas": {
+            "r2_delta": 14.117126680686809,
+            "mae_delta": -1.5930430342753727,
+            "rmse_delta": -1.6166231905420623
+          }
+        },
+        "+50%": {
+          "injection_ratio": "+50%",
+          "ratio": 0.5,
+          "n_train": 97,
+          "n_synth_added": 32,
+          "subsample_rng_seed": 501,
+          "metrics": {
+            "r2": 0.94172312016436,
+            "mae": 0.09538374096155167,
+            "rmse": 0.11480838308731715
+          },
+          "deltas": {
+            "r2_delta": 14.295876472783814,
+            "mae_delta": -1.706415278216203,
+            "rmse_delta": -1.7247793450951576
+          }
+        },
+        "+100%": {
+          "injection_ratio": "+100%",
+          "ratio": 1.0,
+          "n_train": 130,
+          "n_synth_added": 65,
+          "subsample_rng_seed": 1001,
+          "metrics": {
+            "r2": 0.9751713231672813,
+            "mae": 0.0521623839934667,
+            "rmse": 0.07615775614976883
+          },
+          "deltas": {
+            "r2_delta": 14.329324675786735,
+            "mae_delta": -1.749636635184288,
+            "rmse_delta": -1.763429972032706
+          }
+        },
+        "synthetic_only": {
+          "injection_ratio": "synthetic_only",
+          "n_train": 19200,
+          "n_synth_added": 19200,
+          "metrics": {
+            "r2": 0.9976528493844808,
+            "mae": 0.01844084511200587,
+            "rmse": 0.023485714569687843
+          },
+          "deltas": {
+            "r2_delta": 14.351806202003935,
+            "mae_delta": -1.7833581740657487,
+            "rmse_delta": -1.816102013612787
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1632 @@
+{
+  "schema": "long-form rows[] + tstr block (D-10-21, EVAL-01)",
+  "model_kinds": [
+    "quantum",
+    "wgan_mlp",
+    "wgan_cnn",
+    "wgan_lstm",
+    "vae",
+    "ar"
+  ],
+  "pipelines": [
+    "A",
+    "B"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ],
+  "data_hash": "91e447d4624e25b3",
+  "data_hash_verification": {
+    "recomputed_from": "load_and_preprocess('data.csv')['OD'].tobytes() sha256[:16]",
+    "n_new_configs_checked": 50,
+    "all_equal": true,
+    "quantum_equivalence": "Quantum (09.1) data equivalence established BY CONSTRUCTION: the 09.1 transform_ablation runs used the identical load_and_preprocess(data.csv) OD tensor; 09.1 wrote no data_hash field, so no grep is performed (D-10-15, RESEARCH Pitfall 4)."
+  },
+  "soft_sensor": "TSTRLiteLSTM (1-layer LSTM, hidden=32) copied verbatim from _build_baseline_notebook.py:395-440; MAE/RMSE added (sklearn ABSENT, RESEARCH Pitfall 2). One-step-ahead OD forecast: X=window[:,:9], y=window[:,9:10] (D-11-01).",
+  "init_seeds": [
+    40,
+    41,
+    42
+  ],
+  "epochs": 50,
+  "rows": [
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": -4.455053832049827
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 1.073213815689087
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 1.1342822313308716
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 1.2865962982177734
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": -4.608459960410148
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 1.0877102613449097
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 1.150120735168457
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 1.3227777481079102
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": -4.65354087780621
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 1.0921180248260498
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 1.1547338962554932
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 1.3334102630615234
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9937311750070812
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.03071529231965542
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.03845162317156792
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0014785274397581816
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9941715450950949
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.029436130076646805
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.037076469510793686
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0013746644835919142
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.994396836037774
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.028838669881224632
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.03635283559560776
+    },
+    {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0013215286890044808
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": -2.5096854828649855
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.855074405670166
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.909820556640625
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.82777339220047
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.7854130742747437
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.1998618245124817
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.2249692976474762
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.050611186772584915
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9654958621659745
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.05402736738324165
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.09021052718162537
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.008137939497828484
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9974166332415005
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.019340503960847855
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.02468395046889782
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0006092974217608571
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.996998237807298
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.020990053191781044
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.026607848703861237
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0007079776260070503
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9978457214277345
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.017780344933271408
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.022540967911481857
+    },
+    {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0005080952541902661
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": -0.033329916580691954
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.4610547423362732
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.49367499351501465
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.24371500313282013
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.11274889476139038
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.4368768632411957
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.45745134353637695
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.2092617303133011
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.14674477484509874
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.4167815148830414
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.4486019015312195
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.20124366879463196
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9977118754500914
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.01821308210492134
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.02323065511882305
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0005396633641794324
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.997711954029716
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.018243294209241867
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.023230256512761116
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.000539644795935601
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9953811034871448
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.027018506079912186
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.033005837351083755
+    },
+    {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0010893852449953556
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": -0.3996576575593025
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.5525311231613159
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.5745562314987183
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.33011487126350403
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": -1.2685917338442692
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.7131980657577515
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.7314755320549011
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.535056471824646
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": -0.5906193561665409
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.5846803188323975
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.6124981045722961
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.37515395879745483
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.996710011495591
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.02185184136033058
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.027856003493070602
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0007759569562040269
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9965402686474836
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.02256781980395317
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.02856556512415409
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0008159914868883789
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9968401727206369
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.021143466234207153
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.027299413457512856
+    },
+    {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0007452579447999597
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9930074337620044
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.03227771073579788
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.040610648691654205
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0016492247814312577
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9934412248795392
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.030948858708143234
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.039330821484327316
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0015469134086742997
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9938735162713747
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.02987406775355339
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.03801257163286209
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.001444955705665052
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9929778743974941
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.03197414427995682
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.0406963936984539
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0016561964293941855
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9927522355721554
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.03257952257990837
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.04134506359696388
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0017094142967835069
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9932913992021579
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.030953818932175636
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.03977750986814499
+    },
+    {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0015822503482922912
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.995863786926074
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.02548077143728733
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.03123367391526699
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0009755424107424915
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.993310433635443
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.0323435515165329
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.0397210419178009
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.001577761024236679
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9852762569606226
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.048937030136585236
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.05892922729253769
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0034726536832749844
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9980128012558006
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.016985677182674408
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.02164922095835209
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 40,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0004686887841671705
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9976161889622539
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.018443265929818153
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.023711418733000755
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 41,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0005622314056381583
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "r2",
+      "scale": "OD",
+      "value": 0.9973295579353878
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mae",
+      "scale": "OD",
+      "value": 0.019893592223525047
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "rmse",
+      "scale": "OD",
+      "value": 0.025096504017710686
+    },
+    {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "seed": 42,
+      "metric_name": "mse",
+      "scale": "OD",
+      "value": 0.0006298344815149903
+    }
+  ],
+  "tstr": {
+    "quantum|A": {
+      "model_kind": "quantum",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 1.2865962982177734,
+          "r2": -4.455053832049827,
+          "mae": 1.073213815689087,
+          "rmse": 1.1342822313308716
+        },
+        "41": {
+          "mse": 1.3227777481079102,
+          "r2": -4.608459960410148,
+          "mae": 1.0877102613449097,
+          "rmse": 1.150120735168457
+        },
+        "42": {
+          "mse": 1.3334102630615234,
+          "r2": -4.65354087780621,
+          "mae": 1.0921180248260498,
+          "rmse": 1.1547338962554932
+        }
+      },
+      "mse_mean": 1.3142614364624023,
+      "mse_std": 0.02003800554164551,
+      "r2_mean": -4.572351556755396,
+      "r2_std": 0.08495936065415867,
+      "mae_mean": 1.0843473672866821,
+      "mae_std": 0.008075645406969211,
+      "rmse_mean": 1.1463789542516072,
+      "rmse_std": 0.008758551739853076
+    },
+    "quantum|B": {
+      "model_kind": "quantum",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0014785274397581816,
+          "r2": 0.9937311750070812,
+          "mae": 0.03071529231965542,
+          "rmse": 0.03845162317156792
+        },
+        "41": {
+          "mse": 0.0013746644835919142,
+          "r2": 0.9941715450950949,
+          "mae": 0.029436130076646805,
+          "rmse": 0.037076469510793686
+        },
+        "42": {
+          "mse": 0.0013215286890044808,
+          "r2": 0.994396836037774,
+          "mae": 0.028838669881224632,
+          "rmse": 0.03635283559560776
+        }
+      },
+      "mse_mean": 0.0013915735374515255,
+      "mse_std": 6.520014831974995e-05,
+      "r2_mean": 0.9940998520466501,
+      "r2_std": 0.00027644296800874587,
+      "mae_mean": 0.029663364092508953,
+      "mae_std": 0.0007827960217830723,
+      "rmse_mean": 0.03729364275932312,
+      "rmse_std": 0.0008704789820012125
+    },
+    "wgan_mlp|A": {
+      "model_kind": "wgan_mlp",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.82777339220047,
+          "r2": -2.5096854828649855,
+          "mae": 0.855074405670166,
+          "rmse": 0.909820556640625
+        },
+        "41": {
+          "mse": 0.050611186772584915,
+          "r2": 0.7854130742747437,
+          "mae": 0.1998618245124817,
+          "rmse": 0.2249692976474762
+        },
+        "42": {
+          "mse": 0.008137939497828484,
+          "r2": 0.9654958621659745,
+          "mae": 0.05402736738324165,
+          "rmse": 0.09021052718162537
+        }
+      },
+      "mse_mean": 0.29550750615696114,
+      "mse_std": 0.3767680314355919,
+      "r2_mean": -0.2529255154747557,
+      "r2_std": 1.5974629083716951,
+      "mae_mean": 0.3696545325219631,
+      "mae_std": 0.3483688296015762,
+      "rmse_mean": 0.4083334604899089,
+      "rmse_std": 0.3588471933461606
+    },
+    "wgan_mlp|B": {
+      "model_kind": "wgan_mlp",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0006092974217608571,
+          "r2": 0.9974166332415005,
+          "mae": 0.019340503960847855,
+          "rmse": 0.02468395046889782
+        },
+        "41": {
+          "mse": 0.0007079776260070503,
+          "r2": 0.996998237807298,
+          "mae": 0.020990053191781044,
+          "rmse": 0.026607848703861237
+        },
+        "42": {
+          "mse": 0.0005080952541902661,
+          "r2": 0.9978457214277345,
+          "mae": 0.017780344933271408,
+          "rmse": 0.022540967911481857
+        }
+      },
+      "mse_mean": 0.0006084567673193911,
+      "mse_std": 8.160380165038576e-05,
+      "r2_mean": 0.9974201974921777,
+      "r2_std": 0.0003459929186551021,
+      "mae_mean": 0.019370300695300102,
+      "mae_std": 0.0013105272883396346,
+      "rmse_mean": 0.02461092236141364,
+      "rmse_std": 0.0016610999715485966
+    },
+    "wgan_cnn|A": {
+      "model_kind": "wgan_cnn",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.24371500313282013,
+          "r2": -0.033329916580691954,
+          "mae": 0.4610547423362732,
+          "rmse": 0.49367499351501465
+        },
+        "41": {
+          "mse": 0.2092617303133011,
+          "r2": 0.11274889476139038,
+          "mae": 0.4368768632411957,
+          "rmse": 0.45745134353637695
+        },
+        "42": {
+          "mse": 0.20124366879463196,
+          "r2": 0.14674477484509874,
+          "mae": 0.4167815148830414,
+          "rmse": 0.4486019015312195
+        }
+      },
+      "mse_mean": 0.21807346741358438,
+      "mse_std": 0.01842441483756309,
+      "r2_mean": 0.07538791767526572,
+      "r2_std": 0.07811788348236223,
+      "mae_mean": 0.4382377068201701,
+      "mae_std": 0.01810006609041758,
+      "rmse_mean": 0.46657607952753705,
+      "rmse_std": 0.01949942752024948
+    },
+    "wgan_cnn|B": {
+      "model_kind": "wgan_cnn",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0005396633641794324,
+          "r2": 0.9977118754500914,
+          "mae": 0.01821308210492134,
+          "rmse": 0.02323065511882305
+        },
+        "41": {
+          "mse": 0.000539644795935601,
+          "r2": 0.997711954029716,
+          "mae": 0.018243294209241867,
+          "rmse": 0.023230256512761116
+        },
+        "42": {
+          "mse": 0.0010893852449953556,
+          "r2": 0.9953811034871448,
+          "mae": 0.027018506079912186,
+          "rmse": 0.033005837351083755
+        }
+      },
+      "mse_mean": 0.000722897801703463,
+      "mse_std": 0.0002591457564822882,
+      "r2_mean": 0.9969349776556508,
+      "r2_std": 0.0010987549621294744,
+      "mae_mean": 0.021158294131358463,
+      "mae_std": 0.004143813964155142,
+      "rmse_mean": 0.026488916327555973,
+      "rmse_std": 0.004608159051066958
+    },
+    "wgan_lstm|A": {
+      "model_kind": "wgan_lstm",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.33011487126350403,
+          "r2": -0.3996576575593025,
+          "mae": 0.5525311231613159,
+          "rmse": 0.5745562314987183
+        },
+        "41": {
+          "mse": 0.535056471824646,
+          "r2": -1.2685917338442692,
+          "mae": 0.7131980657577515,
+          "rmse": 0.7314755320549011
+        },
+        "42": {
+          "mse": 0.37515395879745483,
+          "r2": -0.5906193561665409,
+          "mae": 0.5846803188323975,
+          "rmse": 0.6124981045722961
+        }
+      },
+      "mse_mean": 0.4134417672952016,
+      "mse_std": 0.08793835765205368,
+      "r2_mean": -0.7529562491900376,
+      "r2_std": 0.3728507810189788,
+      "mae_mean": 0.6168031692504883,
+      "mae_std": 0.06941361417886675,
+      "rmse_mean": 0.6395099560419718,
+      "rmse_std": 0.06684881854665435
+    },
+    "wgan_lstm|B": {
+      "model_kind": "wgan_lstm",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0007759569562040269,
+          "r2": 0.996710011495591,
+          "mae": 0.02185184136033058,
+          "rmse": 0.027856003493070602
+        },
+        "41": {
+          "mse": 0.0008159914868883789,
+          "r2": 0.9965402686474836,
+          "mae": 0.02256781980395317,
+          "rmse": 0.02856556512415409
+        },
+        "42": {
+          "mse": 0.0007452579447999597,
+          "r2": 0.9968401727206369,
+          "mae": 0.021143466234207153,
+          "rmse": 0.027299413457512856
+        }
+      },
+      "mse_mean": 0.0007790687959641218,
+      "mse_std": 2.8960561160687973e-05,
+      "r2_mean": 0.9966968176212371,
+      "r2_std": 0.00012279026023761302,
+      "mae_mean": 0.021854375799496967,
+      "mae_std": 0.0005814926714634054,
+      "rmse_mean": 0.027906994024912517,
+      "rmse_std": 0.0005181602303584837
+    },
+    "vae|A": {
+      "model_kind": "vae",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0016492247814312577,
+          "r2": 0.9930074337620044,
+          "mae": 0.03227771073579788,
+          "rmse": 0.040610648691654205
+        },
+        "41": {
+          "mse": 0.0015469134086742997,
+          "r2": 0.9934412248795392,
+          "mae": 0.030948858708143234,
+          "rmse": 0.039330821484327316
+        },
+        "42": {
+          "mse": 0.001444955705665052,
+          "r2": 0.9938735162713747,
+          "mae": 0.02987406775355339,
+          "rmse": 0.03801257163286209
+        }
+      },
+      "mse_mean": 0.001547031298590203,
+      "mse_std": 8.339254264069094e-05,
+      "r2_mean": 0.9934407249709728,
+      "r2_std": 0.0003535768805514128,
+      "mae_mean": 0.03103354573249817,
+      "mae_std": 0.0009831086123767026,
+      "rmse_mean": 0.039318013936281204,
+      "rmse_std": 0.0010606991800445231
+    },
+    "vae|B": {
+      "model_kind": "vae",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0016561964293941855,
+          "r2": 0.9929778743974941,
+          "mae": 0.03197414427995682,
+          "rmse": 0.0406963936984539
+        },
+        "41": {
+          "mse": 0.0017094142967835069,
+          "r2": 0.9927522355721554,
+          "mae": 0.03257952257990837,
+          "rmse": 0.04134506359696388
+        },
+        "42": {
+          "mse": 0.0015822503482922912,
+          "r2": 0.9932913992021579,
+          "mae": 0.030953818932175636,
+          "rmse": 0.03977750986814499
+        }
+      },
+      "mse_mean": 0.0016492870248233278,
+      "mse_std": 5.214385456032176e-05,
+      "r2_mean": 0.9930071697239358,
+      "r2_std": 0.0002210852280499759,
+      "mae_mean": 0.03183582859734694,
+      "mae_std": 0.0006708584096040718,
+      "rmse_mean": 0.040606322387854256,
+      "rmse_std": 0.0006431126412111425
+    },
+    "ar|A": {
+      "model_kind": "ar",
+      "pipeline": "A",
+      "n_train_synth": 19250,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0009755424107424915,
+          "r2": 0.995863786926074,
+          "mae": 0.02548077143728733,
+          "rmse": 0.03123367391526699
+        },
+        "41": {
+          "mse": 0.001577761024236679,
+          "r2": 0.993310433635443,
+          "mae": 0.0323435515165329,
+          "rmse": 0.0397210419178009
+        },
+        "42": {
+          "mse": 0.0034726536832749844,
+          "r2": 0.9852762569606226,
+          "mae": 0.048937030136585236,
+          "rmse": 0.05892922729253769
+        }
+      },
+      "mse_mean": 0.002008652372751385,
+      "mse_std": 0.0010639992771052768,
+      "r2_mean": 0.9914834925073799,
+      "r2_std": 0.004511262432800042,
+      "mae_mean": 0.03558711769680182,
+      "mae_std": 0.009846811978721351,
+      "rmse_mean": 0.043294647708535194,
+      "rmse_std": 0.011585591999807054
+    },
+    "ar|B": {
+      "model_kind": "ar",
+      "pipeline": "B",
+      "n_train_synth": 19200,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 0.0004686887841671705,
+          "r2": 0.9980128012558006,
+          "mae": 0.016985677182674408,
+          "rmse": 0.02164922095835209
+        },
+        "41": {
+          "mse": 0.0005622314056381583,
+          "r2": 0.9976161889622539,
+          "mae": 0.018443265929818153,
+          "rmse": 0.023711418733000755
+        },
+        "42": {
+          "mse": 0.0006298344815149903,
+          "r2": 0.9973295579353878,
+          "mae": 0.019893592223525047,
+          "rmse": 0.025096504017710686
+        }
+      },
+      "mse_mean": 0.0005535848904401064,
+      "mse_std": 6.607094980514706e-05,
+      "r2_mean": 0.9976528493844808,
+      "r2_std": 0.00028013490635831004,
+      "mae_mean": 0.01844084511200587,
+      "mae_std": 0.001187152578362895,
+      "rmse_mean": 0.023485714569687843,
+      "rmse_std": 0.001416367866489912
+    },
+    "real_only_baseline": {
+      "n_train_real": 65,
+      "n_eval_real": 320,
+      "per_init_seed": {
+        "40": {
+          "mse": 3.395045757293701,
+          "r2": -13.394692347707348,
+          "mae": 1.8083972930908203,
+          "rmse": 1.8425649404525757
+        },
+        "41": {
+          "mse": 3.2124176025390625,
+          "r2": -12.620364816181741,
+          "mae": 1.7538245916366577,
+          "rmse": 1.792321801185608
+        },
+        "42": {
+          "mse": 3.548990249633789,
+          "r2": -14.04740289396927,
+          "mae": 1.8431751728057861,
+          "rmse": 1.8838764429092407
+        }
+      },
+      "mse_mean": 3.385484536488851,
+      "mse_std": 0.1375714345362611,
+      "r2_mean": -13.354153352619454,
+      "r2_std": 0.5832906516514351,
+      "mae_mean": 1.8017990191777546,
+      "mae_std": 0.036774397822299625,
+      "rmse_mean": 1.8395877281824748,
+      "rmse_std": 0.03743626539388085
+    }
+  }
+}
