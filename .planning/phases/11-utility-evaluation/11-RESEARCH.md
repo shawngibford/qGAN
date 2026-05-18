@@ -459,21 +459,24 @@ class PredictiveGRU(torch.nn.Module):
 | A4 | TF `tf.train.AdamOptimizer()` default LR = 1e-3 (TF1 default) | TimeGAN Score Definitions | LOW — well-documented TF1 default; reproduced as `torch.optim.Adam(lr=1e-3)` |
 | A5 | Phase 11 work completes well within local-Mac budget (aggregation over frozen artifacts; no GAN training; longest op is 6×2 TimeGAN nets × 5000/2000 iters on tiny length-10 windows) | (compute) | LOW — Phase 10 VAE was ~16s; these post-hoc nets are smaller. Expect <15 min total. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **TimeGAN post-hoc `hidden_dim` for univariate length-10 windows**
    - What we know: canonical formula `int(dim/2)`; D-11-04 says "hidden dim ≈ input_dim, ~1–2 layers"; reference uses single-layer GRU.
    - What's unclear: the exact H. `int(1/2)=0` is degenerate; D-11-04 says ≈ input_dim but "input_dim" is ambiguous for a univariate windowed signal (1 feature vs 10-step window).
    - Recommendation: planner locks `H = WINDOW_LENGTH = 10` (matches D-11-04 "≈ input_dim" reading the window as the input) OR `H = 5`; record the value + rationale in `predictive_discriminative.json` metadata; surface in plan as an explicit decision. Either is defensible; consistency (same H for predictive and discriminative) matters more than the exact value.
+   - **RESOLVED:** Plan 11-02 locks `H = 10`, used identically for both the predictive and discriminative post-hoc nets, recorded in `predictive_discriminative.json` metadata with rationale.
 
 2. **Soft-sensor architecture: LSTM (Phase 10 precedent) vs 1D-CNN (EVAL-01 "or")**
    - What we know: EVAL-01 allows either; Phase 10 used LSTM-32; D-11 discretion says pick one, used consistently.
    - What's unclear: nothing blocking.
    - Recommendation: reuse the Phase 10 `TSTRLiteLSTM` (1-layer LSTM-32) for direct comparability with the already-published Phase 10 scaffolding table, just add MAE/RMSE. Lowest-risk, most-comparable choice. Document the architecture in `tstr.json`.
+   - **RESOLVED:** Plan 11-01 reuses the Phase 10 `TSTRLiteLSTM` (1-layer LSTM-32) copied verbatim, adding MAE/RMSE; architecture documented in `tstr.json`.
 
 3. **Should EVAL-05 dual-scale rows live in `tstr.json`/`augmentation.json` or a separate `fidelity_dualscale.json`?**
    - What we know: ROADMAP SC-4 says "visible as explicit scale fields in JSON outputs"; long-form schema already has a `scale` field.
    - Recommendation: emit a dedicated long-form block (e.g. `fidelity_dualscale.json` or a `fidelity` array in the utility JSON) carrying every `revision.core.eval` metric twice — once `scale="OD"`, once `scale="log_return"` (Pipeline B; Pipeline A is OD-only — log-return scale n/a, emit explicit `"log_return": null` or omit with a documented reason). Planner decides file boundary; the schema is the constraint, not the filename.
+   - **RESOLVED:** Plan 11-03 emits a dedicated `revision/results/fidelity_dualscale.json` extending the long-form schema with explicit `scale` fields per metric row.
 
 ## Environment Availability
 
