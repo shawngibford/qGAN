@@ -45,7 +45,7 @@ Full details: `.planning/ROADMAP.md` (prior revision) and git history.
 - [ ] **Phase 8: Core Module Extraction** - Extract shared logic into `revision/core/` and verify parity with main notebook
 - [x] **Phase 9: Documentation Bridge** - Training protocol + dataset stats + differentiable inverse transform — cheap, paper-ready numbers that unblock paper drafting
 - [x] **Phase 10: Classical Baselines** - Matched-parameter classical WGAN-GP + non-adversarial baseline (VAE/AR) + side-by-side comparison table (completed 2026-05-18)
-- [ ] **Phase 11: Utility Evaluation** - TSTR, predictive/discriminative scores, real-only vs synthetic-augmented, fidelity metrics on both scales (all 4 plans executed + verified 5/5 on 2026-05-18; gap-closure pending for CR-01 + 6 code-review warnings)
+- [x] **Phase 11: Utility Evaluation** - TSTR, predictive/discriminative scores, real-only vs synthetic-augmented, fidelity metrics on both scales (all 4 plans executed + verified 5/5 on 2026-05-18; gap-closure pending for CR-01 + 6 code-review warnings) (completed 2026-05-18)
 - [ ] **Phase 12: Sensitivity Analysis** - Shot-noise sweep, noise-model sensitivity, multi-seed (≥5) mean ± std across all headline results
 - [ ] **Phase 13: Architecture & Introspection** - 2–3 ansatz comparison + training-progression / parameter-trajectory / entanglement figures
 - [ ] **Phase 14: Paper Revision & Release Freeze** - All PAPER-* revisions to manuscript aic-4719598 + Zenodo DOI freeze
@@ -143,7 +143,7 @@ Plans:
   3. Real-only vs. synthetic-augmented training comparison (Orlandi et al. style) produces a delta table in `revision/results/augmentation.json` showing downstream-task lift from each generator
   4. Every fidelity metric (EMD, ACF, moments, DTW) is reported on both transformed (log-return) and original OD scales — visible as explicit `scale: "log_return" | "OD"` fields in JSON outputs
 
-**Plans:** 8 plans (4 executed + 4 gap-closure for CR-01 + WR-01..06)
+**Plans:** 8/8 plans complete
 Plans:
 **Wave 1**
 
@@ -157,10 +157,10 @@ Plans:
 
 **Gap closure** *(from 11-VERIFICATION.md — CR-01 + WR-01..06)*
 
-- [ ] 11-05-PLAN.md — run_utility.py correctness: WR-01 shape comment, WR-02 NaN-on-degenerate R2, WR-03 collision-free subsample seed, WR-04 grid-collapse guard (gap, wave 1)
-- [ ] 11-06-PLAN.md — run_dualscale_fidelity.py portability: CR-01 env-var QGAN_CANONICAL_REPO resolver + fail-loud + single-root provenance assertion (gap, wave 1, closes HUMAN-UAT)
-- [ ] 11-07-PLAN.md — run_timegan_scores.py: WR-05 single-Generator discriminative_score + logits/labels shape contract (gap, wave 1)
-- [ ] 11-08-PLAN.md — test_timegan_scores.py: WR-06 collected test_discriminative_score_deterministic (gap, wave 2 — depends on 11-07)
+- [x] 11-05-PLAN.md — run_utility.py correctness: WR-01 shape comment, WR-02 NaN-on-degenerate R2, WR-03 collision-free subsample seed, WR-04 grid-collapse guard (gap, wave 1)
+- [x] 11-06-PLAN.md — run_dualscale_fidelity.py portability: CR-01 env-var QGAN_CANONICAL_REPO resolver + fail-loud + single-root provenance assertion (gap, wave 1, closes HUMAN-UAT)
+- [x] 11-07-PLAN.md — run_timegan_scores.py: WR-05 single-Generator discriminative_score + logits/labels shape contract (gap, wave 1)
+- [x] 11-08-PLAN.md — test_timegan_scores.py: WR-06 collected test_discriminative_score_deterministic (gap, wave 2 — depends on 11-07)
 
 **Cross-cutting constraints:**
 
@@ -227,7 +227,7 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 8. Core Module Extraction | v2.0 | 0/5 | Not started | - |
 | 9. Documentation Bridge | v2.0 | 0/5 | Not started | - |
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
-| 11. Utility Evaluation | v2.0 | 4/4 | Complete   | 2026-05-18 |
+| 11. Utility Evaluation | v2.0 | 8/8 | Complete   | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 0/TBD | Not started | - |
 | 13. Architecture & Introspection | v2.0 | 0/TBD | Not started | - |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
