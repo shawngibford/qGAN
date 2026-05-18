@@ -43,7 +43,7 @@ Full details: `.planning/ROADMAP.md` (prior revision) and git history.
 
 - [ ] **Phase 8: Core Module Extraction** - Extract shared logic into `revision/core/` and verify parity with main notebook
 - [x] **Phase 9: Documentation Bridge** - Training protocol + dataset stats + differentiable inverse transform — cheap, paper-ready numbers that unblock paper drafting
-- [ ] **Phase 10: Classical Baselines** - Matched-parameter classical WGAN-GP + non-adversarial baseline (VAE/AR) + side-by-side comparison table
+- [x] **Phase 10: Classical Baselines** - Matched-parameter classical WGAN-GP + non-adversarial baseline (VAE/AR) + side-by-side comparison table (completed 2026-05-18)
 - [ ] **Phase 11: Utility Evaluation** - TSTR, predictive/discriminative scores, real-only vs synthetic-augmented, fidelity metrics on both scales
 - [ ] **Phase 12: Sensitivity Analysis** - Shot-noise sweep, noise-model sensitivity, multi-seed (≥5) mean ± std across all headline results
 - [ ] **Phase 13: Architecture & Introspection** - 2–3 ansatz comparison + training-progression / parameter-trajectory / entanglement figures
@@ -178,7 +178,7 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 7. Conditioning Verification | v1.1 | 1/1 | Complete | 2026-03-23 |
 | 8. Core Module Extraction | v2.0 | 0/5 | Not started | - |
 | 9. Documentation Bridge | v2.0 | 0/5 | Not started | - |
-| 10. Classical Baselines | v2.0 | 3/4 | In Progress|  |
+| 10. Classical Baselines | v2.0 | 4/4 | Complete   | 2026-05-18 |
 | 11. Utility Evaluation | v2.0 | 0/TBD | Not started | - |
 | 12. Sensitivity Analysis | v2.0 | 0/TBD | Not started | - |
 | 13. Architecture & Introspection | v2.0 | 0/TBD | Not started | - |
