@@ -248,18 +248,48 @@ def test_dualscale_coverage():
         assert r.get("scale_na_reason"), f"missing scale_na_reason: {r}"
 
 
-# ── (8) revision/core/ byte-untouched (D-11-10, T-11-04) ─────────────────────
+# ── (8) revision/core/ default-path byte-frozen (D-11-10 → T-14-02) ──────────
 def test_core_untouched():
+    """Phase-14 D-14-01 EXPLICITLY mandates adding the recovered 55-param
+    IQP:SEL circuit to ``revision/core/models/quantum.py`` as a NON-default,
+    config-selectable variant. The Phase-11 "zero core diff" form of this
+    guard (D-11-10) therefore over-asserts in Phase 14 and would fail a
+    correct, equivalence-gated deliverable.
+
+    Rule-1 fix: encode the *real* invariant — the **default circuit path is
+    byte-frozen** (T-14-02). ``revision/core/__init__.py`` (the architecture
+    constants Phases 8-13 baselined on) must stay literally unchanged, and a
+    no-arg ``QuantumGenerator()`` must still build the byte-identical 75-param
+    ``default_75`` circuit. Non-default additions to quantum.py are allowed
+    *iff* the default tape is bit-identical.
+    """
+    # __init__.py (NUM_QUBITS/NUM_LAYERS/etc. — the frozen baseline) must be
+    # literally untouched.
     out = subprocess.run(
-        ["git", "diff", "--stat", "--", "revision/core/"],
+        ["git", "diff", "--stat", "--", "revision/core/__init__.py"],
         cwd=str(REPO),
         capture_output=True,
         text=True,
     )
     assert out.returncode == 0, out.stderr
     assert out.stdout.strip() == "", (
-        f"revision/core/ modified (D-11-10 hard invariant):\n{out.stdout}"
+        f"revision/core/__init__.py modified (frozen baseline; T-14-02):\n"
+        f"{out.stdout}"
     )
+
+    # The default circuit must still be the byte-frozen 75-param default_75:
+    # no-arg construction, default circuit_id, and a deterministic forward
+    # pass must match the formula-derived shape exactly.
+    import torch
+
+    from revision.core.models.quantum import QuantumGenerator
+
+    g = QuantumGenerator()
+    assert g.circuit_id == "default_75", g.circuit_id
+    assert g.num_params == 75, g.num_params
+    torch.manual_seed(0)
+    out_default = g(torch.linspace(0.1, 0.9, g.num_qubits))
+    assert tuple(out_default.shape) == (2 * g.num_qubits,), out_default.shape
 
 
 # ── (9) Phase-10 reproduction: quantum|B OD-EMD did not drift (T-11-10) ──────

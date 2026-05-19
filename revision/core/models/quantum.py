@@ -39,6 +39,16 @@ class QuantumGenerator(nn.Module):
     #: (wrap-around range pattern, byte-identical to pre-Phase-13 code).
     _TOPOLOGIES = ("range", "linear")
 
+    #: Allowed circuit variants (Phase 14 D-14-01/04/07). ``"default_75"`` is
+    #: the v1.0/v1.1 byte-frozen circuit: IQP encoding + SEL layers + final
+    #: RX **and** RY per qubit (5 + L*15 + 2*5 = 75 at L=4). ``"iqp_sel_55"``
+    #: is the recovered canonical paper circuit reconstructed from
+    #: ``best_checkpoint.pt`` (D-14-02): IQP encoding + SEL layers + final
+    #: RX-**only** per qubit (5 + L*15 + 5 = 55 at L=3). The 55-param variant
+    #: is NON-default — selecting it never perturbs the frozen default tape
+    #: (T-14-02). Mirrors the eager-validation shape of :attr:`_TOPOLOGIES`.
+    _CIRCUIT_IDS = ("default_75", "iqp_sel_55")
+
     #: The balanced 2|3 bipartition used by :meth:`introspect` — recorded here
     #: so plan-03's JSON metadata can pin the exact partition (D-13-09).
     INTROSPECT_BIPARTITION = ((0, 1), (2, 3, 4))
@@ -50,6 +60,7 @@ class QuantumGenerator(nn.Module):
         window_length: int = 10,
         diff_method: str = "backprop",
         topology: str = "range",
+        circuit_id: str = "default_75",
     ) -> None:
         super().__init__()
 
@@ -60,6 +71,16 @@ class QuantumGenerator(nn.Module):
             raise ValueError(
                 f"Unknown topology {topology!r}; expected one of "
                 f"{self._TOPOLOGIES}"
+            )
+
+        # D-14-01/04/07: select the circuit variant. Default "default_75"
+        # keeps the v1.0/v1.1 circuit byte-identical (T-14-02 — Phases 8-13
+        # were baselined on it). "iqp_sel_55" is the recovered canonical paper
+        # circuit (final RX-only, no RY). Eager validation mirrors topology.
+        if circuit_id not in self._CIRCUIT_IDS:
+            raise ValueError(
+                f"Unknown circuit_id {circuit_id!r}; expected one of "
+                f"{self._CIRCUIT_IDS}"
             )
 
         # v1.0 invariant: window_length = 2 * num_qubits (PauliX + PauliZ per wire).
@@ -73,10 +94,18 @@ class QuantumGenerator(nn.Module):
         self.window_length = window_length
         self.diff_method = diff_method
         self.topology = topology
+        self.circuit_id = circuit_id
 
-        # IQP (num_qubits) + num_layers * (num_qubits * 3 Rot params) + final RX/RY (num_qubits * 2)
+        # Param formula by variant:
+        #   default_75 : IQP(num_qubits) + L*(num_qubits*3) + final RX+RY (num_qubits*2)
+        #   iqp_sel_55 : IQP(num_qubits) + L*(num_qubits*3) + final RX-only (num_qubits)
+        # The "default_75" branch is LITERALLY the pre-Phase-14 expression so
+        # the frozen default circuit is byte-identical (T-14-02).
+        _final_rot_factor = 2 if circuit_id == "default_75" else 1
         self.num_params = (
-            num_qubits + num_layers * (num_qubits * 3) + num_qubits * 2
+            num_qubits
+            + num_layers * (num_qubits * 3)
+            + num_qubits * _final_rot_factor
         )
 
         # Quantum device (statevector simulator, no shots — match cell 26).
@@ -109,9 +138,22 @@ class QuantumGenerator(nn.Module):
     def count_params(self) -> int:
         """Return total PQC parameter count.
 
-        For (num_qubits=5, num_layers=4): 5 + 4*15 + 10 = 75.
+        ``default_75`` (num_qubits=5, num_layers=4): 5 + 4*15 + 10 = 75.
+        ``iqp_sel_55`` (num_qubits=5, num_layers=3): 5 + 3*15 + 5 = 55
+        (recovered canonical paper circuit, D-14-01).
         """
         return self.num_params
+
+    def last_param_index(self, noise_params: torch.Tensor) -> int:
+        """Structural-introspection helper for the D-14-07 equivalence gate.
+
+        Runs a single forward pass and returns how many ``params_pqc``
+        entries the bound circuit body actually consumed. The reconstructed
+        ``iqp_sel_55`` circuit must consume exactly 55 (Phase-14 Task 2 gate);
+        ``default_75`` consumes 75. Read-only — never mutates state.
+        """
+        self.qnode(noise_params, self.params_pqc)
+        return int(self._last_idx)
 
     def encoding_layer(self, noise_params: torch.Tensor) -> None:
         """IQP noise encoding: RZ(noise_params[i]) on wire i.
@@ -190,12 +232,25 @@ class QuantumGenerator(nn.Module):
                         qml.CNOT(wires=[q, q + 1])
 
         # Step 5: Final measurement-preparation rotations.
-        for qubit in range(self.num_qubits):
-            if idx + 1 < len(params_pqc):
-                qml.RX(phi=params_pqc[idx], wires=qubit)
-                idx += 1
-                qml.RY(phi=params_pqc[idx], wires=qubit)
-                idx += 1
+        # default_75 — RX+RY per qubit (the body below is LITERALLY the
+        # pre-Phase-14 block so the frozen default tape is byte-identical,
+        # T-14-02). iqp_sel_55 — RX-only per qubit (recovered canonical
+        # paper circuit, D-14-01: 5 + L*15 + 5 = 55).
+        if self.circuit_id == "default_75":
+            for qubit in range(self.num_qubits):
+                if idx + 1 < len(params_pqc):
+                    qml.RX(phi=params_pqc[idx], wires=qubit)
+                    idx += 1
+                    qml.RY(phi=params_pqc[idx], wires=qubit)
+                    idx += 1
+        elif self.circuit_id == "iqp_sel_55":
+            for qubit in range(self.num_qubits):
+                if idx < len(params_pqc):
+                    qml.RX(phi=params_pqc[idx], wires=qubit)
+                    idx += 1
+
+        # Record how many params the body consumed (D-14-07 structural gate).
+        self._last_idx = idx
 
         # Step 6: Pauli-X and Pauli-Z expectations on each qubit.
         measurements = []
@@ -253,13 +308,22 @@ class QuantumGenerator(nn.Module):
                     for q in range(self.num_qubits - 1):
                         qml.CNOT(wires=[q, q + 1])
 
-        # Step 5: Final measurement-preparation rotations.
-        for qubit in range(self.num_qubits):
-            if idx + 1 < len(params_pqc):
-                qml.RX(phi=params_pqc[idx], wires=qubit)
-                idx += 1
-                qml.RY(phi=params_pqc[idx], wires=qubit)
-                idx += 1
+        # Step 5: Final measurement-preparation rotations (variant-aware —
+        # mirrors generator_circuit so the probed state matches the prepared
+        # state for whichever circuit_id is selected; default_75 branch is
+        # the byte-frozen RX+RY block, T-14-02).
+        if self.circuit_id == "default_75":
+            for qubit in range(self.num_qubits):
+                if idx + 1 < len(params_pqc):
+                    qml.RX(phi=params_pqc[idx], wires=qubit)
+                    idx += 1
+                    qml.RY(phi=params_pqc[idx], wires=qubit)
+                    idx += 1
+        elif self.circuit_id == "iqp_sel_55":
+            for qubit in range(self.num_qubits):
+                if idx < len(params_pqc):
+                    qml.RX(phi=params_pqc[idx], wires=qubit)
+                    idx += 1
 
         # Step 6 (replaced): entanglement diagnostics on the balanced
         # bipartition {0,1}|{2,3,4} (== INTROSPECT_BIPARTITION).
