@@ -1,0 +1,19 @@
+{
+ "figure": "stylized_facts_trajectory",
+ "model": "wgan_mlp",
+ "scale": "OD",
+ "source": "matched2000/runs/wgan_mlp/42",
+ "render_only": true,
+ "real_moments": {
+  "mean": 1.4042103290557861,
+  "std": 0.8812640905380249,
+  "skewness": 1.3128113746643066,
+  "kurtosis": 0.5972871780395508
+ },
+ "fake_moments": {
+  "mean": 1.4031038477112072,
+  "std": 0.8819876780543479,
+  "skewness": 1.3693324556769282,
+  "kurtosis": 0.7955926915812706
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "figure": "stylized_facts_trajectory",
+ "model": "ar",
+ "scale": "OD",
+ "source": "matched2000/runs/ar/42",
+ "render_only": true,
+ "real_moments": {
+  "mean": 1.4042103290557861,
+  "std": 0.8812640905380249,
+  "skewness": 1.3128113746643066,
+  "kurtosis": 0.5972871780395508
+ },
+ "fake_moments": {
+  "mean": 1.4083020232771801,
+  "std": 0.8885348517900707,
+  "skewness": 1.380069543424254,
+  "kurtosis": 0.8670046536892251
+ }
+}

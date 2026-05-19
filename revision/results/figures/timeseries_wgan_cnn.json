@@ -1,0 +1,28 @@
+{
+ "figure": "time_series_comparison",
+ "model": "wgan_cnn",
+ "scale": "OD",
+ "source": "matched2000/runs/wgan_cnn/42",
+ "render_only": true,
+ "n_windows_shown": 8,
+ "real_window_idx": [
+  334,
+  111,
+  100,
+  134,
+  262,
+  241,
+  333,
+  160
+ ],
+ "fake_window_idx": [
+  2238,
+  2221,
+  36,
+  1978,
+  2294,
+  242,
+  3450,
+  2340
+ ]
+}

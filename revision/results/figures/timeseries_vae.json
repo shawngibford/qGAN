@@ -1,0 +1,28 @@
+{
+ "figure": "time_series_comparison",
+ "model": "vae",
+ "scale": "OD",
+ "source": "matched2000/runs/vae/42",
+ "render_only": true,
+ "n_windows_shown": 8,
+ "real_window_idx": [
+  180,
+  129,
+  374,
+  215,
+  154,
+  367,
+  300,
+  88
+ ],
+ "fake_window_idx": [
+  3030,
+  722,
+  2800,
+  2124,
+  666,
+  263,
+  2568,
+  3477
+ ]
+}

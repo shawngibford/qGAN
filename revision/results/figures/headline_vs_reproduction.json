@@ -1,0 +1,29 @@
+{
+ "figure": "headline_vs_reproduction",
+ "render_only": true,
+ "headline_source": "headline_canonical.json (frozen_checkpoint_epoch_1969)",
+ "reproduction_source": "matched2000/runs/iqp_sel_55_repro/42 (matched2000_reproduction)",
+ "conflation_guard": "D-14-10 / T-14-12: headline and reproduction are separate distinctly-labelled series, never merged",
+ "moments": {
+  "mean": {
+   "real": 1.4042103290557861,
+   "headline": 1.4073796823002893,
+   "reproduction": 1.4071833282150938
+  },
+  "std": {
+   "real": 0.8812640905380249,
+   "headline": 0.8843061247467316,
+   "reproduction": 0.8840789221312944
+  },
+  "skewness": {
+   "real": 1.3128113746643066,
+   "headline": 1.3657245885713432,
+   "reproduction": 1.3649443396208174
+  },
+  "kurtosis": {
+   "real": 0.5972871780395508,
+   "headline": 0.7771527793674218,
+   "reproduction": 0.7744683432964083
+  }
+ }
+}
