@@ -1,0 +1,19 @@
+{
+ "figure": "stylized_facts_trajectory",
+ "model": "vae",
+ "scale": "OD",
+ "source": "matched2000/runs/vae/42",
+ "render_only": true,
+ "real_moments": {
+  "mean": 1.4042103290557861,
+  "std": 0.8812640905380249,
+  "skewness": 1.3128113746643066,
+  "kurtosis": 0.5972871780395508
+ },
+ "fake_moments": {
+  "mean": 1.3900480490344411,
+  "std": 0.8730492951885461,
+  "skewness": 1.3643024422826089,
+  "kurtosis": 0.7693381742828573
+ }
+}

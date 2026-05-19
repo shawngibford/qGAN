@@ -1,0 +1,33 @@
+{
+ "figure": "cross_model_emd",
+ "models": [
+  "iqp_sel_55_repro",
+  "V1",
+  "V2",
+  "V3",
+  "wgan_mlp",
+  "wgan_cnn",
+  "wgan_lstm"
+ ],
+ "best_emd_mean": [
+  0.11269164160318393,
+  0.11244795113753729,
+  0.11350972427491031,
+  0.10655275301115315,
+  0.058451476846712466,
+  0.052372386981248076,
+  0.09054842307591268
+ ],
+ "best_emd_std": [
+  0.005053356378236175,
+  0.004208920789444384,
+  0.0034621239053770664,
+  0.0037629720358517693,
+  0.011622948907636405,
+  0.046683952423489536,
+  0.014166976480487006
+ ],
+ "frozen_headline_OD_emd": 0.023071979442389253,
+ "headline_source": "headline_canonical.json (source=frozen_checkpoint_epoch_1969) \u2014 distinct from the iqp_sel_55_repro 2000ep reproduction (D-14-10)",
+ "render_only": true
+}

@@ -1,0 +1,12 @@
+{
+ "figure": "distribution_comparison",
+ "model": "V3",
+ "scale": "OD",
+ "source": "matched2000/runs/V3/42",
+ "render_only": true,
+ "n_real": 3850,
+ "n_fake": 38400,
+ "real_mean": 1.4042103290557861,
+ "fake_mean": 1.4069734279240016,
+ "emd": 0.02289553628247895
+}

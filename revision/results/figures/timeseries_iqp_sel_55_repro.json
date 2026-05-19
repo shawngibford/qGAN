@@ -1,0 +1,28 @@
+{
+ "figure": "time_series_comparison",
+ "model": "iqp_sel_55_repro",
+ "scale": "OD",
+ "source": "matched2000/runs/iqp_sel_55_repro/42",
+ "render_only": true,
+ "n_windows_shown": 8,
+ "real_window_idx": [
+  42,
+  43,
+  319,
+  39,
+  181,
+  312,
+  306,
+  184
+ ],
+ "fake_window_idx": [
+  3526,
+  859,
+  1828,
+  1305,
+  2999,
+  446,
+  912,
+  2978
+ ]
+}

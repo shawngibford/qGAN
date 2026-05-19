@@ -1,0 +1,12 @@
+{
+ "figure": "loss_curves",
+ "model": "ar",
+ "source": "matched2000/runs/ar/42/metrics.json",
+ "render_only": true,
+ "fit_summary": {
+  "sigma2": 0.05696122724863105,
+  "p": 2.0,
+  "sample_mean": -0.002539797279569328,
+  "sample_std": 0.24190169098236167
+ }
+}

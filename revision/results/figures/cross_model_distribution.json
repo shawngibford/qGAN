@@ -1,0 +1,18 @@
+{
+ "figure": "cross_model_distribution",
+ "models": [
+  "iqp_sel_55_repro",
+  "V1",
+  "V2",
+  "V3",
+  "wgan_mlp",
+  "wgan_cnn",
+  "wgan_lstm",
+  "vae",
+  "ar"
+ ],
+ "scale": "OD",
+ "source": "matched2000/runs/<model>/42",
+ "render_only": true,
+ "quantum_entrant": "iqp_sel_55_repro (D-14-04)"
+}
