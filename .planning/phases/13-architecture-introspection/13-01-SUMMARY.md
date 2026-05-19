@@ -132,6 +132,10 @@ None — all delivered functionality is wired and tested.
 - CR-01 and CR-02 folded-todo fixes are landed with CONTEXT-mandated regression tests; the pending todo files under `.planning/todos/pending/` can be marked resolved by the orchestrator/transition step.
 - No blockers.
 
+## Self-Check: PASSED
+
+All 10 created/modified files verified present; all 6 task/doc commits verified in git log (9fb23ee, 1aa4f6c, 2a7ced3, 7ea061b, 236d7d3, 959ce23). Full suite: 19 passed.
+
 ---
 *Phase: 13-architecture-introspection*
 *Completed: 2026-05-19*
