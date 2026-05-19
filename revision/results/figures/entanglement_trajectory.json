@@ -1,0 +1,37 @@
+{
+  "schema": "INTRO-03 entanglement trajectory (quantum only)",
+  "metadata": {
+    "variant": "V1",
+    "bipartition": "{0,1}|{2,3,4}",
+    "measure": "Von Neumann entanglement entropy + state purity Tr(rho^2)",
+    "seed": 42,
+    "snapshot_epochs": [
+      0,
+      250,
+      500,
+      750,
+      1000
+    ]
+  },
+  "epochs": [
+    0,
+    250,
+    500,
+    750,
+    1000
+  ],
+  "vn_entropy": [
+    1.2442820699581412,
+    1.2071784180275071,
+    1.2525693671581006,
+    1.1677263112101728,
+    1.209043125399173
+  ],
+  "purity": [
+    0.3231121002168733,
+    0.33342981576526026,
+    0.3195736220853429,
+    0.3475073462224076,
+    0.3312775677082296
+  ]
+}
