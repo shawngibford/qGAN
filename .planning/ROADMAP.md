@@ -15,7 +15,7 @@
 Plans:
 **Wave 1**
 
-- [ ] 13-01-PLAN.md — core/ edits: QuantumGenerator topology selector + introspect() (ARCH-01/INTRO-03); CR-01 differentiable PSD + CR-02 device-safe ES restore; greenfield tests/ + 4 regression tests (wave 1, foundational)
+- [x] 13-01-PLAN.md — core/ edits: QuantumGenerator topology selector + introspect() (ARCH-01/INTRO-03); CR-01 differentiable PSD + CR-02 device-safe ES restore; greenfield tests/ + 4 regression tests (wave 1, foundational)
 
 **Wave 2** *(blocked on Wave 1 — needs topology arg + introspect())*
 
@@ -66,5 +66,5 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
-| 13. Architecture & Introspection | v2.0 | 0/4 | Not started | - |
+| 13. Architecture & Introspection | v2.0 | 1/4 | In Progress|  |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
