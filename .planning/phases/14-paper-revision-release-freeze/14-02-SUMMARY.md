@@ -44,7 +44,7 @@ key-decisions:
   - "ACF NLAGS=9 (not 20) — matched verbatim to run_dualscale_fidelity:106 so the headline ACF rows reconcile with fidelity_dualscale.json (Rule-1 port-fix)"
 
 patterns-established:
-  - "Pattern: resumable sweep where completion == strict-accept-gate-PASS, proven across repeated kill/resume cycles (14 accepted runs skipped on resume, 14 PASS / 0 FAIL on independent gate recheck)"
+  - "Pattern: resumable sweep where completion == strict-accept-gate-PASS, proven across repeated kill/resume cycles; ran to full completion — 45/45 runs PASS / 0 FAIL on independent gate recheck across the entire 9x5 matrix"
 
 requirements-completed: [PAPER-03]
 
@@ -79,10 +79,10 @@ completed: 2026-05-19
 - `--accept` strict gate (D-14-13): explicit `raise AssertionError` on each of data_hash ≠ frozen, seed ∉ {42..46}, epochs ≠ 2000, early-stop set, device-manifest not PASSED, schema nonconformance, missing bundle, headline/reproduction conflation. Zero bare `assert` guards (python -O safe).
 - `revision/run_matched2000_sweep.sh`: copied end-to-end from the proven `run_ansatz_sweep.sh` skeleton. Verbatim thermal guardrail (`--parallel` 1|2, ≥3 → `exit 3`), `xargs -P 2 -L 1` dispatch (no in-process Python pool — Pitfall 5), atomic flock'd `sweep_status.json`, `./qgan_env/bin/python` direct invocation. The resumable `is_complete()` requires the **strict accept gate to PASS** (not file presence) so mixed-budget / wrong-hash bundles never look done. Tiered T2 (reproduction + baseline-bearing) / T3 (ansatz), each independently acceptable, run-to-completion with no hard time-box (D-14-14).
 
-### Sweep execution (run-to-completion, in progress)
-- Launched at `--parallel 2`; at SUMMARY time **14/45 runs accepted** behind the strict gate (all 5 `iqp_sel_55_repro`, all 5 V1, 4 of 5 V2), **0 failures**.
-- **Resume proven across repeated kill cycles**: the harness re-invocation skipped all 14 already-accepted runs (strict-gate-confirmed) and resumed from the first incomplete one; an independent strict-accept recheck of all 14 returned **14 PASS / 0 FAIL**.
-- The sweep continues running detached (`nohup … & disown`) to produce all 45 accepted artifacts. This is exactly the resumable, no-hard-time-box infrastructure D-14-14 mandates — the harness is the deliverable; full sweep completion is operator-resumable (`./revision/run_matched2000_sweep.sh --parallel 2` re-invoked any time).
+### Sweep execution (run-to-completion, COMPLETE)
+- Launched at `--parallel 2`; the detached sweep ran to full completion. `sweep_status.json` reports `all_complete: true` with **45/45 runs `complete`** across the full 9-model × 5-seed matrix (`iqp_sel_55_repro`, V1, V2, V3, wgan_mlp/cnn/lstm, vae, ar × seeds 42–46).
+- **Final strict-accept verification**: an independent re-run of the D-14-13 `_strict_accept` gate over **all 45 runs** returned **45 PASS / 0 FAIL**. Every accepted artifact agrees on the frozen Phase-09.1 `data_hash=91e447d4624e25b3`, `epochs=2000`, no early-stop, device-manifest `backend_assertion=PASSED`, conformant long-form schema, and the 5-file bundle present & non-empty.
+- **Resume proven across repeated kill cycles**: prior re-invocations skipped already-accepted runs (strict-gate-confirmed) and resumed from the first incomplete one, losing zero work — exactly the resumable, no-hard-time-box infrastructure D-14-14 mandates. The harness can be re-invoked idempotently (`./revision/run_matched2000_sweep.sh --parallel 2`); it is now a no-op (all 45 accepted).
 
 ## Task Commits
 
@@ -94,7 +94,7 @@ completed: 2026-05-19
 - `revision/results/headline_canonical.json` — load-bearing headline (source=frozen_checkpoint_epoch_1969, 56 rows)
 - `revision/run_matched2000.py` — per-(model,seed) 2000ep driver + explicit-raise strict accept gate
 - `revision/run_matched2000_sweep.sh` — resumable tiered xargs -P2 2000ep sweep harness
-- `revision/results/matched2000/sweep_status.json` (+ 60 lightweight per-run config/metrics/inverse/samples artifacts) — resumable tiered sweep state
+- `revision/results/matched2000/sweep_status.json` (+ 185 lightweight per-run config/metrics/inverse/samples artifacts across all 45 accepted runs; `ar` adds its `checkpoint.npz`) — completed tiered sweep state (`all_complete: true`)
 - `.gitignore` — ignore the `qgan_env` symlink (env, gitignored in main) and the sweep `.status.lock` (advisory flock guard, not an artifact)
 
 ## Decisions Made
@@ -123,17 +123,17 @@ completed: 2026-05-19
 **Total deviations:** 2 auto-fixed (1 Rule-1 port bug, 1 Rule-3 acceptance-gate blocker). No scope creep — both restore the plan's actual intent (ACF reconciliation; functional token-absence, not documentation-absence).
 
 ## Issues Encountered
-- **Harness-killed long background tasks:** the `nohup` sweep was repeatedly terminated by the executor's background-job control. This is precisely the scenario the resumable harness was designed for (D-14-14): every kill/resume cycle skipped the already-accepted runs (strict-gate-confirmed) and lost zero work. The sweep was finally relaunched fully detached via `nohup … & disown` so it survives across turns.
+- **Harness-killed long background tasks:** the `nohup` sweep was repeatedly terminated by the executor's background-job control. This is precisely the scenario the resumable harness was designed for (D-14-14): every kill/resume cycle skipped the already-accepted runs (strict-gate-confirmed) and lost zero work. The sweep was finally relaunched fully detached via `nohup … & disown` and **ran to full completion across turns — 45/45 accepted, 0 failed**. Resolved.
 - **Gitignored artifacts absent in worktree:** `best_checkpoint.pt`, `qgan_env`, are gitignored and live in the main checkout. Resolved by the worktree-aware checkpoint resolver (copied from `run_recover_canonical.py`) and a `qgan_env` symlink (added to `.gitignore`, never committed). `data.csv` is tracked and present.
 - **Per-run `.pt` checkpoints gitignored by precedent:** consistent with Phase-13 ansatz (0 artifacts tracked) and Phase-10 baselines (2 non-checkpoint files); only the lightweight `config.yaml`/`metrics.json`/`inverse_kwargs.npz`/`samples.npy` + `sweep_status.json` are committed as resumable state.
 
 ## Next Phase Readiness
 - **Headline is locked and traceable:** `headline_canonical.json` is the load-bearing number, generated from the frozen checkpoint with stored stats + fixed seed, sha256-verified, device-honest, and distinct from any reproduction (D-14-03/05/10).
-- **Matched-budget sweep is in progress, resumable, run-to-completion:** the harness + strict gate are proven (14/45 accepted, 0 failed, 14 PASS / 0 FAIL on independent recheck). Re-invoke `./revision/run_matched2000_sweep.sh --parallel 2` any time to continue/finish; downstream Phase-14 plans (14-03..07: model-info, figure suite, latex blocks) consume `matched2000/runs/<model>/<seed>/` + `headline_canonical.json` once all 45 are accepted.
+- **Matched-budget sweep is COMPLETE and accepted:** the harness + strict gate ran to full completion — **45/45 accepted, 0 failed, 45 PASS / 0 FAIL on independent re-run of the D-14-13 gate**; `sweep_status.json` reports `all_complete: true`. Downstream Phase-14 plans (14-03..07: model-info, figure suite, latex blocks) can now consume the full `matched2000/runs/<model>/<seed>/` matrix + `headline_canonical.json` directly. Re-invoking the harness is an idempotent no-op.
 - **No blockers.** The core default path remains byte-frozen (Plan 01 invariant); this plan adds only new driver/sweep scripts and `iqp_sel_55`-config usage.
 
 ## Known Stubs
-None — no hardcoded empty/placeholder values; every metric is computed from real generated samples via `revision.core.eval`. The sweep is mid-execution (14/45 accepted) but that is run-to-completion infrastructure (D-14-14), not a stub.
+None — no hardcoded empty/placeholder values; every metric is computed from real generated samples via `revision.core.eval`. The sweep ran to full completion (45/45 accepted) — no stubs, no partial state.
 
 ## Threat Surface Scan
 No new network endpoints, auth paths, or external file-access patterns. The two plan trust boundaries are both mitigated as specified: training-run → device-manifest (T-14-04 — per-run explicit-raise backend assertion; strict gate rejects un-PASSED manifests) and regenerated-artifact → strict-accept-gate (T-14-05/06/14 — explicit-raise data_hash/seed/2000ep/conflation/sha256 gate). No threat flags.
@@ -143,9 +143,12 @@ No new network endpoints, auth paths, or external file-access patterns. The two 
 - `revision/results/headline_canonical.json` — FOUND (source=frozen_checkpoint_epoch_1969, 56 rows, data_hash 91e447d4624e25b3)
 - `revision/run_matched2000.py` — FOUND
 - `revision/run_matched2000_sweep.sh` — FOUND (executable)
-- `revision/results/matched2000/sweep_status.json` — FOUND (total_count 45, epochs 2000, parallel 2)
+- `revision/results/matched2000/sweep_status.json` — FOUND (45 runs, all `complete`, `all_complete: true`, epochs 2000, parallel 2)
+- `revision/results/matched2000/runs/**` — FOUND (185 tracked bundle files across 45 run dirs)
+- Strict gate independently re-run over all 45 runs — 45 PASS / 0 FAIL
 - Commit `f9d9fb8` — FOUND
 - Commit `02555ca` — FOUND
+- Commit `80c939d` (sweep completion, 45/45) — FOUND
 
 ---
 *Phase: 14-paper-revision-release-freeze*
