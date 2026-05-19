@@ -66,8 +66,8 @@ Code group (Group A):
 - [x] OD-scale inverse-transform results + ACF on both scales — Phase 11 (EVAL-05 validated 2026-05-18; fidelity_dualscale.json dual-scale OD + log_return, 3360 rows; CR-01 portability fix applied)
 - [x] Shot-noise sensitivity (1024, 8192) + multi-seed (≥5) sweeps — Phase 12 (SENS-01 + SENS-03 validated 2026-05-18; shot_noise_sensitivity.json 270 rows, multiseed_summary.json 1266 cells over seeds {42..46}; CR-01 log_return-reference fix reconciled to 1.5e-16, CR-02/03 hardening)
 - [x] Depolarizing / amplitude-damping noise-model sensitivity — Phase 12 (SENS-02 validated 2026-05-18; noise_model_sensitivity.json 720 rows, depol+ampdamp p/γ ∈ {0,0.001,0.01,0.05}, per-layer channels; sweep 8m22s, core/ byte-untouched)
-- [ ] Training-progression + circuit-analysis figures
-- [ ] 2–3 ansatz comparison
+- [x] Training-progression + circuit-analysis figures — Phase 13 (INTRO-01/02/03 validated 2026-05-19; training_progression/param_trajectory/entanglement_trajectory PNG+PDF + reproducibility JSON; entropy ∈ [1.17,1.25] < ln4, purity ∈ [0.32,0.35])
+- [x] 2–3 ansatz comparison — Phase 13 (ARCH-01/02 validated 2026-05-19; V1/V2/V3 topology-selectable, ansatz_comparison.json 300 rows multi-seed dual-scale; core/ default path byte-unchanged vs b7c84d3)
 - [ ] Training-protocol + dataset-stats extraction
 - [ ] Zenodo / tagged-release repository freeze
 
