@@ -171,6 +171,20 @@ class EarlyStopping:
         device, recast restored params to the live device+dtype, and push every
         optimizer-state tensor onto that device before re-registering
         ``params_pqc`` with the generator optimizer.
+
+        WR-01 (Phase 13 reproducibility caveat — DOCUMENTATION ONLY, no
+        behavior change): on the default headline path early stopping is OFF
+        (D-13-05), so this method is never invoked and the default
+        forward/training trace stays byte-identical to pre-Phase-13
+        (``test_default_forward_byte_unchanged``, atol 1e-12). On the
+        CPU/float64 path the device/dtype recasts above are value-preserving
+        no-ops. HOWEVER, any *prior* phase that ran with ``early_stopper`` set
+        and then resumed/early-stopped now follows a different code path than
+        it did pre-``b7c84d3`` (the old port did a raw ``.data =`` assignment
+        and did not iterate optimizer state). A future early-stopped
+        reproduction therefore MUST NOT be compared bit-for-bit against a
+        pre-Phase-13 early-stopped trace. This delta is intentional and
+        accepted; it is recorded here so it is discoverable at the call site.
         """
         dev = model.params_pqc.device
         dt = model.params_pqc.dtype
