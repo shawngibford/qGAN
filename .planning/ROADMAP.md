@@ -66,5 +66,5 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
-| 13. Architecture & Introspection | v2.0 | 4/4 | Complete   | 2026-05-19 |
+| 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
