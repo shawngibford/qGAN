@@ -51,7 +51,7 @@ Plans:
 
 Plans:
 **Wave 1**
-- [ ] 14-01-PLAN.md — Recover the 55-param IQP:SEL config from best_checkpoint.pt, add as non-default config-selectable circuit, config-equivalence hard-assert (T1, D-14-07)
+- [x] 14-01-PLAN.md — Recover the 55-param IQP:SEL config from best_checkpoint.pt, add as non-default config-selectable circuit, config-equivalence hard-assert (T1, D-14-07)
 **Wave 2** *(blocked on 14-01 — needs the locked 55-param config)*
 - [ ] 14-02-PLAN.md — Frozen-checkpoint headline + tiered resumable 2000ep matched-budget sweep behind the strict accept gate (D-14-08..14)
 **Wave 3** *(blocked on 14-02 — needs accepted 2000ep artifacts)*
@@ -83,4 +83,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 0/7 | Not started | - |
+| 14. Paper Revision & Release Freeze | v2.0 | 1/7 | In Progress|  |
