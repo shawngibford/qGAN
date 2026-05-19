@@ -55,8 +55,8 @@ Plans:
 **Wave 2** *(blocked on 14-01 — needs the locked 55-param config)*
 - [x] 14-02-PLAN.md — Frozen-checkpoint headline + tiered resumable 2000ep matched-budget sweep behind the strict accept gate (D-14-08..14)
 **Wave 3** *(blocked on 14-02 — needs accepted 2000ep artifacts)*
-- [ ] 14-03-PLAN.md — run_model_info.py → model_info.json, regenerate provenance docs from JSON, reconciliation note, reusable number-provenance gate (D-14-15/16)
-- [ ] 14-04-PLAN.md — Render-only per-model + cross-model + analysis figure suite (PNG+PDF+JSON, ≥16-figure canonical bar) (D-14-17)
+- [x] 14-03-PLAN.md — run_model_info.py → model_info.json, regenerate provenance docs from JSON, reconciliation note, reusable number-provenance gate (D-14-15/16)
+- [x] 14-04-PLAN.md — Render-only per-model + cross-model + analysis figure suite (PNG+PDF+JSON, ≥16-figure canonical bar) (D-14-17)
 **Wave 4** *(blocked on 14-03 + 14-04 — needs numbers + figures + provenance gate)*
 - [ ] 14-05-PLAN.md — PAPER-01/02/03/04/05 keyed framing/calibration LaTeX blocks; passes number-provenance gate
 - [ ] 14-06-PLAN.md — PAPER-06..11 keyed refs/methods/typo LaTeX blocks + per-reviewer reviewer_response.md; passes number-provenance gate
@@ -83,4 +83,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 2/7 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 4/7 | In Progress|  |
