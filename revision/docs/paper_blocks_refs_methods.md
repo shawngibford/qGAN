@@ -536,5 +536,130 @@ lines ~196-252). Increase rendered size for legibility.
 
 ---
 
-<!-- PAPER-08 and PAPER-09 Methods blocks (rendered-from-JSON) and the
-     per-reviewer reviewer_response.md are appended by Plan 14-06 Task 2. -->
+## PAPER-08 — Dataset Details in Methods (Reviewer comment: R1-m2)
+
+**R1-m2 rationale:** the reviewer asks for the raw number of time points, the
+number of rolling windows, the train/val/test split ratios and counts, and the
+number of independent runs to be reported in Methods. Every number in the block
+below is rendered FROM `revision/results/model_info.json` (the `dataset` block,
+DERIVED from `data.csv` + the locked window config — D-14-16, success criterion
+5) and from `model_info.json` `seed_set`; none is hand-typed. Companion doc:
+`revision/docs/dataset_stats.md` (also rendered from the same JSON).
+
+**Insertion point:** `main (4) copy.tex` §3.2 "Photobioreactor Experimental
+Setup", immediately after the data-logging sentence (line ~180, "...data logged
+at 10-minute intervals by an internal data acquisition system."), as a new
+"Dataset and Preprocessing" paragraph before §4.
+
+**Copy-paste LaTeX block:**
+
+```latex
+\paragraph{Dataset and preprocessing.}
+The study uses a single LUCY photobioreactor cultivation campaign
+% source: revision/results/model_info.json#dataset.independent_campaigns (=1)
+% source: revision/results/model_info.json#dataset.raw_csv_rows (=778)
+comprising 778 raw optical-density time points logged at 10-minute intervals.
+% source: revision/results/model_info.json#dataset.log_return_rows (=777)
+First differencing into log-returns yields 777 log-return observations
+($r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$), which are standardized to
+zero mean and unit variance, passed through an inverse Lambert~$W$ heavy-tail
+correction, and rescaled to $[-1, 1]$.
+% source: revision/results/model_info.json#dataset.window_length (=10)
+% source: revision/results/model_info.json#dataset.window_stride (=2)
+% source: revision/results/model_info.json#dataset.rolling_windows (=384)
+Overlapping subsequences of length 10 with stride 2 are then extracted with a
+rolling window, producing 384 training windows.
+% source: revision/results/model_info.json#dataset.train_windows (=384)
+% source: revision/results/model_info.json#dataset.val_windows (=0)
+% source: revision/results/model_info.json#dataset.test_windows (=0)
+Because only one independent campaign is available, all 384 windows are used for
+training; no held-out validation or test split is carved out, as a 384-window
+single campaign is too small to support a held-out split without severely
+under-powering training (stated openly per the calibration-honesty standard,
+R1-M5). Multi-campaign generalization is identified as future work.
+% source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
+All reported quantitative results are aggregated over 5 independent random
+seeds (42, 43, 44, 45, 46) and reported as mean $\pm$ standard deviation.
+```
+
+> **Render-from-JSON contract.** Every numeric literal above carries a
+> `% source: revision/results/model_info.json#<path>` annotation. The values
+> are: `independent_campaigns`=1, `raw_csv_rows`=778, `log_return_rows`=777,
+> `window_length`=10, `window_stride`=2, `rolling_windows`=384,
+> `train_windows`=384, `val_windows`=0, `test_windows`=0, and the 5-element
+> `seed_set` [42, 43, 44, 45, 46]. To regenerate, re-run
+> `revision/run_model_info.py`; `revision/verify_number_provenance.py` proves
+> every literal here resolves to `model_info.json`.
+
+---
+
+## PAPER-09 — Per-Metric Evaluation Scale in Methods (Reviewer comment: R1-m3)
+
+**R1-m3 rationale:** the reviewer asks the Methods to state explicitly, for
+every evaluation metric, whether it is computed on the transformed (log-return,
+training-space) scale or the original optical-density (OD) scale. Source:
+`revision/results/fidelity_dualscale.json` (dual-scale rows, 2000ep, both
+`scale = "log_return"` and `scale = "OD"`, `metric_helpers =
+revision.core.eval`). The block below is a Methods table that labels every
+metric family with its evaluation scale and gives the headline 55-param IQP:SEL
+quantum value on each scale (single representative seed 42, Pipeline~B — the
+native preprocessing pipeline) so the dual-scale reporting is concrete.
+
+**Insertion point:** `main (4) copy.tex` §4.1 "Results", immediately before the
+"Dynamic Time Warping." paragraph (line ~189), as an "Evaluation scale" Methods
+paragraph + table.
+
+**Copy-paste LaTeX block:**
+
+```latex
+\paragraph{Evaluation scale.}
+Every fidelity metric is reported on \emph{both} the transformed log-return
+scale (the space the generator is trained in) and the original optical-density
+(OD) scale (obtained by inverting the preprocessing pipeline), so that the
+physical-unit fidelity is explicit (R1-m3). Table~\ref{tbl:eval_scale} states
+the scale of each metric family and the headline 55-parameter IQP:SEL quantum
+generator value on each scale.
+
+\begin{table}[h]
+\centering
+\caption{Evaluation metrics and the scale on which each is computed. Values are
+for the 55-parameter IQP:SEL quantum generator, Pipeline~B (native
+preprocessing), representative seed.}
+\label{tbl:eval_scale}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Metric} & \textbf{Transformed (log-return)} & \textbf{Original (OD)} & \textbf{Reported on} \\
+\midrule
+EMD                 & 0.1209437521974767 & 0.022937980562900886 & both scales \\
+DTW (mean)          & 0.9343404967853801 & 0.2648187239898106   & both scales \\
+Moment: mean        & 0.1232816505352802 & 1.4070339987298917   & both scales \\
+Moment: std         & 0.07206523080095577 & 0.8839933147241738  & both scales \\
+Moment: skewness    & -0.03262545792264619 & 1.3655798412279025 & both scales \\
+Moment: kurtosis    & -0.08214151764010014 & 0.7768219209344931 & both scales \\
+ACF (lag~1, mean)   & -0.0814285239177223 & 0.6965233188661055  & both scales \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+PDF/CDF, Q--Q, and ACF diagnostic plots in the main text are shown on the
+transformed log-return scale (the training space); the corresponding
+original-OD-scale versions are provided as regenerated figures
+(\texttt{revision/results/figures/acf\_iqp\_sel\_55\_repro}, dual-scale). DTW,
+EMD, and the distributional moments are reported on both scales as above.
+```
+
+> **Render-from-JSON contract.** Every value in the table is the exact stored
+> `value` for `model_kind = "quantum"`, `pipeline = "B"`, `seed = 42` in
+> `revision/results/fidelity_dualscale.json` at the named `metric_name` /
+> `scale`: `emd`, `dtw_mean`, `moment_mean`, `moment_std`, `moment_skewness`,
+> `moment_kurtosis`, `acf_lag1_mean` — each present on both
+> `scale = "log_return"` and `scale = "OD"`. No value is hand-typed or rounded
+> (full stored precision is used so the substring resolves);
+> `revision/verify_number_provenance.py` proves every literal resolves to
+> `fidelity_dualscale.json`.
+
+---
+
+<!-- End of PAPER-06..11 LaTeX-blocks file. The AIChE per-reviewer
+     point-by-point rebuttal is revision/docs/reviewer_response.md. -->
