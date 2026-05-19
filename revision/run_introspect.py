@@ -40,9 +40,10 @@ Usage
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, Iterator, List, Tuple
 
 import numpy as np
 import torch
@@ -117,35 +118,76 @@ def make_snapshot_cb(
         # Re-generation: training noise contract copied verbatim
         # (training.py:304-313 / run_baselines.generate_wgan_samples) — MPS
         # has no float64 statevector path (Pitfall 6) so force CPU first.
+        # train_wgan_gp keeps the generator resident on `device` (MPS here)
+        # and re-generates on it EVERY epoch, so we MUST restore the original
+        # device after the snapshot or the next training epoch crashes on a
+        # cross-device matmul (Rule 1 fix; mirrors generate_wgan_samples which
+        # only runs post-training).
+        try:
+            orig_device = next(generator.parameters()).device
+        except StopIteration:  # pragma: no cover - generators always have params
+            orig_device = torch.device("cpu")
         gen_model = generator.to("cpu")
-        with torch.no_grad():
-            noise = torch.tensor(
-                rng.uniform(
-                    NOISE_LOW, NOISE_HIGH, size=(NUM_QUBITS, BATCH_SIZE)
-                ),
-                dtype=torch.float32,
-            )
-            gen = (
-                gen_model(noise).to(torch.float64) * 0.1
-            ).cpu().numpy()
-            record: Dict[str, Any] = {
-                "epoch": int(label),
-                "samples": gen.tolist(),
-                "emd": float(metrics["emd"]),
-                "std": float(metrics["std"]),
-            }
-            # INTRO-02/03: quantum only (hasattr guard — classical has no
-            # introspect()). Order matters: params then introspect.
-            if hasattr(gen_model, "introspect"):
-                p = gen_model.params_pqc.detach().cpu().numpy()
-                ent, pur = gen_model.introspect(noise[:, 0])
-                record["param_norm"] = float(np.linalg.norm(p))
-                record["param_angles"] = [float(v) for v in p.tolist()]
-                record["vn_entropy"] = float(ent)
-                record["purity"] = float(pur)
-        records.append(record)
+        try:
+            with torch.no_grad():
+                noise = torch.tensor(
+                    rng.uniform(
+                        NOISE_LOW, NOISE_HIGH, size=(NUM_QUBITS, BATCH_SIZE)
+                    ),
+                    dtype=torch.float32,
+                )
+                gen = (
+                    gen_model(noise).to(torch.float64) * 0.1
+                ).cpu().numpy()
+                record: Dict[str, Any] = {
+                    "epoch": int(label),
+                    "samples": gen.tolist(),
+                    "emd": float(metrics["emd"]),
+                    "std": float(metrics["std"]),
+                }
+                # INTRO-02/03: quantum only (hasattr guard — classical has no
+                # introspect()). Order matters: params then introspect.
+                if hasattr(gen_model, "introspect"):
+                    p = gen_model.params_pqc.detach().cpu().numpy()
+                    ent, pur = gen_model.introspect(noise[:, 0])
+                    record["param_norm"] = float(np.linalg.norm(p))
+                    record["param_angles"] = [float(v) for v in p.tolist()]
+                    record["vn_entropy"] = float(ent)
+                    record["purity"] = float(pur)
+            records.append(record)
+        finally:
+            # Restore training-loop device placement (in-place, like .to()).
+            generator.to(orig_device)
 
     return cb, records
+
+
+@contextlib.contextmanager
+def _force_cpu_for_quantum() -> Iterator[None]:
+    """Make ``train_wgan_gp`` take its CPU path for the quantum target.
+
+    Rule-3 blocking-issue fix (NOT architectural — ``revision/core/`` stays
+    byte-untouched). ``train_wgan_gp`` (training.py:238-264) unconditionally
+    moves the generator to MPS when ``torch.backends.mps.is_available()`` is
+    True. A ``QuantumGenerator``'s PennyLane QNode, once its ``params_pqc``
+    lands on MPS, mis-coerces the MPS tensor to a CUDA device inside
+    ``pennylane.math.single_dispatch._coerce_types_torch`` and raises
+    ``AssertionError: Torch not compiled with CUDA enabled`` — the quantum
+    forward pass cannot run on MPS at all on this machine.
+
+    The classical WGAN generators are pure ``torch.nn`` and run fine on MPS,
+    so this guard is applied ONLY around the quantum training call. We monkey-
+    patch ``torch.backends.mps.is_available -> False`` for the duration so the
+    training.py device selector falls through to the float64 CPU path
+    (identical to the path the frozen 09.1 quantum runs used), then restore it
+    in a ``finally`` so the classical targets are unaffected.
+    """
+    orig = torch.backends.mps.is_available
+    torch.backends.mps.is_available = lambda: False  # type: ignore[assignment]
+    try:
+        yield
+    finally:
+        torch.backends.mps.is_available = orig  # type: ignore[assignment]
 
 
 def _find_repo_root() -> Path:
@@ -191,20 +233,28 @@ def _run_one_target(
         generator, snap=SNAP, num_epochs=int(epochs), seed=seed
     )
 
-    train_wgan_gp(
-        generator,
-        critic,
-        bundle.dataloader,
-        num_epochs=int(epochs),
-        n_critic=int(N_CRITIC),
-        lambda_gp=float(LAMBDA),
-        lr_critic=float(LR_CRITIC),
-        lr_generator=float(LR_GENERATOR),
-        seed=int(seed),
-        eval_every=int(EVAL_EVERY),
-        early_stopper=None,
-        callback=cb,
+    # Quantum needs the CPU/float64 path (PennyLane QNode breaks on MPS —
+    # Rule-3 fix); classical WGANs run fine on MPS, so guard ONLY quantum.
+    train_ctx = (
+        _force_cpu_for_quantum()
+        if target == "quantum"
+        else contextlib.nullcontext()
     )
+    with train_ctx:
+        train_wgan_gp(
+            generator,
+            critic,
+            bundle.dataloader,
+            num_epochs=int(epochs),
+            n_critic=int(N_CRITIC),
+            lambda_gp=float(LAMBDA),
+            lr_critic=float(LR_CRITIC),
+            lr_generator=float(LR_GENERATOR),
+            seed=int(seed),
+            eval_every=int(EVAL_EVERY),
+            early_stopper=None,
+            callback=cb,
+        )
 
     payload: Dict[str, Any] = {
         "target": target,
