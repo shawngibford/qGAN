@@ -45,9 +45,9 @@ Plans:
   4. Repository frozen at tag `v2.0-revision`, Zenodo DOI minted and cited in the manuscript (INFRA-03) — tag + DOI resolvable from `revision/docs/release.md`
   5. All numbers cited in the revised manuscript trace back to a JSON artifact in `revision/results/` (no hand-typed numbers)
 
-**Plans**: 7 plans
+**Plans**: 8 plans
 
-> Scope note (D-14-23, recorded deviation): this phase was intentionally, user-drivenly expanded from "paper edits + freeze" to also recover the lost canonical 55-param IQP:SEL circuit and re-execute Phases 10–13 at a matched 2000-epoch budget so the manuscript numbers are coherent and traceable. Plans 01–04 are that recovery/re-execution/provenance work; Plans 05–06 are the manuscript revision package; Plan 07 is the gated release freeze (LAST, D-14-22).
+> Scope note (D-14-23, recorded deviation): this phase was intentionally, user-drivenly expanded from "paper edits + freeze" to also recover the lost canonical 55-param IQP:SEL circuit and re-execute Phases 10–13 at a matched 2000-epoch budget so the manuscript numbers are coherent and traceable. Plans 01–04 are that recovery/re-execution/provenance work; Plans 05–06 are the manuscript revision package; Plan 07 is the gated release freeze (LAST, D-14-22). Plan 08 adds the matched-budget dual-scale (OD + log_return) side-by-side comparison across all 9 models for the resubmission, re-evaluating the already-saved 14-02/03/04 sample artifacts (no retraining).
 
 Plans:
 **Wave 1**
@@ -62,6 +62,8 @@ Plans:
 - [x] 14-06-PLAN.md — PAPER-06..11 keyed refs/methods/typo LaTeX blocks + per-reviewer reviewer_response.md; passes number-provenance gate
 **Wave 5** *(blocked on 14-05 + 14-06 — release LAST, D-14-22)*
 - [ ] 14-07-PLAN.md — Pre-tag freeze-ready gate + tag v2.0-revision + manual Zenodo reserved-DOI deposit + release.md (INFRA-03)
+**Wave 6** *(independent — re-evaluates completed 14-02/03/04 sample artifacts; not blocked by 14-07)*
+- [ ] 14-08-PLAN.md — Render-only matched-2000ep dual-scale (OD + log_return) side-by-side comparison across all 9 models from saved samples; passes number-provenance gate (supports PAPER-09)
 
 ## Progress
 
@@ -83,4 +85,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 6/7 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 6/8 | In Progress|  |
