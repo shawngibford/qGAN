@@ -35,14 +35,32 @@ class QuantumGenerator(nn.Module):
     from ``qgan_pennylane.ipynb`` cell 26.
     """
 
+    #: Allowed entangling-CNOT topologies. ``"range"`` is the v1.0/v1.1 default
+    #: (wrap-around range pattern, byte-identical to pre-Phase-13 code).
+    _TOPOLOGIES = ("range", "linear")
+
+    #: The balanced 2|3 bipartition used by :meth:`introspect` — recorded here
+    #: so plan-03's JSON metadata can pin the exact partition (D-13-09).
+    INTROSPECT_BIPARTITION = ((0, 1), (2, 3, 4))
+
     def __init__(
         self,
         num_qubits: int = 5,
         num_layers: int = 4,
         window_length: int = 10,
         diff_method: str = "backprop",
+        topology: str = "range",
     ) -> None:
         super().__init__()
+
+        # ARCH-01: select the entangling-CNOT wiring. Default "range" keeps the
+        # pre-Phase-13 circuit byte-identical (T-13-01). Validate eagerly with
+        # an argparse-style message so bad config fails at construction.
+        if topology not in self._TOPOLOGIES:
+            raise ValueError(
+                f"Unknown topology {topology!r}; expected one of "
+                f"{self._TOPOLOGIES}"
+            )
 
         # v1.0 invariant: window_length = 2 * num_qubits (PauliX + PauliZ per wire).
         assert window_length == 2 * num_qubits, (
@@ -54,6 +72,7 @@ class QuantumGenerator(nn.Module):
         self.num_layers = num_layers
         self.window_length = window_length
         self.diff_method = diff_method
+        self.topology = topology
 
         # IQP (num_qubits) + num_layers * (num_qubits * 3 Rot params) + final RX/RY (num_qubits * 2)
         self.num_params = (
@@ -75,6 +94,16 @@ class QuantumGenerator(nn.Module):
             self.dev,
             interface="torch",
             diff_method=diff_method,
+        )
+
+        # INTRO-03: read-only introspection QNode (same device + interface).
+        # It clones Steps 1-5 of generator_circuit and returns VN-entropy +
+        # purity on the {0,1}|{2,3,4} bipartition instead of Pauli expvals.
+        self._introspect_qnode = qml.QNode(
+            self._introspect_circuit,
+            self.dev,
+            interface="torch",
+            diff_method="backprop",
         )
 
     def count_params(self) -> int:
@@ -147,12 +176,18 @@ class QuantumGenerator(nn.Module):
                     )
                     idx += 3
 
-            # Range-based entangling CNOTs.
+            # Entangling CNOTs — topology-selectable (ARCH-01). The "range"
+            # branch body below is LITERALLY the pre-Phase-13 block so the
+            # drawn tape is byte-identical for the default (T-13-01).
             if self.num_qubits > 1:
-                range_param = (layer % (self.num_qubits - 1)) + 1
-                for qubit in range(self.num_qubits):
-                    target_qubit = (qubit + range_param) % self.num_qubits
-                    qml.CNOT(wires=[qubit, target_qubit])
+                if self.topology == "range":
+                    range_param = (layer % (self.num_qubits - 1)) + 1
+                    for qubit in range(self.num_qubits):
+                        target_qubit = (qubit + range_param) % self.num_qubits
+                        qml.CNOT(wires=[qubit, target_qubit])
+                elif self.topology == "linear":
+                    for q in range(self.num_qubits - 1):
+                        qml.CNOT(wires=[q, q + 1])
 
         # Step 5: Final measurement-preparation rotations.
         for qubit in range(self.num_qubits):
@@ -169,6 +204,86 @@ class QuantumGenerator(nn.Module):
             measurements.append(qml.expval(qml.PauliZ(i)))
 
         return (*measurements,)
+
+    def _introspect_circuit(
+        self, noise_params: torch.Tensor, params_pqc: torch.Tensor
+    ):
+        """Read-only entanglement probe (INTRO-03).
+
+        Steps 1-5 are cloned VERBATIM from :meth:`generator_circuit` (including
+        the topology switch) so the prepared state is identical to the one the
+        generator produces; only the Step-6 measurement is replaced with
+        Von-Neumann entropy + purity on the balanced 2|3 bipartition
+        ``{0,1}|{2,3,4}`` (recorded in :attr:`INTROSPECT_BIPARTITION`).
+        """
+        idx = 0
+
+        # Step 1: Hadamard initialization for superposition.
+        for qubit in range(self.num_qubits):
+            qml.Hadamard(wires=qubit)
+
+        # Step 2: IQP encoding with parameterized RZ rotations.
+        for qubit in range(self.num_qubits):
+            if idx < len(params_pqc):
+                qml.RZ(phi=params_pqc[idx], wires=qubit)
+                idx += 1
+
+        # Step 3: Apply noise encoding (IQP-style).
+        self.encoding_layer(noise_params)
+
+        # Step 4: Strongly Entangled Layers.
+        for layer in range(self.num_layers):
+            for qubit in range(self.num_qubits):
+                if idx + 2 < len(params_pqc):
+                    qml.Rot(
+                        phi=params_pqc[idx],
+                        theta=params_pqc[idx + 1],
+                        omega=params_pqc[idx + 2],
+                        wires=qubit,
+                    )
+                    idx += 3
+
+            if self.num_qubits > 1:
+                if self.topology == "range":
+                    range_param = (layer % (self.num_qubits - 1)) + 1
+                    for qubit in range(self.num_qubits):
+                        target_qubit = (qubit + range_param) % self.num_qubits
+                        qml.CNOT(wires=[qubit, target_qubit])
+                elif self.topology == "linear":
+                    for q in range(self.num_qubits - 1):
+                        qml.CNOT(wires=[q, q + 1])
+
+        # Step 5: Final measurement-preparation rotations.
+        for qubit in range(self.num_qubits):
+            if idx + 1 < len(params_pqc):
+                qml.RX(phi=params_pqc[idx], wires=qubit)
+                idx += 1
+                qml.RY(phi=params_pqc[idx], wires=qubit)
+                idx += 1
+
+        # Step 6 (replaced): entanglement diagnostics on the balanced
+        # bipartition {0,1}|{2,3,4} (== INTROSPECT_BIPARTITION).
+        return (
+            qml.vn_entropy(wires=[0, 1]),
+            qml.purity(wires=[0, 1]),
+        )
+
+    def introspect(self, noise_vec: torch.Tensor):
+        """Return ``(vn_entropy, purity)`` for the 2|3 bipartition.
+
+        Both are python floats. VN-entropy is bounded in ``[0, ln 4]`` and
+        purity in ``[1/4, 1]`` for the 2-qubit subsystem ``{0,1}``. Apple MPS
+        has no float64 statevector path (RESEARCH Pitfall 6), so params and
+        noise are forced onto CPU before the read-only QNode is evaluated.
+        Caller is expected to wrap this in ``torch.no_grad()``.
+        """
+        params_cpu = self.params_pqc.detach().cpu()
+        if torch.is_tensor(noise_vec):
+            noise_cpu = noise_vec.detach().cpu()
+        else:
+            noise_cpu = torch.as_tensor(noise_vec)
+        ent, pur = self._introspect_qnode(noise_cpu, params_cpu)
+        return float(ent), float(pur)
 
     def forward(
         self,
