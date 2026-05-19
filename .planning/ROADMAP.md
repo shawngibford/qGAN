@@ -24,7 +24,7 @@ Plans:
 
 **Wave 3** *(blocked on 13-03 companion JSON)*
 
-- [ ] 13-04-PLAN.md — run_introspect_figures.py: render training-progression / param-trajectory / entanglement-trajectory figures (png+pdf) from companion JSON, render-only (INTRO-01/02/03) (wave 3)
+- [x] 13-04-PLAN.md — run_introspect_figures.py: render training-progression / param-trajectory / entanglement-trajectory figures (png+pdf) from companion JSON, render-only (INTRO-01/02/03) (wave 3)
 
 **Cross-cutting constraints:**
 
@@ -66,5 +66,5 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
-| 13. Architecture & Introspection | v2.0 | 3/4 | In Progress|  |
+| 13. Architecture & Introspection | v2.0 | 4/4 | Complete   | 2026-05-19 |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
