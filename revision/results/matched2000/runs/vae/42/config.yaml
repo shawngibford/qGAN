@@ -1,0 +1,45 @@
+model: vae
+pipeline: B
+seed: 42
+epochs: 2000
+num_qubits: 5
+num_layers: 4
+window_length: 10
+batch_size: 12
+eval_every: 10
+noise_low: 0.0
+noise_high: 12.566370614359172
+n_real_windows: 384
+inverse_kwargs_keys:
+- mu
+- od_starts
+- r_max
+- r_min
+- sigma
+csv_path: data.csv
+data_hash: 91e447d4624e25b3
+tier: T2
+matched_budget: true
+model_kind: vae
+parameter_count: 562
+family: non-adversarial
+n_critic: null
+lambda_gp: null
+lr_critic: null
+lr_generator: null
+vae_lr: 0.001
+vae_beta: 1.0
+vae_kl_warmup_epochs: 0
+source: matched2000_baseline
+device_manifest:
+  sample_generation_device: cpu
+  sample_generation_dtype: torch.float64
+  mps_available: true
+  cuda_available: false
+  backend_assertion: PASSED
+  note: "PennyLane default.qubit statevector path is CPU-only (D-14-11); quantum rows\
+    \ are CORRECTLY CPU \u2014 not a silent classical fallback (T-14-04). Classical\
+    \ rows generate samples on CPU/float64 (Pitfall 6)."
+train_protocol_notes: 'Matched-budget VAE: local ELBO loop (D-10-09), 2000 epochs,
+  single Adam(lr=1e-3), NO critic/GP; sample() emits in [-1,1] (NO *0.1, Pitfall 3).
+  source=matched2000_baseline.'
