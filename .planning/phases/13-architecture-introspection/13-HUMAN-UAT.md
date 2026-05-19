@@ -26,18 +26,18 @@ result: [pending]
 
 ### 4. REVIEW BLOCKER CR-01 disposition (run_ansatz.py --epochs dead-code)
 expected: decide and apply — either thread `args.epochs` through `_train_wgan`/`train_wgan_gp`, or remove the `--epochs` knob entirely so recorded config.yaml cannot contradict the training. Deliverables as produced are correct (sweep ran at the hardcoded 1000 epochs); this is future-maintenance provenance hygiene.
-result: [pending]
+result: PASS — fixed in `f2671d6`: `_train_wgan` now passes `num_epochs=int(epochs)` through to `train_wgan_gp`; `train_protocol_notes` interpolates the real count. Default stays 1000; committed deliverables unaffected. 30/30 tests green.
 
 ### 5. REVIEW BLOCKER CR-02 disposition (run_ansatz_comparison.py V1 npz reuse)
 expected: decide and apply — add a runtime key/schema guard on the V1 `inverse_kwargs.npz` read, or explicitly document trust-by-construction. Current V1 keys match exactly and all 100 V1 rows are valid; this is defensive hardening, not a deliverable defect.
-result: [pending]
+result: PASS — fixed in `046dfad`: `reconstruct_dualscale` now raises `FileNotFoundError`/`KeyError` with actionable messages before any scoring; on-disk format unchanged. 30/30 tests green.
 
 ## Summary
 
 total: 5
-passed: 0
+passed: 2
 issues: 0
-pending: 5
+pending: 3
 skipped: 0
 blocked: 0
 

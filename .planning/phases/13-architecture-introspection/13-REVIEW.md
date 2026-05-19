@@ -66,6 +66,7 @@ in `revision/core/`.
 
 ### CR-01: `run_ansatz.py` silently ignores `--epochs`; trains 1000 epochs but records the requested count in config.yaml
 
+**status:** fixed (commit f2671d6 — `num_epochs=int(epochs)` threaded; protocol-notes text now interpolates `{epochs}`; default stays 1000)
 **File:** `revision/run_ansatz.py:214-264`, `revision/run_ansatz.py:344-356`
 **Issue:**
 `main()` parses `--epochs` (default 1000), passes it as `_train_wgan(args.variant, bundle,
@@ -114,6 +115,7 @@ expose a knob that is silently ignored.
 
 ### CR-02: `run_ansatz.py` writes `checkpoint.pt`, but `run_ansatz_comparison.py` requires `inverse_kwargs.npz` keys that the saved scalar encoding breaks at read time
 
+**status:** fixed (commit 046dfad — added FileNotFoundError + KeyError schema guard in `reconstruct_dualscale` before scoring; on-disk format unchanged)
 **File:** `revision/run_ansatz.py:189-201` and `revision/run_ansatz_comparison.py:147-160`
 **Issue:**
 `_save_inverse_kwargs` stores scalar entries via `np.asarray(v)` → 0-D arrays
@@ -161,6 +163,7 @@ def reconstruct_dualscale(variant, seed, ansatz_root):
 
 ### WR-01: `_load_checkpoint` rewrite changes the early-stopped numeric path vs. pre-Phase-13 (reproducibility caveat)
 
+**status:** fixed (commit c1e779d — documentation-only docstring caveat added to `_load_checkpoint`; NO behavior change, pin test green)
 **File:** `revision/core/training.py:163-195`
 **Issue:**
 The pre-`b7c84d3` `_load_checkpoint` did `model.params_pqc.data = checkpoint["params_pqc"]`
@@ -181,6 +184,7 @@ compared bit-for-bit against pre-Phase-13 outputs.
 
 ### WR-02: `_spectral_psd_loss` has no length-match guard between fake and real
 
+**status:** fixed (commit 9872e00 — ValueError raised on `fake_flat.numel() != real_flat.numel()`; on the spectral_loss_weight>0 path, OFF by default; pin test green)
 **File:** `revision/core/training.py:511-520`
 **Issue:**
 `psd_fake = torch.fft.rfft(fake_flat)` and `psd_real = torch.fft.rfft(real_flat)` produce
@@ -203,6 +207,7 @@ or assert `fake_flat.numel() == real_flat.numel()` with a clear message.
 
 ### WR-03: monkey-patching `torch.backends.mps.is_available` is global and non-restoring in `run_ansatz.py`
 
+**status:** fixed (commit 43f807e — added restoring `_force_cpu_for_quantum` context manager mirroring run_introspect; wraps only the train_wgan_gp call)
 **File:** `revision/run_ansatz.py:243`
 **Issue:**
 `torch.backends.mps.is_available = lambda: False` permanently replaces a global torch
@@ -220,6 +225,7 @@ of mutating the global at function-body top level.
 
 ### WR-04: snapshot closure mutates the live generator's device mid-training (re-entrancy / exception risk)
 
+**status:** fixed (commit 2717491 — `orig_device` captured before mutation; `.to("cpu")` moved inside the `try` so `finally` device-restore always runs)
 **File:** `revision/run_introspect.py:114-161`
 **Issue:**
 `cb` does `gen_model = generator.to("cpu")` (in-place for nn.Module), regenerates, then
@@ -242,6 +248,7 @@ state surfaces instead of producing silent NaNs.
 
 ### WR-05: `run_introspect.py --assemble` indexes `inter["quantum"]` keys that only exist for the quantum target, with no presence check
 
+**status:** fixed (commit 7ec0577 — added is_quantum/bipartition + per-snapshot key validation in `_assemble` with actionable re-run message)
 **File:** `revision/run_introspect.py:308`, `334`, `355`
 **Issue:**
 `_assemble` does `snap_epochs = inter["quantum"]["snapshot_epochs"]`, then
@@ -274,12 +281,16 @@ for s in q_doc["snapshots"]:
 
 ### IN-01: `_load_checkpoint` rebinds `checkpoint = ckpt` purely to keep the old print statement
 
+**status:** deferred (Info, out of fix scope)
+
 **File:** `revision/core/training.py:191`
 **Issue:** `checkpoint = ckpt` exists only so the trailing `print(f"... {checkpoint['epoch']
 ...}")` keeps its original variable name. This is dead-style aliasing that obscures intent.
 **Fix:** Use `ckpt` directly in the print and delete the alias line.
 
 ### IN-02: `tests/__init__.py` is empty but present; `conftest.py` already handles path bootstrap
+
+**status:** deferred (Info, out of fix scope)
 
 **File:** `tests/__init__.py:1`
 **Issue:** An empty `tests/__init__.py` turns `tests/` into a package. Combined with
@@ -291,6 +302,8 @@ intended; no functional change needed.
 
 ### IN-03: `run_ansatz_comparison.py` defines `_bootstrap_repo_on_path` and `_find_repo_root` doing nearly the same walk-up
 
+**status:** deferred (Info, out of fix scope)
+
 **File:** `revision/run_ansatz_comparison.py:50-58` and `115-121`
 **Issue:** Two functions independently walk parents looking for
 `revision/core/preprocessing.py` — one for `sys.path` bootstrap, one for path resolution.
@@ -301,6 +314,8 @@ This duplicated traversal logic also appears verbatim in `run_introspect.py:193-
 self-contained.
 
 ### IN-04: `run_ansatz.py` `--epochs` default (1000) and hardcoded `_train_wgan` 1000 create a misleading "consistent" appearance
+
+**status:** deferred (Info, out of fix scope — note: CR-01 fix removed the underlying hardcode)
 
 **File:** `revision/run_ansatz.py:313`, `257`
 **Issue:** Because both the argparse default and the hardcoded `train_wgan_gp(num_epochs=
