@@ -44,14 +44,14 @@
 
 ### Architecture Study (addresses R2-5b)
 
-- [ ] **ARCH-01**: 2–3 alternate ansatz variants implemented (vary depth {4, 6, 8} and/or entanglement topology).
-- [ ] **ARCH-02**: Ansatz comparison table (identical training budget, multi-seed, all metrics).
+- [x] **ARCH-01**: 2–3 alternate ansatz variants implemented (vary depth {4, 6, 8} and/or entanglement topology). _(Phase 13)_
+- [x] **ARCH-02**: Ansatz comparison table (identical training budget, multi-seed, all metrics). _(Phase 13)_
 
 ### Training Introspection (addresses R2-6)
 
-- [ ] **INTRO-01**: Training-progression figure — generated distribution at epochs {0, N/4, N/2, 3N/4, N} for quantum and classical WGAN-GP.
-- [ ] **INTRO-02**: PQC parameter trajectory plot (norms, angle histograms across epochs).
-- [ ] **INTRO-03**: Entanglement-entropy or state-purity trajectory across training.
+- [x] **INTRO-01**: Training-progression figure — generated distribution at epochs {0, N/4, N/2, 3N/4, N} for quantum and classical WGAN-GP. _(Phase 13)_
+- [x] **INTRO-02**: PQC parameter trajectory plot (norms, angle histograms across epochs). _(Phase 13)_
+- [x] **INTRO-03**: Entanglement-entropy or state-purity trajectory across training. _(Phase 13)_
 
 ### Documentation Bridge (addresses R1-M4, R1-m2)
 
@@ -151,11 +151,11 @@ See `.planning/MILESTONES.md` for shipped milestones. Legacy requirement IDs (RE
 | SENS-01     | Phase 12 | Complete |
 | SENS-02     | Phase 12 | Complete |
 | SENS-03     | Phase 12 | Complete |
-| ARCH-01     | Phase 13 | Pending |
-| ARCH-02     | Phase 13 | Pending |
-| INTRO-01    | Phase 13 | Pending |
-| INTRO-02    | Phase 13 | Pending |
-| INTRO-03    | Phase 13 | Pending |
+| ARCH-01     | Phase 13 | Complete |
+| ARCH-02     | Phase 13 | Complete |
+| INTRO-01    | Phase 13 | Complete |
+| INTRO-02    | Phase 13 | Complete |
+| INTRO-03    | Phase 13 | Complete |
 | DOC-01      | Phase 9  | Pending |
 | DOC-02      | Phase 9  | Pending |
 | PAPER-01    | Phase 14 | Pending |
