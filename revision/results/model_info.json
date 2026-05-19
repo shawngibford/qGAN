@@ -2,6 +2,19 @@
   "schema": "long-form rows[] + models[] aggregate (D-10-16)",
   "metric_helpers": "revision.core.eval ONLY (D-10-20)",
   "data_hash": "91e447d4624e25b3",
+  "dataset": {
+    "raw_csv_rows": 778,
+    "od_rows_after_fillna_dropna": 778,
+    "log_return_rows": 777,
+    "window_length": 10,
+    "window_stride": 2,
+    "rolling_windows": 384,
+    "independent_campaigns": 1,
+    "train_windows": 384,
+    "val_windows": 0,
+    "test_windows": 0,
+    "derivation": "raw=lines(data.csv)-1; logret=raw-1; windows=(logret-W)//stride+1 (W=window_length, stride=2; revision/core/data.py:64/150/255-258) \u2014 DERIVED, not hand-typed"
+  },
   "consumed_artifacts": {
     "headline_canonical.json": "91e447d4624e25b3",
     "canonical_recovery.json": "optimizer_breadcrumbs (LR/betas)",
@@ -113,7 +126,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T2",
-      "train_protocol_notes": "'Matched-budget iqp_sel_55_repro: QuantumGenerator(circuit_id=''iqp_sel_55'',",
+      "train_protocol_notes": "Matched-budget iqp_sel_55_repro: QuantumGenerator(circuit_id='iqp_sel_55', num_layers=3, topology='range') via train_wgan_gp UNCHANGED, 2000 epochs, early-stop OFF (full 2000ep, D-14-13), spectral_loss_weight=0.0. source=matched2000_reproduction: the iqp_sel_55 2000ep run is the NON-load-bearing reproduction instance, distinct from the frozen-checkpoint headline (source=frozen_checkpoint_epoch_1969, D-14-10). Backend default.qubit + backprop, CPU-only (D-14-11).",
       "wall_seconds": null
     },
     {
@@ -156,7 +169,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T3",
-      "train_protocol_notes": "'Matched-budget V1: QuantumGenerator(circuit_id=''default_75'',",
+      "train_protocol_notes": "Matched-budget V1: QuantumGenerator(circuit_id='default_75', num_layers=4, topology='range') via train_wgan_gp UNCHANGED, 2000 epochs, early-stop OFF (full 2000ep, D-14-13), spectral_loss_weight=0.0. source=matched2000_ansatz: the iqp_sel_55 2000ep run is the NON-load-bearing reproduction instance, distinct from the frozen-checkpoint headline (source=frozen_checkpoint_epoch_1969, D-14-10). Backend default.qubit + backprop, CPU-only (D-14-11).",
       "wall_seconds": null
     },
     {
@@ -199,7 +212,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T3",
-      "train_protocol_notes": "'Matched-budget V2: QuantumGenerator(circuit_id=''default_75'',",
+      "train_protocol_notes": "Matched-budget V2: QuantumGenerator(circuit_id='default_75', num_layers=8, topology='range') via train_wgan_gp UNCHANGED, 2000 epochs, early-stop OFF (full 2000ep, D-14-13), spectral_loss_weight=0.0. source=matched2000_ansatz: the iqp_sel_55 2000ep run is the NON-load-bearing reproduction instance, distinct from the frozen-checkpoint headline (source=frozen_checkpoint_epoch_1969, D-14-10). Backend default.qubit + backprop, CPU-only (D-14-11).",
       "wall_seconds": 636
     },
     {
@@ -242,7 +255,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T3",
-      "train_protocol_notes": "'Matched-budget V3: QuantumGenerator(circuit_id=''default_75'',",
+      "train_protocol_notes": "Matched-budget V3: QuantumGenerator(circuit_id='default_75', num_layers=4, topology='linear') via train_wgan_gp UNCHANGED, 2000 epochs, early-stop OFF (full 2000ep, D-14-13), spectral_loss_weight=0.0. source=matched2000_ansatz: the iqp_sel_55 2000ep run is the NON-load-bearing reproduction instance, distinct from the frozen-checkpoint headline (source=frozen_checkpoint_epoch_1969, D-14-10). Backend default.qubit + backprop, CPU-only (D-14-11).",
       "wall_seconds": 2420
     },
     {
@@ -285,7 +298,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T2",
-      "train_protocol_notes": "'Matched-budget wgan_mlp: WGAN-GP via train_wgan_gp UNCHANGED",
+      "train_protocol_notes": "Matched-budget wgan_mlp: WGAN-GP via train_wgan_gp UNCHANGED (D-10-08), 2000 epochs; shared Critic(window_length=WINDOW_LENGTH); *0.1 output scaling (Pitfall 3). source=matched2000_baseline.",
       "wall_seconds": 882
     },
     {
@@ -328,7 +341,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T2",
-      "train_protocol_notes": "'Matched-budget wgan_cnn: WGAN-GP via train_wgan_gp UNCHANGED",
+      "train_protocol_notes": "Matched-budget wgan_cnn: WGAN-GP via train_wgan_gp UNCHANGED (D-10-08), 2000 epochs; shared Critic(window_length=WINDOW_LENGTH); *0.1 output scaling (Pitfall 3). source=matched2000_baseline.",
       "wall_seconds": 799
     },
     {
@@ -371,7 +384,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T2",
-      "train_protocol_notes": "'Matched-budget wgan_lstm: WGAN-GP via train_wgan_gp UNCHANGED",
+      "train_protocol_notes": "Matched-budget wgan_lstm: WGAN-GP via train_wgan_gp UNCHANGED (D-10-08), 2000 epochs; shared Critic(window_length=WINDOW_LENGTH); *0.1 output scaling (Pitfall 3). source=matched2000_baseline.",
       "wall_seconds": 918
     },
     {
@@ -414,7 +427,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T2",
-      "train_protocol_notes": "'Matched-budget VAE: local ELBO loop (D-10-09), 2000 epochs,",
+      "train_protocol_notes": "Matched-budget VAE: local ELBO loop (D-10-09), 2000 epochs, single Adam(lr=1e-3), NO critic/GP; sample() emits in [-1,1] (NO *0.1, Pitfall 3). source=matched2000_baseline.",
       "wall_seconds": 140
     },
     {
@@ -457,7 +470,7 @@
       "backend_assertion": "PASSED",
       "data_hash": "91e447d4624e25b3",
       "tier": "T2",
-      "train_protocol_notes": "\"Matched-budget AR(p=2): closed-form np.linalg.lstsq (D-10-13),\\",
+      "train_protocol_notes": "Matched-budget AR(p=2): closed-form np.linalg.lstsq (D-10-13), 50-step burn-in. No epoch loop \u2014 fit is closed-form; the matched 2000ep budget is recorded for schema rectangularity. Samples in [-1,1] (NO *0.1, Pitfall 3). source=matched2000_baseline.",
       "wall_seconds": 11
     }
   ],

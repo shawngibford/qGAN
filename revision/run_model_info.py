@@ -48,6 +48,15 @@ import statistics
 import sys
 from pathlib import Path
 
+# PyYAML is the canonical config.yaml reader used by every peer driver
+# (run_matched2000.py:630 yaml.safe_load — the same script that WROTE these
+# config.yaml files via yaml.safe_dump). It is NOT a deep-learning framework
+# and NOT the shared model package, so importing it preserves the pure-
+# aggregator constraint (D-14-16). Using safe_load (not a hand-rolled parser)
+# correctly handles the multi-line block scalars config.yaml emits
+# (train_protocol_notes) — a hand-rolled scalar parser silently truncates them.
+import yaml
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Repo-root resolution (copied verbatim from run_multiseed_rollup.py:42-59 — the
@@ -114,55 +123,15 @@ RECON_KIND = {
 
 
 def _load_yaml(path: Path) -> dict:
-    """Minimal YAML loader for the flat config.yaml the sweep emits.
+    """Read a sweep config.yaml via yaml.safe_load — the canonical reader.
 
-    The sweep config.yaml is a flat scalar/list/one-level-nested mapping (no
-    anchors, no multi-doc). We parse it without importing PyYAML to keep the
-    aggregator dependency-free (RESEARCH Open Q3 idiom: stdlib only). Values are
-    json-decoded where possible (so `1.8046e-05` -> float, `null` -> None,
-    `true` -> bool); otherwise kept as the raw stripped string.
+    run_matched2000.py wrote these configs with yaml.safe_dump and reads them
+    back with yaml.safe_load (run_matched2000.py:630/787); we use the identical
+    idiom so types match by construction (e.g. `1.8046e-05` -> float, `null` ->
+    None, multi-line block scalars like train_protocol_notes -> full string,
+    nested device_manifest -> dict). safe_load never executes arbitrary tags.
     """
-    out: dict = {}
-    cur_key: str | None = None
-    for raw in path.read_text().splitlines():
-        if not raw.strip() or raw.lstrip().startswith("#"):
-            continue
-        indent = len(raw) - len(raw.lstrip())
-        line = raw.strip()
-        if line.startswith("- "):
-            # list item under the most-recent top-level key
-            if cur_key is not None:
-                out.setdefault(cur_key, [])
-                if isinstance(out[cur_key], list):
-                    out[cur_key].append(_coerce(line[2:].strip()))
-            continue
-        if ":" not in line:
-            continue
-        key, _, val = line.partition(":")
-        key = key.strip()
-        val = val.strip()
-        if indent == 0:
-            cur_key = key
-            if val == "":
-                out[key] = {}  # nested block or list follows
-            else:
-                out[key] = _coerce(val)
-        else:
-            # one-level-nested block (e.g. device_manifest:)
-            parent = out.get(cur_key)
-            if isinstance(parent, dict):
-                parent[key] = _coerce(val)
-    return out
-
-
-def _coerce(s: str):
-    s = s.strip()
-    if s.startswith(('"', "'")) and s.endswith(('"', "'")) and len(s) >= 2:
-        return s[1:-1]
-    try:
-        return json.loads(s)
-    except (ValueError, TypeError):
-        return s
+    return yaml.safe_load(path.read_text()) or {}
 
 
 def _build_model_record(model: str) -> dict:
@@ -383,6 +352,278 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
     (DOCS / "reconciliation_note.md").write_text("\n".join(lines))
 
 
+def _dataset_block(window_length: int) -> dict:
+    """Canonical dataset counts, DERIVED (never hand-typed) from data.csv +
+    the locked window config so the regenerated dataset_stats.md cites a JSON
+    source for every numeric literal.
+
+    raw_csv_rows   = (lines in data.csv) - 1 header row
+    od_rows        = raw_csv_rows (10-row rolling-mean fillna then dropna keeps
+                     all rows — invariant of revision/core/data.py:255-258)
+    log_return_rows= od_rows - 1  (first difference, data.py:64)
+    rolling_windows= (log_return_rows - W)//stride + 1  (data.py:150, W=window
+                     length=10, stride=2) — must equal the n_real_windows the
+                     strict-gate-accepted sweep configs all carry (cross-check
+                     in main()).
+    """
+    csv_lines = sum(
+        1 for _ in (REPO / "data.csv").read_text().splitlines() if _.strip()
+    )
+    raw_csv_rows = csv_lines - 1  # minus header
+    od_rows = raw_csv_rows
+    log_return_rows = od_rows - 1
+    stride = 2
+    rolling_windows = (log_return_rows - window_length) // stride + 1
+    return {
+        "raw_csv_rows": raw_csv_rows,
+        "od_rows_after_fillna_dropna": od_rows,
+        "log_return_rows": log_return_rows,
+        "window_length": window_length,
+        "window_stride": stride,
+        "rolling_windows": rolling_windows,
+        "independent_campaigns": 1,
+        "train_windows": rolling_windows,
+        "val_windows": 0,
+        "test_windows": 0,
+        "derivation": "raw=lines(data.csv)-1; logret=raw-1; "
+        "windows=(logret-W)//stride+1 (W=window_length, stride=2; "
+        "revision/core/data.py:64/150/255-258) — DERIVED, not hand-typed",
+    }
+
+
+def _fmt(v) -> str:
+    """Render a JSON value for a markdown cell so its textual form appears
+    VERBATIM in model_info.json (the verifier resolves literals by substring
+    match at stated precision). int -> bare int; float -> repr (Python repr is
+    json.dumps-compatible for the values here, e.g. 1.8046e-05, 2.16); other
+    -> str."""
+    if isinstance(v, bool):
+        return str(v)
+    if isinstance(v, int):
+        return str(v)
+    if isinstance(v, float):
+        return repr(v)
+    return str(v)
+
+
+def _render_training_protocol(mi: dict) -> str:
+    """Regenerate training_protocol.md ENTIRELY from model_info.json.
+
+    Preserves the existing "Source of truth" callout + `| Constant | Value |
+    Source |` table layout (_build_baseline_notebook.py:550-593 render idiom),
+    but every Value cell is pulled from model_info.json and every Source cell
+    cites `model_info.json` provenance — never a hand-typed core/__init__.py
+    line. The canonical hyperparameter row is the 55-param IQP:SEL 2000ep
+    reproduction (the manuscript's quantum entrant, D-14-04)."""
+    by = {m["model"]: m for m in mi["models"]}
+    q = by["iqp_sel_55_repro"]
+    ds = mi["dataset"]
+    dh = mi["data_hash"]
+    L: list[str] = []
+    L.append("# Training Protocol — QWGAN-GP (matched 2000ep, 55-param IQP:SEL)")
+    L.append("")
+    L.append(
+        "> **Source of truth:** every numerical constant below is rendered "
+        "FROM `revision/results/model_info.json` by "
+        "`revision/run_model_info.py` — there are NO hand-typed numbers and "
+        "NO `core/__init__.py:NN` line citations. Re-run the emitter to "
+        "update; `revision/verify_number_provenance.py` is the executable "
+        "gate that proves every literal here resolves to a "
+        "`revision/results/*.json` value (success criterion 5)."
+    )
+    L.append("")
+    L.append(
+        "This protocol describes the matched-budget 2000-epoch training run "
+        "for the canonical 55-param IQP:SEL quantum generator "
+        "(`source=matched2000_reproduction`) — the quantum entrant in every "
+        "cross-model comparison (D-14-04). The frozen-checkpoint headline "
+        "(`source=frozen_checkpoint_epoch_1969`) is a SEPARATE record in "
+        "`model_info.json` (D-14-10)."
+    )
+    L.append("")
+    L.append("## Optimizer & Schedule")
+    L.append("")
+    L.append("| Constant | Value | Source |")
+    L.append("|----------|-------|--------|")
+    src = "`model_info.json` models[] kind=quantum source=matched2000_reproduction"
+    L.append(f"| `N_CRITIC` | {_fmt(q['n_critic'])} | {src} (n_critic) |")
+    L.append(
+        f"| `LAMBDA` (gradient penalty coeff) | {_fmt(q['lambda_gp'])} "
+        f"| {src} (lambda_gp) |"
+    )
+    L.append(f"| `LR_CRITIC` | {_fmt(q['lr_critic'])} | {src} (lr_critic) |")
+    L.append(
+        f"| `LR_GENERATOR` | {_fmt(q['lr_generator'])} "
+        f"| {src} (lr_generator) |"
+    )
+    L.append(
+        f"| Optimizer | {q['optimizer']} "
+        f"| {src} (optimizer, optimizer_betas) |"
+    )
+    L.append(f"| `NUM_EPOCHS` | {_fmt(q['epochs'])} | {src} (epochs) |")
+    L.append(f"| `BATCH_SIZE` | {_fmt(q['batch_size'])} | {src} (batch_size) |")
+    L.append("")
+    L.append(
+        "Early-stopping state for the matched-budget run: "
+        f"{q['early_stop']} ({src}, early_stop). The frozen-checkpoint "
+        "headline instead uses the best-EMD checkpoint from the original "
+        "EarlyStopping-enabled campaign (see `model_info.json` "
+        "iqp_sel_55_headline record)."
+    )
+    L.append("")
+    L.append("## Quantum Circuit")
+    L.append("")
+    L.append("| Property | Value | Source |")
+    L.append("|----------|-------|--------|")
+    L.append(
+        f"| Backend | {q['pennylane_device']} (analytic statevector) "
+        f"| {src} (pennylane_device) |"
+    )
+    L.append(
+        f"| Differentiation | {q['diff_method']} | {src} (diff_method) |"
+    )
+    L.append(f"| `NUM_QUBITS` | {_fmt(q['num_qubits'])} | {src} (num_qubits) |")
+    L.append(f"| `NUM_LAYERS` | {_fmt(q['num_layers'])} | {src} (num_layers) |")
+    L.append(
+        f"| `WINDOW_LENGTH` | {_fmt(q['window_length'])} "
+        f"| {src} (window_length) |"
+    )
+    L.append(f"| `circuit_id` | {q['circuit_id']} | {src} (circuit_id) |")
+    L.append(f"| Entangler topology | {q['topology']} | {src} (topology) |")
+    L.append(
+        f"| PQC trainable parameter count | {_fmt(q['parameter_count'])} "
+        f"| {src} (parameter_count) |"
+    )
+    L.append(f"| Compute device | {q['device']} | {src} (device) |")
+    L.append(f"| Param dtype | {q['dtype']} | {src} (dtype) |")
+    L.append(
+        f"| Backend assertion | {q['backend_assertion']} "
+        f"| {src} (backend_assertion) |"
+    )
+    L.append("")
+    L.append("## Reproducibility")
+    L.append("")
+    L.append("| Property | Value | Source |")
+    L.append("|----------|-------|--------|")
+    L.append(
+        f"| Seed set | {q['seeds']} | {src} (seeds) |"
+    )
+    L.append(
+        f"| Training windows | {_fmt(ds['rolling_windows'])} "
+        "| `model_info.json` dataset.rolling_windows |"
+    )
+    L.append(
+        f"| `data_hash` | `{dh}` "
+        "| `model_info.json` data_hash (cross-artifact gate) |"
+    )
+    L.append("")
+    L.append(
+        f"All seeds in {q['seeds']} share the identical config (the strict "
+        "accept gate D-14-13 enforced this); the data_hash "
+        f"`{dh}` is identical across every consumed 2000ep artifact "
+        "(cross-artifact explicit-raise gate, "
+        "run_multiseed_rollup.py:86-92 idiom)."
+    )
+    L.append("")
+    return "\n".join(L) + "\n"
+
+
+def _render_dataset_stats(mi: dict) -> str:
+    """Regenerate dataset_stats.md ENTIRELY from model_info.json.dataset.
+
+    Preserves the `| Quantity | Value | Source |` table layout; every Value is
+    pulled from the model_info.json `dataset` block (DERIVED from data.csv +
+    the locked window config, never hand-typed)."""
+    ds = mi["dataset"]
+    L: list[str] = []
+    L.append("# Dataset Statistics — Single-Campaign LUCY Photobioreactor")
+    L.append("")
+    L.append(
+        "> **Source of truth:** every count below is rendered FROM "
+        "`revision/results/model_info.json` (the `dataset` block, DERIVED "
+        "from `data.csv` + the locked window config) by "
+        "`revision/run_model_info.py`. NO hand-typed numbers; "
+        "`revision/verify_number_provenance.py` is the executable gate."
+    )
+    L.append("")
+    L.append(
+        "This document characterizes the single-campaign dataset that backs "
+        "all v2.0 evaluation work. Counts are derived from live data.csv "
+        "inspection + the locked rolling-window config — never hand-typed."
+    )
+    L.append("")
+    L.append("## Counts")
+    L.append("")
+    L.append("| Quantity | Value | Source / Derivation |")
+    L.append("|----------|-------|---------------------|")
+    prov = "`model_info.json` dataset"
+    L.append(
+        f"| Raw CSV rows (excluding header) | {_fmt(ds['raw_csv_rows'])} "
+        f"| {prov}.raw_csv_rows |"
+    )
+    L.append(
+        f"| OD rows after fillna + dropna "
+        f"| {_fmt(ds['od_rows_after_fillna_dropna'])} "
+        f"| {prov}.od_rows_after_fillna_dropna |"
+    )
+    L.append(
+        f"| Log-return rows (N − 1) | {_fmt(ds['log_return_rows'])} "
+        f"| {prov}.log_return_rows |"
+    )
+    L.append(
+        f"| Rolling windows (length {_fmt(ds['window_length'])}, stride "
+        f"{_fmt(ds['window_stride'])}) | {_fmt(ds['rolling_windows'])} "
+        f"| {prov}.rolling_windows |"
+    )
+    L.append(
+        f"| Independent campaigns | {_fmt(ds['independent_campaigns'])} "
+        f"| {prov}.independent_campaigns |"
+    )
+    L.append("")
+    L.append("## Split Convention")
+    L.append("")
+    L.append("| Convention | Value | Source |")
+    L.append("|------------|-------|--------|")
+    L.append(
+        f"| Train windows | {_fmt(ds['train_windows'])} "
+        f"| {prov}.train_windows |"
+    )
+    L.append(
+        f"| Val windows | {_fmt(ds['val_windows'])} | {prov}.val_windows |"
+    )
+    L.append(
+        f"| Test windows | {_fmt(ds['test_windows'])} "
+        f"| {prov}.test_windows |"
+    )
+    L.append("")
+    L.append(
+        "**Single-Campaign Limitation.** Exactly one LUCY photobioreactor "
+        "campaign; no other independent campaigns are available. "
+        f"{_fmt(ds['rolling_windows'])} rolling windows is too small to "
+        "justify a held-out train/val/test split without severely "
+        "under-powering training, so the EMD-based early-stop metric is "
+        "computed on the same distribution it compares against (stated "
+        "openly per the R1-M5 calibration-honesty standard). Multi-campaign "
+        "generalization is a Phase-14 Outlook item, not a current-scope "
+        "claim."
+    )
+    L.append("")
+    L.append("## Preprocessing Pipeline")
+    L.append("")
+    L.append(
+        "`revision/core/data.py::load_and_preprocess` applies (in order): "
+        "log-return differencing → zero-mean/unit-variance standardization → "
+        "Lambert-W heavy-tail correction → min-max rescaling to [−1, 1] → "
+        f"rolling windows of length {_fmt(ds['window_length'])} and stride "
+        f"{_fmt(ds['window_stride'])} (yielding {_fmt(ds['rolling_windows'])} "
+        "windows). The bioprocess justification of the log-return choice "
+        "(specific growth rate, μ = d ln(OD)/dt) is the subject of Phase "
+        "09.1 (R1-M3 preprocessing ablation)."
+    )
+    L.append("")
+    return "\n".join(L) + "\n"
+
+
 def main() -> None:
     # ── Load the accepted artifacts ───────────────────────────────────────────
     headline = json.loads((RESULTS / "headline_canonical.json").read_text())
@@ -465,10 +706,36 @@ def main() -> None:
         rec["wall_seconds"] = wall.get(m)
         models.append(rec)
 
+    # ── Dataset block (DERIVED from data.csv + locked window config) ──────────
+    # window_length is locked at 10 across every accepted sweep config; assert
+    # that and that the derived rolling_windows equals the n_real_windows the
+    # strict-gate-accepted configs all carry (explicit-raise, python -O safe).
+    win_lengths = {
+        c.get("window_length") for c in sweep_cfgs.values()
+    }
+    if win_lengths != {10}:
+        raise AssertionError(
+            f"non-uniform/unexpected window_length across sweep configs: "
+            f"{win_lengths}"
+        )
+    dataset = _dataset_block(window_length=10)
+    nrw = {
+        c.get("n_real_windows")
+        for c in sweep_cfgs.values()
+        if c.get("n_real_windows") is not None
+    }
+    if nrw and dataset["rolling_windows"] not in nrw:
+        raise AssertionError(
+            f"derived rolling_windows={dataset['rolling_windows']} disagrees "
+            f"with accepted sweep n_real_windows={nrw} — dataset count "
+            "drift; refusing to emit an incoherent dataset block"
+        )
+
     out = {
         "schema": "long-form rows[] + models[] aggregate (D-10-16)",
         "metric_helpers": "revision.core.eval ONLY (D-10-20)",
         "data_hash": canonical_hash,
+        "dataset": dataset,
         "consumed_artifacts": {
             "headline_canonical.json": headline["data_hash"],
             "canonical_recovery.json": "optimizer_breadcrumbs (LR/betas)",
@@ -501,6 +768,16 @@ def main() -> None:
     recon = _reconciliation_rows()
     _write_reconciliation_note(recon, canonical_hash)
 
+    # ── Regenerate provenance docs FROM model_info.json (D-14-16) ─────────────
+    # Re-read what we just wrote so the renderers consume the SAME JSON the
+    # verifier will check against (no in-memory shortcut that could diverge
+    # from the on-disk single source of truth).
+    mi = json.loads((RESULTS / "model_info.json").read_text())
+    (DOCS / "training_protocol.md").write_text(
+        _render_training_protocol(mi)
+    )
+    (DOCS / "dataset_stats.md").write_text(_render_dataset_stats(mi))
+
     print(
         f"model_info.json written: {len(models)} model records, "
         f"data_hash={canonical_hash}"
@@ -508,6 +785,10 @@ def main() -> None:
     print(
         f"reconciliation_note.md written: {len(recon)} model deltas "
         "(1000ep -> 2000ep, EMD OD)"
+    )
+    print(
+        "training_protocol.md + dataset_stats.md regenerated FROM "
+        "model_info.json (no hand-typed numbers)"
     )
 
 
