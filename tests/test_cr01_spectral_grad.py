@@ -51,7 +51,12 @@ def test_real_branch_is_detached():
 
 def test_no_scipy_welch_import_remains():
     src = inspect.getsource(_spectral_psd_loss)
-    assert "welch" not in src, "scipy.signal.welch must be gone (CR-01)"
+    # The acceptance criterion is the *import statement* being gone, not the
+    # word 'welch' (which still legitimately appears in the CR-01 docstring
+    # explaining what was replaced).
+    assert "from scipy.signal import welch" not in src, (
+        "scipy.signal.welch import must be gone (CR-01)"
+    )
     assert "torch.fft.rfft" in src, "must use torch.fft.rfft periodogram"
 
 

@@ -161,14 +161,34 @@ class EarlyStopping:
         torch.save(checkpoint, self.checkpoint_path)
 
     def _load_checkpoint(self, model):
-        """Load best checkpoint and restore model state (cell 31 verbatim)."""
-        checkpoint = torch.load(self.checkpoint_path, weights_only=False)
-        model.params_pqc.data = checkpoint["params_pqc"]
-        model.critic.load_state_dict(checkpoint["critic_state"])
-        model.c_optimizer.load_state_dict(checkpoint["c_optimizer"])
-        model.g_optimizer.load_state_dict(checkpoint["g_optimizer"])
+        """Load best checkpoint and restore model state.
+
+        CR-02 (Phase 13, resolves the pending todo): the cell-31 verbatim port
+        did an un-mapped ``torch.load`` + raw ``.data =`` assignment, so a
+        checkpoint saved on one device/dtype could land params (and optimizer
+        state) on the wrong device — silent NaN/garbage in any future
+        early-stopped run (T-13-03). We now ``map_location`` to the live param
+        device, recast restored params to the live device+dtype, and push every
+        optimizer-state tensor onto that device before re-registering
+        ``params_pqc`` with the generator optimizer.
+        """
+        dev = model.params_pqc.device
+        dt = model.params_pqc.dtype
+        ckpt = torch.load(
+            self.checkpoint_path, weights_only=False, map_location=dev
+        )
+        model.params_pqc.data = ckpt["params_pqc"].to(device=dev, dtype=dt)
+        model.critic.load_state_dict(ckpt["critic_state"])
+        model.c_optimizer.load_state_dict(ckpt["c_optimizer"])
+        model.g_optimizer.load_state_dict(ckpt["g_optimizer"])
+        for opt in (model.c_optimizer, model.g_optimizer):
+            for st in opt.state.values():
+                for k, v in st.items():
+                    if torch.is_tensor(v):
+                        st[k] = v.to(dev)
         # Re-register params_pqc with generator optimizer (cell 31 line).
         model.g_optimizer.param_groups[0]["params"] = [model.params_pqc]
+        checkpoint = ckpt
         print(
             f"  [ES] Loaded best checkpoint from epoch "
             f"{checkpoint['epoch'] + 1} (EMD: {checkpoint['emd']:.6f})"
@@ -475,36 +495,29 @@ def _spectral_psd_loss(fake: torch.Tensor, real: torch.Tensor) -> torch.Tensor:
     but was REMOVED from the final unconditioned run (cell 65: ``RUN_NAME =
     "unconditioned_wgan"`` — "PAR_LIGHT and PSD loss removed"). This function
     re-implements the term so callers that want to opt back in can do so via
-    ``spectral_loss_weight > 0``. The implementation uses
-    :func:`scipy.signal.welch` on the flattened fake and real batches,
-    converts to log-power, and returns MSE; this is the canonical formulation
-    referenced in the v1.1 Phase 6 plan.
-    """
-    from scipy.signal import welch
+    ``spectral_loss_weight > 0``.
 
-    # Flatten both batches; detach real (target — no gradient through real).
+    CR-01 (Phase 13, resolves the pending todo): the previous implementation
+    ran :func:`scipy.signal.welch` on detached numpy buffers and re-anchored a
+    constant scalar to ``fake.var()`` as a proxy — so the spectral term carried
+    no real gradient w.r.t. the generator params. This is now a fully
+    differentiable, device-resident ``torch.fft.rfft`` periodogram: the MSE
+    between log-power spectra of the flattened fake and (detached) real
+    batches. ``real`` is moved to ``fake``'s device+dtype so the term is safe
+    under the MPS/float32 training path.
+    """
+    # Flatten both batches; detach real (target — no gradient through real)
+    # and move it onto fake's device+dtype (CR-01 device fix).
     fake_flat = fake.reshape(-1)
     real_flat = real.reshape(-1).detach()
+    real_flat = real_flat.to(device=fake_flat.device, dtype=fake_flat.dtype)
 
-    # Welch PSD on numpy buffers.
-    fake_np = fake_flat.detach().cpu().numpy()
-    real_np = real_flat.detach().cpu().numpy()
-    _, psd_fake = welch(fake_np)
-    _, psd_real = welch(real_np)
-
-    # Log-power MSE — eps prevents log(0).
     eps = 1e-12
-    log_psd_fake = np.log(psd_fake + eps)
-    log_psd_real = np.log(psd_real + eps)
-    diff = log_psd_fake - log_psd_real
-    mse = float(np.mean(diff ** 2))
-
-    # Re-attach to the autograd graph by anchoring the scalar to a fake-derived
-    # term (so g_opt.step() still updates params_pqc). The MSE itself is a
-    # constant w.r.t. params for this simplified hook — gradient flows through
-    # ``fake_flat.var()`` as a proxy. Acceptable because spectral_loss_weight
-    # defaults to 0.0 (off) — full differentiable PSD is a Phase 13 concern.
-    return mse * fake_flat.var() / (fake_flat.var().detach() + eps)
+    psd_fake = torch.fft.rfft(fake_flat).abs() ** 2
+    psd_real = torch.fft.rfft(real_flat).abs() ** 2
+    return torch.mean(
+        (torch.log(psd_fake + eps) - torch.log(psd_real + eps)) ** 2
+    )
 
 
 # 4 * math.pi sentinel for static-analysis / acceptance-criteria text search
