@@ -368,4 +368,113 @@ Time-series data were collected from a 20-liter photobioreactor (LUCY\textregist
 
 ---
 
-<!-- PAPER-03 appended in Task 2 below -->
+# PAPER-03 — Circuit Design Rationale subsection
+
+Addresses reviewer memo **R2-5b**: the manuscript must justify the circuit
+design — (1) why 5 qubits, (2) the ansatz expressibility–trainability
+tradeoff, (3) why a classical critic with a quantum generator. New
+`\subsection{Circuit Design Rationale}` to be inserted **immediately after**
+`\subsection{QWGAN-GP Architecture Overview}` (`main (4) copy.tex`, the
+subsection beginning at `main:155`).
+
+Every numeric literal below is annotated with its `revision/results/*.json`
+source. The qubit/layer/parameter figures are taken from the locked
+decomposition in `revision/results/canonical_config_lock.json` and
+`revision/results/model_info.json` (the `iqp_sel_55` record) — they are
+**not** hard-coded layer counts. The ansatz expressibility/trainability
+argument uses the matched-2000ep `V1`/`V2`/`V3` structural numbers from
+`revision/results/model_info.json` and `revision/results/ansatz_comparison.json`
+(D-14-10). Per D-14-20 the trainability point is stated qualitatively in the
+direction the matched-budget sweep actually fell (more depth/parameters did
+**not** improve fidelity at matched budget — see
+`revision/docs/reconciliation_note.md`); no rounded EMD mean is hand-typed
+into the manuscript body, in keeping with the number-provenance contract.
+
+- **Target:** `main (4) copy.tex`, insert after `main:155`
+  (`\subsection{QWGAN-GP Architecture Overview}`).
+- **AFTER** (new subsection, copy-paste ready):
+
+```latex
+\subsection{Circuit Design Rationale}
+
+The generator circuit was fixed by three deliberate design choices, each
+constrained by the matched-parameter, low-data setting of this study.
+
+\textbf{Qubit count.} The generator uses 5 qubits. The qubit count is
+dictated by the rolling-window length: each length-10 subsequence is produced
+from Pauli-X and Pauli-Z expectation values over the 5-qubit register
+($5$ qubits $\times\,2$ observables $=10$ outputs), so the window length and
+qubit count are coupled by construction rather than tuned independently. Five
+qubits give a $2^{5}$-dimensional state space, which is more than sufficient
+to embed a length-10 log-return window while keeping the parameterised circuit
+trainable by exact backpropagation on a state-vector simulator at the data
+scale available here. The locked configuration therefore has 5 qubits,
+3 layers, and 55 trainable parameters, decomposed as one IQP-encoding
+parameter per qubit plus 3 strongly-entangling rotation parameters per qubit
+per layer.
+
+\textbf{Ansatz expressibility versus trainability.} The reported circuit
+(IQP encoding $+$ strongly-entangling layers, range entangler, 55 parameters)
+was selected against a multi-seed ansatz comparison at a matched 2000-epoch
+budget. We compared three alternatives at increased capacity or different
+connectivity: a depth-4 range-entangled circuit (75 parameters), a depth-8
+range-entangled circuit (135 parameters), and a depth-4 linear-entangled
+circuit (75 parameters), each over 5 seeds. Increasing parameter count and
+circuit depth, or changing the entangler topology, did \emph{not} yield a
+fidelity improvement over the compact 55-parameter circuit at the matched
+budget on this dataset (per-model values reported in Section~4 and the
+supplementary figure suite). Consistent with the expressibility--trainability
+tradeoff for variational circuits, the deeper/larger ansatz is harder to
+optimise in the low-data, fixed-epoch regime without a corresponding accuracy
+gain, motivating the choice of the smaller circuit as the reported
+configuration.
+
+\textbf{Classical critic with a quantum generator.} The critic is a classical
+convolutional network and only the generator is quantum. This is deliberate:
+the WGAN-GP objective requires a gradient penalty on interpolated samples,
+which is cheap and stable to evaluate with a classical critic, whereas placing
+the discriminator on the quantum device would add measurement-shot noise to
+the critic gradient and substantially increase circuit evaluations per step
+without benefiting the quantity of interest (the generated distribution). A
+classical critic also makes the comparison against the matched classical
+WGAN-GP baselines clean: the only component that differs between the quantum
+and classical entrants is the generator, isolating the effect of the quantum
+circuit.
+```
+
+- **Rationale (R2-5b):** delivers all three required sub-points. The qubit /
+  layer / parameter figures (`5`, `3`, `55`; `2`, `10`) resolve to the
+  `iqp_sel_55` record in `revision/results/model_info.json` /
+  `revision/results/canonical_config_lock.json` (`num_qubits`, `num_layers`,
+  `parameter_count`, `window_length`); the comparison figures (`75`, `135`,
+  `4`, `8`) resolve to the `V1`/`V2`/`V3` records in
+  `revision/results/model_info.json` and
+  `revision/results/ansatz_comparison.json`; `2000` resolves to the `epochs`
+  field. The trainability conclusion is stated qualitatively in the direction
+  the matched-budget sweep actually fell (D-14-20), so no non-resolving
+  rounded EMD mean is introduced into the manuscript body.
+
+---
+
+## Number-provenance footer
+
+Every numeric literal in this file resolves to a `revision/results/*.json`
+value at its stated precision, enforced by:
+
+```
+./qgan_env/bin/python revision/verify_number_provenance.py \
+    --target revision/docs/paper_blocks_framing.md
+```
+
+Source map for the load-bearing literals:
+
+| Literal(s) | Source artifact / path |
+|---|---|
+| `5` (qubits), `3` (layers), `55` (params) | `revision/results/model_info.json` `models[iqp_sel_55_*]` (`num_qubits`/`num_layers`/`parameter_count`); `revision/results/canonical_config_lock.json` `decomposition` |
+| `10` (window length), `2` (Pauli observables / encoding) | `revision/results/model_info.json` `window_length`; `canonical_config_lock.json` `decomposition` (`iqp_encoding_params_per_qubit`, `sel_rot_params_per_qubit_per_layer`) |
+| `75`, `135` (ansatz param counts), `4`, `8` (depths) | `revision/results/model_info.json` `models[V1/V2/V3]`; `revision/results/ansatz_comparison.json` `ansatz_variants[]` |
+| `2000` (epochs) | `revision/results/model_info.json` `models[].epochs` |
+| `0.6843` and other BEFORE-block manuscript constants | quoted verbatim from the read-only manuscript inside fenced BEFORE blocks; these are not introduced by the revision and resolve as substrings of the frozen `revision/results/*.json` artifacts where they coincide, otherwise are confined to BEFORE quotations and removed in the AFTER blocks |
+
+Per D-14-18 no `.tex` file is edited by this repository; these blocks are
+copy-paste targets for the external Overleaf manuscript of record.
