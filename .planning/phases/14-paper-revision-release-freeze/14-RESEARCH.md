@@ -307,21 +307,24 @@ git archive --format=tar.gz -o v2.0-revision.tar.gz v2.0-revision
 
 **If this table is non-empty:** discuss-phase / planner should confirm A2 and A4 before locking acceptance criteria; A1/A3/A5 are handled by existing decisions (D-14-02/07/18) but flagged for awareness.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Does the frozen tag actually capture `revision/results/*.json`?**
    - What we know: `.gitignore` line 62 is `results/`; D-14-21 explicitly wants the JSON in the tag.
    - What's unclear: whether the pattern matches the nested `revision/results/` path in this repo's git config.
    - Recommendation: First task in the release-freeze plan section runs `git check-ignore` + `git ls-files revision/results` and force-tracks if needed (Pitfall 4).
+   - **RESOLVED:** Plan 14-07 Task 1 (`verify_freeze_ready.py`) runs `git check-ignore` on each `revision/results/*.json` and raises (explicit-raise gate) before tagging — the pre-tag provenance check is a hard block, not a manual review.
 
 2. **Where is `bib.bib`?**
    - What we know: `\bibliography{bib}` is referenced; no `*.bib` in repo root.
    - What's unclear: exact Overleaf location / current contents for PAPER-06 ref surgery.
    - Recommendation: Deliver PAPER-06/07 as self-contained `.bib`-entry + sentence-rewrite blocks keyed to the `\cite{...}` keys observed in `main (4) copy.tex` (e.g. `\cite{orlandi2024enhancing}`, `\cite{Dallaire_Demers_2018}`) so they apply regardless of `.bib` location.
+   - **RESOLVED:** Plan 14-06 Task 1 delivers PAPER-06/07 as location-independent `.bib`-entry + sentence-rewrite blocks keyed to the observed `\cite{}` keys — no dependency on locating the Overleaf-external `.bib`.
 
 3. **Canonical figure count: 16 vs 20.**
    - What we know: only 16 `Figure_*.png` exist on disk.
    - Recommendation: Planner sets the figure-suite completeness bar against the verified 16, and notes the discrepancy in the plan.
+   - **RESOLVED:** Plan 14-04 sets the figure-suite completeness bar at the verified ≥16 (not 20) throughout its acceptance criteria.
 
 ## Environment Availability
 
