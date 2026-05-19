@@ -254,7 +254,7 @@ def _train_wgan(
         generator,
         critic,
         bundle.dataloader,
-        num_epochs=1000,
+        num_epochs=int(epochs),  # CR-01: honor --epochs (default 1000)
         n_critic=int(N_CRITIC),
         lambda_gp=float(LAMBDA),
         lr_critic=float(LR_CRITIC),
@@ -289,7 +289,8 @@ def _train_wgan(
         "train_protocol_notes": (
             f"ARCH-01 ansatz variant {variant}: QuantumGenerator("
             f"num_layers={depth}, topology={topology!r}) trained via "
-            "train_wgan_gp UNCHANGED, 1000 epochs, early-stop OFF (D-13-05), "
+            f"train_wgan_gp UNCHANGED, {int(epochs)} epochs, early-stop OFF "
+            "(D-13-05), "
             "spectral_loss_weight=0.0 (D-13-06). Shared "
             "Critic(window_length=WINDOW_LENGTH); generator output is scaled "
             "by *0.1 (quantum-output magnitude artifact, training.py) before "
