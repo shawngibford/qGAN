@@ -311,6 +311,31 @@ def _assemble(out_dir: Path) -> None:
             )
         inter[t] = json.loads(p.read_text())
 
+    # WR-05 (Phase 13): the quantum payload's introspection fields
+    # (bipartition / param_norm / vn_entropy / purity) are only written when
+    # the generator exposed introspect() (make_snapshot_cb hasattr guard). The
+    # p.exists() check above only proves the file is present, not complete — a
+    # partially-written or refactor-produced intermediate would otherwise die
+    # with a bare KeyError naming an internal dict key. Validate the shape
+    # up front with an actionable "re-run --target quantum" message.
+    q_doc = inter["quantum"]
+    if not q_doc.get("is_quantum") or "bipartition" not in q_doc:
+        raise ValueError(
+            "quantum intermediate is missing introspection fields "
+            "(is_quantum/bipartition) — re-run `--target quantum` to "
+            "regenerate a complete intermediate"
+        )
+    for s in q_doc["snapshots"]:
+        missing = {
+            "param_norm", "param_angles", "vn_entropy", "purity"
+        } - set(s)
+        if missing:
+            raise ValueError(
+                f"quantum snapshot epoch={s.get('epoch')} missing "
+                f"{sorted(missing)} — re-run `--target quantum` to "
+                f"regenerate a complete intermediate"
+            )
+
     snap_epochs = inter["quantum"]["snapshot_epochs"]
 
     # INTRO-01: training_progression.json — quantum + 3 classical side-by-side
