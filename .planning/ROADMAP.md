@@ -45,7 +45,23 @@ Plans:
   4. Repository frozen at tag `v2.0-revision`, Zenodo DOI minted and cited in the manuscript (INFRA-03) — tag + DOI resolvable from `revision/docs/release.md`
   5. All numbers cited in the revised manuscript trace back to a JSON artifact in `revision/results/` (no hand-typed numbers)
 
-**Plans**: TBD
+**Plans**: 7 plans
+
+> Scope note (D-14-23, recorded deviation): this phase was intentionally, user-drivenly expanded from "paper edits + freeze" to also recover the lost canonical 55-param IQP:SEL circuit and re-execute Phases 10–13 at a matched 2000-epoch budget so the manuscript numbers are coherent and traceable. Plans 01–04 are that recovery/re-execution/provenance work; Plans 05–06 are the manuscript revision package; Plan 07 is the gated release freeze (LAST, D-14-22).
+
+Plans:
+**Wave 1**
+- [ ] 14-01-PLAN.md — Recover the 55-param IQP:SEL config from best_checkpoint.pt, add as non-default config-selectable circuit, config-equivalence hard-assert (T1, D-14-07)
+**Wave 2** *(blocked on 14-01 — needs the locked 55-param config)*
+- [ ] 14-02-PLAN.md — Frozen-checkpoint headline + tiered resumable 2000ep matched-budget sweep behind the strict accept gate (D-14-08..14)
+**Wave 3** *(blocked on 14-02 — needs accepted 2000ep artifacts)*
+- [ ] 14-03-PLAN.md — run_model_info.py → model_info.json, regenerate provenance docs from JSON, reconciliation note, reusable number-provenance gate (D-14-15/16)
+- [ ] 14-04-PLAN.md — Render-only per-model + cross-model + analysis figure suite (PNG+PDF+JSON, ≥16-figure canonical bar) (D-14-17)
+**Wave 4** *(blocked on 14-03 + 14-04 — needs numbers + figures + provenance gate)*
+- [ ] 14-05-PLAN.md — PAPER-01/02/03/04/05 keyed framing/calibration LaTeX blocks; passes number-provenance gate
+- [ ] 14-06-PLAN.md — PAPER-06..11 keyed refs/methods/typo LaTeX blocks + per-reviewer reviewer_response.md; passes number-provenance gate
+**Wave 5** *(blocked on 14-05 + 14-06 — release LAST, D-14-22)*
+- [ ] 14-07-PLAN.md — Pre-tag freeze-ready gate + tag v2.0-revision + manual Zenodo reserved-DOI deposit + release.md (INFRA-03)
 
 ## Progress
 
@@ -67,4 +83,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
+| 14. Paper Revision & Release Freeze | v2.0 | 0/7 | Not started | - |
