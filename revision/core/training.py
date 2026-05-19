@@ -526,6 +526,21 @@ def _spectral_psd_loss(fake: torch.Tensor, real: torch.Tensor) -> torch.Tensor:
     real_flat = real.reshape(-1).detach()
     real_flat = real_flat.to(device=fake_flat.device, dtype=fake_flat.dtype)
 
+    # WR-02 (Phase 13): the rfft PSDs below have length len//2 + 1, so a
+    # fake/real element-count mismatch would either broadcast into a silently
+    # wrong loss or raise an opaque shape error mid-training. At the only
+    # in-repo call site the lengths match by construction, so this assertion
+    # is latent insurance that surfaces the contract violation with an
+    # actionable message instead of corrupting the spectral term. This is on
+    # the spectral_loss_weight > 0.0 path, which is OFF by default
+    # (D-13-06) — the default training trace is unaffected.
+    if fake_flat.numel() != real_flat.numel():
+        raise ValueError(
+            f"_spectral_psd_loss: fake/real length mismatch "
+            f"(fake={fake_flat.numel()}, real={real_flat.numel()}); the "
+            f"log-PSD MSE requires equal-length flattened batches"
+        )
+
     eps = 1e-12
     psd_fake = torch.fft.rfft(fake_flat).abs() ** 2
     psd_real = torch.fft.rfft(real_flat).abs() ** 2
