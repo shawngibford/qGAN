@@ -19,8 +19,8 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 — needs topology arg + introspect())*
 
-- [ ] 13-02-PLAN.md — run_ansatz.py + run_ansatz_sweep.sh (10-run V2/V3 × 5-seed sweep) + ansatz_comparison.json on extended long-form schema; V1 reused no-recompute (ARCH-01/02) (wave 2)
-- [ ] 13-03-PLAN.md — run_introspect.py callback-snapshot driver: instrumented V1 quantum + 3 classical WGAN runs (seed 42); 3 reproducibility companion JSON (INTRO-01/02/03) (wave 2, parallel to 13-02)
+- [x] 13-02-PLAN.md — run_ansatz.py + run_ansatz_sweep.sh (10-run V2/V3 × 5-seed sweep) + ansatz_comparison.json on extended long-form schema; V1 reused no-recompute (ARCH-01/02) (wave 2)
+- [x] 13-03-PLAN.md — run_introspect.py callback-snapshot driver: instrumented V1 quantum + 3 classical WGAN runs (seed 42); 3 reproducibility companion JSON (INTRO-01/02/03) (wave 2, parallel to 13-02)
 
 **Wave 3** *(blocked on 13-03 companion JSON)*
 
@@ -66,5 +66,5 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 10. Classical Baselines | v2.0 | 4/4 | Complete    | 2026-05-18 |
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
-| 13. Architecture & Introspection | v2.0 | 1/4 | In Progress|  |
+| 13. Architecture & Introspection | v2.0 | 3/4 | In Progress|  |
 | 14. Paper Revision & Release Freeze | v2.0 | 0/TBD | Not started | - |
