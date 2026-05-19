@@ -123,12 +123,18 @@ def make_snapshot_cb(
         # device after the snapshot or the next training epoch crashes on a
         # cross-device matmul (Rule 1 fix; mirrors generate_wgan_samples which
         # only runs post-training).
+        # WR-04 (Phase 13): capture orig_device BEFORE any mutation, then put
+        # the .to("cpu") move itself inside the try so the finally restore
+        # always runs even if the device round-trip or generation raises. The
+        # device probe is its own try/except (params always exist in practice)
+        # and happens before the mutating block, so a failure here cannot
+        # strand the generator on CPU.
         try:
             orig_device = next(generator.parameters()).device
         except StopIteration:  # pragma: no cover - generators always have params
             orig_device = torch.device("cpu")
-        gen_model = generator.to("cpu")
         try:
+            gen_model = generator.to("cpu")
             with torch.no_grad():
                 noise = torch.tensor(
                     rng.uniform(
