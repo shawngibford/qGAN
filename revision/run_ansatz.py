@@ -230,6 +230,18 @@ def _train_wgan(
     depth = int(spec["num_layers"])
     topology = str(spec["topology"])
 
+    # RESEARCH Pitfall 6 — the quantum statevector path MUST run on CPU.
+    # train_wgan_gp moves the generator onto MPS when available, but PennyLane's
+    # default.qubit + torch interface mis-coerces non-CPU tensors (it probes a
+    # CUDA device that does not exist on Apple silicon and raises
+    # "Torch not compiled with CUDA enabled"). The 09.1/10 V1 quantum reference
+    # runs are CPU-only by construction, so pinning this quantum-training
+    # process to CPU keeps V2/V3 on the SAME numeric path as the reused V1
+    # column. This is a process-local guard inside the driver — it does NOT
+    # modify revision/core/training.py (byte-unchanged discipline) and cannot
+    # affect the frozen V1 artifacts.
+    torch.backends.mps.is_available = lambda: False  # noqa: E731 (Pitfall 6)
+
     torch.manual_seed(seed)
     generator = QuantumGenerator(
         num_qubits=NUM_QUBITS,
