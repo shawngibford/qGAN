@@ -144,8 +144,33 @@ def reconstruct_dualscale(variant: str, seed: int, ansatz_root: Path) -> dict:
     ``transformed`` is the log-return array (Pipeline B always emits it).
     """
     base = _run_base(variant, seed, ansatz_root)
-    samples_pm1 = np.load(base / "samples.npy").astype(np.float64)
-    inv = np.load(base / "inverse_kwargs.npz", allow_pickle=True)
+    spath = base / "samples.npy"
+    ipath = base / "inverse_kwargs.npz"
+    # CR-02: fail loudly + early if the frozen bundle is absent. The V1 branch
+    # reads transform_ablation/runs/B/<seed> written by a *different* driver
+    # (run_baselines._save_inverse_kwargs) in a prior phase, so its existence
+    # is a cross-module assumption with no compile-time guarantee.
+    if not spath.is_file() or not ipath.is_file():
+        raise FileNotFoundError(
+            f"{variant} seed={seed}: frozen bundle missing under {base} "
+            f"(expected samples.npy + inverse_kwargs.npz) — V1 reuse "
+            f"contract (D-13-01) broken; aborting before partial re-score"
+        )
+    samples_pm1 = np.load(spath).astype(np.float64)
+    inv = np.load(ipath, allow_pickle=True)
+
+    # CR-02: validate the on-disk schema BEFORE scoring so a key/name drift in
+    # the 09.1/10 run_baselines layout raises an actionable message up front
+    # instead of a bare KeyError deep in the aggregator, *after* V2/V3 have
+    # already been re-scored (which would silently fail the ARCH-02 JSON).
+    required = {"r_min", "r_max", "mu", "sigma", "od_starts"}
+    missing = required - set(inv.files)
+    if missing:
+        raise KeyError(
+            f"{variant} seed={seed}: inverse_kwargs.npz missing keys "
+            f"{sorted(missing)} (found {sorted(inv.files)}) — V1 reuse "
+            f"contract (D-13-01) broken; aborting before partial re-score"
+        )
 
     r_min = float(inv["r_min"])
     r_max = float(inv["r_max"])
