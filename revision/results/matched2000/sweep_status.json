@@ -96,21 +96,111 @@
     {
       "model": "V2",
       "seed": 46,
-      "status": "running",
+      "status": "complete",
       "started_at": "2026-05-19T15:13:59Z",
-      "ended_at": "",
-      "wall_seconds": null,
-      "return_code": null,
+      "ended_at": "2026-05-19T15:24:35Z",
+      "wall_seconds": 636,
+      "return_code": 0,
       "skipped_already_done": false
     },
     {
       "model": "V3",
       "seed": 42,
-      "status": "running",
+      "status": "complete",
       "started_at": "2026-05-19T15:13:59Z",
-      "ended_at": "",
-      "wall_seconds": null,
-      "return_code": null,
+      "ended_at": "2026-05-19T15:22:45Z",
+      "wall_seconds": 526,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "V3",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T15:22:45Z",
+      "ended_at": "2026-05-19T15:30:48Z",
+      "wall_seconds": 483,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "V3",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T15:24:35Z",
+      "ended_at": "2026-05-19T15:32:43Z",
+      "wall_seconds": 488,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "V3",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T15:30:48Z",
+      "ended_at": "2026-05-19T15:38:37Z",
+      "wall_seconds": 469,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "V3",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-19T15:32:44Z",
+      "ended_at": "2026-05-19T15:40:18Z",
+      "wall_seconds": 454,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "ar",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-19T16:02:19Z",
+      "ended_at": "2026-05-19T16:02:19Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "ar",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T16:02:19Z",
+      "ended_at": "2026-05-19T16:02:22Z",
+      "wall_seconds": 3,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "ar",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T16:02:20Z",
+      "ended_at": "2026-05-19T16:02:23Z",
+      "wall_seconds": 3,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "ar",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T16:02:23Z",
+      "ended_at": "2026-05-19T16:02:25Z",
+      "wall_seconds": 2,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "ar",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-19T16:02:23Z",
+      "ended_at": "2026-05-19T16:02:26Z",
+      "wall_seconds": 3,
+      "return_code": 0,
       "skipped_already_done": false
     },
     {
@@ -162,9 +252,209 @@
       "wall_seconds": 0,
       "return_code": 0,
       "skipped_already_done": true
+    },
+    {
+      "model": "vae",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-19T16:00:28Z",
+      "ended_at": "2026-05-19T16:00:56Z",
+      "wall_seconds": 28,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "vae",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T16:00:56Z",
+      "ended_at": "2026-05-19T16:01:24Z",
+      "wall_seconds": 28,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "vae",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T16:01:24Z",
+      "ended_at": "2026-05-19T16:01:53Z",
+      "wall_seconds": 29,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "vae",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T16:01:51Z",
+      "ended_at": "2026-05-19T16:02:19Z",
+      "wall_seconds": 28,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "vae",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-19T16:01:53Z",
+      "ended_at": "2026-05-19T16:02:20Z",
+      "wall_seconds": 27,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_cnn",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-19T15:46:10Z",
+      "ended_at": "2026-05-19T15:48:58Z",
+      "wall_seconds": 168,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_cnn",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T15:47:28Z",
+      "ended_at": "2026-05-19T15:50:15Z",
+      "wall_seconds": 166,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_cnn",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T15:48:58Z",
+      "ended_at": "2026-05-19T15:51:43Z",
+      "wall_seconds": 165,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_cnn",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T15:50:15Z",
+      "ended_at": "2026-05-19T15:52:46Z",
+      "wall_seconds": 151,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_cnn",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-19T15:51:43Z",
+      "ended_at": "2026-05-19T15:54:12Z",
+      "wall_seconds": 149,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_lstm",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-19T15:52:46Z",
+      "ended_at": "2026-05-19T15:55:38Z",
+      "wall_seconds": 172,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_lstm",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T15:54:13Z",
+      "ended_at": "2026-05-19T15:57:19Z",
+      "wall_seconds": 186,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_lstm",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T15:55:38Z",
+      "ended_at": "2026-05-19T15:58:44Z",
+      "wall_seconds": 186,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_lstm",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T15:57:19Z",
+      "ended_at": "2026-05-19T16:00:27Z",
+      "wall_seconds": 188,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_lstm",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-19T15:58:45Z",
+      "ended_at": "2026-05-19T16:01:51Z",
+      "wall_seconds": 186,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_mlp",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-19T15:38:37Z",
+      "ended_at": "2026-05-19T15:41:37Z",
+      "wall_seconds": 180,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_mlp",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T15:40:18Z",
+      "ended_at": "2026-05-19T15:43:17Z",
+      "wall_seconds": 179,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_mlp",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T15:41:37Z",
+      "ended_at": "2026-05-19T15:44:33Z",
+      "wall_seconds": 176,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_mlp",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T15:43:17Z",
+      "ended_at": "2026-05-19T15:46:10Z",
+      "wall_seconds": 173,
+      "return_code": 0,
+      "skipped_already_done": false
+    },
+    {
+      "model": "wgan_mlp",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-19T15:44:34Z",
+      "ended_at": "2026-05-19T15:47:28Z",
+      "wall_seconds": 174,
+      "return_code": 0,
+      "skipped_already_done": false
     }
   ],
-  "all_complete": false,
-  "completed_count": 14,
+  "all_complete": true,
+  "completed_count": 45,
   "total_count": 45
 }
