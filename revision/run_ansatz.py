@@ -47,6 +47,7 @@ Each run writes these five artifacts to ``out_root/runs/<variant>/<seed>/``:
 from __future__ import annotations
 
 import argparse
+import contextlib
 import hashlib
 import json
 import shutil
@@ -211,6 +212,37 @@ def _compute_data_hash(csv_path: Path) -> str:
     return hashlib.sha256(od.tobytes()).hexdigest()[:16]
 
 
+@contextlib.contextmanager
+def _force_cpu_for_quantum():
+    """Force ``train_wgan_gp`` onto its CPU path for the quantum statevector.
+
+    WR-03 (Phase 13): the previous implementation mutated the global
+    ``torch.backends.mps.is_available`` unconditionally at function-body level
+    and NEVER restored it — fine for the one-process-per-invocation driver
+    today, but a latent footgun if ``_train_wgan`` is ever imported into a
+    longer-lived process (a future aggregator or a test), where MPS would be
+    silently disabled for the whole interpreter with no way to undo it. This
+    mirrors ``run_introspect._force_cpu_for_quantum`` exactly: monkey-patch
+    for the duration of the wrapped call, then restore the original in a
+    ``finally``.
+
+    RESEARCH Pitfall 6 — PennyLane's default.qubit + torch interface
+    mis-coerces non-CPU tensors (probes a CUDA device that does not exist on
+    Apple silicon and raises "Torch not compiled with CUDA enabled"). The
+    09.1/10 V1 quantum reference runs are CPU-only by construction, so pinning
+    this quantum-training process to CPU keeps V2/V3 on the SAME numeric path
+    as the reused V1 column. This is a process-local guard inside the driver —
+    it does NOT modify revision/core/training.py (byte-unchanged discipline)
+    and cannot affect the frozen V1 artifacts.
+    """
+    orig = torch.backends.mps.is_available
+    torch.backends.mps.is_available = lambda: False  # type: ignore[assignment]
+    try:
+        yield
+    finally:
+        torch.backends.mps.is_available = orig  # type: ignore[assignment]
+
+
 def _train_wgan(
     variant: str,
     bundle: DatasetBundle,
@@ -230,18 +262,6 @@ def _train_wgan(
     depth = int(spec["num_layers"])
     topology = str(spec["topology"])
 
-    # RESEARCH Pitfall 6 — the quantum statevector path MUST run on CPU.
-    # train_wgan_gp moves the generator onto MPS when available, but PennyLane's
-    # default.qubit + torch interface mis-coerces non-CPU tensors (it probes a
-    # CUDA device that does not exist on Apple silicon and raises
-    # "Torch not compiled with CUDA enabled"). The 09.1/10 V1 quantum reference
-    # runs are CPU-only by construction, so pinning this quantum-training
-    # process to CPU keeps V2/V3 on the SAME numeric path as the reused V1
-    # column. This is a process-local guard inside the driver — it does NOT
-    # modify revision/core/training.py (byte-unchanged discipline) and cannot
-    # affect the frozen V1 artifacts.
-    torch.backends.mps.is_available = lambda: False  # noqa: E731 (Pitfall 6)
-
     torch.manual_seed(seed)
     generator = QuantumGenerator(
         num_qubits=NUM_QUBITS,
@@ -250,18 +270,24 @@ def _train_wgan(
         topology=topology,
     )
     critic = Critic(window_length=WINDOW_LENGTH)
-    metrics = train_wgan_gp(
-        generator,
-        critic,
-        bundle.dataloader,
-        num_epochs=int(epochs),  # CR-01: honor --epochs (default 1000)
-        n_critic=int(N_CRITIC),
-        lambda_gp=float(LAMBDA),
-        lr_critic=float(LR_CRITIC),
-        lr_generator=float(LR_GENERATOR),
-        seed=int(seed),
-        eval_every=int(EVAL_EVERY),
-    )
+    # WR-03 (Phase 13): RESEARCH Pitfall 6 — the quantum statevector path MUST
+    # run on CPU. Wrap ONLY the train_wgan_gp call in a restoring guard (was: a
+    # permanent, non-restoring global monkey-patch at function-body top level)
+    # so MPS availability is reinstated even if training raises and the global
+    # is never silently disabled for the rest of the interpreter.
+    with _force_cpu_for_quantum():
+        metrics = train_wgan_gp(
+            generator,
+            critic,
+            bundle.dataloader,
+            num_epochs=int(epochs),  # CR-01: honor --epochs (default 1000)
+            n_critic=int(N_CRITIC),
+            lambda_gp=float(LAMBDA),
+            lr_critic=float(LR_CRITIC),
+            lr_generator=float(LR_GENERATOR),
+            seed=int(seed),
+            eval_every=int(EVAL_EVERY),
+        )
     n_synth = 10 * bundle.n_real_windows
     samples = generate_wgan_samples(generator, n_synth, seed)
     checkpoint = {
