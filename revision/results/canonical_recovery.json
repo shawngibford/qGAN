@@ -1,0 +1,44 @@
+{
+  "checkpoint_emd": 0.08384301715430653,
+  "checkpoint_epoch": 1969,
+  "checkpoint_filename": "best_checkpoint.pt",
+  "checkpoint_sha256": "f7cceb52285f753b9f5f697086f3042817761d37f3112a9b36dc580ebe03b082",
+  "circuit_id": "iqp_sel_55",
+  "core_default_path": "UNCHANGED (75-param 5,4 default; T-14-02)",
+  "corroborating_git_archaeology": "git log -S NUM_LAYERS qgan_pennylane.ipynb shows NUM_LAYERS in {2,3,4} over time \u2014 CORROBORATING ONLY (D-14-02); the checkpoint params_pqc(55,) + structural forward-pass walk disambiguate to L=3 with IQP encoding present and final-RX-only.",
+  "data_hash_note": "No dataset hash resolvable from the checkpoint alone (it stores only model/optimizer tensors + scalar mu/sigma); the headline data_hash is established downstream against the pinned native pipeline. Omitted here by design (D-14-06).",
+  "decomposition": {
+    "gate_layout": {
+      "entangler": "range",
+      "final_rotation": "RX_only",
+      "hadamard_init": true,
+      "iqp_encoding_params_per_qubit": 1,
+      "sel_rot_params_per_qubit_per_layer": 3
+    },
+    "num_layers": 3,
+    "num_qubits": 5,
+    "param_count": 55
+  },
+  "mu": 0.0024553430266678333,
+  "native_pipeline": "B",
+  "native_pipeline_evidence": {
+    "rationale": "Checkpoint stores zero-centred scalar mu/sigma (0.002455/0.02141) \u2014 log-return standardization stats, NOT min-max OD bounds, so Pipeline A is excluded. They match results/run_unconditioned_wgan/stats.json moments_real (mean~0.00245, std~0.02174 log-returns). Native headline standardization = log-returns (Pipeline B); Pipeline C is the Lambert-W superset sharing the same stored mu/sigma.",
+    "stored_mu": 0.0024553430266678333,
+    "stored_sigma": 0.021407155320048332
+  },
+  "optimizer_breadcrumbs": {
+    "c_optimizer_betas": [
+      0.0,
+      0.9
+    ],
+    "c_optimizer_lr": 3e-05,
+    "g_optimizer_betas": [
+      0.0,
+      0.9
+    ],
+    "g_optimizer_lr": 8e-05
+  },
+  "param_count": 55,
+  "schema": "canonical-recovery v1 (Phase 14 D-14-01/02/06)",
+  "sigma": 0.021407155320048332
+}

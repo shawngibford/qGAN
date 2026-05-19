@@ -1,0 +1,32 @@
+{
+  "checkpoint_emd": 0.08384301715430653,
+  "checkpoint_epoch": 1969,
+  "checkpoint_filename": "best_checkpoint.pt",
+  "checkpoint_sha256": "f7cceb52285f753b9f5f697086f3042817761d37f3112a9b36dc580ebe03b082",
+  "core_default_path": "UNCHANGED \u2014 QuantumGenerator() with no args still builds the 75-param (5,4) default (T-14-02)",
+  "decomposition": {
+    "gate_layout": {
+      "entangler": "range",
+      "final_rotation": "RX_only",
+      "hadamard_init": true,
+      "iqp_encoding_params_per_qubit": 1,
+      "sel_rot_params_per_qubit_per_layer": 3
+    },
+    "num_layers": 3,
+    "num_qubits": 5,
+    "param_count": 55
+  },
+  "equivalence_gate": "PASSED \u2014 explicit-raise shape gate (==(55,)) + structural forward-pass gate (consumed==55); python -O safe (D-14-07)",
+  "locked_circuit_id": "iqp_sel_55",
+  "mu": 0.0024553430266678333,
+  "native_pipeline": "B",
+  "native_pipeline_evidence": {
+    "rationale": "Checkpoint stores zero-centred scalar mu/sigma (0.002455/0.02141) \u2014 log-return standardization stats, NOT min-max OD bounds, so Pipeline A is excluded. They match results/run_unconditioned_wgan/stats.json moments_real (mean~0.00245, std~0.02174 log-returns). Native headline standardization = log-returns (Pipeline B); Pipeline C is the Lambert-W superset sharing the same stored mu/sigma.",
+    "stored_mu": 0.0024553430266678333,
+    "stored_sigma": 0.021407155320048332
+  },
+  "param_count": 55,
+  "schema": "canonical-config-lock v1 (Phase 14 D-14-05/06/07)",
+  "sigma": 0.021407155320048332,
+  "structural_forward_pass_consumed": 55
+}
