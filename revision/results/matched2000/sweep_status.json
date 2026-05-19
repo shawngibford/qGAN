@@ -1,0 +1,170 @@
+{
+  "started_at": "2026-05-19T13:00:30Z",
+  "epochs": 2000,
+  "parallel": 2,
+  "runs": [
+    {
+      "model": "V1",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V1",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V1",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V1",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V1",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V2",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V2",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V2",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V2",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "2026-05-19T15:13:59Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "V2",
+      "seed": 46,
+      "status": "running",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "",
+      "wall_seconds": null,
+      "return_code": null,
+      "skipped_already_done": false
+    },
+    {
+      "model": "V3",
+      "seed": 42,
+      "status": "running",
+      "started_at": "2026-05-19T15:13:59Z",
+      "ended_at": "",
+      "wall_seconds": null,
+      "return_code": null,
+      "skipped_already_done": false
+    },
+    {
+      "model": "iqp_sel_55_repro",
+      "seed": 42,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:58Z",
+      "ended_at": "2026-05-19T15:13:58Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "iqp_sel_55_repro",
+      "seed": 43,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:58Z",
+      "ended_at": "2026-05-19T15:13:58Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "iqp_sel_55_repro",
+      "seed": 44,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:58Z",
+      "ended_at": "2026-05-19T15:13:58Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "iqp_sel_55_repro",
+      "seed": 45,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:58Z",
+      "ended_at": "2026-05-19T15:13:58Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    },
+    {
+      "model": "iqp_sel_55_repro",
+      "seed": 46,
+      "status": "complete",
+      "started_at": "2026-05-19T15:13:58Z",
+      "ended_at": "2026-05-19T15:13:58Z",
+      "wall_seconds": 0,
+      "return_code": 0,
+      "skipped_already_done": true
+    }
+  ],
+  "all_complete": false,
+  "completed_count": 14,
+  "total_count": 45
+}
