@@ -2088,6 +2088,132 @@ def render_noise_robustness_quantum(repo: Path,
     return _save(fig, figures_dir, "noise_robustness_quantum", companion)
 
 
+def render_shot_noise_robustness(repo: Path,
+                                 figures_dir: Path) -> list[Path]:
+    """EMD vs shot count with analytic-statevector reference (Task 7).
+
+    Render-only over ``revision/results/shot_noise_sensitivity.json``
+    (previously unconsumed). The "analytic" condition (shots=None,
+    statevector simulator) is rendered as a HORIZONTAL REFERENCE LINE
+    per pipeline (the shots=∞ asymptote); finite-shot conditions
+    (currently shots_8192 and shots_1024) are plotted as points connected
+    by lines on a log-x shots axis with error bars over 3 seeds.
+    """
+    src_path = repo / Path("revision/results/shot_noise_sensitivity.json")
+    j = _load_json(src_path, "shot_noise_sensitivity.json (Task 7 source)")
+    rows = j["rows"]
+    pipelines = list(j["pipelines"])
+    seeds = list(j["seeds"])
+    conditions = list(j["conditions"])
+    shot_levels = dict(j["shot_levels"])
+
+    # Filter to emd|OD and group.
+    emd_rows = [r for r in rows
+                if r.get("metric_name") == "emd"
+                and r.get("scale") == "OD"]
+    from collections import defaultdict
+    grouped: dict[tuple, list[float]] = defaultdict(list)
+    for r in emd_rows:
+        cond = r["condition"]
+        p = r["pipeline"]
+        grouped[(cond, p)].append(float(r["value"]))
+
+    finite_conditions = sorted(
+        (c for c in conditions if shot_levels.get(c) is not None),
+        key=lambda c: int(shot_levels[c]),
+    )
+    per_curve: dict[str, list[dict]] = {}
+    analytic_baseline: dict[str, dict] = {}
+    for p in pipelines:
+        curve = []
+        for c in finite_conditions:
+            vals = grouped.get((c, p), [])
+            if not vals:
+                raise FileNotFoundError(
+                    f"[14-10/T7] missing emd|OD rows for ({c}, {p}) "
+                    f"in shot_noise_sensitivity.json."
+                )
+            arr = np.asarray(vals, dtype=float)
+            curve.append({
+                "condition": c,
+                "shots": int(shot_levels[c]),
+                "emd_mean": float(arr.mean()),
+                "emd_std": float(arr.std()),
+                "n_seeds": int(arr.size),
+            })
+        per_curve[p] = curve
+        avals = grouped.get(("analytic", p), [])
+        if not avals:
+            raise FileNotFoundError(
+                f"[14-10/T7] missing emd|OD rows for ('analytic', {p}) "
+                f"in shot_noise_sensitivity.json."
+            )
+        aarr = np.asarray(avals, dtype=float)
+        analytic_baseline[p] = {
+            "emd_mean": float(aarr.mean()),
+            "emd_std": float(aarr.std()),
+            "n_seeds": int(aarr.size),
+        }
+
+    # Single-panel figure: log-x shots, both pipelines on the same axes
+    # with their analytic baselines as horizontal references.
+    fig, ax = plt.subplots(figsize=(10, 5.6))
+    pipeline_styles = {
+        "A": dict(color="#D55E00", linestyle="--", marker="s",
+                  label_prefix="Pipeline A"),
+        "B": dict(color="#0072B2", linestyle="-",  marker="o",
+                  label_prefix="Pipeline B"),
+    }
+    for p in pipelines:
+        st = pipeline_styles[p]
+        curve = per_curve[p]
+        xs = [c["shots"] for c in curve]
+        ys = [c["emd_mean"] for c in curve]
+        es = [c["emd_std"] for c in curve]
+        ax.errorbar(xs, ys, yerr=es, marker=st["marker"],
+                    linestyle=st["linestyle"], color=st["color"],
+                    markersize=8, markeredgecolor="white",
+                    markeredgewidth=0.6, capsize=3, linewidth=1.6,
+                    elinewidth=0.9,
+                    label=f"{st['label_prefix']} (finite shots)")
+        # Horizontal analytic baseline reference (shots=∞ asymptote).
+        ab = analytic_baseline[p]
+        ax.axhline(ab["emd_mean"], color=st["color"], linestyle=":",
+                   linewidth=1.3, alpha=0.75,
+                   label=f"{st['label_prefix']} analytic (shots=∞)")
+    ax.set_xscale("log")
+    ax.set_xlabel("shots (per Pauli measurement, log scale)")
+    ax.set_ylabel("OD EMD (mean ± std over 3 seeds)")
+    ax.set_title(
+        "Shot-noise robustness — EMD vs shot count (log-x). Analytic-"
+        "statevector baseline (shots=∞) shown as horizontal reference "
+        "per pipeline. Mean over 3 seeds (42-44); error bars are seed std."
+    )
+    ax.grid(True, alpha=0.3, which="both")
+    ax.legend(frameon=False, fontsize=8, loc="best")
+    fig.tight_layout()
+
+    companion = {
+        "figure": "shot_noise_robustness",
+        "render_only": True,
+        "source_artifact": "revision/results/shot_noise_sensitivity.json",
+        "conditions": conditions,
+        "shot_levels": shot_levels,
+        "pipelines": pipelines,
+        "seeds": seeds,
+        "per_curve_aggregates": per_curve,
+        "analytic_baseline": analytic_baseline,
+        "x_scale": "log",
+        "caption_note": (
+            "EMD vs shot count (log-x) for Pipeline A and B; the "
+            "analytic-statevector baseline (shots=∞) is shown as a "
+            "horizontal reference per pipeline. Mean over 3 seeds "
+            "(42-44); error bars are seed std."
+        ),
+    }
+    return _save(fig, figures_dir, "shot_noise_robustness", companion)
+
+
 # ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
@@ -2185,6 +2311,7 @@ def main() -> None:
     written += render_param_efficiency_pareto(repo, figures_dir)
     written += render_seed_variance_per_model(repo, figures_dir)
     written += render_noise_robustness_quantum(repo, figures_dir)
+    written += render_shot_noise_robustness(repo, figures_dir)
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
     written += render_existing_introspection(figures_dir)
