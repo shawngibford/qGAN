@@ -71,7 +71,7 @@ Plans:
 **Wave 9** *(independent — pure-aggregator methods doc consolidation over existing audited JSON + introspection of revision/core source for citations; not blocked by 14-07)*
 - [x] 14-11-PLAN.md — Paper-ready Methods document (`revision/docs/methods_full.md`) + 3 new audited JSONs (`classical_architectures.json` via `run_classical_arch_extract.py`, `framework_versions.json` via `run_framework_versions.py`, `methods_full.json` via `run_methods_full.py`); resolves default_75 vs iqp_sel_55 and dtype_params vs dtype_samples contradictions; passes number-provenance gate (supports PAPER-08/09)
 **Wave 10** *(integration only — paper-blocks cross-citation + completeness-sweep manifest; not blocked by 14-07)*
-- [ ] 14-12-PLAN.md — Thread 14-09/14-10/14-11 artifacts into paper_blocks_framing.md (PAPER-03 atlas + PAPER-01/02b param_efficiency_pareto), paper_blocks_refs_methods.md (PAPER-08 methods_full.md cross-ref + PAPER-09 6-figure citations), reviewer_response.md (Completeness sweep section, R1-M4 RESOLVED via methods_full.md), reconciliation_note.md (caveat paragraph); emit `revision/docs/completeness_sweep_manifest.md`; aggregate end-to-end provenance verify across all 6 paper-blocks docs; pure-additive, no `revision/core/` edit, no `verify_number_provenance.py` edit (supports PAPER-01/03/08/09)
+- [x] 14-12-PLAN.md — Thread 14-09/14-10/14-11 artifacts into paper_blocks_framing.md (PAPER-03 atlas + PAPER-01/02b param_efficiency_pareto), paper_blocks_refs_methods.md (PAPER-08 methods_full.md cross-ref + PAPER-09 6-figure citations), reviewer_response.md (Completeness sweep section, R1-M4 RESOLVED via methods_full.md), reconciliation_note.md (caveat paragraph); emit `revision/docs/completeness_sweep_manifest.md`; aggregate end-to-end provenance verify across all 6 paper-blocks docs; pure-additive, no `revision/core/` edit, no `verify_number_provenance.py` edit (supports PAPER-01/03/08/09)
 
 ## Progress
 
@@ -93,4 +93,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 10/12 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 11/12 | In Progress|  |
