@@ -69,7 +69,7 @@ Plans:
 **Wave 8** *(independent — render-only story-completeness figures over existing JSONs; consumes previously-unconsumed tstr/noise/shot-noise data; not blocked by 14-07)*
 - [x] 14-10-PLAN.md — Render-only story-completeness figure suite: training_convergence_all_models, tstr_crossmodel, failure_modes_summary, param_efficiency_pareto, seed_variance_per_model, noise_robustness_quantum, shot_noise_robustness (supports PAPER-01/09)
 **Wave 9** *(independent — pure-aggregator methods doc consolidation over existing audited JSON + introspection of revision/core source for citations; not blocked by 14-07)*
-- [ ] 14-11-PLAN.md — Paper-ready Methods document (`revision/docs/methods_full.md`) + 3 new audited JSONs (`classical_architectures.json` via `run_classical_arch_extract.py`, `framework_versions.json` via `run_framework_versions.py`, `methods_full.json` via `run_methods_full.py`); resolves default_75 vs iqp_sel_55 and dtype_params vs dtype_samples contradictions; passes number-provenance gate (supports PAPER-08/09)
+- [x] 14-11-PLAN.md — Paper-ready Methods document (`revision/docs/methods_full.md`) + 3 new audited JSONs (`classical_architectures.json` via `run_classical_arch_extract.py`, `framework_versions.json` via `run_framework_versions.py`, `methods_full.json` via `run_methods_full.py`); resolves default_75 vs iqp_sel_55 and dtype_params vs dtype_samples contradictions; passes number-provenance gate (supports PAPER-08/09)
 
 ## Progress
 
@@ -91,4 +91,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 9/11 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 10/11 | In Progress|  |
