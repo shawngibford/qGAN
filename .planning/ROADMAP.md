@@ -67,7 +67,7 @@ Plans:
 **Wave 7** *(independent — render-only circuit visualization; not blocked by 14-07)*
 - [x] 14-09-PLAN.md — Render-only circuit diagrams for all 5 production qubit circuits (default_75, iqp_sel_55, V1, V2, V3) + V1/V2/V3 config locks + circuit_atlas.md (supports PAPER-03)
 **Wave 8** *(independent — render-only story-completeness figures over existing JSONs; consumes previously-unconsumed tstr/noise/shot-noise data; not blocked by 14-07)*
-- [ ] 14-10-PLAN.md — Render-only story-completeness figure suite: training_convergence_all_models, tstr_crossmodel, failure_modes_summary, param_efficiency_pareto, seed_variance_per_model, noise_robustness_quantum, shot_noise_robustness (supports PAPER-01/09)
+- [x] 14-10-PLAN.md — Render-only story-completeness figure suite: training_convergence_all_models, tstr_crossmodel, failure_modes_summary, param_efficiency_pareto, seed_variance_per_model, noise_robustness_quantum, shot_noise_robustness (supports PAPER-01/09)
 
 ## Progress
 
@@ -89,4 +89,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 8/10 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 9/10 | In Progress|  |
