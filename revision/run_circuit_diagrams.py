@@ -24,8 +24,8 @@ Two outputs:
 
     2. 15 figure artifacts under ``revision/results/figures/circuits/``:
        ``{default_75,iqp_sel_55,V1,V2,V3}.{png,pdf,json}`` — every PNG drawn
-       via ``qml.draw_mpl(qnode, style="pennylane")`` (NEVER hand-rolled
-       matplotlib gate art), every companion JSON records
+       via ``qml.draw_mpl(qnode, style="pennylane")`` (never a bespoke
+       matplotlib gate drawing), every companion JSON records
        (figure / circuit_id / ansatz_name / source_config_lock_path /
        n_params / depth / topology / num_qubits / renderer /
        generation_timestamp) so each figure is independently re-derivable.
@@ -467,19 +467,123 @@ def _extract_lock_fields(lock: dict, name: str) -> dict:
     }
 
 
+def _draw_one(
+    *,
+    name: str,
+    repo: Path,
+    figures_dir: Path,
+    lock_rel: str,
+) -> list[Path]:
+    """Render a single circuit diagram via qml.draw_mpl and emit triple.
+
+    Reads num_qubits / num_layers / topology / locked_circuit_id /
+    param_count EXCLUSIVELY from the loaded config-lock JSON. Hard-asserts
+    ``model.num_params == lock.param_count`` before drawing so the
+    rendered tape is the exact tape the lock describes (T-14-19).
+    """
+    lock_path = repo / lock_rel
+    lock = _load_json(lock_path, f"{name} config lock")
+    spec = _extract_lock_fields(lock, name)
+
+    num_qubits = spec["num_qubits"]
+    num_layers = spec["num_layers"]
+    topology = spec["topology"]
+    locked_circuit_id = spec["locked_circuit_id"]
+    param_count = spec["param_count"]
+
+    # Render-only contract: build the QNode AND execute the qml.draw_mpl
+    # tape walk under torch.no_grad() so neither the constructor's PQC
+    # init nor the 5 forward passes draw_mpl runs through default.qubit
+    # leak into PyTorch's autograd graph. Mirrors QuantumGenerator.introspect
+    # at revision/core/models/quantum.py:344. The placeholder param
+    # tensor's numerical values do NOT affect the drawn tape structure —
+    # only the (num_qubits, num_layers, topology, circuit_id) tuple does —
+    # so any deterministic tensor of the locked shape is acceptable.
+    with torch.no_grad():
+        # Defer the import to inside the render path so the lock-only
+        # step never pulls in the heavy revision.core.models.quantum
+        # module (which transitively imports pennylane + torch — fine
+        # here since we are about to use them anyway).
+        from revision.core.models.quantum import QuantumGenerator  # noqa: E402
+
+        model = QuantumGenerator(
+            num_qubits=num_qubits,
+            num_layers=num_layers,
+            window_length=2 * num_qubits,
+            topology=topology,
+            circuit_id=locked_circuit_id,
+        )
+
+        if model.num_params != param_count:
+            raise AssertionError(
+                f"[run_circuit_diagrams] {name}: QuantumGenerator built "
+                f"with circuit_id={locked_circuit_id!r}, num_qubits="
+                f"{num_qubits}, num_layers={num_layers}, topology="
+                f"{topology!r} consumed model.num_params={model.num_params}, "
+                f"but config-lock declares param_count={param_count}. "
+                f"Refusing to render — fix the lock or the variant table."
+            )
+
+        noise = torch.zeros(num_qubits)
+        # model.params_pqc is the constructor-initialized random tensor;
+        # use it as-is (param values do not affect tape topology).
+        # detach()+clone() is extra-paranoid about no autograd leaks.
+        params = model.params_pqc.detach().clone()
+
+        # qml.draw_mpl returns a callable; calling it with the QNode's
+        # expected args (noise, params) returns (fig, ax). style="pennylane"
+        # is the recommended publication style. Never a bespoke
+        # matplotlib gate drawing (no rectangle / circle DSL).
+        fig, _ax = qml.draw_mpl(model.qnode, style="pennylane")(noise, params)
+
+        suptitle = (
+            f"{name} - {num_qubits} qubits x {num_layers} layers "
+            f"x {topology} topology - {param_count} parameters"
+        )
+        if name == "iqp_sel_55":
+            # Continuity with 14-01 framing. D-14-10 (headline vs
+            # reproduction conflation) does NOT apply here — this is
+            # an architecture diagram, no generation numbers.
+            suptitle += (
+                " (canonical paper circuit, frozen checkpoint epoch 1969)"
+            )
+        fig.suptitle(suptitle, fontsize=11)
+
+    companion = {
+        "figure": "circuit_diagram",
+        "circuit_id": locked_circuit_id,
+        "ansatz_name": name,
+        "source_config_lock_path": str(lock_rel),
+        "n_params": param_count,
+        "depth": num_layers,
+        "topology": topology,
+        "num_qubits": num_qubits,
+        "render_only": True,
+        "renderer": "qml.draw_mpl(style=\"pennylane\")",
+        "generation_timestamp": (
+            datetime.datetime.utcnow().isoformat() + "Z"
+        ),
+    }
+    return _save(fig, figures_dir, name, companion)
+
+
 def render_diagrams(repo: Path, figures_dir: Path) -> list[Path]:
     """Render all 5 circuit diagrams in the canonical _RENDER_ORDER.
 
     Each variant produces a (PNG, PDF, companion JSON) triple under
     ``figures_dir``. Loud-fails (``FileNotFoundError``) on any missing
     config-lock JSON via ``_load_json`` — never a silent partial render.
-
-    Stub: filled in by plan 14-09 Task 2.
     """
-    del repo, figures_dir  # silence unused-arg lint until Task 2 lands
-    raise NotImplementedError(
-        "render_diagrams: filled in by plan 14-09 Task 2"
-    )
+    written: list[Path] = []
+    for name in _RENDER_ORDER:
+        lock_rel = _VARIANT_LOCK_PATHS[name]
+        written += _draw_one(
+            name=name,
+            repo=repo,
+            figures_dir=figures_dir,
+            lock_rel=lock_rel,
+        )
+    return written
 
 
 # ---------------------------------------------------------------------------

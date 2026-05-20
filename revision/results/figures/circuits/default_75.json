@@ -1,0 +1,13 @@
+{
+  "ansatz_name": "default_75",
+  "circuit_id": "default_75",
+  "depth": 4,
+  "figure": "circuit_diagram",
+  "generation_timestamp": "2026-05-20T14:48:39.791295Z",
+  "n_params": 75,
+  "num_qubits": 5,
+  "render_only": true,
+  "renderer": "qml.draw_mpl(style=\"pennylane\")",
+  "source_config_lock_path": "revision/results/default_75_config_lock.json",
+  "topology": "range"
+}

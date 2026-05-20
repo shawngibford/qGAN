@@ -1,0 +1,13 @@
+{
+  "ansatz_name": "iqp_sel_55",
+  "circuit_id": "iqp_sel_55",
+  "depth": 3,
+  "figure": "circuit_diagram",
+  "generation_timestamp": "2026-05-20T14:48:40.307234Z",
+  "n_params": 55,
+  "num_qubits": 5,
+  "render_only": true,
+  "renderer": "qml.draw_mpl(style=\"pennylane\")",
+  "source_config_lock_path": "revision/results/canonical_config_lock.json",
+  "topology": "range"
+}
