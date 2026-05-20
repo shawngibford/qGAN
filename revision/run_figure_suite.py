@@ -38,6 +38,7 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -435,8 +436,21 @@ def render_qq_plot(model: str, od: np.ndarray, real_flat: np.ndarray,
 def render_time_series_comparison(model: str, od: np.ndarray,
                                   real_windowed: np.ndarray,
                                   figures_dir: Path) -> list[Path]:
-    """Sample OD-trajectory windows: real vs generated, side by side."""
-    rng = np.random.default_rng(model.__hash__() & 0xFFFF)
+    """Sample OD-trajectory windows: real vs generated, side by side.
+
+    Plan 14-13 Task 5 (CR-1): The seed is now SHA-256-of-model-name (first
+    8 hex chars → uint32) instead of the previously-used Python string-hash
+    expression (which was seeded per-interpreter via PYTHONHASHSEED, so
+    successive invocations of run_figure_suite.py produced DIFFERENT
+    real_window_idx / fake_window_idx values for the same model — the
+    timeseries figures were silently non-deterministic across reruns).
+    SHA-256 of the model name string is deterministic across processes /
+    interpreters / machines and yields the same indices every time.
+    """
+    # CR-1 deterministic seed: SHA-256 hex digest of model name, take first
+    # 8 hex chars (32-bit) as the RNG seed.
+    seed = int(hashlib.sha256(model.encode()).hexdigest()[:8], 16)
+    rng = np.random.default_rng(seed)
     n_show = min(8, od.shape[0], real_windowed.shape[0])
     ridx = rng.choice(real_windowed.shape[0], n_show, replace=False)
     fidx = rng.choice(od.shape[0], n_show, replace=False)

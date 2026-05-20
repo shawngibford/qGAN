@@ -78,8 +78,15 @@ def _git(*args: str) -> str:
 
 
 def _check_ignored_json() -> list[str]:
-    """Return the list of revision/results/*.json paths git would ignore."""
-    jsons = sorted(str(p.relative_to(REPO_ROOT)) for p in RESULTS_DIR.glob("*.json"))
+    """Return the list of revision/results/*.json paths git would ignore.
+
+    Plan 14-13 Task 5 (HI-6): rglob recursive walk — matches the verifier's
+    own .rglob behaviour in revision/verify_number_provenance.py. The
+    previous .glob walked only the top-level revision/results/*.json files
+    and silently skipped nested subdir JSONs (e.g. sensitivity/*, matched2000/*),
+    so freeze-ready could pass even when nested provenance was gitignored.
+    """
+    jsons = sorted(str(p.relative_to(REPO_ROOT)) for p in RESULTS_DIR.rglob("*.json"))
     if not jsons:
         raise AssertionError(
             "No revision/results/*.json present — the provenance backbone "
@@ -101,7 +108,9 @@ def gate_a_gitignore_archive() -> None:
     if ignored:
         # Self-heal (RESEARCH Pitfall 4 remediation): add an explicit
         # negation so the nested provenance JSON re-enters the tag.
-        negation = "!revision/results/\n!revision/results/*.json\n"
+        # Plan 14-13 Task 5 (HI-6): negation now uses the recursive
+        # glob pattern matching the actual .rglob walk.
+        negation = "!revision/results/\n!revision/results/**/*.json\n"
         existing = GITIGNORE.read_text() if GITIGNORE.exists() else ""
         if "!revision/results/" not in existing:
             with GITIGNORE.open("a") as fh:
@@ -112,8 +121,9 @@ def gate_a_gitignore_archive() -> None:
                     "backbone MUST ship in the v2.0-revision tag archive\n"
                 )
                 fh.write(negation)
-        # Belt-and-braces: force-stage so they are definitely in the tree.
-        _git("add", "-f", "--", *[str(p) for p in RESULTS_DIR.glob("*.json")])
+        # Belt-and-braces: force-stage so they are definitely in the tree
+        # (rglob — recursive walk, Plan 14-13 Task 5 HI-6).
+        _git("add", "-f", "--", *[str(p) for p in RESULTS_DIR.rglob("*.json")])
         ignored = _check_ignored_json()
 
     tracked = _git("ls-files", "revision/results").splitlines()

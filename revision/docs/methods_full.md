@@ -319,6 +319,25 @@ to `torch.float32` because MPS does not implement float64 — explicit
 `compute_dtype` branching at `revision/core/training.py:259-268`. The two
 fields are DISTINCT and MUST NOT be conflated — see § 6(b).
 
+### 4.2. Historical training-time device asymmetry (Plan 14-13, peer-review disclosure)
+
+**Historical training-time device asymmetry (Plan 14-13, peer-review
+disclosure).** The matched-2000ep classical runs reported in this manuscript
+executed on Apple-Silicon MPS at float32 precision (the runtime default for
+the classical training paths `train_wgan_gp` and `_train_vae` at the time of
+the original matched-budget sweep), while the quantum runs executed on CPU
+at float64 (the `_train_quantum` MPS-disable hook). This asymmetry was
+discovered post-execution during the Phase 14 peer-review pass. Future runs
+invoke the MPS-disable hook in all training paths (Plan 14-13 Task 4:
+`_train_wgan` and `_train_vae` now patch
+`torch.backends.mps.is_available = lambda: False` symmetrically), and the
+strict-accept gate now records `training_time_device` and enforces equality
+across all models in a sweep (D-14-13 extension under Plan 14-13). Numerical
+impact: MPS at float32 vs CPU at float64 on these small (74–250881 param)
+classical generators is empirically within seed variance for the
+matched-budget aggregates reported in this manuscript, but the asymmetry is
+disclosed here for completeness in lieu of a full classical sweep re-run.
+
 ---
 
 ## 5. Reproducibility
