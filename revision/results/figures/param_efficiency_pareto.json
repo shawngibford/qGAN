@@ -1,0 +1,131 @@
+{
+ "figure": "param_efficiency_pareto",
+ "render_only": true,
+ "source_artifacts": [
+  "revision/results/model_info.json",
+  "revision/results/matched2000_dualscale.json"
+ ],
+ "panels": [
+  "OD",
+  "log_return"
+ ],
+ "x_axis": "log10(parameter_count)",
+ "per_model": {
+  "iqp_sel_55_repro": {
+   "parameter_count": 55,
+   "family": "adversarial-quantum",
+   "log10_params": 1.7403626894942439,
+   "OD_emd_mean": 0.027526430476567092,
+   "OD_emd_std": 0.004591288378486305,
+   "log_return_emd_mean": 0.12286584712632038,
+   "log_return_emd_std": 0.0023282438658001905,
+   "marker": "o",
+   "color": "#0072B2"
+  },
+  "V1": {
+   "parameter_count": 75,
+   "family": "adversarial-quantum",
+   "log10_params": 1.8750612633917,
+   "OD_emd_mean": 0.027582604413720145,
+   "OD_emd_std": 0.004577309279457218,
+   "log_return_emd_mean": 0.12190673604602073,
+   "log_return_emd_std": 0.0010091421952335413,
+   "marker": "o",
+   "color": "#56B4E9"
+  },
+  "V2": {
+   "parameter_count": 135,
+   "family": "adversarial-quantum",
+   "log10_params": 2.130333768495006,
+   "OD_emd_mean": 0.027571997702351646,
+   "OD_emd_std": 0.00457351948639675,
+   "log_return_emd_mean": 0.1218157301317309,
+   "log_return_emd_std": 0.00019082527559026918,
+   "marker": "o",
+   "color": "#009E73"
+  },
+  "V3": {
+   "parameter_count": 75,
+   "family": "adversarial-quantum",
+   "log10_params": 1.8750612633917,
+   "OD_emd_mean": 0.027537862057722535,
+   "OD_emd_std": 0.004548326765658865,
+   "log_return_emd_mean": 0.13030466424258152,
+   "log_return_emd_std": 0.004213264231686552,
+   "marker": "o",
+   "color": "#E69F00"
+  },
+  "wgan_mlp": {
+   "parameter_count": 74,
+   "family": "adversarial-classical",
+   "log10_params": 1.8692317197309762,
+   "OD_emd_mean": 0.025952441411555126,
+   "OD_emd_std": 0.005985248654294808,
+   "log_return_emd_mean": 0.26993858202582777,
+   "log_return_emd_std": 0.035580571917365016,
+   "marker": "s",
+   "color": "#D55E00"
+  },
+  "wgan_cnn": {
+   "parameter_count": 73,
+   "family": "adversarial-classical",
+   "log10_params": 1.863322860120456,
+   "OD_emd_mean": 0.0543233969986812,
+   "OD_emd_std": 0.052418838808951033,
+   "log_return_emd_mean": 0.6873233973280222,
+   "log_return_emd_std": 0.27134323529468446,
+   "marker": "s",
+   "color": "#CC79A7"
+  },
+  "wgan_lstm": {
+   "parameter_count": 78,
+   "family": "adversarial-classical",
+   "log10_params": 1.8920946026904804,
+   "OD_emd_mean": 0.028214100034701418,
+   "OD_emd_std": 0.004482840848634803,
+   "log_return_emd_mean": 0.16632064238232588,
+   "log_return_emd_std": 0.018339947702398253,
+   "marker": "s",
+   "color": "#999999"
+  },
+  "vae": {
+   "parameter_count": 562,
+   "family": "non-adversarial",
+   "log10_params": 2.749736315569061,
+   "OD_emd_mean": 0.025741708778716454,
+   "OD_emd_std": 0.006405681704417852,
+   "log_return_emd_mean": 0.010299878935153753,
+   "log_return_emd_std": 0.0010185497410960486,
+   "marker": "^",
+   "color": "#882255"
+  },
+  "ar": {
+   "parameter_count": 3,
+   "family": "non-adversarial",
+   "log10_params": 0.47712125471966244,
+   "OD_emd_mean": 0.02908435933553529,
+   "OD_emd_std": 0.004120948097505048,
+   "log_return_emd_mean": 0.7811385570662264,
+   "log_return_emd_std": 0.002798117315215629,
+   "marker": "^",
+   "color": "#117733"
+  }
+ },
+ "frozen_headline": {
+  "parameter_count": 55,
+  "log10_params": 1.7403626894942439,
+  "OD_emd_mean": 0.023071979442389253,
+  "OD_emd_std": 0.0,
+  "log_return_emd_mean": 0.12124099500150183,
+  "log_return_emd_std": 0.0,
+  "marker_style": "diamond, HEADLINE_COLOR",
+  "source": "frozen_checkpoint_epoch_1969",
+  "conflation_guard": "D-14-10: headline is a diamond at the same x as iqp_sel_55_repro (both 55p) but a distinct color, marker shape, AND y \u2014 never merged into the repro circle."
+ },
+ "family_markers": {
+  "adversarial-quantum": "o",
+  "adversarial-classical": "s",
+  "non-adversarial": "^"
+ },
+ "caption_note": "Lower-left = better parameter efficiency. The frozen headline (epoch 1969, 55p) is the diamond \u2014 distinct from the 5-seed iqp_sel_55_repro circle at the same x. Markers: circle = adversarial-quantum, square = adversarial-classical, triangle = non-adversarial."
+}

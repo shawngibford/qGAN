@@ -1628,6 +1628,186 @@ def render_failure_modes_summary(repo: Path,
     return _save(fig, figures_dir, "failure_modes_summary", companion)
 
 
+# Family -> marker style for the param-efficiency Pareto scatter.
+_FAMILY_MARKER = {
+    "adversarial-quantum": "o",
+    "adversarial-classical": "s",
+    "non-adversarial": "^",
+}
+
+
+def render_param_efficiency_pareto(repo: Path,
+                                   figures_dir: Path) -> list[Path]:
+    """log10(params) × EMD Pareto scatter, OD vs log_return facets (Task 4).
+
+    Render-only over ``model_info.json`` (parameter_count + family) and
+    ``matched2000_dualscale.json`` (EMD mean ± std at OD + log_return).
+    The frozen-checkpoint headline (iqp_sel_55_headline, 55p,
+    source=frozen_checkpoint_epoch_1969) is a DISTINCT diamond at
+    log10(55) — at the same x as the iqp_sel_55_repro circle but with a
+    different color, marker shape, and y (D-14-10 visually distinct).
+    """
+    mi_path = repo / Path("revision/results/model_info.json")
+    mi = _load_json(mi_path, "model_info.json (Task 4 source)")
+    ds = _load_json(
+        repo / MATCHED2000_DUALSCALE_REL,
+        "matched2000_dualscale.json (Task 4 source)",
+    )
+    aggs: list[dict] = ds["aggregates"]
+
+    # Index model_info[models] by model field for O(1) lookup.
+    mi_by_model: dict[str, dict] = {m["model"]: m for m in mi["models"]}
+
+    per_model: dict[str, dict] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        rec = mi_by_model.get(m)
+        if rec is None:
+            raise FileNotFoundError(
+                f"[14-10/T4] {m} missing from model_info.json (no "
+                f"parameter_count); the render-only contract requires "
+                f"every matched-2000ep model carry a model_info record."
+            )
+        n_params = int(rec["parameter_count"])
+        family = str(rec["family"])
+        a_od = _agg_lookup(aggs, m, "OD", "emd")
+        a_lr = _agg_lookup(aggs, m, "log_return", "emd")
+        if a_od is None or a_lr is None:
+            raise FileNotFoundError(
+                f"[14-10/T4] {m} missing OD/log_return EMD aggregate "
+                f"in matched2000_dualscale.json."
+            )
+        per_model[m] = {
+            "parameter_count": n_params,
+            "family": family,
+            "log10_params": float(np.log10(n_params)),
+            "OD_emd_mean": float(a_od["mean"]),
+            "OD_emd_std": float(a_od["std"]),
+            "log_return_emd_mean": float(a_lr["mean"]),
+            "log_return_emd_std": float(a_lr["std"]),
+            "marker": _FAMILY_MARKER.get(family, "x"),
+            "color": MODEL_COLORS.get(m, "#666666"),
+        }
+
+    # Frozen-headline diamond: x = log10(iqp_sel_55_headline.parameter_count)
+    head_rec = mi_by_model.get("iqp_sel_55_headline")
+    if head_rec is None:
+        raise FileNotFoundError(
+            "[14-10/T4] iqp_sel_55_headline missing from model_info.json."
+        )
+    head_params = int(head_rec["parameter_count"])
+    if head_params != 55:
+        raise ValueError(
+            f"[14-10/T4] iqp_sel_55_headline.parameter_count={head_params}, "
+            f"expected 55 (frozen_checkpoint_epoch_1969 anchor)."
+        )
+    head_x = float(np.log10(head_params))
+    head_od = _agg_lookup(aggs, HEADLINE_KIND, "OD", "emd")
+    head_lr = _agg_lookup(aggs, HEADLINE_KIND, "log_return", "emd")
+    if head_od is None or head_lr is None:
+        raise FileNotFoundError(
+            f"[14-10/T4] frozen headline OD/log_return EMD aggregate "
+            f"missing from matched2000_dualscale.json."
+        )
+
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.6))
+    panel_specs = [
+        (axes[0], "OD",        "OD_emd_mean",        "OD_emd_std"),
+        (axes[1], "log_return", "log_return_emd_mean", "log_return_emd_std"),
+    ]
+    for ax, scale_label, mean_key, std_key in panel_specs:
+        for m, rec in per_model.items():
+            ax.errorbar(
+                rec["log10_params"], rec[mean_key],
+                yerr=rec[std_key],
+                fmt=rec["marker"], color=rec["color"], markersize=9,
+                markeredgecolor="white", markeredgewidth=0.8,
+                capsize=3, ecolor=rec["color"], elinewidth=0.8,
+                alpha=0.92, zorder=4,
+            )
+            ax.annotate(
+                MODEL_LABELS.get(m, m),
+                (rec["log10_params"], rec[mean_key]),
+                xytext=(6, 4), textcoords="offset points",
+                fontsize=7, color="#222222", alpha=0.9,
+            )
+        # Frozen-headline diamond (D-14-10: distinct marker shape +
+        # distinct color vs the iqp_sel_55_repro circle at the same x).
+        head_y = float((head_od if scale_label == "OD" else head_lr)["mean"])
+        ax.scatter([head_x], [head_y], marker="D", s=140,
+                   color=HEADLINE_COLOR, edgecolor="white",
+                   linewidths=1.2, zorder=10, label=HEADLINE_LABEL)
+        ax.set_xlabel("log10(parameter_count)")
+        ax.set_ylabel(f"{scale_label} EMD (mean ± std, 5 seeds)")
+        ax.set_title(
+            f"{scale_label} scale — lower-left = better param-efficiency"
+        )
+        ax.grid(True, alpha=0.3)
+        ax.legend(
+            handles=[
+                plt.Line2D([], [], linestyle="", marker="o",
+                           color="#0072B2", markersize=8,
+                           label="adversarial-quantum"),
+                plt.Line2D([], [], linestyle="", marker="s",
+                           color="#D55E00", markersize=8,
+                           label="adversarial-classical"),
+                plt.Line2D([], [], linestyle="", marker="^",
+                           color="#882255", markersize=8,
+                           label="non-adversarial"),
+                plt.Line2D([], [], linestyle="", marker="D",
+                           color=HEADLINE_COLOR, markersize=10,
+                           markeredgecolor="white",
+                           label=HEADLINE_LABEL),
+            ],
+            frameon=False, fontsize=7, loc="upper right",
+        )
+
+    fig.suptitle(
+        "Parameter-efficiency Pareto — log10(params) × EMD, "
+        "OD vs log_return. Frozen-checkpoint headline (epoch 1969, 55p) "
+        "is the DISTINCT diamond at log10(55) — different marker shape "
+        "AND color AND y from the iqp_sel_55_repro circle at the same x "
+        "(D-14-10).",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+
+    companion = {
+        "figure": "param_efficiency_pareto",
+        "render_only": True,
+        "source_artifacts": [
+            "revision/results/model_info.json",
+            "revision/results/matched2000_dualscale.json",
+        ],
+        "panels": ["OD", "log_return"],
+        "x_axis": "log10(parameter_count)",
+        "per_model": per_model,
+        "frozen_headline": {
+            "parameter_count": head_params,
+            "log10_params": head_x,
+            "OD_emd_mean": float(head_od["mean"]),
+            "OD_emd_std": float(head_od["std"]),
+            "log_return_emd_mean": float(head_lr["mean"]),
+            "log_return_emd_std": float(head_lr["std"]),
+            "marker_style": "diamond, HEADLINE_COLOR",
+            "source": "frozen_checkpoint_epoch_1969",
+            "conflation_guard": (
+                "D-14-10: headline is a diamond at the same x as "
+                "iqp_sel_55_repro (both 55p) but a distinct color, marker "
+                "shape, AND y — never merged into the repro circle."
+            ),
+        },
+        "family_markers": dict(_FAMILY_MARKER),
+        "caption_note": (
+            "Lower-left = better parameter efficiency. The frozen "
+            "headline (epoch 1969, 55p) is the diamond — distinct from "
+            "the 5-seed iqp_sel_55_repro circle at the same x. "
+            "Markers: circle = adversarial-quantum, square = adversarial-"
+            "classical, triangle = non-adversarial."
+        ),
+    }
+    return _save(fig, figures_dir, "param_efficiency_pareto", companion)
+
+
 # ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
@@ -1722,6 +1902,7 @@ def main() -> None:
     written += render_training_convergence_all_models(repo, figures_dir)
     written += render_tstr_crossmodel(repo, figures_dir)
     written += render_failure_modes_summary(repo, figures_dir)
+    written += render_param_efficiency_pareto(repo, figures_dir)
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
     written += render_existing_introspection(figures_dir)
