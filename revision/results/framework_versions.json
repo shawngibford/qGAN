@@ -1,5 +1,5 @@
 {
-  "captured_at_iso": "2026-05-20T19:13:58.443258Z",
+  "captured_at_iso": "2026-05-20T21:33:50.213072Z",
   "data_hash": "91e447d4624e25b3",
   "note": "Recorded at methods-doc emit time from the running qgan_env interpreter; revision/requirements.txt carries the >= constraint set, this JSON carries the exact installed pin. Re-emit on environment change.",
   "packages": {
@@ -8,6 +8,7 @@
     "numpy": "2.3.4",
     "pennylane": "0.43.0",
     "scipy": "1.16.2",
+    "statsmodels": "0.14.5",
     "torch": "2.9.0"
   },
   "platform": "macOS-26.0.1-arm64-arm-64bit",

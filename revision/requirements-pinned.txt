@@ -15,6 +15,7 @@ numpy==2.3.4
 pennylane==0.43.0
 PyYAML==6.0.3
 scipy==1.16.2
+statsmodels==0.14.5
 torch==2.9.0
 # python-version recorded for the running interpreter (cross-check at install time).
 # python==3.11.14

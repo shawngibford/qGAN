@@ -61,6 +61,10 @@ PACKAGES: tuple[str, ...] = (
     "scipy",
     "matplotlib",
     "PyYAML",
+    # Plan 14-14 Task 4 (R2-methods-LOW-1): statsmodels is the ACF backend
+    # for revision/core/eval.py (statsmodels.tsa.stattools.acf) and was
+    # missing from both the pin file and the framework_versions probe.
+    "statsmodels",
 )
 
 

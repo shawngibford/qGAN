@@ -455,7 +455,7 @@ delivers reproducibility-within-numerical-tolerance, not bit-determinism
 ### 5.2. Exact rerun command (verbatim)
 
 The block below is the verbatim module docstring of
-`revision/run_matched2000.py` (lines 1-80) — preserved character-for-character
+`revision/run_matched2000.py` (lines 1-69) — preserved character-for-character
 inside `methods_full.json.buckets.5_reproducibility.rerun_command_template`
 and rendered as-is here:
 
@@ -479,7 +479,7 @@ Usage
         --accept --model M --seed N [--out-root revision/results/matched2000]
 ```
 
-Source: `revision/run_matched2000.py:1-80` (module docstring; preserved
+Source: `revision/run_matched2000.py:1-69` (module docstring; preserved
 verbatim — never paraphrased). The fully verbatim docstring (including the
 strict-gate accept-criterion text and the Pitfall-5 / D-10-24 worker-pool
 note) lives in `methods_full.json.buckets.5_reproducibility.rerun_command_template`.
@@ -560,5 +560,5 @@ rows in any future revision table — see § 4 of this document.
   `revision/results/methods_full.json` (never authored inline in this
   document).
 - The `rerun_command_template` block in § 5.2 is sliced verbatim from
-  `revision/run_matched2000.py:1-80` (module docstring) by
+  `revision/run_matched2000.py:1-69` (module docstring) by
   `revision/run_methods_full.py` — never paraphrased.
