@@ -1,9 +1,10 @@
 {
   "ansatz_name": "default_75",
   "circuit_id": "default_75",
+  "data_hash": "91e447d4624e25b3",
   "depth": 4,
   "figure": "circuit_diagram",
-  "generation_timestamp": "2026-05-20T14:48:39.791295Z",
+  "generation_timestamp": "2026-05-20T19:13:48.318613Z",
   "n_params": 75,
   "num_qubits": 5,
   "render_only": true,

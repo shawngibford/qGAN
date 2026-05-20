@@ -558,6 +558,10 @@ def _draw_one(
         "depth": num_layers,
         "topology": topology,
         "num_qubits": num_qubits,
+        # Plan 14-13 Task 4 (HIGH-2 / PROV-HIGH-2): record the audited
+        # dataset hash so data_hash corpus consistency holds for figure
+        # companions too.
+        "data_hash": "91e447d4624e25b3",
         "render_only": True,
         "renderer": "qml.draw_mpl(style=\"pennylane\")",
         "generation_timestamp": (

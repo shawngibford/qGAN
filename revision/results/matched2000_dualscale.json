@@ -9,7 +9,8 @@
     "wgan_cnn",
     "wgan_lstm",
     "vae",
-    "ar"
+    "ar",
+    "frozen_checkpoint_headline"
   ],
   "pipelines": [
     "B"

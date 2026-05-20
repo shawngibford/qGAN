@@ -246,7 +246,8 @@ def _reconstruct_od_from_samples(samples_pm1, mu: float, sigma: float,
     return od, r_norm
 
 
-def _od_scale_rows(od, real_OD_flat, real_windowed_OD) -> list:
+def _od_scale_rows(od, real_OD_flat, real_windowed_OD,
+                   generation_seed: int = 42) -> list:
     """Every eval.py metric on the OD scale (D-11-10 — NO new metric math).
 
     Structure copied from run_dualscale_fidelity._od_scale_rows (same metric
@@ -277,7 +278,14 @@ def _od_scale_rows(od, real_OD_flat, real_windowed_OD) -> list:
         out.append(dict(model_kind=mk, pipeline=p,
                         metric_name=f"acf_lag{lag}_std", scale="OD",
                         value=float(acfs[:, lag].std())))
-    rng = np.random.default_rng(42 * 31)
+    # Plan 14-13 Task 4 (HI-1): thread `generation_seed` through the DTW
+    # subsample RNG instead of hardcoding `42 * 31`. The `* 31` offset
+    # preserves the original Phase 14-01 / 14-02 DTW-seed convention (an
+    # arbitrary but deterministic multiplier distinct from the
+    # generation_seed itself so the DTW sample is not the same RNG
+    # sequence as the headline generation).
+    dtw_seed = int(generation_seed) * 31
+    rng = np.random.default_rng(dtw_seed)
     synth_idx = rng.choice(od.shape[0],
                            size=min(DTW_N_PAIRS, od.shape[0]), replace=False)
     real_idx = rng.choice(real_windowed_OD.shape[0],
@@ -296,7 +304,8 @@ def _od_scale_rows(od, real_OD_flat, real_windowed_OD) -> list:
     return out
 
 
-def _log_return_rows(r_norm, real_log_delta) -> list:
+def _log_return_rows(r_norm, real_log_delta,
+                     generation_seed: int = 42) -> list:
     """The SAME metric set on the log-return scale (Pipeline B real values).
 
     Structure copied from run_dualscale_fidelity._log_return_rows (Pipeline-B
@@ -331,7 +340,10 @@ def _log_return_rows(r_norm, real_log_delta) -> list:
         out.append(dict(model_kind=mk, pipeline=p,
                         metric_name=f"acf_lag{lag}_std", scale="log_return",
                         value=float(acfs[:, lag].std())))
-    rng = np.random.default_rng(42 * 31)
+    # Plan 14-13 Task 4 (HI-1): thread `generation_seed` through the DTW
+    # subsample RNG (see _od_scale_rows for the convention rationale).
+    dtw_seed = int(generation_seed) * 31
+    rng = np.random.default_rng(dtw_seed)
     real_w = real_log_delta.reshape(-1)
     n_real_w = max(1, real_w.shape[0] // win.shape[1])
     real_windows = real_w[: n_real_w * win.shape[1]].reshape(
@@ -519,9 +531,13 @@ def generate_headline(csv_path: Path, generation_seed: int,
     refs = _build_real_references(csv_path)
     rows = []
     rows += _od_scale_rows(
-        od_synth, refs["real_OD_flat"], refs["real_windowed_OD"]
+        od_synth, refs["real_OD_flat"], refs["real_windowed_OD"],
+        generation_seed=generation_seed,
     )
-    rows += _log_return_rows(r_norm_synth, refs["real_log_delta"])
+    rows += _log_return_rows(
+        r_norm_synth, refs["real_log_delta"],
+        generation_seed=generation_seed,
+    )
 
     data_hash = _compute_data_hash(csv_path)
 

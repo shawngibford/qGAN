@@ -31,7 +31,8 @@ Early-stopping state for the matched-budget run: OFF (full 2000ep, D-14-13) (`mo
 | Entangler topology | range | `model_info.json` models[] kind=quantum source=matched2000_reproduction (topology) |
 | PQC trainable parameter count | 55 | `model_info.json` models[] kind=quantum source=matched2000_reproduction (parameter_count) |
 | Compute device | cpu | `model_info.json` models[] kind=quantum source=matched2000_reproduction (device) |
-| Param dtype | torch.float64 | `model_info.json` models[] kind=quantum source=matched2000_reproduction (dtype) |
+| dtype_params | torch.float32 | `model_info.json` models[] kind=quantum source=matched2000_reproduction (dtype_params); see methods_full.md §4.b |
+| dtype_samples | torch.float64 | `model_info.json` models[] kind=quantum source=matched2000_reproduction (dtype_samples); see methods_full.md §4.b |
 | Backend assertion | PASSED | `model_info.json` models[] kind=quantum source=matched2000_reproduction (backend_assertion) |
 
 ## Reproducibility

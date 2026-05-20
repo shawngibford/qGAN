@@ -600,7 +600,13 @@ def main() -> None:
             "matched-2000ep dual-scale rows[] + per-(model,scale,metric) "
             "seed-aggregate; frozen headline DISTINCT, D-14-10"
         ),
-        "model_kinds": MODEL_KINDS,
+        # Plan 14-13 Task 4 (HI-5): include HEADLINE_MODEL_KIND in the
+        # model_kinds top-level field. The headline IS a distinct model_kind
+        # in the aggregates (D-14-10); listing it alongside the 9 sweep
+        # models matches the actual rows[] / aggregates[] content. The
+        # `headline_model_kind` field below remains as the explicit pointer
+        # to the headline entry.
+        "model_kinds": MODEL_KINDS + [HEADLINE_MODEL_KIND],
         "pipelines": PIPELINES,
         "seeds": SEEDS,
         "data_hash": EXPECTED_DATA_HASH,

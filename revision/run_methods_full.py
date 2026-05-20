@@ -121,6 +121,17 @@ def _citations(training_src: str) -> dict[str, str]:
         "critic_loss": "critic_loss = fake_score_mean - real_score_mean",
         "generator_loss": "generator_loss = -torch.mean(fake_scores)",
         "gradient_penalty": "gp = ((gradients.norm(2, dim=1) - 1)",
+        # Plan 14-13 Task 4 (CR-3) — replace hardcoded training.py:347 +
+        # training.py:259-268 literals with programmatic _first_lineno
+        # citations. `generator_to_compute_dtype` resolves the cast site
+        # (`generated_samples = generator(noise_batch)` — the immediately-
+        # preceding line of the `.to(compute_dtype) * 0.1` chain).
+        # `mps_dtype_block` resolves the MPS-vs-CPU dtype-split line
+        # (`compute_dtype = torch.float32 if device.type == "mps" else torch.float64`).
+        "generator_to_compute_dtype": "generated_samples = generator",
+        "mps_dtype_block": (
+            "compute_dtype = torch.float32 if device.type == \"mps\""
+        ),
     }
     out: dict[str, str] = {}
     for label, pat in targets.items():
@@ -463,9 +474,9 @@ def main() -> None:
         "dtype_samples": (
             "torch.float64 (sample-generation pipeline: "
             f"{cits['compute_dtype_split']} compute_dtype = torch.float64 on "
-            "CPU/CUDA; revision/core/training.py:347 generator output cast "
-            ".to(compute_dtype) * 0.1; MPS path falls back to float32 "
-            "because MPS lacks float64 — see training.py:259-268)"
+            f"CPU/CUDA; {cits['generator_to_compute_dtype']} generator output "
+            "cast .to(compute_dtype) * 0.1; MPS path falls back to float32 "
+            f"because MPS lacks float64 — see {cits['mps_dtype_block']})"
         ),
         "dtype_note": (
             "dtype_params and dtype_samples are DISTINCT — params live in "

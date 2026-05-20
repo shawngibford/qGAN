@@ -93,6 +93,11 @@ HEADLINE_REL = Path("revision/results/headline_canonical.json")
 # (Task 1 — the gated single-source-of-truth artifact). Missing JSON is a
 # hard FileNotFoundError, never a silent partial render (D-14-10).
 MATCHED2000_DUALSCALE_REL = Path("revision/results/matched2000_dualscale.json")
+# Plan 14-13 Task 4 (MD-3): canonical config lock — drives the lock-driven
+# replacement of the hardcoded `head_epoch != 1969` assertion in
+# render_training_convergence_all_models. Loaded once at module init so
+# every consumer reads the same lock-snapshot.
+CANONICAL_LOCK_REL = Path("revision/results/canonical_config_lock.json")
 
 # Stable per-model ordering / labels / colours. The 55-param IQP:SEL
 # reproduction is the quantum entrant in every cross-model figure (D-14-04);
@@ -168,6 +173,57 @@ def _require(path: Path, what: str) -> Path:
     return path
 
 
+def _finite_sanitize(obj, _stats=None):
+    """Plan 14-13 Task 4 (HI-8 mirror): convert non-finite floats to None
+    rather than letting json.dumps(default=float) emit literal `NaN` /
+    `Infinity` tokens (which are invalid JSON per the spec and cause
+    downstream parser failures). Tracks non-finite frequency for the
+    explicit-raise check in `_dumps_finite`.
+    """
+    import math
+    if _stats is None:
+        _stats = {"total": 0, "nonfinite": 0}
+    if isinstance(obj, dict):
+        return {k: _finite_sanitize(v, _stats) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_finite_sanitize(v, _stats) for v in obj]
+    if isinstance(obj, tuple):
+        return [_finite_sanitize(v, _stats) for v in obj]
+    if isinstance(obj, float):
+        _stats["total"] += 1
+        if not math.isfinite(obj):
+            _stats["nonfinite"] += 1
+            return None
+        return obj
+    if isinstance(obj, (int, bool, str)) or obj is None:
+        return obj
+    try:
+        v = float(obj)
+        _stats["total"] += 1
+        if not math.isfinite(v):
+            _stats["nonfinite"] += 1
+            return None
+        return v
+    except (TypeError, ValueError):
+        return str(obj)
+
+
+def _dumps_finite(obj, *, indent: int = 1, nonfinite_threshold: float = 0.05) -> str:
+    """json.dumps wrapper using _finite_sanitize (HI-8 mirror)."""
+    stats = {"total": 0, "nonfinite": 0}
+    sanitized = _finite_sanitize(obj, stats)
+    if stats["total"] > 0:
+        frac = stats["nonfinite"] / stats["total"]
+        if frac > nonfinite_threshold:
+            raise AssertionError(
+                f"_dumps_finite: {stats['nonfinite']} of {stats['total']} "
+                f"numeric leaves are non-finite ({frac:.1%} > "
+                f"{nonfinite_threshold:.0%}); refusing to emit a corpus "
+                "of Nones (HI-8 mirror, Plan 14-13 Task 4)"
+            )
+    return json.dumps(sanitized, indent=indent)
+
+
 def _load_json(path: Path, what: str) -> dict:
     """Load a companion/source JSON, failing loudly if absent (T-14-10)."""
     _require(path, what)
@@ -188,7 +244,8 @@ def _save(fig: plt.Figure, figures_dir: Path, stem: str,
         written.append(out)
     plt.close(fig)
     jpath = figures_dir / f"{stem}.json"
-    jpath.write_text(json.dumps(companion, indent=1, default=float))
+    # Plan 14-13 Task 4 (HI-8 mirror): _finite_sanitize replaces default=float.
+    jpath.write_text(_dumps_finite(companion, indent=1))
     written.append(jpath)
     return written
 
@@ -1143,10 +1200,19 @@ def render_training_convergence_all_models(repo: Path,
         repo / HEADLINE_REL, "headline_canonical for training-convergence")
     head_epoch = int(head["checkpoint_epoch"])
     head_emd = float(head["checkpoint_emd"])
-    if head_epoch != 1969:
+    # Plan 14-13 Task 4 (MD-3): lock-driven head_epoch check. Read the
+    # canonical_config_lock.json's checkpoint_epoch once and assert
+    # equality rather than hardcoding `1969`. If the lock's checkpoint_epoch
+    # rolls forward in a future revision, this assertion follows the lock
+    # automatically.
+    _lock = _load_json(
+        repo / CANONICAL_LOCK_REL, "canonical_config_lock for MD-3 lock-driven head_epoch")
+    _lock_epoch = int(_lock["checkpoint_epoch"])
+    if head_epoch != _lock_epoch:
         raise ValueError(
             f"[14-10/T1] headline_canonical.checkpoint_epoch={head_epoch}, "
-            f"expected 1969 (frozen_checkpoint_epoch_1969)."
+            f"expected {_lock_epoch} (canonical_config_lock.json checkpoint_epoch, "
+            "Plan 14-13 Task 4 MD-3 lock-driven check)."
         )
 
     fig, ax = plt.subplots(figsize=(10, 6.5))
@@ -1173,7 +1239,13 @@ def render_training_convergence_all_models(repo: Path,
                label=HEADLINE_LABEL, zorder=10)
 
     ax.set_xlabel("epoch (eval_step × 10)")
-    ax.set_ylabel("EMD (avg over eval window, OD scale)")
+    # Plan 14-13 Task 4 (H-1): the `emd_avg` per-eval-step value is
+    # the in-loop training-loss metric computed on log-return-standardized
+    # inputs, NOT an OD-scale quantity. The previous label "OD scale" was
+    # incorrect (math-review.md H-1).
+    ax.set_ylabel(
+        "EMD (in-loop training metric, log-return-standardized scale)"
+    )
     ax.set_yscale("log")
     ax.set_xlim(0, 2000)
     ax.grid(True, alpha=0.3, which="both")

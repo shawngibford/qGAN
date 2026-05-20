@@ -1,5 +1,6 @@
 {
-  "captured_at_iso": "2026-05-20T15:53:53.526570Z",
+  "captured_at_iso": "2026-05-20T19:13:58.443258Z",
+  "data_hash": "91e447d4624e25b3",
   "note": "Recorded at methods-doc emit time from the running qgan_env interpreter; revision/requirements.txt carries the >= constraint set, this JSON carries the exact installed pin. Re-emit on environment change.",
   "packages": {
     "PyYAML": "6.0.3",

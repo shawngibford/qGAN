@@ -92,6 +92,16 @@ MATCHED = RESULTS / "matched2000"
 # Canonical training seed set re-emitted per model row.
 SEED_SET = [42, 43, 44, 45, 46]
 
+# Plan 14-13 Task 4 (HI-3 / PROV-HIGH-2): canonical dataset hash. The
+# cross-artifact gate below previously asserted only MUTUAL equality of the
+# observed hashes across consumed artifacts; that passes loudly when all
+# consumed artifacts agree on a DIFFERENT hash than the audited
+# 91e447d4624e25b3. The explicit-raise gate now also asserts equality to
+# EXPECTED_DATA_HASH so a regression of the dataset itself surfaces
+# immediately rather than after silently propagating through the rest of
+# Phase 14.
+EXPECTED_DATA_HASH = "91e447d4624e25b3"
+
 # The accepted 2000ep matched-budget sweep models (9-model x 5-seed matrix; the
 # 55-param IQP:SEL reproduction + V1/V2/V3 ansatz + 3 classical WGAN baselines +
 # 2 non-adversarial baselines). The frozen-checkpoint headline is NOT in this
@@ -140,6 +150,15 @@ def _build_model_record(model: str) -> dict:
     seed field — the strict accept gate D-14-13 enforced this)."""
     cfg = _load_yaml(MATCHED / "runs" / model / "42" / "config.yaml")
     dm = cfg.get("device_manifest", {}) or {}
+    # Plan 14-13 Task 4 (HI-2): optimizer_betas is family-specific.
+    # WGAN-GP families use (0.0, 0.9) per Gulrajani's recipe; non-adversarial
+    # (VAE / AR) baselines do not use the WGAN-GP critic optimization and
+    # report `None` rather than the misleading [0.0, 0.9] hardcode.
+    family = cfg.get("family", "")
+    if family == "non-adversarial":
+        betas: list | None = None
+    else:
+        betas = [0.0, 0.9]
     return {
         "model": model,
         "kind": cfg.get("model_kind"),
@@ -155,7 +174,7 @@ def _build_model_record(model: str) -> dict:
         "optimizer": _optimizer_for(cfg),
         "lr_critic": cfg.get("lr_critic"),
         "lr_generator": cfg.get("lr_generator"),
-        "optimizer_betas": [0.0, 0.9],
+        "optimizer_betas": betas,
         "batch_size": cfg.get("batch_size"),
         "n_critic": cfg.get("n_critic"),
         "lambda_gp": cfg.get("lambda_gp"),
@@ -165,6 +184,12 @@ def _build_model_record(model: str) -> dict:
         "window_length": cfg.get("window_length"),
         "n_real_windows": cfg.get("n_real_windows"),
         "device": dm.get("sample_generation_device"),
+        # Plan 14-13 Task 4 (PROV-HIGH-3 / HIGH-3): dtype field renamed to
+        # dtype_samples (the field genuinely is sample-generation dtype, not
+        # parameter dtype). dtype_params added alongside for explicit clarity.
+        "dtype_samples": dm.get("sample_generation_dtype"),
+        "dtype_params": "torch.float32",
+        # Keep legacy 'dtype' alias for any consumer that hasn't switched yet.
         "dtype": dm.get("sample_generation_dtype"),
         "pennylane_device": dm.get("pennylane_device"),
         "diff_method": dm.get("diff_method"),
@@ -550,7 +575,18 @@ def _render_training_protocol(mi: dict) -> str:
         f"| {src} (parameter_count) |"
     )
     L.append(f"| Compute device | {q['device']} | {src} (device) |")
-    L.append(f"| Param dtype | {q['dtype']} | {src} (dtype) |")
+    # Plan 14-13 Task 4 (PROV-HIGH-3 / HIGH-3): dtype row split into
+    # dtype_params (torch.float32 trainable nn.Parameter) and dtype_samples
+    # (the field formerly labelled `Param dtype`, which actually carries
+    # sample-generation dtype). See methods_full.md §4.b.
+    L.append(
+        f"| dtype_params | {q.get('dtype_params', 'torch.float32')} "
+        f"| {src} (dtype_params); see methods_full.md §4.b |"
+    )
+    L.append(
+        f"| dtype_samples | {q.get('dtype_samples', q['dtype'])} "
+        f"| {src} (dtype_samples); see methods_full.md §4.b |"
+    )
     L.append(
         f"| Backend assertion | {q['backend_assertion']} "
         f"| {src} (backend_assertion) |"
@@ -691,9 +727,12 @@ def main() -> None:
     }
 
     # ── Cross-artifact data_hash gate (HARD, explicit-raise, python -O safe) ───
-    # run_multiseed_rollup.py:86-92 idiom: assert ONLY mutual equality of the
+    # run_multiseed_rollup.py:86-92 idiom: assert mutual equality of the
     # frozen `data_hash` fields across every consumed 2000ep artifact (the
     # headline + all 9 accepted sweep configs). Do NOT re-derive the hash.
+    # Plan 14-13 Task 4 (HI-3 / PROV-HIGH-2): additionally assert equality
+    # to EXPECTED_DATA_HASH so a dataset regression where all artifacts
+    # SHARE a wrong hash still surfaces loudly.
     hashes = {"headline_canonical.json": headline["data_hash"]}
     for m, c in sweep_cfgs.items():
         hashes[f"matched2000/{m}/config.yaml"] = c.get("data_hash")
@@ -701,7 +740,14 @@ def main() -> None:
         raise AssertionError(
             f"data_hash mismatch across consumed 2000ep artifacts: {hashes}"
         )
-    canonical_hash = next(iter(hashes.values()))  # expect 91e447d4624e25b3
+    canonical_hash = next(iter(hashes.values()))
+    if canonical_hash != EXPECTED_DATA_HASH:
+        raise AssertionError(
+            f"observed canonical data_hash={canonical_hash!r} does NOT "
+            f"match EXPECTED_DATA_HASH={EXPECTED_DATA_HASH!r}; the dataset "
+            f"itself has regressed (HI-3 / PROV-HIGH-2 explicit-raise gate, "
+            f"Plan 14-13 Task 4)."
+        )
 
     # ── Build the unified models[] table ──────────────────────────────────────
     wall = _wall_seconds_by_model(sweep_status)
@@ -741,7 +787,11 @@ def main() -> None:
             "window_length": 10,
             "n_real_windows": None,
             "device": hdev.get("torch_device"),
-            "dtype": headline.get("dtype"),
+            # Plan 14-13 Task 4 (PROV-HIGH-3 / HIGH-3): dtype rename to
+            # dtype_samples + dtype_params alongside.
+            "dtype_samples": headline.get("dtype"),
+            "dtype_params": "torch.float32",
+            "dtype": headline.get("dtype"),  # legacy alias
             "pennylane_device": hdev.get("pennylane_device"),
             "diff_method": hdev.get("diff_method"),
             "backend_assertion": hdev.get("backend_assertion"),
