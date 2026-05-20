@@ -75,7 +75,7 @@ Plans:
 **Wave 11** *(independent — peer-review correction sweep over existing artifacts; not blocked by 14-07)*
 - [x] 14-13-PLAN.md — Peer-review remediation sweep: provenance-gate v2 (LIFTS D-14-16), scale-correct reconciliation + cross_model_emd rebuild, ddof=0→ddof=1 sample-std switch, aggregator integrity (HI-2..HI-8, MD-3), figure render-determinism (CR-1), paper-blocks phantom-number cleanup, pinned `revision/requirements-pinned.txt` + tracked `revision/checkpoints/best_checkpoint.pt`, CR-4 honest disclosure + future-gate (D-14-13 extension), methods_full.md Metric Conventions section honoring D-14-22, `peer_review_remediation.md` reviewer-facing index; passes v2 gate on all 9 paper-facing docs (supports PAPER-01/02/03/08/09 + INFRA-03)
 **Wave 12** *(independent — pre-tag punch list from r2 peer-review pass; not blocked by 14-07)*
-- [ ] 14-14-PLAN.md — Pre-tag punch list: gate v2.1 (negative-sign-aware lookbehind, LIFTS D-14-16), training_time_device capture-before-`.to(cpu)`, VAE β_eff=2.5 derivation correction + VAE-not-param-matched caveat, wgan_cnn seed-variance honesty, R1-m4 DOI-pending wording, docstring 1-80→1-69, CR-3 line 346→347, apparatus units split, statsmodels pin, REPRODUCE.md, _introspect render_only marks, sensitivity data_hash; passes v2.1 gate on all 10 paper-facing docs (supports PAPER-01/02/08/09 + INFRA-03)
+- [x] 14-14-PLAN.md — Pre-tag punch list: gate v2.1 (negative-sign-aware lookbehind, LIFTS D-14-16), training_time_device capture-before-`.to(cpu)`, VAE β_eff=2.5 derivation correction + VAE-not-param-matched caveat, wgan_cnn seed-variance honesty, R1-m4 DOI-pending wording, docstring 1-80→1-69, CR-3 line 346→347, apparatus units split, statsmodels pin, REPRODUCE.md, _introspect render_only marks, sensitivity data_hash; passes v2.1 gate on all 10 paper-facing docs (supports PAPER-01/02/08/09 + INFRA-03)
 
 ## Progress
 
@@ -97,4 +97,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 12/14 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 13/14 | In Progress|  |

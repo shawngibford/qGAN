@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 14 plan 14-13 complete (Wave 11 — peer-review remediation sweep)
-last_updated: "2026-05-20T13:54:00.000Z"
-last_activity: 2026-05-20 -- Phase 14 plan 14-13 landed; only 14-07 (Zenodo deposit) remains
+stopped_at: Phase 14 plan 14-14 complete (Wave 12 — r2 peer-review punch list)
+last_updated: "2026-05-20T18:00:00.000Z"
+last_activity: 2026-05-20 -- Phase 14 plan 14-14 landed; only 14-07 (Zenodo deposit) remains
 progress:
   total_phases: 2
   completed_phases: 1
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 14 (paper-revision-release-freeze) — EXECUTING
-Plan: 12 of 13 complete (14-13 landed; 14-07 Zenodo deposit deferred)
+Plan: 13 of 14 complete (14-14 landed; 14-07 Zenodo deposit deferred)
 Status: Executing Phase 14
-Last activity: 2026-05-20 -- 14-13 peer-review remediation sweep merged (Wave 11, 7 tasks)
+Last activity: 2026-05-20 -- 14-14 r2 peer-review punch list merged (Wave 12, 5 tasks)
 
 Progress: [██████████] 100%
 
