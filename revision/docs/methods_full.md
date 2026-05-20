@@ -190,12 +190,24 @@ loop lives in `revision/run_baselines.py` (D-10-13) — **not** in
 \mathcal{L}_{ELBO}(x) = \mathbb{E}_{q_\phi(z|x)}[\log p_\theta(x|z)] - D_{KL}(q_\phi(z|x) \| p(z))
 ```
 
-**Implementation note (Plan 14-13, math-review M-4).** The actual implemented
-loss at `revision/run_baselines.py:315` uses per-element-mean MSE +
-per-element-mean KLD with `β=1`, which is equivalent to a re-weighted ELBO
-with implicit `β ≈ 0.4` vs the canonical formulation above (see §3.x.d for
-the derivation). The comparison numbers in this manuscript use the
-implemented (β=1 per-element-mean) loss consistently across all VAE runs.
+**Implementation note (Plan 14-14, math-review-r2 M-4 correction).** The
+actual implemented loss at `revision/run_baselines.py:315-319` uses
+per-element-mean MSE + per-element-mean KLD with the literal `β = 1`
+coefficient, which is equivalent to a canonical per-window-sum ELBO with
+effective coefficient `β_eff = N_recon / N_kld = 10 / 4 = 2.5` (KL
+up-weighted). Plan 14-13 originally propagated the inverted figure
+`β_eff ≈ 0.4` from the r1 math-review M-4 finding; the r2 math review
+surfaced the inversion and §3.x.d carries the corrected derivation. The
+comparison numbers in this manuscript use the implemented loss
+consistently across all VAE runs; the only correction is to the
+documentation of what `β_eff` evaluates to.
+
+**Implementation note (Plan 14-14, methods-reproducibility-review-r2
+caveat).** The VAE is **not** parameter-matched to the WGAN-GP variants
+(~75k–135k generator params) or the IQP:SEL headline (55 params); at
+74 trainable params, the VAE is closer to the IQP:SEL scale and is
+included as a non-adversarial low-data baseline, not as a head-to-head
+adversarial comparator.
 
 ### 2.j. `ar` (non-adversarial baseline)
 
@@ -313,18 +325,33 @@ which is biased by a factor of `(n-p)/n` relative to the standard
 notebook AR baseline and is documented here for completeness; no v2.0
 numbers shift.
 
-**(d) VAE ELBO formulation** (cite: `revision/run_baselines.py:315`). The
-implemented loss is a per-element-mean reconstruction MSE plus a
-per-element-mean KL divergence with `β=1` (the standard ELBO formal
-coefficient). Because both terms are PER-ELEMENT MEANS rather than
-PER-WINDOW SUMS, the effective ELBO is re-weighted by the ratio of the
-per-element dimensionality between the two terms; for the 10-step ×
-1-feature windowing convention used in this manuscript, the
-reconstruction term is mean-over-10-elements and the KL term is
-mean-over-4-latent-dimensions, which is equivalent to a canonical
-per-window-sum ELBO with implicit `β ≈ 0.4`. The convention follows the
-v1.0 notebook baseline. The actual loss expression is documented
-alongside the canonical LaTeX in §2.i (VAE).
+**(d) VAE ELBO formulation** (corrected per Plan 14-14, math-review-r2 M-4
+correction; cite: `revision/run_baselines.py:315-319`). The implemented loss
+uses per-element-mean reconstruction MSE plus per-element-mean KL divergence
+with the standard `β = 1` ELBO coefficient. With per-element-mean MSE =
+sum_MSE / N_recon (where N_recon = window × features = 10 × 1 = 10) and
+per-element-mean KLD = sum_KLD / N_kld (where N_kld = latent_dim = 4), the
+implemented loss factors as:
+
+```
+loss = recon + 1·kld
+     = sum_MSE/10 + sum_KLD/4
+     = (1/10) · (sum_MSE + (10/4)·sum_KLD)
+     = (1/10) · (sum_MSE + 2.5·sum_KLD)
+```
+
+Hence the canonical-sum-form equivalent is **β_eff = 2.5 (KL up-weighted)**,
+NOT `β_eff ≈ 0.4` (the inverted figure propagated from the r1 math-review
+M-4 finding through Plan 14-13 — math-review-r2 surfaced the inversion).
+Semantic interpretation: the latent space is MORE STRONGLY regularized
+toward the unit Gaussian prior than a canonical `β = 1` ELBO would impose;
+the implementation sits on the upper-β side of a β-VAE rather than as a
+vanilla `β = 1` VAE. The numeric value `β_eff = 2.5` follows directly
+from the ratio of the per-element averaging dimensionalities
+(N_recon / N_kld = 10 / 4); both terms still use the literal `β = 1`
+coefficient in code. The convention follows the v1.0 notebook baseline and
+the actual loss expression is documented alongside the canonical LaTeX in
+§2.i (VAE).
 
 ---
 
