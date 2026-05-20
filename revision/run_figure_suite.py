@@ -1039,6 +1039,169 @@ def render_existing_introspection(figures_dir: Path) -> list[Path]:
 
 
 # ---------------------------------------------------------------------------
+# Plan 14-10: 7 render-only "full story" figures consuming previously-
+# unconsumed audited JSONs (tstr.json, noise_model_sensitivity.json,
+# shot_noise_sensitivity.json) + previously-absent head-to-head views
+# over already-computed artifacts. Render-only: NO retraining, NO sampling,
+# NO checkpoint reload, NO new metric recomputation — only numpy.mean/std
+# aggregations over already-evaluated values (and numpy.histogram for the
+# failure-modes distribution row, which is rendering math, not metric math).
+# revision/core/ remains byte-frozen (D-14-22). The frozen-checkpoint
+# headline is visually distinct from iqp_sel_55_repro on every figure where
+# both could appear (D-14-10).
+# ---------------------------------------------------------------------------
+# Adversarial models that carry per-eval-step ``emd_avg`` (length 201,
+# eval-every-10-epochs over 2000 epochs). VAE has no emd_avg (ELBO loop);
+# AR(p) is closed-form (no training curve). These two are handled as
+# explicit caption/no-trajectory panels in Tasks 1 + 5 — never fabricated.
+ADVERSARIAL_MODELS_WITH_EMD_AVG = [
+    "iqp_sel_55_repro", "V1", "V2", "V3",
+    "wgan_mlp", "wgan_cnn", "wgan_lstm",
+]
+MODELS_NO_TRAJECTORY = ["vae", "ar"]
+
+
+def render_training_convergence_all_models(repo: Path,
+                                           figures_dir: Path) -> list[Path]:
+    """9-model EMD-vs-epoch trajectories + frozen-headline marker (Task 1).
+
+    Render-only over the 35 audited
+    ``matched2000/runs/<adversarial model>/<seed>/metrics.json`` per-run
+    files (7 adversarial models x 5 seeds) + ``headline_canonical.json``.
+    The 7 emd_avg arrays are stacked into (5, 201) per model and the
+    per-epoch MEAN and STD are computed via ``numpy`` over the already-
+    evaluated EMD values (this is aggregation, NOT metric recomputation —
+    revision.core.eval is not invoked here).
+
+    VAE / AR have no eval-epoch emd_avg trajectory; they are explicitly
+    NOT plotted and are surfaced in the in-figure caption + companion
+    JSON ``models_skipped_no_emd_avg``. The frozen-checkpoint headline
+    (``headline_canonical.json``, source=``frozen_checkpoint_epoch_1969``)
+    is rendered as a DISTINCT diamond at x=1969 + a horizontal dashed
+    reference line at y=checkpoint_emd (D-14-10): never merged into the
+    iqp_sel_55_repro mean curve.
+    """
+    # Load the 7-model x 5-seed = 35 per-run metrics.json files.
+    per_model_emd_seedstack: dict[str, np.ndarray] = {}
+    for m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
+        stack: list[np.ndarray] = []
+        for s in SEEDS:
+            mp = _run_dir(repo, m, s) / "metrics.json"
+            j = _load_json(mp, f"{m}/{s} metrics for training-convergence")
+            if "emd_avg" not in j:
+                raise FileNotFoundError(
+                    f"[14-10/T1] {m}/{s} metrics.json missing emd_avg; the "
+                    f"render-only contract requires the pre-evaluated EMD "
+                    f"trajectory be present."
+                )
+            arr = np.asarray(j["emd_avg"], dtype=float)
+            if arr.shape != (201,):
+                raise ValueError(
+                    f"[14-10/T1] {m}/{s} emd_avg has shape {arr.shape}, "
+                    f"expected (201,) — eval-every-10-epochs over 2000 "
+                    f"epochs (the 14-08 / matched2000 schema)."
+                )
+            stack.append(arr)
+        per_model_emd_seedstack[m] = np.stack(stack, axis=0)  # (5, 201)
+
+    # Recover absolute epoch index from the eval-step grid (eval every 10).
+    n_eval_steps = 201
+    epochs_per_step = 10
+    epochs = np.arange(n_eval_steps) * epochs_per_step  # 0, 10, ..., 2000
+
+    # Frozen-checkpoint headline (D-14-10 distinct diamond + dashed line).
+    head = _load_json(
+        repo / HEADLINE_REL, "headline_canonical for training-convergence")
+    head_epoch = int(head["checkpoint_epoch"])
+    head_emd = float(head["checkpoint_emd"])
+    if head_epoch != 1969:
+        raise ValueError(
+            f"[14-10/T1] headline_canonical.checkpoint_epoch={head_epoch}, "
+            f"expected 1969 (frozen_checkpoint_epoch_1969)."
+        )
+
+    fig, ax = plt.subplots(figsize=(10, 6.5))
+    per_model_mean: dict[str, list[float]] = {}
+    per_model_std: dict[str, list[float]] = {}
+    for m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
+        s = per_model_emd_seedstack[m]
+        mean_e = s.mean(axis=0)
+        std_e = s.std(axis=0)
+        per_model_mean[m] = mean_e.tolist()
+        per_model_std[m] = std_e.tolist()
+        c = MODEL_COLORS.get(m, "#0072B2")
+        ax.plot(epochs, mean_e, color=c, linewidth=2.0,
+                label=MODEL_LABELS.get(m, m), zorder=3)
+        ax.fill_between(epochs, mean_e - std_e, mean_e + std_e,
+                        color=c, alpha=0.18, linewidth=0, zorder=2)
+
+    # Frozen headline: DISTINCT diamond + thin horizontal dashed reference.
+    ax.axhline(head_emd, color=HEADLINE_COLOR, linestyle="--",
+               linewidth=1.2, alpha=0.55, zorder=4)
+    ax.scatter([head_epoch], [head_emd], marker="D", s=100,
+               color=HEADLINE_COLOR, edgecolor="white", linewidths=1.2,
+               label=HEADLINE_LABEL, zorder=10)
+
+    ax.set_xlabel("epoch (eval_step × 10)")
+    ax.set_ylabel("EMD (avg over eval window, OD scale)")
+    ax.set_yscale("log")
+    ax.set_xlim(0, 2000)
+    ax.grid(True, alpha=0.3, which="both")
+    ax.set_title(
+        "Training convergence — 7 adversarial models (mean ± std over 5 "
+        "seeds) + frozen-checkpoint headline at epoch 1969 "
+        "(DISTINCT diamond + horizontal reference — D-14-10)"
+    )
+    ax.legend(frameon=False, fontsize=8, ncol=2, loc="upper right")
+    ax.annotate(
+        "VAE / AR: no emd_avg eval trajectory\n(ELBO loop / closed-form fit)",
+        xy=(0.98, 0.02), xycoords="axes fraction",
+        ha="right", va="bottom", fontsize=8,
+        bbox=dict(boxstyle="round,pad=0.3", fc="white",
+                  ec="#888888", alpha=0.85),
+    )
+    fig.tight_layout()
+
+    companion = {
+        "figure": "training_convergence_all_models",
+        "render_only": True,
+        "source_artifacts": [
+            f"revision/results/matched2000/runs/<{','.join(ADVERSARIAL_MODELS_WITH_EMD_AVG)}>/"
+            f"<{','.join(str(s) for s in SEEDS)}>/metrics.json (×35)",
+            "revision/results/headline_canonical.json",
+        ],
+        "models_plotted": list(ADVERSARIAL_MODELS_WITH_EMD_AVG),
+        "models_skipped_no_emd_avg": list(MODELS_NO_TRAJECTORY),
+        "epochs_per_eval_step": epochs_per_step,
+        "n_eval_steps": n_eval_steps,
+        "epoch_axis_range": [0, 2000],
+        "seeds": list(SEEDS),
+        "frozen_headline": {
+            "checkpoint_epoch": head_epoch,
+            "checkpoint_emd": head_emd,
+            "source": "frozen_checkpoint_epoch_1969",
+            "marker_style": "diamond, HEADLINE_COLOR",
+            "conflation_guard": (
+                "D-14-10: frozen headline is a DISTINCT marker (diamond + "
+                "horizontal dashed reference line), never merged into the "
+                "iqp_sel_55_repro mean curve."
+            ),
+        },
+        "per_model_mean_emd_avg": per_model_mean,
+        "per_model_std_emd_avg": per_model_std,
+        "caption_note": (
+            "EMD-vs-epoch on log-y, per matched-2000ep budget; the frozen "
+            "checkpoint epoch 1969 is shown as a distinct diamond + "
+            "horizontal reference (D-14-10). log_return per-epoch "
+            "trajectories were not captured during training; only OD eval "
+            "trajectories exist (single-panel OD)."
+        ),
+    }
+    return _save(fig, figures_dir, "training_convergence_all_models",
+                 companion)
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 def main() -> None:
@@ -1123,6 +1286,13 @@ def main() -> None:
     written += render_matched2000_dualscale_comparison_table(
         repo, figures_dir
     )
+
+    # --- Plan 14-10: 7 "full story" render-only figures (NO retraining,
+    # NO resampling, NO new metric recomputation). Each function loud-
+    # fails on missing input JSON. Frozen-checkpoint headline rendered
+    # visually distinct from iqp_sel_55_repro on every figure where both
+    # could appear (D-14-10). revision/core/ stays byte-frozen (D-14-22).
+    written += render_training_convergence_all_models(repo, figures_dir)
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
     written += render_existing_introspection(figures_dir)
