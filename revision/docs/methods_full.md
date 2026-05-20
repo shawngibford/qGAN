@@ -216,7 +216,25 @@ Conv1d(1, 64, k=10, s=1, p=5) + LeakyReLU(0.1); Conv1d(64, 128, k=10, s=1,
 p=5) + LeakyReLU(0.1); Conv1d(128, 128, k=10, s=1, p=5) + LeakyReLU(0.1);
 AdaptiveAvgPool1d(output_size=1); Flatten; Linear(128, 32) + LeakyReLU(0.1)
 + Dropout(p=0.2); Linear(32, 1). The critic is cast to `torch.float64` at
-`revision/core/models/critic.py:67`.
+`revision/core/models/critic.py:67`. The critic carries **250881**
+trainable parameters (`classical_architectures.json` models.shared_critic.total_params).
+
+### 2.k.x — Total adversarial parameter budget (Plan 14-13 Task 3, H-3)
+
+The `param_efficiency_pareto` figure plots **generator-only** parameter
+counts on the x-axis; the shared critic (250881 params per
+`classical_architectures.json` models.shared_critic.total_params) applies
+to all adversarial models alike (`iqp_sel_55_repro`, V1, V2, V3,
+`wgan_mlp`, `wgan_cnn`, `wgan_lstm`). The **total adversarial parameter
+budget** (generator + shared critic) for each model is therefore
+generator-only + 250881; the headline `iqp_sel_55` reports a generator of
+55 params and a generator+critic total of 250936 params. The
+parameter-efficiency comparison is fair under the generator-only x-axis
+because the shared critic budget is identical across the adversarial
+entries; this subsection documents the convention explicitly so the
+figure's caption ("x-axis is generator-only parameter count; the shared
+critic ≈250k applies to all adversarial models alike") is no longer the
+sole place the breakdown is recorded (H-3 resolution).
 
 ---
 

@@ -1,0 +1,63 @@
+{
+  "schema": "reconciliation-deltas v1 (Phase 14 plan 14-13 Task 3 / C-1 / PROV-CRIT-1 OD-scale rebuild)",
+  "data_hash": "91e447d4624e25b3",
+  "metric": "emd (OD, audited aggregate mean over seeds 42-46)",
+  "old_source": "baseline_comparison.json#rows (pipeline=B, OD, emd)",
+  "new_source": "matched2000_dualscale.json#aggregates (metric_name=emd, scale=OD)",
+  "rows": [
+    {
+      "model": "iqp_sel_55_repro",
+      "old_1000ep": 0.027585978068845007,
+      "new_2000ep": 0.027526430476567092,
+      "delta": -5.9547592277914285e-05
+    },
+    {
+      "model": "V1",
+      "old_1000ep": null,
+      "new_2000ep": 0.027582604413720145,
+      "delta": null
+    },
+    {
+      "model": "V2",
+      "old_1000ep": null,
+      "new_2000ep": 0.027571997702351646,
+      "delta": null
+    },
+    {
+      "model": "V3",
+      "old_1000ep": null,
+      "new_2000ep": 0.027537862057722535,
+      "delta": null
+    },
+    {
+      "model": "wgan_mlp",
+      "old_1000ep": 0.027580479945505044,
+      "new_2000ep": 0.025952441411555126,
+      "delta": -0.0016280385339499173
+    },
+    {
+      "model": "wgan_cnn",
+      "old_1000ep": 0.11303307733265014,
+      "new_2000ep": 0.0543233969986812,
+      "delta": -0.058709680333968936
+    },
+    {
+      "model": "wgan_lstm",
+      "old_1000ep": 0.029257607688196907,
+      "new_2000ep": 0.028214100034701418,
+      "delta": -0.0010435076534954894
+    },
+    {
+      "model": "vae",
+      "old_1000ep": 0.025740018457191753,
+      "new_2000ep": 0.025741708778716454,
+      "delta": 1.6903215247013326e-06
+    },
+    {
+      "model": "ar",
+      "old_1000ep": 0.029084359335535298,
+      "new_2000ep": 0.02908435933553529,
+      "delta": -6.938893903907228e-18
+    }
+  ]
+}

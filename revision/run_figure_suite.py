@@ -611,27 +611,43 @@ def render_cross_model_distribution(od_by_model: dict, real_flat: np.ndarray,
 
 
 def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
-    """Cross-model final-EMD bar with seed spread + the FROZEN headline.
+    """Cross-model final-eval EMD (OD scale) bar with seed spread + headline.
+
+    Plan 14-13 Task 3 rebuild (CR-2 / C-2 resolution):
+    - Source per-seed EMD from `matched2000_dualscale.json#rows` filtered to
+      `metric_name=emd, scale=OD` (audited OD-scale aggregate basis) — NOT
+      `np.min(metrics.json["emd_avg"])` over the 201-point log-return
+      training trajectory (the v1 selection bias + scale-collision).
+    - Aggregate as `mean ± std (ddof=1, sample std)` over seeds 42-46.
+    - Headline reference line on the SAME OD scale.
+    - "best EMD" framing dropped — title/axis/companion describe the figure
+      as a final-eval EMD on the OD scale, mean over the 5-seed set.
 
     The FROZEN-checkpoint headline EMD (epoch 1969) is drawn as a distinct
     annotated reference line, NEVER merged into the reproduction bar
     (D-14-10 / T-14-12).
     """
     models = MODEL_ORDER
+    # Source the per-seed OD-scale EMD from the audited dualscale rows.
+    dual = _load_json(
+        repo / "revision/results/matched2000_dualscale.json", "dualscale"
+    )
+    per_seed: dict[str, list[float]] = {m: [] for m in models}
+    for r in dual.get("rows", []):
+        if r.get("metric_name") != "emd" or r.get("scale") != "OD":
+            continue
+        mk = r.get("model_kind")
+        v = r.get("value")
+        if mk in per_seed and isinstance(v, (int, float)):
+            per_seed[mk].append(float(v))
     means, stds, present = [], [], []
     for m in models:
-        finals = []
-        for s in SEEDS:
-            mt_path = _run_dir(repo, m, s) / "metrics.json"
-            if not mt_path.exists():
-                continue
-            mt = json.loads(mt_path.read_text())
-            if "emd_avg" in mt and len(mt["emd_avg"]):
-                finals.append(float(np.min(mt["emd_avg"])))
+        finals = per_seed.get(m, [])
         if finals:
             present.append(m)
             means.append(float(np.mean(finals)))
-            stds.append(float(np.std(finals)))
+            # ddof=1 sample std (Plan 14-13 H-2 remediation)
+            stds.append(float(np.std(finals, ddof=1)))
     fig, ax = plt.subplots(figsize=(9, 5))
     x = np.arange(len(present))
     ax.bar(x, means, yerr=stds, capsize=4,
@@ -640,8 +656,10 @@ def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
     ax.set_xticks(x)
     ax.set_xticklabels([MODEL_LABELS.get(m, m) for m in present],
                        rotation=30, ha="right", fontsize=8)
-    ax.set_ylabel("best EMD over training (mean ± std over 5 seeds)")
-    ax.set_title("Cross-model EMD (2000ep matched budget)")
+    ax.set_ylabel(
+        "final-eval EMD (OD scale, mean ± sample std over 5 seeds)"
+    )
+    ax.set_title("Cross-model final-eval EMD (OD scale, 2000ep matched budget)")
     # FROZEN headline reference line — distinctly labelled (D-14-10).
     headline = _load_json(repo / HEADLINE_REL, "frozen headline")
     od_emd = next(
@@ -658,12 +676,23 @@ def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
     companion = {
         "figure": "cross_model_emd",
         "models": present,
-        "best_emd_mean": means,
-        "best_emd_std": stds,
+        "final_eval_emd_mean_OD": means,
+        "final_eval_emd_std_OD": stds,
+        "n_seeds": [len(per_seed.get(m, [])) for m in present],
         "frozen_headline_OD_emd": od_emd,
         "headline_source": "headline_canonical.json (source=frozen_"
                             "checkpoint_epoch_1969) — distinct from the "
                             "iqp_sel_55_repro 2000ep reproduction (D-14-10)",
+        "source": (
+            "matched2000_dualscale.json#rows filtered to "
+            "metric_name=emd, scale=OD (audited per-seed OD-scale EMD); "
+            "aggregation mean ± sample std (ddof=1) over seeds 42-46"
+        ),
+        "caption": (
+            "OD scale, final-eval mean ± std over 5 seeds 42-46; frozen "
+            "headline reference line on the same scale "
+            "(Plan 14-13 Task 3, CR-2 / C-2 resolution)"
+        ),
         "render_only": True,
     }
     return _save(fig, figures_dir, "cross_model_emd", companion)
@@ -1126,7 +1155,8 @@ def render_training_convergence_all_models(repo: Path,
     for m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
         s = per_model_emd_seedstack[m]
         mean_e = s.mean(axis=0)
-        std_e = s.std(axis=0)
+        # Sample std (ddof=1) — H-2 Plan 14-13 Task 3 remediation
+        std_e = s.std(axis=0, ddof=1)
         per_model_mean[m] = mean_e.tolist()
         per_model_std[m] = std_e.tolist()
         c = MODEL_COLORS.get(m, "#0072B2")
@@ -1802,8 +1832,15 @@ def render_param_efficiency_pareto(repo: Path,
             "headline (epoch 1969, 55p) is the diamond — distinct from "
             "the 5-seed iqp_sel_55_repro circle at the same x. "
             "Markers: circle = adversarial-quantum, square = adversarial-"
-            "classical, triangle = non-adversarial."
+            "classical, triangle = non-adversarial. "
+            "x-axis is generator-only parameter count; the shared "
+            "critic (250881 params per classical_architectures.json "
+            "models.shared_critic.total_params) applies to all "
+            "adversarial models alike and is documented in "
+            "methods_full.md §2.k.x — Total adversarial parameter budget "
+            "(Plan 14-13 Task 3, H-3 resolution)."
         ),
+        "shared_critic_n_params": 250881,
     }
     return _save(fig, figures_dir, "param_efficiency_pareto", companion)
 
@@ -1886,10 +1923,10 @@ def render_seed_variance_per_model(repo: Path,
             ax.grid(True, alpha=0.3, which="both")
             ax.set_title(MODEL_LABELS.get(m, m), fontsize=9)
             ax.tick_params(labelsize=7)
-            # Final-step spread
+            # Final-step spread (ddof=1 sample std — H-2 Plan 14-13 Task 3)
             final_vals = stack[:, -1]
             final_mean = float(final_vals.mean())
-            final_std = float(final_vals.std())
+            final_std = float(final_vals.std(ddof=1))
             per_model_final_emd_mean[m] = final_mean
             per_model_final_emd_std[m] = final_std
             label = _spread_label(final_mean, final_std)
@@ -2006,7 +2043,8 @@ def render_noise_robustness_quantum(repo: Path,
                 curve.append({
                     "noise_level": float(lev),
                     "emd_mean": float(arr.mean()),
-                    "emd_std": float(arr.std()),
+                    # ddof=1 sample std (H-2 Plan 14-13 Task 3)
+                    "emd_std": float(arr.std(ddof=1)) if arr.size > 1 else 0.0,
                     "n_seeds": int(arr.size),
                 })
             per_curve[f"{ch}|{p}"] = curve
@@ -2138,7 +2176,8 @@ def render_shot_noise_robustness(repo: Path,
                 "condition": c,
                 "shots": int(shot_levels[c]),
                 "emd_mean": float(arr.mean()),
-                "emd_std": float(arr.std()),
+                # ddof=1 sample std (H-2 Plan 14-13 Task 3)
+                "emd_std": float(arr.std(ddof=1)) if arr.size > 1 else 0.0,
                 "n_seeds": int(arr.size),
             })
         per_curve[p] = curve
@@ -2151,7 +2190,8 @@ def render_shot_noise_robustness(repo: Path,
         aarr = np.asarray(avals, dtype=float)
         analytic_baseline[p] = {
             "emd_mean": float(aarr.mean()),
-            "emd_std": float(aarr.std()),
+            # ddof=1 sample std (H-2 Plan 14-13 Task 3)
+            "emd_std": float(aarr.std(ddof=1)) if aarr.size > 1 else 0.0,
             "n_seeds": int(aarr.size),
         }
 

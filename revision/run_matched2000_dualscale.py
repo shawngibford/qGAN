@@ -519,7 +519,14 @@ def build_aggregates(rows: list) -> list:
     for (mk, scale, metric), vals in sorted(groups.items()):
         n_seeds = len(seeds_of[(mk, scale, metric)])
         mean = statistics.fmean(vals)
-        std = statistics.pstdev(vals) if len(vals) > 1 else 0.0
+        # Sample std (statistics.stdev = sqrt of unbiased variance, ddof=1)
+        # — Plan 14-13 Task 3 H-2 remediation (was statistics.pstdev = ddof=0)
+        std = statistics.stdev(vals) if len(vals) > 1 else 0.0
+        # `n` alias alongside existing `n_seeds` for paper-facing
+        # convention (Plan 14-13 Task 3 MED-4 remediation): n=5 for matched
+        # budget aggregates; n=1 for the headline (single frozen-checkpoint
+        # eval). KEEPS `n_seeds` for backward compat with 14-08/14-12.
+        n_alias = n_seeds
         aggs.append(dict(
             model_kind=mk,
             scale=scale,
@@ -527,6 +534,7 @@ def build_aggregates(rows: list) -> list:
             mean=mean,
             std=std,
             n_seeds=n_seeds,
+            n=n_alias,
             source=src_of[(mk, scale, metric)],
         ))
     return aggs

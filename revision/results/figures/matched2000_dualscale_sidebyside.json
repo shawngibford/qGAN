@@ -32,7 +32,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.027526430476567092,
-   "std": 0.004591288378486305,
+   "std": 0.00513321645930008,
    "n_seeds": 5,
    "source": "matched2000_reproduction"
   },
@@ -41,7 +41,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.027582604413720145,
-   "std": 0.004577309279457218,
+   "std": 0.005117587351453461,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -50,7 +50,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.027571997702351646,
-   "std": 0.00457351948639675,
+   "std": 0.005113350234001529,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -59,7 +59,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.027537862057722535,
-   "std": 0.004548326765658865,
+   "std": 0.00508518391594749,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -68,7 +68,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.025952441411555126,
-   "std": 0.005985248654294808,
+   "std": 0.006691711426621165,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -77,7 +77,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.0543233969986812,
-   "std": 0.052418838808951033,
+   "std": 0.05860604343920931,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -86,7 +86,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.028214100034701418,
-   "std": 0.004482840848634803,
+   "std": 0.005011968434930132,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -95,7 +95,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.025741708778716454,
-   "std": 0.006405681704417852,
+   "std": 0.007161769866652516,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -104,7 +104,7 @@
    "scale": "OD",
    "metric_name": "emd",
    "mean": 0.02908435933553529,
-   "std": 0.004120948097505048,
+   "std": 0.0046073600388848585,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -122,7 +122,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.12286584712632038,
-   "std": 0.0023282438658001905,
+   "std": 0.002603055776063062,
    "n_seeds": 5,
    "source": "matched2000_reproduction"
   },
@@ -131,7 +131,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.12190673604602073,
-   "std": 0.0010091421952335413,
+   "std": 0.0011282552737527812,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -140,7 +140,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.1218157301317309,
-   "std": 0.00019082527559026918,
+   "std": 0.0002133491440224866,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -149,7 +149,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.13030466424258152,
-   "std": 0.004213264231686552,
+   "std": 0.004710572614609778,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -158,7 +158,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.26993858202582777,
-   "std": 0.035580571917365016,
+   "std": 0.039780288742774096,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -167,7 +167,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.6873233973280222,
-   "std": 0.27134323529468446,
+   "std": 0.3033709596768173,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -176,7 +176,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.16632064238232588,
-   "std": 0.018339947702398253,
+   "std": 0.02050468488317679,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -185,7 +185,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.010299878935153753,
-   "std": 0.0010185497410960486,
+   "std": 0.0011387732297777878,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -194,7 +194,7 @@
    "scale": "log_return",
    "metric_name": "emd",
    "mean": 0.7811385570662264,
-   "std": 0.002798117315215629,
+   "std": 0.003128390262920676,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -212,7 +212,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.4025739953012102,
-   "std": 0.007345655344982987,
+   "std": 0.008212692345333313,
    "n_seeds": 5,
    "source": "matched2000_reproduction"
   },
@@ -221,7 +221,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.4025649119928443,
-   "std": 0.007290300012553913,
+   "std": 0.008150803202219059,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -230,7 +230,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.4025957989238111,
-   "std": 0.007417153876334214,
+   "std": 0.008292630133529686,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -239,7 +239,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.4025523800797692,
-   "std": 0.007374512487499308,
+   "std": 0.00824495561148476,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -248,7 +248,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.3976412529116542,
-   "std": 0.0072956545033181835,
+   "std": 0.008156789704885961,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -257,7 +257,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.4248856088945534,
-   "std": 0.06992650456608716,
+   "std": 0.07818020881936016,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -266,7 +266,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.3931162106469253,
-   "std": 0.016239221774359082,
+   "std": 0.018156001894580828,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -275,7 +275,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.385408562125461,
-   "std": 0.007270038272300854,
+   "std": 0.008128149887944918,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -284,7 +284,7 @@
    "scale": "OD",
    "metric_name": "moment_mean",
    "mean": 1.4037801775461822,
-   "std": 0.007394962585682096,
+   "std": 0.00826781951632639,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -302,7 +302,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": 0.12365024236511998,
-   "std": 0.0004160436353686122,
+   "std": 0.00046515092514517635,
    "n_seeds": 5,
    "source": "matched2000_reproduction"
   },
@@ -311,7 +311,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": 0.12376226846428198,
-   "std": 0.00039584065796531695,
+   "std": 0.0004425633097343462,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -320,7 +320,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": 0.12410003046289468,
-   "std": 0.00017388599320492857,
+   "std": 0.0001944104505706434,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -329,7 +329,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": 0.12392245764283194,
-   "std": 0.0003526980280913133,
+   "std": 0.0003943283831711535,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -338,7 +338,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": 0.07314964762004197,
-   "std": 0.02401095986541197,
+   "std": 0.026845069232040185,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -347,7 +347,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": 0.1854525121572042,
-   "std": 0.2880404717479722,
+   "std": 0.3220390375497868,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -356,7 +356,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": 0.053594507169170455,
-   "std": 0.061244915250298765,
+   "std": 0.0684738968879408,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -365,7 +365,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": -0.007039941195861531,
-   "std": 0.0006418798955923316,
+   "std": 0.0007176435399674605,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -374,7 +374,7 @@
    "scale": "log_return",
    "metric_name": "moment_mean",
    "mean": 0.12087081425770647,
-   "std": 0.0051316812775752275,
+   "std": 0.005737394087760588,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -392,7 +392,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8751044720475354,
-   "std": 0.010262833256001068,
+   "std": 0.011474196401081946,
    "n_seeds": 5,
    "source": "matched2000_reproduction"
   },
@@ -401,7 +401,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8751350090835643,
-   "std": 0.01022550181753955,
+   "std": 0.011432458584033044,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -410,7 +410,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8751325802835781,
-   "std": 0.010430721610214765,
+   "std": 0.01166190128740814,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -419,7 +419,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8750391877240817,
-   "std": 0.01047613638650346,
+   "std": 0.011712676550890373,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -428,7 +428,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8720146839655614,
-   "std": 0.008813979137195442,
+   "std": 0.009854328251516976,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -437,7 +437,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8910632496998036,
-   "std": 0.0505063626902175,
+   "std": 0.05646783013579274,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -446,7 +446,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8691034530422732,
-   "std": 0.015741766452440065,
+   "std": 0.017599829936790847,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -455,7 +455,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8641147188613354,
-   "std": 0.01018741848100754,
+   "std": 0.011389880119385255,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -464,7 +464,7 @@
    "scale": "OD",
    "metric_name": "moment_std",
    "mean": 0.8787623595985737,
-   "std": 0.009714732418780386,
+   "std": 0.010861401035806949,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -482,7 +482,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.08297097854195945,
-   "std": 0.011669659426785089,
+   "std": 0.013047075876281344,
    "n_seeds": 5,
    "source": "matched2000_reproduction"
   },
@@ -491,7 +491,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.08103509675175954,
-   "std": 0.006849035817579481,
+   "std": 0.007657454834219285,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -500,7 +500,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.07760392032813698,
-   "std": 0.0007675418405438751,
+   "std": 0.0008581378655157045,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -509,7 +509,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.11789982136201964,
-   "std": 0.010262045613646393,
+   "std": 0.01147331579015844,
    "n_seeds": 5,
    "source": "matched2000_ansatz"
   },
@@ -518,7 +518,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.3529687912190079,
-   "std": 0.0369023179373741,
+   "std": 0.04125804571763916,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -527,7 +527,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.9066776079393681,
-   "std": 0.30129008819364417,
+   "std": 0.33685255907394757,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -536,7 +536,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.20601738755322416,
-   "std": 0.026853947103713468,
+   "std": 0.030023625594043455,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -545,7 +545,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.01855218080290109,
-   "std": 0.0016664632672787384,
+   "std": 0.00186316257382083,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
@@ -554,7 +554,7 @@
    "scale": "log_return",
    "metric_name": "moment_std",
    "mean": 0.9918638761003556,
-   "std": 0.0032500961094668658,
+   "std": 0.0036337179170877545,
    "n_seeds": 5,
    "source": "matched2000_baseline"
   },
