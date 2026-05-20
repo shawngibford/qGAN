@@ -1,4 +1,5 @@
 {
+  "render_only": true,
   "target": "quantum",
   "seed": 42,
   "epochs": 1000,

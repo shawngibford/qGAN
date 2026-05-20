@@ -64,7 +64,7 @@ import sys
 from pathlib import Path
 
 
-_SCHEMA = "v2 (Phase 14 plan 14-13 — boundary-strict resolution + render-only exclusion)"
+_SCHEMA = "v2.1 (Phase 14 plan 14-14 — negative-sign-aware lookbehind)"
 
 
 def _find_repo_root() -> Path:
@@ -121,6 +121,13 @@ _ID_PATTERNS = [
     r"aic-\d{7}",                              # AIC manuscript IDs (e.g. aic-4719598)
     r"\bv\d+(?:\.\d+)?\b",                     # version tags v2.0
     r"\b09\.1\b",
+    # v2.1 (Phase 14 plan 14-14) — platform identifier string carries hyphen-
+    # separated version digits that look like numeric literals but are part of
+    # a single OS-identifier token (e.g. `macOS-26.0.1-arm64-arm-64bit`). Strip
+    # the whole token so the gate does not try to resolve its component digits
+    # individually; the platform string is resolved as a single substring via
+    # the boundary-strict text-match path.
+    r"macOS-\d+(?:\.\d+)*-[\w-]+",
 ]
 
 # Trivially-universal small integers + the [-1,1] window-space bounds: present
@@ -190,7 +197,15 @@ def _resolves(token: str, corpus: dict[str, dict]) -> tuple[str, str] | None:
       1. Exact-token boundary match in concatenated text (v2 boundary-strict)
       2. Float ε-neighborhood match against any numeric leaf in any JSON
     """
-    boundary_re = re.compile(rf"(?<![\d.]){re.escape(token)}(?![\d])")
+    # Regression (Phase 14 plan 14-14): the lookbehind class is `(?<![-\d.])`
+    # NOT `(?<![\d.])` — without the `-`, a positive token `0.0001` in a doc
+    # resolves against a JSON value `-0.0001` because the `-` does not appear
+    # in the lookbehind. The negative sign is particularly common in
+    # `reconciliation_deltas.json` (dense with small negative deltas), so the
+    # bug had outsized impact on the reconciliation gate's reliability.
+    # See peer-review-r2/provenance-review-r2.md (R2-prov-HIGH-1) and the
+    # `__main__` differential-test assertion added in Task 5.
+    boundary_re = re.compile(rf"(?<![-\d.]){re.escape(token)}(?![\d])")
 
     # Pass 1: boundary-strict text match.
     for path, entry in corpus.items():
@@ -293,16 +308,52 @@ def verify(target: Path, manifest: bool = False) -> int:
     return 0
 
 
+def _differential_test() -> int:
+    """v2.1 lookbehind differential-test (Phase 14 plan 14-14, R2-prov-HIGH-1).
+
+    Regression test for the negative-sign-aware lookbehind. The v2 gate's
+    boundary regex `(?<![\\d.])` did NOT include `-` in the lookbehind
+    character class, so a positive token `0.0001` in a doc resolved against
+    a JSON value `-0.0001` (the sign-flip false positive). v2.1 adds `-`
+    to the class: `(?<![-\\d.])`. This test asserts both directions:
+
+      (1) positive token `0.0001` MUST NOT resolve against `-0.0001`;
+      (2) positive token `0.0001` MUST still resolve against `0.0001`.
+
+    Exits 0 on PASS, raises AssertionError on FAIL.
+    """
+    token = "0.0001"
+    neg_blob = "delta -0.0001 reference"
+    pos_blob = "value 0.0001 reference"
+    neg_match = re.search(rf"(?<![-\d.]){re.escape(token)}(?![\d])", neg_blob)
+    pos_match = re.search(rf"(?<![-\d.]){re.escape(token)}(?![\d])", pos_blob)
+    if neg_match is not None:
+        raise AssertionError(
+            "v2.1 differential test FAILED: positive token 0.0001 resolved "
+            "against negative JSON value -0.0001 (the v2 sign-flip false "
+            "positive — R2-prov-HIGH-1)."
+        )
+    if pos_match is None:
+        raise AssertionError(
+            "v2.1 differential test FAILED: positive token 0.0001 did NOT "
+            "resolve against positive JSON value 0.0001 (regression in the "
+            "v2.1 lookbehind — the corrective edit overshot)."
+        )
+    print(f"v2.1 differential test PASSED (schema={_SCHEMA!r}).")
+    return 0
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(
         description=(
-            "Number-provenance gate (RESEARCH Pattern 3, D-14-16 LIFTED → v2 "
-            "under Phase 14 plan 14-13)."
+            "Number-provenance gate (RESEARCH Pattern 3, D-14-16 LIFTED → "
+            "v2.1 under Phase 14 plan 14-14)."
         )
     )
     ap.add_argument(
         "--target",
-        required=True,
+        required=False,
+        default=None,
         help="Path to the text file (regenerated doc or paper LaTeX-blocks "
         "file) whose numeric literals must all resolve to a "
         "revision/results/*.json value.",
@@ -314,7 +365,21 @@ def main() -> None:
         "`<doc>:<literal> -> <json_path>#<key_path>`. New under v2 "
         "(Phase 14 plan 14-13).",
     )
+    ap.add_argument(
+        "--differential-test",
+        action="store_true",
+        help="Run the v2.1 lookbehind differential-test (Phase 14 plan "
+        "14-14, R2-prov-HIGH-1): asserts positive token 0.0001 does NOT "
+        "resolve against negative JSON value -0.0001, and DOES resolve "
+        "against positive JSON value 0.0001. No --target required.",
+    )
     args = ap.parse_args()
+    if args.differential_test:
+        sys.exit(_differential_test())
+    if args.target is None:
+        raise AssertionError(
+            "--target is required unless --differential-test is supplied"
+        )
     target = Path(args.target)
     if not target.is_absolute():
         target = (Path.cwd() / target).resolve()

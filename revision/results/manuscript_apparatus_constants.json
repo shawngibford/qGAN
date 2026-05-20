@@ -1,19 +1,19 @@
 {
-  "schema": "manuscript-apparatus-constants v1 (Phase 14 plan 14-13 Task 2 / gate v2)",
-  "note": "Physical apparatus constants quoted from the manuscript LaTeX (main (4) copy.tex, supp_material.tex). These are NOT model results — they describe the experimental hardware (LUCY photobioreactor) and are referenced verbatim in the paper-blocks docs. Emitting them here lets the v2 provenance gate resolve them as legitimate manuscript-context literals rather than via substring coincidence in unrelated JSON values.",
+  "schema": "manuscript-apparatus-constants v2 (Phase 14 plan 14-14 — per-unit subfields)",
+  "note": "Physical apparatus constants quoted from the manuscript LaTeX (main (4) copy.tex:176-180, supp_material.tex). These are NOT model results — they describe the experimental hardware (LUCY photobioreactor) and are referenced verbatim in the paper-blocks docs. Plan 14-14 restructures the apparatus_dimensions field to per-unit subfields so the 880 nm IR LED wavelength is no longer lumped under a `_mm` label that misrepresents the units; the v2.1 provenance gate consumes the per-unit fields as the resolution corpus for the apparatus literals in paper_blocks_framing.md.",
   "lucy_photobioreactor": {
     "production_volume_liters": 20,
     "larger_configuration_liters": 300,
     "manufacturer": "Synoxis Algae"
   },
-  "apparatus_dimensions_mm": {
-    "depth_or_height_880": 880,
-    "ancillary_120": 120,
-    "ancillary_6": 6,
-    "ancillary_10": 10
+  "apparatus_dimensions": {
+    "tube_outer_diameter_cm": 6,
+    "tube_length_cm": 120,
+    "data_logging_interval_min": 10,
+    "ir_led_wavelength_nm": 880
   },
   "provenance": {
-    "source_document": "main (4) copy.tex / supp_material.tex",
-    "rationale": "Apparatus constants are intentionally NOT model results; this JSON exists solely so the number-provenance gate (revision/verify_number_provenance.py v2) can resolve them via a legitimate JSON source rather than substring coincidence."
+    "source_document": "main (4) copy.tex:176-180 / supp_material.tex",
+    "rationale": "Apparatus constants are intentionally NOT model results; this JSON exists solely so the number-provenance gate (revision/verify_number_provenance.py v2.1) can resolve them via a legitimate JSON source rather than substring coincidence. Plan 14-14 restructure: the field name `apparatus_dimensions_mm` previously lumped the 880 nm IR LED wavelength with 6 cm tube OD, 120 cm tube length, and 10-minute logging interval under a single `_mm` label that misrepresented the units; the per-unit subfields are now `tube_outer_diameter_cm`, `tube_length_cm`, `data_logging_interval_min`, `ir_led_wavelength_nm` matching the LaTeX semantics at main (4) copy.tex:176-180 exactly."
   }
 }

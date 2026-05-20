@@ -181,3 +181,56 @@ Every line above exits 0 under the v2 schema as of Plan 14-13 close.
 
 After Plan 14-13 lands, the only remaining open Phase 14 plan is
 **Plan 14-07** (Zenodo deposit + tag + DOI wiring + release.md).
+
+## Plan 14-14 — r2 peer-review punch list (Wave 12)
+
+Closes 15 of 15 actionable findings from the 5-agent r2 peer-review pass
+on Phase 14 plan 14-13's remediation work (3 triangulated HIGHs + 12
+lower-severity items; R2-code-HIGH-2 DISCLOSED per locked decision). No
+retraining; no new figures; `revision/core/` byte-frozen throughout
+(D-14-22). D-14-16 (gate byte-freeze) LIFTED for Task 1 only (one-char
+lookbehind fix); D-14-13 (strict-accept gate) PRESERVED (capture site
+corrected, equality check unchanged); D-14-18 (Overleaf-canonical LaTeX
+read-only) PRESERVED.
+
+| Artifact | Task | Description | Resolved finding(s) |
+|---|---|---|---|
+| `revision/verify_number_provenance.py` (v2.1) | T1 | Boundary lookbehind class `(?<![\d.])` → `(?<![-\d.])` (one char); schema bumped to v2.1; macOS-version identifier strip added | R2-prov-HIGH-1 |
+| `revision/results/figures/_introspect_{quantum,wgan_cnn,wgan_lstm,wgan_mlp}.json` | T1 | `"render_only": true` added at top level (4 files) | R2-code-LOW-1 |
+| `revision/results/noise_model_sensitivity.json` + `shot_noise_sensitivity.json` + `ansatz_comparison.json` | T1 | `"data_hash": "91e447d4624e25b3"` added at top level | R2-prov-MED-1 |
+| `revision/run_matched2000.py` (training_time_device capture-before-.to(cpu)) | T2 | `_train_quantum`, `_train_wgan`, `_train_vae` capture `training_time_device` immediately after training and before .to(cpu); `_device_manifest` accepts optional pre-captured device kwarg; `_strict_accept` equality check unchanged | R2-code-HIGH-1 |
+| `revision/docs/methods_full.md §3.x.d` | T3 | VAE β derivation rewritten: β_eff = 2.5 (KL up-weighted), NOT 0.4 (inverted figure from r1 M-4 → 14-13) | R2-math-HIGH-1 |
+| `revision/docs/methods_full.md §2.i` | T3 | VAE-not-param-matched caveat appended (74 trainable params; WGAN-GP ~75k–135k; IQP:SEL 55) | R2-methods-MED-1 |
+| `revision/docs/reconciliation_note.md` interpretation paragraph | T3 | Reworded to Welch t-test (p ≥ 0.37 for every model) + wgan_cnn -0.059 explicit + seed-42 outliers framing; table rows + 14-12 caveat + 14-13 disclosure preserved verbatim | (additive honesty correction) |
+| `revision/docs/reviewer_response.md` R1-m4 row | T4 | Reworded to "pending under Plan 14-07" explicit DOI-pending wording | R2-methods-HIGH-1 |
+| `revision/run_methods_full.py` (docstring slicer + CR-3 citation) | T4 | `1-80` → `1-69` at 3 sites in script + 3 sites in methods_full.md; CR-3 citation pattern re-pointed to `training.py:347` cast site | R2-code-MED-1, R2-code-MED-2 |
+| `revision/results/manuscript_apparatus_constants.json` | T4 | Restructured to per-unit subfields (`tube_outer_diameter_cm: 6`, `tube_length_cm: 120`, `data_logging_interval_min: 10`, `ir_led_wavelength_nm: 880`); old `apparatus_dimensions_mm` lump removed; schema bumped to v2 | R2-methods-MED-2 |
+| `revision/requirements-pinned.txt` + `framework_versions.json` | T4 | `statsmodels==0.14.5` pin added; `run_framework_versions.py` PACKAGES extended; framework_versions.json re-emitted | R2-methods-LOW-1 |
+| `REPRODUCE.md` (NEW, repo root) | T4 | One-stop reviewer entry-point linking to methods_full.md §5.2 + completeness_sweep_manifest.md | R2-methods-LOW-2 |
+| `revision/verify_number_provenance.py` (`--differential-test`) | T5 | `__main__` differential-test assertion: positive `0.0001` does NOT resolve against JSON `-0.0001`; DOES resolve against `0.0001` | (regression test for R2-prov-HIGH-1) |
+| `revision/docs/peer_review_remediation.md` (`## Gate v2.1 known limitations` + `## R2 follow-up sweep`) | T5 | r2 finding-to-commit index + ε-neighborhood limitation disclosed | R2-code-HIGH-2 (DISCLOSED) |
+| `revision/docs/completeness_sweep_manifest.md` (this section) | T5 | Updated artifact manifest | (manifest) |
+
+### End-to-end v2.1 gate re-run command
+
+```bash
+for doc in \
+    revision/docs/paper_blocks_framing.md \
+    revision/docs/paper_blocks_refs_methods.md \
+    revision/docs/reviewer_response.md \
+    revision/docs/reconciliation_note.md \
+    revision/docs/methods_full.md \
+    revision/docs/circuit_atlas.md \
+    revision/docs/completeness_sweep_manifest.md \
+    revision/docs/training_protocol.md \
+    revision/docs/dataset_stats.md \
+    revision/docs/peer_review_remediation.md; do
+  ./qgan_env/bin/python revision/verify_number_provenance.py --target "$doc"
+done
+./qgan_env/bin/python revision/verify_number_provenance.py --differential-test
+```
+
+Every line exits 0 under the v2.1 schema as of Plan 14-14 close.
+
+After Plan 14-14 lands, the only remaining open Phase 14 plan is still
+**Plan 14-07** (Zenodo deposit + tag + DOI wiring + release.md).

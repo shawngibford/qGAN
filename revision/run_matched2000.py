@@ -308,7 +308,7 @@ def _compute_data_hash(csv_path: Path) -> str:
     return hashlib.sha256(od.tobytes()).hexdigest()[:16]
 
 
-def _device_manifest(generator=None) -> Dict[str, Any]:
+def _device_manifest(generator=None, *, training_time_device=None) -> Dict[str, Any]:
     """Build + hard-assert the device/dtype manifest (T-14-04 / D-14-12).
 
     PennyLane ``default.qubit`` is CPU-only (D-14-11). The matched-budget run
@@ -316,25 +316,50 @@ def _device_manifest(generator=None) -> Dict[str, Any]:
     fallback (e.g. CPU-float64 when MPS-float32 expected) would put a false
     device in the paper table — fail loudly via explicit-raise (NOT bare
     assert; ``python -O`` strips asserts and would disable this honesty gate).
+
+    Plan 14-14 Task 2 — `training_time_device` capture site corrected
+    -----------------------------------------------------------------
+    The 14-13 T4 implementation read `next(generator.parameters()).device`
+    at manifest-build time, which happens AFTER `generate_wgan_samples`
+    moves the generator to CPU (line 270 `generator = generator.to("cpu")`).
+    The manifest therefore always saw `"cpu"` regardless of training
+    device, and the D-14-13 strict-accept gate's `training_time_device`
+    equality check (added in 14-13 T4) was non-functional.
+
+    The fix is symmetric across all three training paths
+    (_train_quantum / _train_wgan / _train_vae): each captures
+    `training_time_device` IMMEDIATELY after the training loop returns
+    and BEFORE the post-training `.to(cpu)` migration, then passes the
+    captured value to `_device_manifest(generator, training_time_device=...)`.
+    The optional `training_time_device` kwarg lets callers supply the
+    pre-captured value; if None (backward compat), the function falls
+    back to the original `next(parameters()).device` read.
+
+    The `_strict_accept` equality check is UNCHANGED — only the value
+    it sees now actually reflects the device the model was on at the
+    moment training finished.
     """
     import torch
 
     torch_cpu = "cpu"
     mps_avail = bool(torch.backends.mps.is_available())
     cuda_avail = bool(torch.cuda.is_available())
-    # Plan 14-13 Task 4 (CR-4 future-gate + D-14-13 extension): record
-    # `training_time_device` by inspecting the generator/critic parameters
-    # AFTER training (not just at sample-generation time). When the
-    # MPS-disable hook is active in _train_quantum / _train_wgan / _train_vae,
-    # this reads back as "cpu" symmetrically across all training paths.
-    training_time_device = torch_cpu
-    if generator is not None:
+    # Plan 14-14 Task 2: prefer the pre-captured training_time_device (taken
+    # immediately after the training loop returns, before .to(cpu)). Fall
+    # back to the post-migration parameters().device read for backward
+    # compatibility with any other caller that does not pre-capture.
+    if training_time_device is not None:
+        # honor the caller-supplied training-time device value verbatim
+        pass
+    elif generator is not None:
         try:
             training_time_device = str(
                 next(generator.parameters()).device
             )
         except (StopIteration, AttributeError):
             training_time_device = torch_cpu
+    else:
+        training_time_device = torch_cpu
     manifest: Dict[str, Any] = {
         "sample_generation_device": torch_cpu,
         "sample_generation_dtype": "torch.float64",
@@ -463,6 +488,20 @@ def _train_quantum(model: str, bundle: DatasetBundle, epochs: int,
     finally:
         torch.backends.mps.is_available = orig_mps  # type: ignore[assignment]
 
+    # Plan 14-14 Task 2: capture training_time_device IMMEDIATELY after the
+    # training loop returns and BEFORE generate_wgan_samples (which at
+    # line 270 does `generator = generator.to("cpu")`). The captured value
+    # flows through to _device_manifest below so the D-14-13 strict-accept
+    # gate's training_time_device equality check sees the actual training
+    # device. In current paths the quantum branch always trains on CPU under
+    # the torch.backends.mps.is_available=False hook above, so the captured
+    # value is "cpu"; the mechanism is symmetric across _train_wgan/_train_vae
+    # and protects against future drift if any path ever moves to MPS.
+    try:
+        training_time_device = str(next(generator.parameters()).device)
+    except (StopIteration, AttributeError):
+        training_time_device = "cpu"
+
     n_synth = 10 * bundle.n_real_windows
     samples = generate_wgan_samples(generator, n_synth, seed)
     param_count = int(generator.count_params())
@@ -491,7 +530,9 @@ def _train_quantum(model: str, bundle: DatasetBundle, epochs: int,
         "early_stopper": None,
         "spectral_loss_weight": 0.0,
         "source": source,
-        "device_manifest": _device_manifest(generator),
+        "device_manifest": _device_manifest(
+            generator, training_time_device=training_time_device
+        ),
         "train_protocol_notes": (
             f"Matched-budget {model}: QuantumGenerator(circuit_id="
             f"{circuit_id!r}, num_layers={num_layers}, topology={topology!r}) "
@@ -552,6 +593,16 @@ def _train_wgan(model: str, bundle: DatasetBundle, epochs: int,
         )
     finally:
         torch.backends.mps.is_available = orig_mps  # type: ignore[assignment]
+    # Plan 14-14 Task 2: capture training_time_device IMMEDIATELY after
+    # train_wgan_gp returns and BEFORE generate_wgan_samples (line 270 moves
+    # the generator to CPU). The captured value flows through _device_manifest
+    # so the D-14-13 strict-accept gate sees the actual training device.
+    # Under the MPS-disable hook above, the value will be "cpu"; the mechanism
+    # protects against future drift if the hook is ever removed.
+    try:
+        training_time_device = str(next(generator.parameters()).device)
+    except (StopIteration, AttributeError):
+        training_time_device = "cpu"
     n_synth = 10 * bundle.n_real_windows
     samples = generate_wgan_samples(generator, n_synth, seed)
     checkpoint = {
@@ -567,7 +618,9 @@ def _train_wgan(model: str, bundle: DatasetBundle, epochs: int,
         "lr_critic": float(LR_CRITIC),
         "lr_generator": float(LR_GENERATOR),
         "source": "matched2000_baseline",
-        "device_manifest": _device_manifest(generator),
+        "device_manifest": _device_manifest(
+            generator, training_time_device=training_time_device
+        ),
         "train_protocol_notes": (
             f"Matched-budget {model}: WGAN-GP via train_wgan_gp UNCHANGED "
             f"(D-10-08), {int(epochs)} epochs; shared "
@@ -632,6 +685,15 @@ def _train_vae(bundle: DatasetBundle, epochs: int, seed: int) -> tuple:
             elbo_hist.append(ep_elbo / n_batches)
             recon_hist.append(ep_recon / n_batches)
             kld_hist.append(ep_kld / n_batches)
+        # Plan 14-14 Task 2: capture training_time_device IMMEDIATELY after
+        # the VAE training loop returns and BEFORE the parallel
+        # `vae.sample(...).cpu()` migration below. The captured value flows
+        # through _device_manifest so the D-14-13 strict-accept gate sees the
+        # actual training device. Under the MPS-disable hook this is "cpu".
+        try:
+            training_time_device = str(next(vae.parameters()).device)
+        except (StopIteration, AttributeError):
+            training_time_device = "cpu"
         n_synth = 10 * bundle.n_real_windows
         gen = torch.Generator()
         gen.manual_seed(seed)
@@ -657,10 +719,13 @@ def _train_vae(bundle: DatasetBundle, epochs: int, seed: int) -> tuple:
         "vae_lr": 1e-3, "vae_beta": float(beta_target),
         "vae_kl_warmup_epochs": int(warmup_epochs),
         "source": "matched2000_baseline",
-        # Plan 14-13 Task 4 (CR-4 future-gate): pass the vae module so
-        # _device_manifest can record training_time_device by inspecting
-        # the trained parameters.
-        "device_manifest": _device_manifest(vae),
+        # Plan 14-14 Task 2: pass the pre-captured training_time_device taken
+        # immediately after the VAE training loop returned, before
+        # `vae.sample(...).cpu()`. _device_manifest's optional kwarg consumes
+        # it; the post-migration parameters() read is bypassed.
+        "device_manifest": _device_manifest(
+            vae, training_time_device=training_time_device
+        ),
         "train_protocol_notes": (
             f"Matched-budget VAE: local ELBO loop (D-10-09), {int(epochs)} "
             "epochs, single Adam(lr=1e-3), NO critic/GP; sample() emits in "

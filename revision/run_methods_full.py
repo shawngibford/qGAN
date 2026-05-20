@@ -128,7 +128,7 @@ def _citations(training_src: str) -> dict[str, str]:
         # preceding line of the `.to(compute_dtype) * 0.1` chain).
         # `mps_dtype_block` resolves the MPS-vs-CPU dtype-split line
         # (`compute_dtype = torch.float32 if device.type == "mps" else torch.float64`).
-        "generator_to_compute_dtype": "generated_samples = generator",
+        "generator_to_compute_dtype": "generated_samples = generated_samples.to(compute_dtype)",
         "mps_dtype_block": (
             "compute_dtype = torch.float32 if device.type == \"mps\""
         ),
@@ -149,7 +149,7 @@ def _citations(training_src: str) -> dict[str, str]:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Docstring slicer for run_matched2000.py:1-80 — captures the leading module
+# Docstring slicer for run_matched2000.py:1-69 — captures the leading module
 # docstring VERBATIM, between the first triple-quote and the second.
 # ─────────────────────────────────────────────────────────────────────────────
 def _slice_module_docstring(src: str) -> str:
@@ -262,7 +262,7 @@ def main() -> None:
     ).read_text()
     cits = _citations(training_src)
 
-    # ── Verbatim docstring slice from run_matched2000.py:1-80 ─────────
+    # ── Verbatim docstring slice from run_matched2000.py:1-69 ─────────
     matched_path = REPO / "revision/run_matched2000.py"
     matched_src = _require(
         matched_path, "verbatim rerun-template source"
@@ -521,7 +521,7 @@ def main() -> None:
         },
         "rerun_command_template": rerun_template,
         "rerun_command_template_source": (
-            "revision/run_matched2000.py:1-80 (module docstring; preserved "
+            "revision/run_matched2000.py:1-69 (module docstring; preserved "
             "verbatim — never paraphrased)"
         ),
     }

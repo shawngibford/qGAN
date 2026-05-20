@@ -1,5 +1,6 @@
 {
   "schema": "long-form; extends baseline_comparison six-key contract {model_kind,pipeline,seed,metric_name,scale,value} with {condition,noise_model,noise_level}",
+  "data_hash": "91e447d4624e25b3",
   "deliverable": "SENS-02 noise-channel degradation",
   "model_kinds": [
     "quantum"
