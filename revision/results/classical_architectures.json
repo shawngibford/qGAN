@@ -1,0 +1,279 @@
+{
+  "consumed_artifacts": {
+    "revision/results/model_info.json": "91e447d4624e25b3"
+  },
+  "drift_gate": "explicit raise AssertionError (python -O safe) \u2014 extractor's walked total_params == model_info.json parameter_count for wgan_mlp/cnn/lstm/vae/ar; PASSED before this JSON was written",
+  "extracted_at_iso": "2026-05-20T15:52:30.830294Z",
+  "extractor": "module.named_modules() walk for nn.Module classes (VAEBaseline, Critic) + functional-layout docstring parse for the three params_pqc-carved WGAN-GP generators + hand-encoded plain-class spec for ARBaseline (not an nn.Module)",
+  "models": {
+    "ar": {
+      "carve_strategy": "plain Python class \u2014 NOT an nn.Module; fit is closed-form np.linalg.lstsq, no training loop",
+      "class": "ARBaseline",
+      "fit_method": "np.linalg.lstsq (closed-form)",
+      "layer_spec": {
+        "burn_in_steps": 50,
+        "fit_method": "np.linalg.lstsq (closed-form, no training loop)",
+        "layer_type": "AR(p)",
+        "order_p": 2,
+        "params_per_seed": 3,
+        "source_path": "revision/core/models/nonadversarial.py:139-158"
+      },
+      "order_p": 2,
+      "source_path": "revision/core/models/nonadversarial.py:120-184",
+      "total_params": 3,
+      "type": "AR(p)"
+    },
+    "shared_critic": {
+      "carve_strategy": "nn.Sequential of Conv1d x3 + LeakyReLU + AdaptiveAvgPool1d + Flatten + Linear(128,32) + Dropout + Linear(32,1); cast to .double() at critic.py:67",
+      "class": "Critic",
+      "dtype": "torch.float64",
+      "layers": [
+        {
+          "bias": true,
+          "in_channels": 1,
+          "kernel_size": 10,
+          "layer_type": "Conv1d",
+          "name": "net.0",
+          "out_channels": 64,
+          "padding": 5,
+          "param_count": 704,
+          "stride": 1
+        },
+        {
+          "layer_type": "LeakyReLU",
+          "name": "net.1",
+          "negative_slope": 0.1,
+          "param_count": 0
+        },
+        {
+          "bias": true,
+          "in_channels": 64,
+          "kernel_size": 10,
+          "layer_type": "Conv1d",
+          "name": "net.2",
+          "out_channels": 128,
+          "padding": 5,
+          "param_count": 82048,
+          "stride": 1
+        },
+        {
+          "layer_type": "LeakyReLU",
+          "name": "net.3",
+          "negative_slope": 0.1,
+          "param_count": 0
+        },
+        {
+          "bias": true,
+          "in_channels": 128,
+          "kernel_size": 10,
+          "layer_type": "Conv1d",
+          "name": "net.4",
+          "out_channels": 128,
+          "padding": 5,
+          "param_count": 163968,
+          "stride": 1
+        },
+        {
+          "layer_type": "LeakyReLU",
+          "name": "net.5",
+          "negative_slope": 0.1,
+          "param_count": 0
+        },
+        {
+          "layer_type": "AdaptiveAvgPool1d",
+          "name": "net.6",
+          "output_size": 1,
+          "param_count": 0
+        },
+        {
+          "layer_type": "Flatten",
+          "name": "net.7",
+          "param_count": 0
+        },
+        {
+          "bias": true,
+          "in_features": 128,
+          "layer_type": "Linear",
+          "name": "net.8",
+          "out_features": 32,
+          "param_count": 4128
+        },
+        {
+          "layer_type": "LeakyReLU",
+          "name": "net.9",
+          "negative_slope": 0.1,
+          "param_count": 0
+        },
+        {
+          "layer_type": "Dropout",
+          "name": "net.10",
+          "p": 0.2,
+          "param_count": 0
+        },
+        {
+          "bias": true,
+          "in_features": 32,
+          "layer_type": "Linear",
+          "name": "net.11",
+          "out_features": 1,
+          "param_count": 33
+        }
+      ],
+      "note": "Shared across iqp_sel_55_repro + V1/V2/V3 + wgan_mlp/cnn/lstm \u2014 one critic instance per training run, NOT a model in the model_info.json sense",
+      "source_path": "revision/core/models/critic.py:19-77",
+      "total_params": 250881
+    },
+    "vae": {
+      "carve_strategy": "five nn.Linear submodules (enc, fc_mu, fc_logvar, dec_h, dec_out); ELBO objective trained in revision/run_baselines.py",
+      "class": "VAEBaseline",
+      "decoder": [
+        {
+          "bias": true,
+          "in_features": 4,
+          "layer_type": "Linear",
+          "name": "dec_h",
+          "out_features": 16,
+          "param_count": 80
+        },
+        {
+          "bias": true,
+          "in_features": 16,
+          "layer_type": "Linear",
+          "name": "dec_out",
+          "out_features": 10,
+          "param_count": 170
+        }
+      ],
+      "encoder": [
+        {
+          "bias": true,
+          "in_features": 10,
+          "layer_type": "Linear",
+          "name": "enc",
+          "out_features": 16,
+          "param_count": 176
+        },
+        {
+          "bias": true,
+          "in_features": 16,
+          "layer_type": "Linear",
+          "name": "fc_mu",
+          "out_features": 4,
+          "param_count": 68
+        },
+        {
+          "bias": true,
+          "in_features": 16,
+          "layer_type": "Linear",
+          "name": "fc_logvar",
+          "out_features": 4,
+          "param_count": 68
+        }
+      ],
+      "hidden_dim": 16,
+      "latent_dim": 4,
+      "objective": "ELBO",
+      "source_path": "revision/core/models/nonadversarial.py:52-117",
+      "total_params": 562,
+      "window": 10
+    },
+    "wgan_cnn": {
+      "carve_strategy": "single nn.Parameter (params_pqc) sliced into per-layer weight/bias views applied via torch.nn.functional",
+      "class": "WGANCNNGenerator",
+      "generator": [
+        {
+          "from_shape": "(B, 5)",
+          "layer_type": "Reshape",
+          "note": "parameter-free reshape (NOT a learnable projection)",
+          "param_count": 0,
+          "to_shape": "(B, 1, 5)"
+        },
+        {
+          "activation": "leaky_relu(0.1)",
+          "bias": true,
+          "in_channels": 1,
+          "kernel_size": 6,
+          "layer_type": "ConvTranspose1d",
+          "out_channels": 9,
+          "padding": 0,
+          "param_count": 63,
+          "params_pqc_slice": "[0:63]",
+          "stride": 1
+        },
+        {
+          "activation": null,
+          "bias": true,
+          "in_channels": 9,
+          "kernel_size": 1,
+          "layer_type": "Conv1d",
+          "out_channels": 1,
+          "param_count": 10,
+          "params_pqc_slice": "[63:73]"
+        }
+      ],
+      "source_path": "revision/core/models/classical.py:98-141",
+      "total_params": 73
+    },
+    "wgan_lstm": {
+      "carve_strategy": "single nn.Parameter (params_pqc) sliced into LSTM cell matrices + final Linear applied via torch.nn.functional",
+      "class": "WGANLSTMGenerator",
+      "generator": [
+        {
+          "from_shape": "(B, 5)",
+          "layer_type": "Reshape",
+          "note": "parameter-free tile/pad (NOT a learnable projection)",
+          "param_count": 0,
+          "to_shape": "(B, seq=3, input=2)"
+        },
+        {
+          "bias": true,
+          "gate_order": "i, f, g, o (PyTorch order)",
+          "hidden_size": 2,
+          "input_size": 2,
+          "layer_type": "LSTM_functional",
+          "num_layers": 1,
+          "param_count": 48,
+          "params_pqc_slice": "[0:48] (W_ih 16 + W_hh 16 + b_ih 8 + b_hh 8)"
+        },
+        {
+          "activation": null,
+          "bias": true,
+          "in_features": 2,
+          "layer_type": "Linear",
+          "out_features": 10,
+          "param_count": 30,
+          "params_pqc_slice": "[48:78]"
+        }
+      ],
+      "source_path": "revision/core/models/classical.py:144-212",
+      "total_params": 78
+    },
+    "wgan_mlp": {
+      "carve_strategy": "single nn.Parameter (params_pqc) sliced into per-layer weight/bias views applied via torch.nn.functional",
+      "class": "WGANMLPGenerator",
+      "generator": [
+        {
+          "activation": "tanh",
+          "bias": true,
+          "in_features": 5,
+          "layer_type": "Linear",
+          "out_features": 4,
+          "param_count": 24,
+          "params_pqc_slice": "[0:24]"
+        },
+        {
+          "activation": null,
+          "bias": true,
+          "in_features": 4,
+          "layer_type": "Linear",
+          "out_features": 10,
+          "param_count": 50,
+          "params_pqc_slice": "[24:74]"
+        }
+      ],
+      "source_path": "revision/core/models/classical.py:58-95",
+      "total_params": 74
+    }
+  },
+  "schema": "classical-architectures v1 (Phase 14 plan 14-11)"
+}
