@@ -190,6 +190,13 @@ loop lives in `revision/run_baselines.py` (D-10-13) — **not** in
 \mathcal{L}_{ELBO}(x) = \mathbb{E}_{q_\phi(z|x)}[\log p_\theta(x|z)] - D_{KL}(q_\phi(z|x) \| p(z))
 ```
 
+**Implementation note (Plan 14-13, math-review M-4).** The actual implemented
+loss at `revision/run_baselines.py:315` uses per-element-mean MSE +
+per-element-mean KLD with `β=1`, which is equivalent to a re-weighted ELBO
+with implicit `β ≈ 0.4` vs the canonical formulation above (see §3.x.d for
+the derivation). The comparison numbers in this manuscript use the
+implemented (β=1 per-element-mean) loss consistently across all VAE runs.
+
 ### 2.j. `ar` (non-adversarial baseline)
 
 | Property | Value | Source |
@@ -206,6 +213,12 @@ closed-form (no training loop) at
 ```latex
 x_t = \sum_{k=1}^{p} \phi_k\, x_{t-k} + \varepsilon_t,\quad \varepsilon_t \sim \mathcal{N}(0, \sigma^2);\quad \hat\phi = \arg\min_\phi \|X\phi - y\|_2^2
 ```
+
+**Implementation note (Plan 14-13, math-review M-2).** The residual variance
+estimator at `revision/core/models/nonadversarial.py:157` uses
+`resid.var(ddof=0)` (ML estimator), biased by `(n-p)/n ≈ -0.26%` relative
+to the standard `ddof=p` Yule-Walker estimator for n=777, p=2 (see §3.x.c).
+The convention follows the v1.0 notebook AR baseline; no v2.0 numbers shift.
 
 ### 2.k. Shared WGAN-GP critic
 
@@ -267,6 +280,51 @@ lr_generator (`iqp_sel_55_headline` row).
 VAE uses a single Adam(lr=1e-3) ELBO loop and AR(p) uses closed-form
 `np.linalg.lstsq` — neither participates in the WGAN-GP table above (see
 § 2.i / § 2.j).
+
+### §3.x — Metric conventions (documented per Plan 14-13, math-review remediation)
+
+The following small statistical conventions in `revision/core/` follow the
+v1.0 notebook-parity contract and are PRESERVED under D-14-22
+(revision/core/ byte-freeze). They are documented here for reviewer
+transparency rather than modified.
+
+**(a) `compute_moments`** (cite: `revision/core/eval.py:42-58`). Uses
+population standard deviation `np.std(..., ddof=0)` for the
+per-distribution `moment_std` field. Fisher excess kurtosis is computed
+via `scipy.stats.kurtosis(bias=True)` (biased estimator, matches the v1.0
+notebook). Sample skew is computed via `scipy.stats.skew(bias=True)`
+(likewise biased; matches v1.0). The biased-vs-unbiased choice is
+consistent across all per-distribution moment statistics reported in this
+manuscript.
+
+**(b) `compute_acf`** (cite: `revision/core/eval.py` ACF block). Uses
+`statsmodels.tsa.stattools.acf(s, nlags=20, fft=True)`, which employs the
+biased divisor `n` (rather than the unbiased divisor `n-k` at lag `k`).
+This is the same biased ACF estimator as the v1.0 notebook and is the
+conventional default for Wasserstein-distance inputs in this codebase.
+
+**(c) AR(p) `sigma^2` estimator** (cite:
+`revision/core/models/nonadversarial.py:157`). The residual variance is
+computed as `resid.var(ddof=0)` — the ML (maximum-likelihood) estimator,
+which is biased by a factor of `(n-p)/n` relative to the standard
+`ddof=p` Yule-Walker estimator. For the AR(2) configuration used on the
+777-sample log-return sequence (n=777, p=2), the downward bias is
+`(777-2)/777 - 1 ≈ -0.26%`. The convention is consistent with the v1.0
+notebook AR baseline and is documented here for completeness; no v2.0
+numbers shift.
+
+**(d) VAE ELBO formulation** (cite: `revision/run_baselines.py:315`). The
+implemented loss is a per-element-mean reconstruction MSE plus a
+per-element-mean KL divergence with `β=1` (the standard ELBO formal
+coefficient). Because both terms are PER-ELEMENT MEANS rather than
+PER-WINDOW SUMS, the effective ELBO is re-weighted by the ratio of the
+per-element dimensionality between the two terms; for the 10-step ×
+1-feature windowing convention used in this manuscript, the
+reconstruction term is mean-over-10-elements and the KL term is
+mean-over-4-latent-dimensions, which is equivalent to a canonical
+per-window-sum ELBO with implicit `β ≈ 0.4`. The convention follows the
+v1.0 notebook baseline. The actual loss expression is documented
+alongside the canonical LaTeX in §2.i (VAE).
 
 ---
 
