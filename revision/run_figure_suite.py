@@ -88,6 +88,11 @@ NLAGS = 9  # window length 10 -> max 9 lags + lag 0 (run_dualscale_fidelity:106)
 DATA_CSV = "data.csv"
 MATCHED2000_REL = Path("revision/results/matched2000/runs")
 HEADLINE_REL = Path("revision/results/headline_canonical.json")
+# Plan 14-08 Task 2: render-only matched-2000ep dual-scale side-by-side
+# figure + comparison-table doc are sourced SOLELY from this JSON
+# (Task 1 — the gated single-source-of-truth artifact). Missing JSON is a
+# hard FileNotFoundError, never a silent partial render (D-14-10).
+MATCHED2000_DUALSCALE_REL = Path("revision/results/matched2000_dualscale.json")
 
 # Stable per-model ordering / labels / colours. The 55-param IQP:SEL
 # reproduction is the quantum entrant in every cross-model figure (D-14-04);
@@ -719,6 +724,296 @@ def render_headline_vs_reproduction(repo: Path, od_repro: np.ndarray,
 
 
 # ---------------------------------------------------------------------------
+# Plan 14-08 Task 2: matched-2000ep dual-scale side-by-side figure + table
+# Render-only. SOLE numeric source: revision/results/matched2000_dualscale.json
+# (Task 1). The frozen-checkpoint headline is drawn as a visually distinct
+# series, NEVER merged into the iqp_sel_55_repro reproduction (D-14-10).
+# ---------------------------------------------------------------------------
+# Matched-2000ep models (the 9 sweep entrants). The frozen headline is the
+# 10th DISTINCT row-set, never appended into this list (D-14-10 / T-14-16).
+DUALSCALE_MODEL_ORDER = [
+    "iqp_sel_55_repro",
+    "V1",
+    "V2",
+    "V3",
+    "wgan_mlp",
+    "wgan_cnn",
+    "wgan_lstm",
+    "vae",
+    "ar",
+]
+HEADLINE_KIND = "frozen_checkpoint_headline"
+HEADLINE_SOURCE = "frozen_checkpoint_epoch_1969"
+
+
+def _fmt(v: float) -> str:
+    """Render a numeric value so its textual form appears verbatim in the
+    source JSON the number-provenance gate scans (run_model_info.py:394-406
+    idiom). For dual-scale aggregates (EMD / moments) a fixed-point 4-decimal
+    spelling resolves at the gate's float-value precision since the JSON
+    carries the full-precision value (verified)."""
+    if isinstance(v, bool):
+        return str(v)
+    if isinstance(v, int):
+        return str(v)
+    if isinstance(v, float):
+        return f"{v:.4f}"
+    return str(v)
+
+
+def _agg_lookup(aggs: list[dict], model_kind: str, scale: str,
+                metric_name: str) -> dict | None:
+    """Find the (model, scale, metric) aggregate row from the dual-scale
+    JSON's aggregates[]. Returns None if absent (never fabricates a row)."""
+    for a in aggs:
+        if (a.get("model_kind") == model_kind
+                and a.get("scale") == scale
+                and a.get("metric_name") == metric_name):
+            return a
+    return None
+
+
+def render_matched2000_dualscale_sidebyside(repo: Path,
+                                            figures_dir: Path) -> list[Path]:
+    """Render the matched-2000ep dual-scale side-by-side comparison figure.
+
+    Render-only contract: every plotted value is pulled from
+    ``matched2000_dualscale.json`` (Task 1 — the gated single source of
+    truth). The companion JSON records every plotted (model, scale, metric,
+    mean, std) tuple plus the source artifact path so the figure is
+    independently re-derivable (T-14-17).
+
+    The frozen-checkpoint headline (``frozen_checkpoint_epoch_1969``) is
+    plotted as a visually distinct annotated marker — NEVER merged into the
+    ``iqp_sel_55_repro`` 2000ep reproduction (D-14-10 / T-14-16).
+    """
+    src_path = repo / MATCHED2000_DUALSCALE_REL
+    ds = _load_json(src_path, "matched-2000ep dual-scale (Task 1)")
+    aggs: list[dict] = ds["aggregates"]
+
+    models = DUALSCALE_MODEL_ORDER
+    panels = [
+        ("emd", "EMD (lower is better)"),
+        ("moment_mean", "moment_mean"),
+        ("moment_std", "moment_std"),
+    ]
+    scales = ("OD", "log_return")
+    scale_titles = {"OD": "OD scale", "log_return": "log-return scale"}
+
+    # 3 rows (metric panels) × 2 cols (scales). Each cell is a bar plot of the
+    # 9 matched-2000ep models with mean±std error bars; the frozen-checkpoint
+    # headline is overlaid as a DISTINCT diamond marker + dashed reference
+    # line so it cannot be visually confused with iqp_sel_55_repro (D-14-10).
+    fig, axes = plt.subplots(len(panels), len(scales), figsize=(13, 12))
+    plotted: list[dict] = []
+
+    for ri, (metric, metric_label) in enumerate(panels):
+        for ci, scale in enumerate(scales):
+            ax = axes[ri][ci]
+            x = np.arange(len(models))
+            means = []
+            stds = []
+            present = []
+            for m in models:
+                a = _agg_lookup(aggs, m, scale, metric)
+                if a is None:
+                    continue
+                present.append(m)
+                means.append(float(a["mean"]))
+                stds.append(float(a["std"]))
+                plotted.append({
+                    "model_kind": m, "scale": scale,
+                    "metric_name": metric,
+                    "mean": float(a["mean"]),
+                    "std": float(a["std"]),
+                    "n_seeds": int(a.get("n_seeds", 0)),
+                    "source": a.get("source", ""),
+                })
+            xp = np.arange(len(present))
+            colors = [MODEL_COLORS.get(m, "#0072B2") for m in present]
+            ax.bar(xp, means, yerr=stds, capsize=4, color=colors, alpha=0.85,
+                   label="matched-2000ep models (mean ± std, 5 seeds)")
+            ax.set_xticks(xp)
+            ax.set_xticklabels([MODEL_LABELS.get(m, m) for m in present],
+                               rotation=30, ha="right", fontsize=7)
+
+            # Frozen-checkpoint headline: distinct dashed line + diamond
+            # marker at x=-0.6 so it visually sits OUTSIDE the bar group and
+            # cannot be merged with iqp_sel_55_repro (D-14-10).
+            head = _agg_lookup(aggs, HEADLINE_KIND, scale, metric)
+            if head is not None:
+                hv = float(head["mean"])
+                ax.axhline(hv, color=HEADLINE_COLOR, linestyle="--",
+                           linewidth=1.5, alpha=0.85,
+                           label=HEADLINE_LABEL)
+                ax.scatter([-0.6], [hv], marker="D", s=70,
+                           color=HEADLINE_COLOR, zorder=5,
+                           edgecolors="white", linewidths=0.8)
+                plotted.append({
+                    "model_kind": HEADLINE_KIND, "scale": scale,
+                    "metric_name": metric,
+                    "mean": hv,
+                    "std": float(head["std"]),
+                    "n_seeds": int(head.get("n_seeds", 1)),
+                    "source": head.get("source", HEADLINE_SOURCE),
+                })
+
+            ax.set_xlim(-1.0, len(present) - 0.5)
+            ax.set_ylabel(metric_label)
+            ax.set_title(f"{metric_label} — {scale_titles[scale]}")
+            ax.grid(True, alpha=0.3, axis="y")
+            if ri == 0 and ci == len(scales) - 1:
+                ax.legend(frameon=False, fontsize=7, loc="upper right")
+
+    fig.suptitle(
+        "Matched-2000ep dual-scale comparison (OD vs log-return) — "
+        "quantum (IQP:SEL 55p + V1/V2/V3) vs classical (WGAN-GP × 3, VAE, AR) "
+        "— frozen headline (epoch 1969) is a DISTINCT series (D-14-10)",
+        fontsize=11,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+
+    companion = {
+        "figure": "matched2000_dualscale_sidebyside",
+        "render_only": True,
+        "source_artifact": str(MATCHED2000_DUALSCALE_REL),
+        "source_data_hash": ds.get("data_hash"),
+        "models_matched2000": list(models),
+        "headline_kind": HEADLINE_KIND,
+        "headline_source": HEADLINE_SOURCE,
+        "panels": [m for m, _ in panels],
+        "scales": list(scales),
+        "conflation_guard": (
+            "D-14-10 / T-14-16: frozen-checkpoint headline plotted as a "
+            "DISTINCT dashed reference line + diamond marker; never merged "
+            "into the iqp_sel_55_repro 2000ep reproduction bar."
+        ),
+        "plotted_values": plotted,
+    }
+    return _save(fig, figures_dir, "matched2000_dualscale_sidebyside",
+                 companion)
+
+
+def render_matched2000_dualscale_comparison_table(
+        repo: Path, figures_dir: Path) -> list[Path]:
+    """Emit the copy-paste matched-2000ep dual-scale comparison-table doc.
+
+    Render-only (run_model_info.py:394-406 ``_fmt`` idiom): every cell's
+    textual form is the ``_fmt`` of an aggregate value pulled from
+    ``matched2000_dualscale.json``. No hand-typed numbers. Every numeric
+    literal in the emitted markdown is gated by the existing
+    ``verify_number_provenance.py`` (which auto-covers the new dual-scale
+    JSON via its ``revision/results/*.json`` rglob — no verifier edit).
+
+    The frozen-checkpoint headline is a CLEARLY-LABELLED separate row
+    (model column = "FROZEN headline (epoch 1969)") distinct from
+    ``iqp_sel_55_repro`` (D-14-10).
+    """
+    src_path = repo / MATCHED2000_DUALSCALE_REL
+    ds = _load_json(src_path, "matched-2000ep dual-scale (Task 1)")
+    aggs: list[dict] = ds["aggregates"]
+
+    out_path = figures_dir / "matched2000_dualscale_comparison.md"
+    lines: list[str] = []
+    lines.append(
+        "# Matched-2000ep dual-scale comparison — copy-paste table"
+    )
+    lines.append("")
+    lines.append(
+        "Rendered ENTIRELY from "
+        "`revision/results/matched2000_dualscale.json` by "
+        "`revision/run_figure_suite.py` "
+        "(`render_matched2000_dualscale_comparison_table`). Zero hand-typed "
+        "numbers; every literal traces to that single JSON source of truth "
+        "and passes `revision/verify_number_provenance.py` unmodified."
+    )
+    lines.append("")
+    lines.append(
+        "Quantum entrants (IQP:SEL 55p + ansatz V1/V2/V3) vs classical "
+        "baselines (WGAN-GP × 3, VAE, AR) at the matched 2000-epoch budget. "
+        "The frozen-checkpoint headline is reported as a DISTINCT row "
+        "(source = `frozen_checkpoint_epoch_1969`) and is never merged into "
+        "the iqp_sel_55_repro reproduction row (D-14-10)."
+    )
+    lines.append("")
+    lines.append(
+        "Aggregates are mean over the 5 matched-2000ep seeds (42-46) for the "
+        "9 sweep models; the frozen headline aggregate is a single-generation "
+        "value (no seed variance)."
+    )
+    lines.append("")
+
+    # Two panels (OD, log_return) × the headline metric set most useful for
+    # the side-by-side discussion (EMD + 4 moments). Every cell is _fmt()
+    # of an aggregate pulled from matched2000_dualscale.json.
+    METRICS = [
+        ("emd", "EMD"),
+        ("moment_mean", "moment_mean"),
+        ("moment_std", "moment_std"),
+        ("moment_skewness", "moment_skewness"),
+        ("moment_kurtosis", "moment_kurtosis"),
+    ]
+
+    def _row(label: str, model_kind: str, scale: str) -> str:
+        cells = [label]
+        for metric_name, _ in METRICS:
+            a = _agg_lookup(aggs, model_kind, scale, metric_name)
+            if a is None:
+                cells.append("—")
+                continue
+            mean_s = _fmt(float(a["mean"]))
+            std_s = _fmt(float(a["std"]))
+            n = int(a.get("n_seeds", 0))
+            cells.append(f"{mean_s} ± {std_s} (n={n})")
+        return "| " + " | ".join(cells) + " |"
+
+    # OD-scale table
+    lines.append("## OD-scale aggregates (mean ± std over 5 seeds; n=1 for headline)")
+    lines.append("")
+    header = ["model"] + [lbl for _, lbl in METRICS]
+    lines.append("| " + " | ".join(header) + " |")
+    lines.append("|" + "|".join(["---"] * len(header)) + "|")
+    for m in DUALSCALE_MODEL_ORDER:
+        lines.append(_row(MODEL_LABELS.get(m, m), m, "OD"))
+    lines.append(_row(
+        "FROZEN headline (epoch 1969)", HEADLINE_KIND, "OD"))
+    lines.append("")
+
+    # log-return-scale table
+    lines.append(
+        "## log-return-scale aggregates (mean ± std over 5 seeds; "
+        "n=1 for headline)"
+    )
+    lines.append("")
+    lines.append("| " + " | ".join(header) + " |")
+    lines.append("|" + "|".join(["---"] * len(header)) + "|")
+    for m in DUALSCALE_MODEL_ORDER:
+        lines.append(_row(MODEL_LABELS.get(m, m), m, "log_return"))
+    lines.append(_row(
+        "FROZEN headline (epoch 1969)", HEADLINE_KIND, "log_return"))
+    lines.append("")
+
+    lines.append(
+        "Source: `revision/results/matched2000_dualscale.json` "
+        f"(schema: `{ds.get('schema','')}`)."
+    )
+    lines.append("")
+    lines.append(
+        "Every value above is `_fmt()` of an `aggregates[]` row from that "
+        "JSON (see `revision/run_figure_suite.py` "
+        "`render_matched2000_dualscale_comparison_table`). The "
+        "number-provenance gate "
+        "(`revision/verify_number_provenance.py --target "
+        "revision/results/figures/matched2000_dualscale_comparison.md`) "
+        "auto-covers this doc because its `revision/results/*.json` rglob "
+        "includes the new dual-scale JSON without any verifier edit."
+    )
+
+    out_path.write_text("\n".join(lines))
+    return [out_path]
+
+
+# ---------------------------------------------------------------------------
 # Existing introspection figures (extend, do not overwrite — keep the 3)
 # ---------------------------------------------------------------------------
 def render_existing_introspection(figures_dir: Path) -> list[Path]:
@@ -817,6 +1112,16 @@ def main() -> None:
     written += render_cross_model_emd(repo, figures_dir)
     written += render_headline_vs_reproduction(
         repo, od_by_model["iqp_sel_55_repro"], real_flat, figures_dir
+    )
+
+    # --- Plan 14-08 Task 2: matched-2000ep dual-scale side-by-side render ---
+    # (PNG + PDF + companion JSON + copy-paste comparison.md, sourced SOLELY
+    # from matched2000_dualscale.json; frozen headline visually distinct
+    # from iqp_sel_55_repro — D-14-10. Gated by the existing
+    # verify_number_provenance.py unmodified.)
+    written += render_matched2000_dualscale_sidebyside(repo, figures_dir)
+    written += render_matched2000_dualscale_comparison_table(
+        repo, figures_dir
     )
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
