@@ -1,0 +1,15 @@
+{
+  "captured_at_iso": "2026-05-20T15:53:53.526570Z",
+  "note": "Recorded at methods-doc emit time from the running qgan_env interpreter; revision/requirements.txt carries the >= constraint set, this JSON carries the exact installed pin. Re-emit on environment change.",
+  "packages": {
+    "PyYAML": "6.0.3",
+    "matplotlib": "3.10.7",
+    "numpy": "2.3.4",
+    "pennylane": "0.43.0",
+    "scipy": "1.16.2",
+    "torch": "2.9.0"
+  },
+  "platform": "macOS-26.0.1-arm64-arm-64bit",
+  "python_version": "3.11.14",
+  "schema": "framework-versions v1 (Phase 14 plan 14-11)"
+}
