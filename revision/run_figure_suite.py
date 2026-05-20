@@ -1374,6 +1374,260 @@ def render_tstr_crossmodel(repo: Path, figures_dir: Path) -> list[Path]:
     return _save(fig, figures_dir, "tstr_crossmodel", companion)
 
 
+def render_failure_modes_summary(repo: Path,
+                                 figures_dir: Path) -> list[Path]:
+    """3-row × 9-column failure-mode diagnostic grid (Task 3).
+
+    Columns are the 9 matched-2000ep models ordered by ASCENDING OD EMD
+    (best-on-the-left). Rows:
+      A) OD distribution overlay (numpy histogram over the already-
+         reconstructed OD windows — this is rendering math, NOT metric
+         math; ``revision.core.eval`` is not invoked).
+      B) ACF lag-1 bar (real vs generated) read DIRECTLY from the
+         pre-written ``acf_<model>.json`` companions (14-04 output).
+      C) log_return EMD bar (model mean ± std) read via ``_agg_lookup``
+         from ``matched2000_dualscale.json``; outliers (> Q3 + 1.5*IQR
+         across the 9 values) get a red bar edge.
+
+    The frozen-checkpoint headline (D-14-10) is rendered as ROW-SPANNING
+    dashed reference lines (one per row where applicable) — NEVER merged
+    into the iqp_sel_55_repro column.
+    """
+    # 1) Load aggregates and sort models by ascending OD EMD.
+    ds_path = repo / MATCHED2000_DUALSCALE_REL
+    ds = _load_json(ds_path, "matched2000_dualscale.json (Task 3 source)")
+    aggs: list[dict] = ds["aggregates"]
+
+    od_emd_per_model: dict[str, float] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        a = _agg_lookup(aggs, m, "OD", "emd")
+        if a is None:
+            raise FileNotFoundError(
+                f"[14-10/T3] missing OD/emd aggregate for {m} in "
+                f"matched2000_dualscale.json; the render-only contract "
+                f"requires every model carry an OD-EMD aggregate row."
+            )
+        od_emd_per_model[m] = float(a["mean"])
+    sorted_models = sorted(
+        DUALSCALE_MODEL_ORDER, key=lambda m: od_emd_per_model[m]
+    )
+
+    # 2) Frozen headline references (row-spanning dashed lines).
+    head_OD_emd = None
+    head_logret_emd = None
+    head_OD_mean = None
+    head_a = _agg_lookup(aggs, HEADLINE_KIND, "OD", "emd")
+    if head_a is not None:
+        head_OD_emd = float(head_a["mean"])
+    head_b = _agg_lookup(aggs, HEADLINE_KIND, "log_return", "emd")
+    if head_b is not None:
+        head_logret_emd = float(head_b["mean"])
+    head_m = _agg_lookup(aggs, HEADLINE_KIND, "OD", "moment_mean")
+    if head_m is not None:
+        head_OD_mean = float(head_m["mean"])
+
+    # 3) Per-model log_return EMD (row C source).
+    logret_emd_per_model: dict[str, tuple[float, float]] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        a = _agg_lookup(aggs, m, "log_return", "emd")
+        if a is None:
+            raise FileNotFoundError(
+                f"[14-10/T3] missing log_return/emd aggregate for {m} "
+                f"in matched2000_dualscale.json."
+            )
+        logret_emd_per_model[m] = (float(a["mean"]), float(a["std"]))
+    # Outlier threshold = Q3 + 1.5 * IQR across the 9 models.
+    lr_vals = np.array([logret_emd_per_model[m][0]
+                        for m in DUALSCALE_MODEL_ORDER])
+    q1, q3 = np.percentile(lr_vals, [25, 75])
+    iqr = q3 - q1
+    lr_outlier_thresh = q3 + 1.5 * iqr
+
+    # 4) Load dist_*.json (row A — for summary stats / failure detection)
+    # and acf_*.json (row B — for lag-1 ACF values).
+    dist_records: dict[str, dict] = {}
+    acf_records: dict[str, dict] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        dp = figures_dir / f"dist_{m}.json"
+        ap = figures_dir / f"acf_{m}.json"
+        dist_records[m] = _load_json(dp, f"dist_{m}.json companion")
+        acf_records[m] = _load_json(ap, f"acf_{m}.json companion")
+
+    # 5) Reconstruct per-model OD windows for row A histogram overlay
+    # (numpy histogram is RENDERING math, not metric math — the OD
+    # windows are reconstructed via the verbatim Pipeline-B logic
+    # already in this module).
+    real_refs = _real_references(repo)
+    real_flat = real_refs["real_OD_flat"]
+    od_by_model_local: dict[str, np.ndarray] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        od_by_model_local[m] = reconstruct_od(repo, m, PRIMARY_SEED)
+
+    # 6) Failure thresholds (per the plan).
+    n_models = len(sorted_models)
+    fig = plt.figure(figsize=(2.0 * n_models + 1.5, 8.2))
+    gs = fig.add_gridspec(3, n_models, hspace=0.55, wspace=0.25)
+    per_cell: dict[str, dict] = {}
+
+    # Shared OD-histogram bin grid (best-quality cross-model overlay).
+    od_lo, od_hi = np.percentile(
+        np.concatenate([real_flat,
+                        *(od_by_model_local[m].reshape(-1)
+                          for m in sorted_models)]),
+        [0.5, 99.5],
+    )
+    bins = np.linspace(od_lo, od_hi, 30)
+
+    for ci, m in enumerate(sorted_models):
+        c = MODEL_COLORS.get(m, "#0072B2")
+        # --- Row A: distribution overlay (real grey vs fake colored).
+        axA = fig.add_subplot(gs[0, ci])
+        fake_flat = od_by_model_local[m].reshape(-1)
+        axA.hist(real_flat, bins=bins, density=True, color="#555555",
+                 alpha=0.4, edgecolor="white", linewidth=0.2)
+        axA.hist(fake_flat, bins=bins, density=True, color=c,
+                 alpha=0.55, edgecolor="white", linewidth=0.2)
+        # Row-spanning headline OD mean reference (a vertical dashed line
+        # at the headline's OD moment_mean — distinct from any per-model
+        # column's bar, D-14-10).
+        if head_OD_mean is not None:
+            axA.axvline(head_OD_mean, color=HEADLINE_COLOR,
+                        linestyle="--", linewidth=1.0, alpha=0.5)
+        # Failure: |fake_mean - real_mean| > 0.1*|real_mean|
+        real_mean = float(dist_records[m]["real_mean"])
+        fake_mean = float(dist_records[m]["fake_mean"])
+        is_fail_A = abs(fake_mean - real_mean) > 0.1 * abs(real_mean)
+        if is_fail_A:
+            axA.set_title(MODEL_LABELS.get(m, m), fontsize=7.5,
+                          color="#D7263D")
+            axA.text(0.98, 0.92, "wrong mean", transform=axA.transAxes,
+                     ha="right", va="top", fontsize=7,
+                     color="#D7263D", weight="bold")
+        else:
+            axA.set_title(MODEL_LABELS.get(m, m), fontsize=7.5)
+        axA.tick_params(labelsize=6)
+        if ci == 0:
+            axA.set_ylabel("dist (density)\nreal grey / fake color",
+                           fontsize=7)
+        else:
+            axA.set_yticks([])
+        per_cell[f"distribution_overlay|{m}"] = {
+            "value": fake_mean,
+            "real_mean": real_mean,
+            "is_failure": bool(is_fail_A),
+            "failure_label": "wrong mean" if is_fail_A else None,
+            "source": f"revision/results/figures/dist_{m}.json + "
+                      f"reconstructed OD (PRIMARY_SEED={PRIMARY_SEED})",
+        }
+
+        # --- Row B: ACF lag-1 (real vs generated) bar pair.
+        axB = fig.add_subplot(gs[1, ci])
+        acf_real = float(acf_records[m]["acf_real_OD"][1])
+        acf_fake = float(acf_records[m]["acf_fake_OD"][1])
+        axB.bar([0, 1], [acf_real, acf_fake], color=["#555555", c],
+                width=0.7, alpha=0.85, edgecolor="white", linewidth=0.4)
+        axB.set_xticks([0, 1])
+        axB.set_xticklabels(["real", "fake"], fontsize=6)
+        axB.set_ylim(-0.1, 1.05)
+        axB.axhline(0, color="#888888", linewidth=0.5, alpha=0.5)
+        is_fail_B = abs(acf_fake - acf_real) > 0.5
+        if is_fail_B:
+            axB.text(0.5, 0.92, "ACF-lag1 mismatch",
+                     transform=axB.transAxes, ha="center", va="top",
+                     fontsize=6.5, color="#D7263D", weight="bold")
+        axB.tick_params(labelsize=6)
+        if ci == 0:
+            axB.set_ylabel("ACF lag-1", fontsize=7)
+        else:
+            axB.set_yticks([])
+        per_cell[f"acf_lag1|{m}"] = {
+            "value": acf_fake,
+            "real_value": acf_real,
+            "is_failure": bool(is_fail_B),
+            "failure_label": "ACF-lag1 mismatch" if is_fail_B else None,
+            "source": f"revision/results/figures/acf_{m}.json (lag-1 idx)",
+        }
+
+        # --- Row C: log_return EMD with red outlier edge.
+        axC = fig.add_subplot(gs[2, ci])
+        lr_mean, lr_std = logret_emd_per_model[m]
+        is_fail_C = lr_mean > lr_outlier_thresh
+        edge_kw = dict(edgecolor=("#D7263D" if is_fail_C else "white"),
+                       linewidth=(1.6 if is_fail_C else 0.4))
+        axC.bar([0], [lr_mean], yerr=[lr_std], capsize=3, color=c,
+                width=0.6, alpha=0.85, **edge_kw)
+        # Row-spanning headline log_return EMD reference (D-14-10).
+        if head_logret_emd is not None:
+            axC.axhline(head_logret_emd, color=HEADLINE_COLOR,
+                        linestyle="--", linewidth=1.0, alpha=0.55)
+        axC.set_xticks([])
+        axC.tick_params(labelsize=6)
+        if is_fail_C:
+            axC.text(0.5, 0.92, "log_ret blowup",
+                     transform=axC.transAxes, ha="center", va="top",
+                     fontsize=6.5, color="#D7263D", weight="bold")
+        if ci == 0:
+            axC.set_ylabel("log_return EMD\n(mean ± std)", fontsize=7)
+        per_cell[f"log_return_emd|{m}"] = {
+            "value": lr_mean,
+            "std": lr_std,
+            "is_failure": bool(is_fail_C),
+            "failure_label": "log_ret blowup" if is_fail_C else None,
+            "outlier_threshold": float(lr_outlier_thresh),
+            "source": "revision/results/matched2000_dualscale.json "
+                      "(log_return/emd aggregate)",
+        }
+
+    fig.suptitle(
+        "Failure-mode triage at a glance — 9 matched-2000ep models "
+        "ordered by ascending OD EMD; rows: (A) OD dist overlay, "
+        "(B) ACF lag-1 vs real, (C) log_return EMD (red-edged outliers). "
+        "Frozen headline (epoch 1969) shown as row-spanning dashed "
+        "reference lines — DISTINCT from iqp_sel_55_repro column "
+        "(D-14-10).",
+        fontsize=10,
+    )
+
+    companion = {
+        "figure": "failure_modes_summary",
+        "render_only": True,
+        "source_artifacts": [
+            "revision/results/matched2000_dualscale.json",
+            "revision/results/figures/dist_<model>.json (×9)",
+            "revision/results/figures/acf_<model>.json (×9)",
+        ],
+        "models_ordered_by_OD_emd_ascending": list(sorted_models),
+        "OD_emd_per_model": {m: float(od_emd_per_model[m])
+                              for m in sorted_models},
+        "rows": ["distribution_overlay", "acf_lag1", "log_return_emd"],
+        "per_cell": per_cell,
+        "log_return_outlier_threshold_iqr": float(lr_outlier_thresh),
+        "frozen_headline_references": {
+            "OD_moment_mean": head_OD_mean,
+            "OD_emd": head_OD_emd,
+            "log_return_emd": head_logret_emd,
+            "source": "frozen_checkpoint_epoch_1969",
+            "conflation_guard": (
+                "D-14-10: headline shown as row-spanning dashed reference "
+                "lines (vertical in row A at OD moment_mean, horizontal "
+                "in row C at log_return EMD), never merged into the "
+                "iqp_sel_55_repro column."
+            ),
+        },
+        "caption_note": (
+            "Failure-mode triage at a glance. Columns are the 9 "
+            "matched-2000ep models in ascending OD EMD; rows are "
+            "(a) OD distribution overlay (real grey, fake color), "
+            "(b) ACF lag-1 vs real, (c) log_return EMD with red-edged "
+            "outliers (> Q3+1.5*IQR). Failure annotations are based on "
+            "natural thresholds: |fake_mean - real_mean| > 0.1*|real_mean| "
+            "(row A), |ACF_fake[1] - ACF_real[1]| > 0.5 (row B), "
+            "log_return EMD > Q3+1.5*IQR (row C)."
+        ),
+    }
+    return _save(fig, figures_dir, "failure_modes_summary", companion)
+
+
 # ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
@@ -1467,6 +1721,7 @@ def main() -> None:
     # could appear (D-14-10). revision/core/ stays byte-frozen (D-14-22).
     written += render_training_convergence_all_models(repo, figures_dir)
     written += render_tstr_crossmodel(repo, figures_dir)
+    written += render_failure_modes_summary(repo, figures_dir)
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
     written += render_existing_introspection(figures_dir)
