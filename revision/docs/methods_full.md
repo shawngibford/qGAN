@@ -279,6 +279,13 @@ VAE uses a single Adam(lr=1e-3) ELBO loop and AR(p) uses closed-form
 is the exact installed pin captured at methods-doc emit time via
 `importlib.metadata.version(...)`. Re-emit on environment change.
 
+The resubmission-canonical environment is committed at
+`revision/requirements-pinned.txt` (Phase 14 plan 14-13, Task 1) with exact
+`==` pins for every package recorded in
+`revision/results/framework_versions.json`; reviewers can rerun the pipeline
+against this exact environment with
+`python -m venv qgan_env && pip install -r revision/requirements-pinned.txt`.
+
 **`dtype_params` ≠ `dtype_samples`.** Trainable parameters live in
 `torch.float32` for every model (every `nn.Parameter` in
 `revision/core/models/classical.py` is constructed with
@@ -314,7 +321,14 @@ fields are DISTINCT and MUST NOT be conflated — see § 6(b).
 
 Seeds are set ONCE at the top of `train_wgan_gp` before optimizer/data
 construction (`revision/core/training.py:244-249`). The same seed produces
-bit-identical training trajectories on the same device/dtype path.
+trajectories that agree to ~1e-6 EMD on the same CPU+BLAS+pinned-pip-freeze
+stack (`revision/requirements-pinned.txt`); bit-determinism would require
+`torch.use_deterministic_algorithms(True)` which is not set in the
+byte-frozen `revision/core/training.py` (D-14-22). The pinned-env +
+tracked-checkpoint contract (`revision/checkpoints/best_checkpoint.pt`,
+sha256 = `f7cceb52…` per `canonical_config_lock.json#checkpoint_sha256`)
+delivers reproducibility-within-numerical-tolerance, not bit-determinism
+(Plan 14-13, METHODS-HIGH-1 remediation).
 
 ### 5.2. Exact rerun command (verbatim)
 
