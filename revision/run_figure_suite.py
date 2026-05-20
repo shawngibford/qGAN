@@ -1808,6 +1808,154 @@ def render_param_efficiency_pareto(repo: Path,
     return _save(fig, figures_dir, "param_efficiency_pareto", companion)
 
 
+def render_seed_variance_per_model(repo: Path,
+                                   figures_dir: Path) -> list[Path]:
+    """3×3 facet grid of per-seed EMD trajectories per model (Task 5).
+
+    Render-only over the 35 audited
+    ``matched2000/runs/<adversarial>/<seed>/metrics.json`` per-run files.
+    Each adversarial panel shows the 5 per-seed emd_avg lines (light) +
+    the across-seed mean (bold). VAE and AR panels carry an explicit
+    "no eval-epoch trajectory" caption — NEVER fabricated.
+
+    Spread label per adversarial panel (tight / moderate / noisy)
+    derived from the across-seed std of the FINAL eval step's EMD value
+    (< 5% of mean = tight, 5-15% = moderate, > 15% = noisy).
+    """
+    # Panel layout MODEL_ORDER row-major (3 rows × 3 cols).
+    panel_order = list(MODEL_ORDER)  # 9 entries; row-major fill
+
+    # Load the 7 adversarial models' 5-seed emd_avg stacks.
+    per_model_seeds: dict[str, np.ndarray] = {}
+    for m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
+        stack = []
+        for s in SEEDS:
+            j = _load_json(
+                _run_dir(repo, m, s) / "metrics.json",
+                f"{m}/{s} metrics for seed-variance",
+            )
+            if "emd_avg" not in j:
+                raise FileNotFoundError(
+                    f"[14-10/T5] {m}/{s} missing emd_avg."
+                )
+            arr = np.asarray(j["emd_avg"], dtype=float)
+            stack.append(arr)
+        per_model_seeds[m] = np.stack(stack, axis=0)
+
+    epochs = np.arange(per_model_seeds[
+        ADVERSARIAL_MODELS_WITH_EMD_AVG[0]
+    ].shape[1]) * 10  # eval every 10 epochs
+
+    # Shared y-range across adversarial panels for fair visual comparison.
+    all_vals = np.concatenate(
+        [per_model_seeds[m].reshape(-1)
+         for m in ADVERSARIAL_MODELS_WITH_EMD_AVG]
+    )
+    y_lo = max(1e-3, float(all_vals[all_vals > 0].min() * 0.85))
+    y_hi = float(all_vals.max() * 1.15)
+
+    fig, axes = plt.subplots(3, 3, figsize=(15, 10), sharex=True)
+    per_model_final_emd_mean: dict[str, float] = {}
+    per_model_final_emd_std: dict[str, float] = {}
+    per_model_spread_label: dict[str, str] = {}
+
+    def _spread_label(mean_v: float, std_v: float) -> str:
+        if mean_v <= 0:
+            return "moderate"
+        ratio = std_v / mean_v
+        if ratio < 0.05:
+            return "tight"
+        if ratio < 0.15:
+            return "moderate"
+        return "noisy"
+
+    for idx, m in enumerate(panel_order):
+        r, c = divmod(idx, 3)
+        ax = axes[r][c]
+        if m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
+            stack = per_model_seeds[m]  # (5, 201)
+            col = MODEL_COLORS.get(m, "#0072B2")
+            for si in range(stack.shape[0]):
+                ax.plot(epochs, stack[si], color=col, alpha=0.35,
+                        linewidth=1.0)
+            mean_curve = stack.mean(axis=0)
+            ax.plot(epochs, mean_curve, color=col, alpha=1.0,
+                    linewidth=2.2, label="mean over 5 seeds")
+            ax.set_yscale("log")
+            ax.set_ylim(y_lo, y_hi)
+            ax.grid(True, alpha=0.3, which="both")
+            ax.set_title(MODEL_LABELS.get(m, m), fontsize=9)
+            ax.tick_params(labelsize=7)
+            # Final-step spread
+            final_vals = stack[:, -1]
+            final_mean = float(final_vals.mean())
+            final_std = float(final_vals.std())
+            per_model_final_emd_mean[m] = final_mean
+            per_model_final_emd_std[m] = final_std
+            label = _spread_label(final_mean, final_std)
+            per_model_spread_label[m] = label
+            ax.text(0.98, 0.04, f"5-seed spread: {label}",
+                    transform=ax.transAxes, ha="right", va="bottom",
+                    fontsize=7, color="#222222",
+                    bbox=dict(boxstyle="round,pad=0.2", fc="white",
+                              ec="#888888", alpha=0.85))
+        else:
+            # VAE / AR — no emd_avg trajectory; honest "no curve" panel.
+            ax.set_title(MODEL_LABELS.get(m, m), fontsize=9)
+            ax.set_yscale("log")
+            ax.set_ylim(y_lo, y_hi)
+            ax.grid(True, alpha=0.3, which="both")
+            note = ("VAE — no emd_avg eval trajectory (ELBO loop)"
+                    if m == "vae"
+                    else "AR — closed-form, no training curve")
+            ax.text(0.5, 0.5, note, transform=ax.transAxes,
+                    ha="center", va="center", fontsize=9,
+                    color="#882255",
+                    bbox=dict(boxstyle="round,pad=0.4", fc="#FFF6F0",
+                              ec="#882255", alpha=0.92))
+        if r == 2:
+            ax.set_xlabel("epoch (eval_step × 10)")
+        if c == 0:
+            ax.set_ylabel("EMD (avg / eval window, OD scale)")
+
+    fig.suptitle(
+        "Per-model 5-seed EMD trajectories (light) + mean (bold) — "
+        "matched-2000ep budget. Quantum cluster (IQP:SEL 55p + V1/V2/V3) "
+        "shows tight seed agreement; wgan_cnn is noisier across seeds. "
+        "VAE/AR have no eval-epoch trajectory (ELBO loop / closed-form fit).",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+
+    companion = {
+        "figure": "seed_variance_per_model",
+        "render_only": True,
+        "source_artifacts": [
+            f"revision/results/matched2000/runs/<{','.join(ADVERSARIAL_MODELS_WITH_EMD_AVG)}>/"
+            f"<{','.join(str(s) for s in SEEDS)}>/metrics.json (×35)",
+        ],
+        "panel_layout_row_major": list(panel_order),
+        "adversarial_panels": list(ADVERSARIAL_MODELS_WITH_EMD_AVG),
+        "no_trajectory_panels": list(MODELS_NO_TRAJECTORY),
+        "seeds": list(SEEDS),
+        "per_model_final_emd_mean": per_model_final_emd_mean,
+        "per_model_final_emd_std": per_model_final_emd_std,
+        "per_model_spread_label": per_model_spread_label,
+        "spread_label_thresholds": {
+            "tight": "std / mean < 5%",
+            "moderate": "5% <= std / mean < 15%",
+            "noisy": "std / mean >= 15%",
+        },
+        "caption_note": (
+            "Per-model 5-seed EMD-vs-epoch trajectories (light) with mean "
+            "(bold). Quantum cluster (IQP:SEL 55p + V1/V2/V3) shows tight "
+            "seed agreement; wgan_cnn is noisier across seeds; VAE/AR "
+            "have no eval-epoch trajectory (ELBO loop / closed-form fit)."
+        ),
+    }
+    return _save(fig, figures_dir, "seed_variance_per_model", companion)
+
+
 # ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
@@ -1903,6 +2051,7 @@ def main() -> None:
     written += render_tstr_crossmodel(repo, figures_dir)
     written += render_failure_modes_summary(repo, figures_dir)
     written += render_param_efficiency_pareto(repo, figures_dir)
+    written += render_seed_variance_per_model(repo, figures_dir)
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
     written += render_existing_introspection(figures_dir)
