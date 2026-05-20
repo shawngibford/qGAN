@@ -79,3 +79,107 @@ The headline 55-parameter IQP:SEL quantum entrant is the frozen best-EMD
 checkpoint (`revision/results/headline_canonical.json`); its matched-budget
 reproduction is a distinct record (`revision/results/model_info.json`,
 D-14-10) and the two are never conflated.
+
+---
+
+## Completeness sweep (Plans 14-09 .. 14-11)
+
+Plans 14-09 (circuit-architecture diagrams + V1/V2/V3 config locks +
+`revision/docs/circuit_atlas.md`), 14-10 (7 story-completeness figures),
+and 14-11 (paper-ready Methods document + classical-architecture extraction
++ pinned framework versions) close the remaining reviewer-facing gaps
+identified in the major-issues and minor-issues tables above. This
+subsection is an explicit audit: for each reviewer concern these three
+plans bear on, the artifact path that closes it and the plan that emitted
+it.
+
+### R1-M4 — Incomplete optimization / training details — RESOLVED by Plan 14-11
+
+The full Training Protocol (optimizer / lr / betas / n_critic / lambda_gp /
+batch / epochs / early-stop), the analytic-statevector backend statement,
+the determinism contract (file:line citations for torch.manual_seed,
+np.random.seed, random.seed), and the verbatim rerun command template are
+consolidated in `revision/docs/methods_full.md` §3 (Training) + §4
+(Hardware & Software) + §5 (Reproducibility), rendered from
+`revision/results/methods_full.json` +
+`revision/results/framework_versions.json` + the five config-lock JSONs
+(Plan 14-11). The shot-noise sensitivity and multi-seed mean ± std
+components of R1-M4 are additionally rendered as figures in Plan 14-10:
+`revision/results/figures/shot_noise_robustness.{png,pdf}` (source =
+`revision/results/shot_noise_sensitivity.json`),
+`revision/results/figures/seed_variance_per_model.{png,pdf}` (source = 45
+per-run metrics.json), and `revision/results/figures/training_convergence_all_models.{png,pdf}`
+(source = 45 per-run metrics.json + `revision/results/headline_canonical.json`).
+R1-M4 is hereby marked **RESOLVED**.
+
+### R2-5b — Why this particular circuit / architecture? — strengthened by Plan 14-09
+
+The Circuit Design Rationale subsection (PAPER-03) is now visually
+grounded by five `qml.draw_mpl` architecture diagrams at
+`revision/results/figures/circuits/{default_75,iqp_sel_55,V1,V2,V3}.{png,pdf}`
+and the copy-paste-ready spec-table atlas at
+`revision/docs/circuit_atlas.md` (Plan 14-09). Every numeric literal in
+the atlas resolves to one of the five config-lock JSONs
+(`revision/results/canonical_config_lock.json`,
+`revision/results/default_75_config_lock.json`,
+`revision/results/v1_config_lock.json`, `revision/results/v2_config_lock.json`,
+`revision/results/v3_config_lock.json`) and is gated by
+`revision/verify_number_provenance.py` unmodified.
+
+### R1-M2 — Utility-oriented tests — strengthened by Plan 14-10
+
+The TSTR cross-model bars are now rendered at
+`revision/results/figures/tstr_crossmodel.{png,pdf}` (source =
+`revision/results/tstr.json`; negative R² plotted honestly per the
+companion JSON's `caption_note`). The per-model failure-mode diagnostic
+grid (distribution overlay × ACF lag-1 × log-return EMD across 9 models,
+ordered by ascending OD EMD) is rendered at
+`revision/results/figures/failure_modes_summary.{png,pdf}` (source =
+`revision/results/matched2000_dualscale.json` + per-model dist/acf
+companion JSONs). Both close the "utility-oriented" gap by visualizing
+the previously-unconsumed `tstr.json` and the cross-model fidelity
+structure.
+
+### R2-1 / R1-M4 — Backend statement (analytic statevector vs shot noise) — strengthened by Plan 14-10
+
+The noise-model sensitivity (depolarizing + amplitude-damping channels,
+per-layer insertion) is rendered at
+`revision/results/figures/noise_robustness_quantum.{png,pdf}` (source =
+`revision/results/noise_model_sensitivity.json`). The shot-noise
+sensitivity (analytic-statevector baseline + finite-shot regimes) is
+rendered at `revision/results/figures/shot_noise_robustness.{png,pdf}`
+(source = `revision/results/shot_noise_sensitivity.json`). Both consume
+previously-unconsumed audited JSONs and make the analytic-vs-shot-noise
+backend statement empirically grounded.
+
+### PAPER-01 / R2-1 — Parameter-matched comparison — strengthened by Plan 14-10
+
+The parameter-matched comparison hypothesis (PAPER-01) is rendered as a
+visual companion at `revision/results/figures/param_efficiency_pareto.{png,pdf}`
+(source = `revision/results/model_info.json` (n_params per model) +
+`revision/results/matched2000_dualscale.json` (EMD mean ± std per scale)).
+The frozen-checkpoint headline (D-14-10) appears as a visually distinct
+marker; the iqp_sel_55_repro matched-budget reproduction and V1/V2/V3
+ansatz variants appear as separate points so the headline-vs-repro
+distinction is unambiguous on inspection.
+
+### PAPER-08 / R1-m2 — Dataset details in Methods — strengthened by Plan 14-11
+
+The dataset paragraph in PAPER-08 (rendered from
+`revision/results/model_info.json`) is now cross-referenced from the
+consolidated `revision/docs/methods_full.md` §1 (Dataset), which also
+renders the model registry (§2), training protocol (§3), hardware &
+software (§4), reproducibility (§5), and the two documented
+contradictions (default_75 vs iqp_sel_55; dtype_params vs dtype_samples)
+explicitly addressed in §6 (Plan 14-11).
+
+### Cross-cutting — Audited JSON corpus extension
+
+Plans 14-09 / 14-10 / 14-11 collectively added the following new audited
+JSONs to the `revision/results/*.json` rglob corpus of
+`revision/verify_number_provenance.py` (gate unmodified, D-14-16):
+`default_75_config_lock.json`, `v1_config_lock.json`, `v2_config_lock.json`,
+`v3_config_lock.json` (Plan 14-09); 7 figure companion JSONs (Plan 14-10);
+`classical_architectures.json`, `framework_versions.json`, `methods_full.json`
+(Plan 14-11). The full per-artifact manifest is at
+`revision/docs/completeness_sweep_manifest.md` (this plan).

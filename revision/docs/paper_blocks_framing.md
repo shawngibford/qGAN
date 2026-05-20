@@ -132,6 +132,19 @@ Third, our empirical validation on a single real-world photobioreactor cultivati
   dropped from this sentence (it remains reported in Section 4); **no numeric
   literal in the AFTER block.**
 
+### PAPER-02b — Visual companion (Plan 14-10, additive footnote)
+
+> **Visual companion (Plan 14-10).** The parameter-matched comparison
+> stated in this paragraph is rendered as a parameter-efficiency Pareto
+> scatter at `revision/results/figures/param_efficiency_pareto.{png,pdf}`
+> (companion JSON `param_efficiency_pareto.json`; source =
+> `revision/results/model_info.json` (n_params per model) +
+> `revision/results/matched2000_dualscale.json` (EMD mean±std per scale)).
+> The frozen-checkpoint headline (D-14-10) appears as a visually distinct
+> marker; the iqp_sel_55_repro matched-budget reproduction and the V1/V2/V3
+> ansatz variants appear as separate points in the same scatter so the
+> headline-vs-repro distinction is unambiguous on inspection.
+
 ## PAPER-02c — "industrial bioprocess engineering" (Concluding Remarks)
 
 - **Target:** `main (4) copy.tex`
@@ -453,6 +466,36 @@ circuit.
   field. The trainability conclusion is stated qualitatively in the direction
   the matched-budget sweep actually fell (D-14-20), so no non-resolving
   rounded EMD mean is introduced into the manuscript body.
+
+### PAPER-03 — Companion artifact atlas (Plan 14-09, additive)
+
+> The five production quantum circuits cited in the AFTER block above are
+> rendered as PennyLane `qml.draw_mpl` architecture diagrams under
+> `revision/results/figures/circuits/`. Reviewers can audit the
+> architecture-vs-claim correspondence directly:
+>
+> - `default_75` — `revision/results/figures/circuits/default_75.{png,pdf}`
+>   (companion JSON `default_75.json`; spec lock
+>   `revision/results/default_75_config_lock.json`)
+> - `iqp_sel_55` — `revision/results/figures/circuits/iqp_sel_55.{png,pdf}`
+>   (companion JSON `iqp_sel_55.json`; spec lock
+>   `revision/results/canonical_config_lock.json`; frozen checkpoint epoch
+>   1969 per Plan 14-01)
+> - `V1` — `revision/results/figures/circuits/V1.{png,pdf}` (companion JSON
+>   `V1.json`; spec lock `revision/results/v1_config_lock.json`)
+> - `V2` — `revision/results/figures/circuits/V2.{png,pdf}` (companion JSON
+>   `V2.json`; spec lock `revision/results/v2_config_lock.json`)
+> - `V3` — `revision/results/figures/circuits/V3.{png,pdf}` (companion JSON
+>   `V3.json`; spec lock `revision/results/v3_config_lock.json`)
+>
+> The full per-circuit spec tables, cross-comparison, and provenance footer
+> are consolidated in `revision/docs/circuit_atlas.md` (PAPER-03 atlas,
+> Plan 14-09). Every numeric literal in the atlas — and every numeric
+> literal in the AFTER block above — resolves to one of the five
+> config-lock JSONs (`canonical_config_lock.json`,
+> `default_75_config_lock.json`, `v1_config_lock.json`,
+> `v2_config_lock.json`, `v3_config_lock.json`) and is gated by
+> `revision/verify_number_provenance.py` unmodified.
 
 ---
 
