@@ -38,6 +38,7 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -93,6 +94,11 @@ HEADLINE_REL = Path("revision/results/headline_canonical.json")
 # (Task 1 — the gated single-source-of-truth artifact). Missing JSON is a
 # hard FileNotFoundError, never a silent partial render (D-14-10).
 MATCHED2000_DUALSCALE_REL = Path("revision/results/matched2000_dualscale.json")
+# Plan 14-13 Task 4 (MD-3): canonical config lock — drives the lock-driven
+# replacement of the hardcoded `head_epoch != 1969` assertion in
+# render_training_convergence_all_models. Loaded once at module init so
+# every consumer reads the same lock-snapshot.
+CANONICAL_LOCK_REL = Path("revision/results/canonical_config_lock.json")
 
 # Stable per-model ordering / labels / colours. The 55-param IQP:SEL
 # reproduction is the quantum entrant in every cross-model figure (D-14-04);
@@ -168,6 +174,57 @@ def _require(path: Path, what: str) -> Path:
     return path
 
 
+def _finite_sanitize(obj, _stats=None):
+    """Plan 14-13 Task 4 (HI-8 mirror): convert non-finite floats to None
+    rather than letting json.dumps(default=float) emit literal `NaN` /
+    `Infinity` tokens (which are invalid JSON per the spec and cause
+    downstream parser failures). Tracks non-finite frequency for the
+    explicit-raise check in `_dumps_finite`.
+    """
+    import math
+    if _stats is None:
+        _stats = {"total": 0, "nonfinite": 0}
+    if isinstance(obj, dict):
+        return {k: _finite_sanitize(v, _stats) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_finite_sanitize(v, _stats) for v in obj]
+    if isinstance(obj, tuple):
+        return [_finite_sanitize(v, _stats) for v in obj]
+    if isinstance(obj, float):
+        _stats["total"] += 1
+        if not math.isfinite(obj):
+            _stats["nonfinite"] += 1
+            return None
+        return obj
+    if isinstance(obj, (int, bool, str)) or obj is None:
+        return obj
+    try:
+        v = float(obj)
+        _stats["total"] += 1
+        if not math.isfinite(v):
+            _stats["nonfinite"] += 1
+            return None
+        return v
+    except (TypeError, ValueError):
+        return str(obj)
+
+
+def _dumps_finite(obj, *, indent: int = 1, nonfinite_threshold: float = 0.05) -> str:
+    """json.dumps wrapper using _finite_sanitize (HI-8 mirror)."""
+    stats = {"total": 0, "nonfinite": 0}
+    sanitized = _finite_sanitize(obj, stats)
+    if stats["total"] > 0:
+        frac = stats["nonfinite"] / stats["total"]
+        if frac > nonfinite_threshold:
+            raise AssertionError(
+                f"_dumps_finite: {stats['nonfinite']} of {stats['total']} "
+                f"numeric leaves are non-finite ({frac:.1%} > "
+                f"{nonfinite_threshold:.0%}); refusing to emit a corpus "
+                "of Nones (HI-8 mirror, Plan 14-13 Task 4)"
+            )
+    return json.dumps(sanitized, indent=indent)
+
+
 def _load_json(path: Path, what: str) -> dict:
     """Load a companion/source JSON, failing loudly if absent (T-14-10)."""
     _require(path, what)
@@ -188,7 +245,8 @@ def _save(fig: plt.Figure, figures_dir: Path, stem: str,
         written.append(out)
     plt.close(fig)
     jpath = figures_dir / f"{stem}.json"
-    jpath.write_text(json.dumps(companion, indent=1, default=float))
+    # Plan 14-13 Task 4 (HI-8 mirror): _finite_sanitize replaces default=float.
+    jpath.write_text(_dumps_finite(companion, indent=1))
     written.append(jpath)
     return written
 
@@ -378,8 +436,21 @@ def render_qq_plot(model: str, od: np.ndarray, real_flat: np.ndarray,
 def render_time_series_comparison(model: str, od: np.ndarray,
                                   real_windowed: np.ndarray,
                                   figures_dir: Path) -> list[Path]:
-    """Sample OD-trajectory windows: real vs generated, side by side."""
-    rng = np.random.default_rng(model.__hash__() & 0xFFFF)
+    """Sample OD-trajectory windows: real vs generated, side by side.
+
+    Plan 14-13 Task 5 (CR-1): The seed is now SHA-256-of-model-name (first
+    8 hex chars → uint32) instead of the previously-used Python string-hash
+    expression (which was seeded per-interpreter via PYTHONHASHSEED, so
+    successive invocations of run_figure_suite.py produced DIFFERENT
+    real_window_idx / fake_window_idx values for the same model — the
+    timeseries figures were silently non-deterministic across reruns).
+    SHA-256 of the model name string is deterministic across processes /
+    interpreters / machines and yields the same indices every time.
+    """
+    # CR-1 deterministic seed: SHA-256 hex digest of model name, take first
+    # 8 hex chars (32-bit) as the RNG seed.
+    seed = int(hashlib.sha256(model.encode()).hexdigest()[:8], 16)
+    rng = np.random.default_rng(seed)
     n_show = min(8, od.shape[0], real_windowed.shape[0])
     ridx = rng.choice(real_windowed.shape[0], n_show, replace=False)
     fidx = rng.choice(od.shape[0], n_show, replace=False)
@@ -611,27 +682,43 @@ def render_cross_model_distribution(od_by_model: dict, real_flat: np.ndarray,
 
 
 def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
-    """Cross-model final-EMD bar with seed spread + the FROZEN headline.
+    """Cross-model final-eval EMD (OD scale) bar with seed spread + headline.
+
+    Plan 14-13 Task 3 rebuild (CR-2 / C-2 resolution):
+    - Source per-seed EMD from `matched2000_dualscale.json#rows` filtered to
+      `metric_name=emd, scale=OD` (audited OD-scale aggregate basis) — NOT
+      `np.min(metrics.json["emd_avg"])` over the 201-point log-return
+      training trajectory (the v1 selection bias + scale-collision).
+    - Aggregate as `mean ± std (ddof=1, sample std)` over seeds 42-46.
+    - Headline reference line on the SAME OD scale.
+    - "best EMD" framing dropped — title/axis/companion describe the figure
+      as a final-eval EMD on the OD scale, mean over the 5-seed set.
 
     The FROZEN-checkpoint headline EMD (epoch 1969) is drawn as a distinct
     annotated reference line, NEVER merged into the reproduction bar
     (D-14-10 / T-14-12).
     """
     models = MODEL_ORDER
+    # Source the per-seed OD-scale EMD from the audited dualscale rows.
+    dual = _load_json(
+        repo / "revision/results/matched2000_dualscale.json", "dualscale"
+    )
+    per_seed: dict[str, list[float]] = {m: [] for m in models}
+    for r in dual.get("rows", []):
+        if r.get("metric_name") != "emd" or r.get("scale") != "OD":
+            continue
+        mk = r.get("model_kind")
+        v = r.get("value")
+        if mk in per_seed and isinstance(v, (int, float)):
+            per_seed[mk].append(float(v))
     means, stds, present = [], [], []
     for m in models:
-        finals = []
-        for s in SEEDS:
-            mt_path = _run_dir(repo, m, s) / "metrics.json"
-            if not mt_path.exists():
-                continue
-            mt = json.loads(mt_path.read_text())
-            if "emd_avg" in mt and len(mt["emd_avg"]):
-                finals.append(float(np.min(mt["emd_avg"])))
+        finals = per_seed.get(m, [])
         if finals:
             present.append(m)
             means.append(float(np.mean(finals)))
-            stds.append(float(np.std(finals)))
+            # ddof=1 sample std (Plan 14-13 H-2 remediation)
+            stds.append(float(np.std(finals, ddof=1)))
     fig, ax = plt.subplots(figsize=(9, 5))
     x = np.arange(len(present))
     ax.bar(x, means, yerr=stds, capsize=4,
@@ -640,8 +727,10 @@ def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
     ax.set_xticks(x)
     ax.set_xticklabels([MODEL_LABELS.get(m, m) for m in present],
                        rotation=30, ha="right", fontsize=8)
-    ax.set_ylabel("best EMD over training (mean ± std over 5 seeds)")
-    ax.set_title("Cross-model EMD (2000ep matched budget)")
+    ax.set_ylabel(
+        "final-eval EMD (OD scale, mean ± sample std over 5 seeds)"
+    )
+    ax.set_title("Cross-model final-eval EMD (OD scale, 2000ep matched budget)")
     # FROZEN headline reference line — distinctly labelled (D-14-10).
     headline = _load_json(repo / HEADLINE_REL, "frozen headline")
     od_emd = next(
@@ -658,12 +747,23 @@ def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
     companion = {
         "figure": "cross_model_emd",
         "models": present,
-        "best_emd_mean": means,
-        "best_emd_std": stds,
+        "final_eval_emd_mean_OD": means,
+        "final_eval_emd_std_OD": stds,
+        "n_seeds": [len(per_seed.get(m, [])) for m in present],
         "frozen_headline_OD_emd": od_emd,
         "headline_source": "headline_canonical.json (source=frozen_"
                             "checkpoint_epoch_1969) — distinct from the "
                             "iqp_sel_55_repro 2000ep reproduction (D-14-10)",
+        "source": (
+            "matched2000_dualscale.json#rows filtered to "
+            "metric_name=emd, scale=OD (audited per-seed OD-scale EMD); "
+            "aggregation mean ± sample std (ddof=1) over seeds 42-46"
+        ),
+        "caption": (
+            "OD scale, final-eval mean ± std over 5 seeds 42-46; frozen "
+            "headline reference line on the same scale "
+            "(Plan 14-13 Task 3, CR-2 / C-2 resolution)"
+        ),
         "render_only": True,
     }
     return _save(fig, figures_dir, "cross_model_emd", companion)
@@ -1114,10 +1214,19 @@ def render_training_convergence_all_models(repo: Path,
         repo / HEADLINE_REL, "headline_canonical for training-convergence")
     head_epoch = int(head["checkpoint_epoch"])
     head_emd = float(head["checkpoint_emd"])
-    if head_epoch != 1969:
+    # Plan 14-13 Task 4 (MD-3): lock-driven head_epoch check. Read the
+    # canonical_config_lock.json's checkpoint_epoch once and assert
+    # equality rather than hardcoding `1969`. If the lock's checkpoint_epoch
+    # rolls forward in a future revision, this assertion follows the lock
+    # automatically.
+    _lock = _load_json(
+        repo / CANONICAL_LOCK_REL, "canonical_config_lock for MD-3 lock-driven head_epoch")
+    _lock_epoch = int(_lock["checkpoint_epoch"])
+    if head_epoch != _lock_epoch:
         raise ValueError(
             f"[14-10/T1] headline_canonical.checkpoint_epoch={head_epoch}, "
-            f"expected 1969 (frozen_checkpoint_epoch_1969)."
+            f"expected {_lock_epoch} (canonical_config_lock.json checkpoint_epoch, "
+            "Plan 14-13 Task 4 MD-3 lock-driven check)."
         )
 
     fig, ax = plt.subplots(figsize=(10, 6.5))
@@ -1126,7 +1235,8 @@ def render_training_convergence_all_models(repo: Path,
     for m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
         s = per_model_emd_seedstack[m]
         mean_e = s.mean(axis=0)
-        std_e = s.std(axis=0)
+        # Sample std (ddof=1) — H-2 Plan 14-13 Task 3 remediation
+        std_e = s.std(axis=0, ddof=1)
         per_model_mean[m] = mean_e.tolist()
         per_model_std[m] = std_e.tolist()
         c = MODEL_COLORS.get(m, "#0072B2")
@@ -1143,7 +1253,13 @@ def render_training_convergence_all_models(repo: Path,
                label=HEADLINE_LABEL, zorder=10)
 
     ax.set_xlabel("epoch (eval_step × 10)")
-    ax.set_ylabel("EMD (avg over eval window, OD scale)")
+    # Plan 14-13 Task 4 (H-1): the `emd_avg` per-eval-step value is
+    # the in-loop training-loss metric computed on log-return-standardized
+    # inputs, NOT an OD-scale quantity. The previous label "OD scale" was
+    # incorrect (math-review.md H-1).
+    ax.set_ylabel(
+        "EMD (in-loop training metric, log-return-standardized scale)"
+    )
     ax.set_yscale("log")
     ax.set_xlim(0, 2000)
     ax.grid(True, alpha=0.3, which="both")
@@ -1802,8 +1918,15 @@ def render_param_efficiency_pareto(repo: Path,
             "headline (epoch 1969, 55p) is the diamond — distinct from "
             "the 5-seed iqp_sel_55_repro circle at the same x. "
             "Markers: circle = adversarial-quantum, square = adversarial-"
-            "classical, triangle = non-adversarial."
+            "classical, triangle = non-adversarial. "
+            "x-axis is generator-only parameter count; the shared "
+            "critic (250881 params per classical_architectures.json "
+            "models.shared_critic.total_params) applies to all "
+            "adversarial models alike and is documented in "
+            "methods_full.md §2.k.x — Total adversarial parameter budget "
+            "(Plan 14-13 Task 3, H-3 resolution)."
         ),
+        "shared_critic_n_params": 250881,
     }
     return _save(fig, figures_dir, "param_efficiency_pareto", companion)
 
@@ -1886,10 +2009,10 @@ def render_seed_variance_per_model(repo: Path,
             ax.grid(True, alpha=0.3, which="both")
             ax.set_title(MODEL_LABELS.get(m, m), fontsize=9)
             ax.tick_params(labelsize=7)
-            # Final-step spread
+            # Final-step spread (ddof=1 sample std — H-2 Plan 14-13 Task 3)
             final_vals = stack[:, -1]
             final_mean = float(final_vals.mean())
-            final_std = float(final_vals.std())
+            final_std = float(final_vals.std(ddof=1))
             per_model_final_emd_mean[m] = final_mean
             per_model_final_emd_std[m] = final_std
             label = _spread_label(final_mean, final_std)
@@ -2006,7 +2129,8 @@ def render_noise_robustness_quantum(repo: Path,
                 curve.append({
                     "noise_level": float(lev),
                     "emd_mean": float(arr.mean()),
-                    "emd_std": float(arr.std()),
+                    # ddof=1 sample std (H-2 Plan 14-13 Task 3)
+                    "emd_std": float(arr.std(ddof=1)) if arr.size > 1 else 0.0,
                     "n_seeds": int(arr.size),
                 })
             per_curve[f"{ch}|{p}"] = curve
@@ -2138,7 +2262,8 @@ def render_shot_noise_robustness(repo: Path,
                 "condition": c,
                 "shots": int(shot_levels[c]),
                 "emd_mean": float(arr.mean()),
-                "emd_std": float(arr.std()),
+                # ddof=1 sample std (H-2 Plan 14-13 Task 3)
+                "emd_std": float(arr.std(ddof=1)) if arr.size > 1 else 0.0,
                 "n_seeds": int(arr.size),
             })
         per_curve[p] = curve
@@ -2151,7 +2276,8 @@ def render_shot_noise_robustness(repo: Path,
         aarr = np.asarray(avals, dtype=float)
         analytic_baseline[p] = {
             "emd_mean": float(aarr.mean()),
-            "emd_std": float(aarr.std()),
+            # ddof=1 sample std (H-2 Plan 14-13 Task 3)
+            "emd_std": float(aarr.std(ddof=1)) if aarr.size > 1 else 0.0,
             "n_seeds": int(aarr.size),
         }
 

@@ -108,6 +108,62 @@ EXPECTED_DATA_HASH = "91e447d4624e25b3"
 # Canonical seed set — the strict gate rejects any seed outside this (D-14-13).
 SEED_SET = (42, 43, 44, 45, 46)
 
+
+# Plan 14-13 Task 4 (HI-8): _finite_sanitize replaces `default=float` in
+# json.dumps. Non-finite floats (nan, +inf, -inf) become `None` in the
+# serialized JSON; if more than 5% of the numeric leaves are non-finite,
+# the helper raises explicitly rather than silently emitting a corpus of
+# Nones (which would propagate as a "no data" downstream).
+def _finite_sanitize(obj, _stats=None):
+    """Recursive sanitizer that converts non-finite floats → None and
+    tracks the (total_floats, nonfinite_floats) tally. Mutates a shared
+    `_stats` dict so the caller can decide whether to raise.
+    """
+    import math
+    if _stats is None:
+        _stats = {"total": 0, "nonfinite": 0}
+    if isinstance(obj, dict):
+        return {k: _finite_sanitize(v, _stats) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_finite_sanitize(v, _stats) for v in obj]
+    if isinstance(obj, tuple):
+        return [_finite_sanitize(v, _stats) for v in obj]
+    if isinstance(obj, float):
+        _stats["total"] += 1
+        if not math.isfinite(obj):
+            _stats["nonfinite"] += 1
+            return None
+        return obj
+    if isinstance(obj, (int, bool, str)) or obj is None:
+        return obj
+    # Numpy scalars / torch tensors: fall through to float() conversion.
+    try:
+        v = float(obj)
+        _stats["total"] += 1
+        if not math.isfinite(v):
+            _stats["nonfinite"] += 1
+            return None
+        return v
+    except (TypeError, ValueError):
+        return str(obj)
+
+
+def _dumps_finite(obj, *, indent: int = 2, nonfinite_threshold: float = 0.05) -> str:
+    """json.dumps wrapper using _finite_sanitize. Raises if non-finite
+    count exceeds `nonfinite_threshold` of total numeric leaves (HI-8)."""
+    stats = {"total": 0, "nonfinite": 0}
+    sanitized = _finite_sanitize(obj, stats)
+    if stats["total"] > 0:
+        frac = stats["nonfinite"] / stats["total"]
+        if frac > nonfinite_threshold:
+            raise AssertionError(
+                f"_dumps_finite: {stats['nonfinite']} of {stats['total']} "
+                f"numeric leaves are non-finite ({frac:.1%} > "
+                f"{nonfinite_threshold:.0%}); refusing to emit a corpus "
+                "of Nones (HI-8, Plan 14-13 Task 4)"
+            )
+    return json.dumps(sanitized, indent=indent)
+
 # Matched budget — every model trains for exactly this many epochs (D-14-08).
 MATCHED_EPOCHS = 2000
 
@@ -266,9 +322,23 @@ def _device_manifest(generator=None) -> Dict[str, Any]:
     torch_cpu = "cpu"
     mps_avail = bool(torch.backends.mps.is_available())
     cuda_avail = bool(torch.cuda.is_available())
+    # Plan 14-13 Task 4 (CR-4 future-gate + D-14-13 extension): record
+    # `training_time_device` by inspecting the generator/critic parameters
+    # AFTER training (not just at sample-generation time). When the
+    # MPS-disable hook is active in _train_quantum / _train_wgan / _train_vae,
+    # this reads back as "cpu" symmetrically across all training paths.
+    training_time_device = torch_cpu
+    if generator is not None:
+        try:
+            training_time_device = str(
+                next(generator.parameters()).device
+            )
+        except (StopIteration, AttributeError):
+            training_time_device = torch_cpu
     manifest: Dict[str, Any] = {
         "sample_generation_device": torch_cpu,
         "sample_generation_dtype": "torch.float64",
+        "training_time_device": training_time_device,
         "mps_available": mps_avail,
         "cuda_available": cuda_avail,
     }
@@ -341,7 +411,12 @@ def _train_quantum(model: str, bundle: DatasetBundle, epochs: int,
         decomp = lock["decomposition"]
         circuit_id = lock["locked_circuit_id"]
         num_layers = int(decomp["num_layers"])
-        topology = "range"
+        # Plan 14-13 Task 4 (HI-4): read topology from the lock dict
+        # instead of hardcoding 'range'. The canonical config encodes
+        # the entangler topology under decomposition.gate_layout.entangler.
+        topology = str(
+            decomp.get("gate_layout", {}).get("entangler", "range")
+        )
         param_expect = int(lock["param_count"])
         source = "matched2000_reproduction"
         ansatz = "iqp_sel_55"
@@ -454,18 +529,29 @@ def _train_wgan(model: str, bundle: DatasetBundle, epochs: int,
     torch.manual_seed(seed)
     generator = gens[model]()
     critic = Critic(window_length=WINDOW_LENGTH)
-    metrics = train_wgan_gp(
-        generator,
-        critic,
-        bundle.dataloader,
-        num_epochs=int(epochs),
-        n_critic=int(N_CRITIC),
-        lambda_gp=float(LAMBDA),
-        lr_critic=float(LR_CRITIC),
-        lr_generator=float(LR_GENERATOR),
-        seed=int(seed),
-        eval_every=int(EVAL_EVERY),
-    )
+    # Plan 14-13 Task 4 (CR-4 future-gate): patch torch.backends.mps.is_available
+    # to False symmetrically with _train_quantum. The historical matched-budget
+    # classical sweep executed on Apple-Silicon MPS at float32 while quantum
+    # runs executed on CPU at float64 (the _train_quantum MPS-disable hook);
+    # the asymmetry is disclosed in methods_full.md + reviewer_response.md.
+    # Future matched-budget classical runs are CPU-only via this hook.
+    orig_mps = torch.backends.mps.is_available
+    torch.backends.mps.is_available = lambda: False  # type: ignore[assignment]
+    try:
+        metrics = train_wgan_gp(
+            generator,
+            critic,
+            bundle.dataloader,
+            num_epochs=int(epochs),
+            n_critic=int(N_CRITIC),
+            lambda_gp=float(LAMBDA),
+            lr_critic=float(LR_CRITIC),
+            lr_generator=float(LR_GENERATOR),
+            seed=int(seed),
+            eval_every=int(EVAL_EVERY),
+        )
+    finally:
+        torch.backends.mps.is_available = orig_mps  # type: ignore[assignment]
     n_synth = 10 * bundle.n_real_windows
     samples = generate_wgan_samples(generator, n_synth, seed)
     checkpoint = {
@@ -481,12 +567,13 @@ def _train_wgan(model: str, bundle: DatasetBundle, epochs: int,
         "lr_critic": float(LR_CRITIC),
         "lr_generator": float(LR_GENERATOR),
         "source": "matched2000_baseline",
-        "device_manifest": _device_manifest(None),
+        "device_manifest": _device_manifest(generator),
         "train_protocol_notes": (
             f"Matched-budget {model}: WGAN-GP via train_wgan_gp UNCHANGED "
             f"(D-10-08), {int(epochs)} epochs; shared "
             "Critic(window_length=WINDOW_LENGTH); *0.1 output scaling "
-            "(Pitfall 3). source=matched2000_baseline."
+            "(Pitfall 3). MPS-disable hook applied (Plan 14-13 Task 4, "
+            "CR-4 future-gate). source=matched2000_baseline."
         ),
     }
     return generator, checkpoint, samples, metrics, extra_cfg
@@ -494,46 +581,64 @@ def _train_wgan(model: str, bundle: DatasetBundle, epochs: int,
 
 def _train_vae(bundle: DatasetBundle, epochs: int, seed: int) -> tuple:
     """VAE branch — local ELBO loop, NO critic/GP (D-10-09). Copied verbatim
-    from run_baselines._train_vae."""
+    from run_baselines._train_vae.
+
+    Plan 14-13 Task 4 (HI-7 + CR-4 future-gate):
+      - HI-7: seed `np.random` and Python `random` in addition to
+        `torch.manual_seed` (the latter was the only seed call previously).
+      - CR-4 future-gate: patch `torch.backends.mps.is_available` to False
+        symmetrically with `_train_quantum` and `_train_wgan`.
+    """
+    import random as _random  # HI-7: standard-library random seeding
     import numpy as np
     import torch
 
     from revision.core.models.nonadversarial import VAEBaseline
 
+    # HI-7: seed numpy + standard-library random in addition to torch.
     torch.manual_seed(seed)
-    vae = VAEBaseline()
-    opt = torch.optim.Adam(vae.parameters(), lr=1e-3)
-    beta_target = 1.0
-    warmup_epochs = 0
-    elbo_hist: list = []
-    recon_hist: list = []
-    kld_hist: list = []
-    for _epoch in range(int(epochs)):
-        beta = beta_target
-        ep_elbo = ep_recon = ep_kld = 0.0
-        n_batches = 0
-        for (x,) in bundle.dataloader:
-            x = x.float()
-            opt.zero_grad()
-            x_hat, mu, logvar = vae(x)
-            recon = torch.nn.functional.mse_loss(x_hat, x)
-            kld = -0.5 * torch.mean(1.0 + logvar - mu.pow(2) - logvar.exp())
-            loss = recon + beta * kld
-            loss.backward()
-            opt.step()
-            ep_elbo += float(loss.detach())
-            ep_recon += float(recon.detach())
-            ep_kld += float(kld.detach())
-            n_batches += 1
-        n_batches = max(n_batches, 1)
-        elbo_hist.append(ep_elbo / n_batches)
-        recon_hist.append(ep_recon / n_batches)
-        kld_hist.append(ep_kld / n_batches)
-    n_synth = 10 * bundle.n_real_windows
-    gen = torch.Generator()
-    gen.manual_seed(seed)
-    with torch.no_grad():
-        samples = vae.sample(n_synth, gen).to(torch.float64).cpu().numpy()
+    np.random.seed(seed)
+    _random.seed(seed)
+
+    # CR-4 future-gate: MPS-disable hook applied symmetrically.
+    orig_mps = torch.backends.mps.is_available
+    torch.backends.mps.is_available = lambda: False  # type: ignore[assignment]
+    try:
+        vae = VAEBaseline()
+        opt = torch.optim.Adam(vae.parameters(), lr=1e-3)
+        beta_target = 1.0
+        warmup_epochs = 0
+        elbo_hist: list = []
+        recon_hist: list = []
+        kld_hist: list = []
+        for _epoch in range(int(epochs)):
+            beta = beta_target
+            ep_elbo = ep_recon = ep_kld = 0.0
+            n_batches = 0
+            for (x,) in bundle.dataloader:
+                x = x.float()
+                opt.zero_grad()
+                x_hat, mu, logvar = vae(x)
+                recon = torch.nn.functional.mse_loss(x_hat, x)
+                kld = -0.5 * torch.mean(1.0 + logvar - mu.pow(2) - logvar.exp())
+                loss = recon + beta * kld
+                loss.backward()
+                opt.step()
+                ep_elbo += float(loss.detach())
+                ep_recon += float(recon.detach())
+                ep_kld += float(kld.detach())
+                n_batches += 1
+            n_batches = max(n_batches, 1)
+            elbo_hist.append(ep_elbo / n_batches)
+            recon_hist.append(ep_recon / n_batches)
+            kld_hist.append(ep_kld / n_batches)
+        n_synth = 10 * bundle.n_real_windows
+        gen = torch.Generator()
+        gen.manual_seed(seed)
+        with torch.no_grad():
+            samples = vae.sample(n_synth, gen).to(torch.float64).cpu().numpy()
+    finally:
+        torch.backends.mps.is_available = orig_mps  # type: ignore[assignment]
     real_std = float(bundle.windowed.std().item())
     samp_std = float(np.std(samples))
     collapse_flag = samp_std < 0.1 * real_std
@@ -552,11 +657,16 @@ def _train_vae(bundle: DatasetBundle, epochs: int, seed: int) -> tuple:
         "vae_lr": 1e-3, "vae_beta": float(beta_target),
         "vae_kl_warmup_epochs": int(warmup_epochs),
         "source": "matched2000_baseline",
-        "device_manifest": _device_manifest(None),
+        # Plan 14-13 Task 4 (CR-4 future-gate): pass the vae module so
+        # _device_manifest can record training_time_device by inspecting
+        # the trained parameters.
+        "device_manifest": _device_manifest(vae),
         "train_protocol_notes": (
             f"Matched-budget VAE: local ELBO loop (D-10-09), {int(epochs)} "
             "epochs, single Adam(lr=1e-3), NO critic/GP; sample() emits in "
-            "[-1,1] (NO *0.1, Pitfall 3). source=matched2000_baseline."
+            "[-1,1] (NO *0.1, Pitfall 3). MPS-disable hook applied "
+            "(Plan 14-13 Task 4, CR-4 future-gate). "
+            "source=matched2000_baseline."
         ),
     }
     return vae, checkpoint, samples, metrics, extra_cfg
@@ -665,6 +775,19 @@ def _strict_accept(model: str, seed: int, out_root: Path) -> dict:
             f"accept: device_manifest missing/failed (model={model}, "
             f"seed={seed}) — silent device/dtype fallback unverified, "
             "T-14-04 / D-14-13 BLOCK"
+        )
+
+    # 4b) Plan 14-13 Task 4 (D-14-13 extension): if `training_time_device`
+    #     is recorded, it MUST be "cpu" (CR-4 future-gate intent). Older
+    #     historical bundles without this field are accepted (forward-only
+    #     gate; historical MPS asymmetry is disclosed in narrative not gated
+    #     retroactively).
+    ttd = dm.get("training_time_device")
+    if ttd is not None and ttd != "cpu":
+        raise AssertionError(
+            f"accept: training_time_device={ttd!r} != 'cpu' (model={model}, "
+            f"seed={seed}) — CR-4 future-gate forbids non-CPU training "
+            "for matched-budget runs (Plan 14-13 Task 4, D-14-13 extension)"
         )
 
     # 5) long-form config schema conforms (the contract fields the
@@ -792,9 +915,10 @@ def _train(model: str, seed: int, epochs: int, csv_path: Path,
         np.savez(run_dir / ckpt_name, **checkpoint)
     else:
         torch.save(checkpoint, run_dir / ckpt_name)
-    (run_dir / "metrics.json").write_text(
-        json.dumps(metrics, indent=2, default=float)
-    )
+    # Plan 14-13 Task 4 (HI-8): _finite_sanitize replaces default=float;
+    # non-finite floats become None and an explicit-raise fires if too many
+    # metrics are non-finite.
+    (run_dir / "metrics.json").write_text(_dumps_finite(metrics, indent=2))
 
     print(
         f"[run_matched2000] model={model} seed={seed} epochs={epochs} "

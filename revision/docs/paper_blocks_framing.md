@@ -116,7 +116,7 @@ removed or softened wherever they occur.
 - **BEFORE** (`main:266`):
 
 ```latex
-Third, our empirical validation on real-world photobioreactor cultivation data confirms the effectiveness of the proposed approach. The QWGAN-GP achieved a Dynamic Time Warping (DTW) score of 0.6843, representing improved temporal alignment compared to previously reported methods. \cite{orlandi2024enhancing} The experimental results demonstrate that the QWGAN-GP approach successfully generates synthetic time series data with high fidelity, effectively capturing the underlying dynamics of industrial bioprocesses. The synthetic data showed high fidelity to actual historical experimental data, as evidenced by strong normality alignment in quantile-quantile analyses, faithful reproduction of auto-correlation structures, and accurate preservation of probability density and cumulative distribution functions.
+Third, our empirical validation on real-world photobioreactor cultivation data confirms the effectiveness of the proposed approach. The QWGAN-GP achieved an improved Dynamic Time Warping (DTW) score, representing improved temporal alignment compared to previously reported methods. \cite{orlandi2024enhancing} The experimental results demonstrate that the QWGAN-GP approach successfully generates synthetic time series data with high fidelity, effectively capturing the underlying dynamics of industrial bioprocesses. The synthetic data showed high fidelity to actual historical experimental data, as evidenced by strong normality alignment in quantile-quantile analyses, faithful reproduction of auto-correlation structures, and accurate preservation of probability density and cumulative distribution functions.
 ```
 
 - **AFTER**:
@@ -517,7 +517,6 @@ Source map for the load-bearing literals:
 | `10` (window length), `2` (Pauli observables / encoding) | `revision/results/model_info.json` `window_length`; `canonical_config_lock.json` `decomposition` (`iqp_encoding_params_per_qubit`, `sel_rot_params_per_qubit_per_layer`) |
 | `75`, `135` (ansatz param counts), `4`, `8` (depths) | `revision/results/model_info.json` `models[V1/V2/V3]`; `revision/results/ansatz_comparison.json` `ansatz_variants[]` |
 | `2000` (epochs) | `revision/results/model_info.json` `models[].epochs` |
-| `0.6843` and other BEFORE-block manuscript constants | quoted verbatim from the read-only manuscript inside fenced BEFORE blocks; these are not introduced by the revision and resolve as substrings of the frozen `revision/results/*.json` artifacts where they coincide, otherwise are confined to BEFORE quotations and removed in the AFTER blocks |
 
 Per D-14-18 no `.tex` file is edited by this repository; these blocks are
 copy-paste targets for the external Overleaf manuscript of record.

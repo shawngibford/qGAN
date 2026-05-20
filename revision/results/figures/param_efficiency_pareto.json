@@ -16,9 +16,9 @@
    "family": "adversarial-quantum",
    "log10_params": 1.7403626894942439,
    "OD_emd_mean": 0.027526430476567092,
-   "OD_emd_std": 0.004591288378486305,
+   "OD_emd_std": 0.00513321645930008,
    "log_return_emd_mean": 0.12286584712632038,
-   "log_return_emd_std": 0.0023282438658001905,
+   "log_return_emd_std": 0.002603055776063062,
    "marker": "o",
    "color": "#0072B2"
   },
@@ -27,9 +27,9 @@
    "family": "adversarial-quantum",
    "log10_params": 1.8750612633917,
    "OD_emd_mean": 0.027582604413720145,
-   "OD_emd_std": 0.004577309279457218,
+   "OD_emd_std": 0.005117587351453461,
    "log_return_emd_mean": 0.12190673604602073,
-   "log_return_emd_std": 0.0010091421952335413,
+   "log_return_emd_std": 0.0011282552737527812,
    "marker": "o",
    "color": "#56B4E9"
   },
@@ -38,9 +38,9 @@
    "family": "adversarial-quantum",
    "log10_params": 2.130333768495006,
    "OD_emd_mean": 0.027571997702351646,
-   "OD_emd_std": 0.00457351948639675,
+   "OD_emd_std": 0.005113350234001529,
    "log_return_emd_mean": 0.1218157301317309,
-   "log_return_emd_std": 0.00019082527559026918,
+   "log_return_emd_std": 0.0002133491440224866,
    "marker": "o",
    "color": "#009E73"
   },
@@ -49,9 +49,9 @@
    "family": "adversarial-quantum",
    "log10_params": 1.8750612633917,
    "OD_emd_mean": 0.027537862057722535,
-   "OD_emd_std": 0.004548326765658865,
+   "OD_emd_std": 0.00508518391594749,
    "log_return_emd_mean": 0.13030466424258152,
-   "log_return_emd_std": 0.004213264231686552,
+   "log_return_emd_std": 0.004710572614609778,
    "marker": "o",
    "color": "#E69F00"
   },
@@ -60,9 +60,9 @@
    "family": "adversarial-classical",
    "log10_params": 1.8692317197309762,
    "OD_emd_mean": 0.025952441411555126,
-   "OD_emd_std": 0.005985248654294808,
+   "OD_emd_std": 0.006691711426621165,
    "log_return_emd_mean": 0.26993858202582777,
-   "log_return_emd_std": 0.035580571917365016,
+   "log_return_emd_std": 0.039780288742774096,
    "marker": "s",
    "color": "#D55E00"
   },
@@ -71,9 +71,9 @@
    "family": "adversarial-classical",
    "log10_params": 1.863322860120456,
    "OD_emd_mean": 0.0543233969986812,
-   "OD_emd_std": 0.052418838808951033,
+   "OD_emd_std": 0.05860604343920931,
    "log_return_emd_mean": 0.6873233973280222,
-   "log_return_emd_std": 0.27134323529468446,
+   "log_return_emd_std": 0.3033709596768173,
    "marker": "s",
    "color": "#CC79A7"
   },
@@ -82,9 +82,9 @@
    "family": "adversarial-classical",
    "log10_params": 1.8920946026904804,
    "OD_emd_mean": 0.028214100034701418,
-   "OD_emd_std": 0.004482840848634803,
+   "OD_emd_std": 0.005011968434930132,
    "log_return_emd_mean": 0.16632064238232588,
-   "log_return_emd_std": 0.018339947702398253,
+   "log_return_emd_std": 0.02050468488317679,
    "marker": "s",
    "color": "#999999"
   },
@@ -93,9 +93,9 @@
    "family": "non-adversarial",
    "log10_params": 2.749736315569061,
    "OD_emd_mean": 0.025741708778716454,
-   "OD_emd_std": 0.006405681704417852,
+   "OD_emd_std": 0.007161769866652516,
    "log_return_emd_mean": 0.010299878935153753,
-   "log_return_emd_std": 0.0010185497410960486,
+   "log_return_emd_std": 0.0011387732297777878,
    "marker": "^",
    "color": "#882255"
   },
@@ -104,9 +104,9 @@
    "family": "non-adversarial",
    "log10_params": 0.47712125471966244,
    "OD_emd_mean": 0.02908435933553529,
-   "OD_emd_std": 0.004120948097505048,
+   "OD_emd_std": 0.0046073600388848585,
    "log_return_emd_mean": 0.7811385570662264,
-   "log_return_emd_std": 0.002798117315215629,
+   "log_return_emd_std": 0.003128390262920676,
    "marker": "^",
    "color": "#117733"
   }
@@ -127,5 +127,6 @@
   "adversarial-classical": "s",
   "non-adversarial": "^"
  },
- "caption_note": "Lower-left = better parameter efficiency. The frozen headline (epoch 1969, 55p) is the diamond \u2014 distinct from the 5-seed iqp_sel_55_repro circle at the same x. Markers: circle = adversarial-quantum, square = adversarial-classical, triangle = non-adversarial."
+ "caption_note": "Lower-left = better parameter efficiency. The frozen headline (epoch 1969, 55p) is the diamond \u2014 distinct from the 5-seed iqp_sel_55_repro circle at the same x. Markers: circle = adversarial-quantum, square = adversarial-classical, triangle = non-adversarial. x-axis is generator-only parameter count; the shared critic (250881 params per classical_architectures.json models.shared_critic.total_params) applies to all adversarial models alike and is documented in methods_full.md \u00a72.k.x \u2014 Total adversarial parameter budget (Plan 14-13 Task 3, H-3 resolution).",
+ "shared_critic_n_params": 250881
 }

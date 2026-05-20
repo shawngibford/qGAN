@@ -519,7 +519,14 @@ def build_aggregates(rows: list) -> list:
     for (mk, scale, metric), vals in sorted(groups.items()):
         n_seeds = len(seeds_of[(mk, scale, metric)])
         mean = statistics.fmean(vals)
-        std = statistics.pstdev(vals) if len(vals) > 1 else 0.0
+        # Sample std (statistics.stdev = sqrt of unbiased variance, ddof=1)
+        # — Plan 14-13 Task 3 H-2 remediation (was statistics.pstdev = ddof=0)
+        std = statistics.stdev(vals) if len(vals) > 1 else 0.0
+        # `n` alias alongside existing `n_seeds` for paper-facing
+        # convention (Plan 14-13 Task 3 MED-4 remediation): n=5 for matched
+        # budget aggregates; n=1 for the headline (single frozen-checkpoint
+        # eval). KEEPS `n_seeds` for backward compat with 14-08/14-12.
+        n_alias = n_seeds
         aggs.append(dict(
             model_kind=mk,
             scale=scale,
@@ -527,6 +534,7 @@ def build_aggregates(rows: list) -> list:
             mean=mean,
             std=std,
             n_seeds=n_seeds,
+            n=n_alias,
             source=src_of[(mk, scale, metric)],
         ))
     return aggs
@@ -592,7 +600,13 @@ def main() -> None:
             "matched-2000ep dual-scale rows[] + per-(model,scale,metric) "
             "seed-aggregate; frozen headline DISTINCT, D-14-10"
         ),
-        "model_kinds": MODEL_KINDS,
+        # Plan 14-13 Task 4 (HI-5): include HEADLINE_MODEL_KIND in the
+        # model_kinds top-level field. The headline IS a distinct model_kind
+        # in the aggregates (D-14-10); listing it alongside the 9 sweep
+        # models matches the actual rows[] / aggregates[] content. The
+        # `headline_model_kind` field below remains as the explicit pointer
+        # to the headline entry.
+        "model_kinds": MODEL_KINDS + [HEADLINE_MODEL_KIND],
         "pipelines": PIPELINES,
         "seeds": SEEDS,
         "data_hash": EXPECTED_DATA_HASH,

@@ -64,3 +64,6 @@ xlstm-main copy/
 notes.txt
 archive/
 plan.md
+
+# Phase 14 plan 14-13: track headline checkpoint in-repo (~6 MB)
+!revision/checkpoints/best_checkpoint.pt

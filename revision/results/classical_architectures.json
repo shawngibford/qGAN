@@ -2,8 +2,9 @@
   "consumed_artifacts": {
     "revision/results/model_info.json": "91e447d4624e25b3"
   },
+  "data_hash": "91e447d4624e25b3",
   "drift_gate": "explicit raise AssertionError (python -O safe) \u2014 extractor's walked total_params == model_info.json parameter_count for wgan_mlp/cnn/lstm/vae/ar; PASSED before this JSON was written",
-  "extracted_at_iso": "2026-05-20T15:52:30.830294Z",
+  "extracted_at_iso": "2026-05-20T19:13:57.777342Z",
   "extractor": "module.named_modules() walk for nn.Module classes (VAEBaseline, Critic) + functional-layout docstring parse for the three params_pqc-carved WGAN-GP generators + hand-encoded plain-class spec for ARBaseline (not an nn.Module)",
   "models": {
     "ar": {

@@ -376,7 +376,7 @@
       "pennylane_device": "default.qubit",
       "diff_method": "backprop",
       "dtype_params": "torch.float32 (classical: nn.Parameter constructed with dtype=torch.float32 \u2014 revision/core/models/classical.py:78; quantum: params_pqc nn.Parameter dtype=torch.float32)",
-      "dtype_samples": "torch.float64 (sample-generation pipeline: revision/core/training.py:268 compute_dtype = torch.float64 on CPU/CUDA; revision/core/training.py:347 generator output cast .to(compute_dtype) * 0.1; MPS path falls back to float32 because MPS lacks float64 \u2014 see training.py:259-268)",
+      "dtype_samples": "torch.float64 (sample-generation pipeline: revision/core/training.py:268 compute_dtype = torch.float64 on CPU/CUDA; revision/core/training.py:346 generator output cast .to(compute_dtype) * 0.1; MPS path falls back to float32 because MPS lacks float64 \u2014 see revision/core/training.py:268)",
       "dtype_note": "dtype_params and dtype_samples are DISTINCT \u2014 params live in float32 (the trainable nn.Parameter), samples are cast to float64 at generation time on CPU/CUDA to match the float64 critic (revision/core/models/critic.py:67 .double()). The two fields MUST NOT be conflated.",
       "framework_versions": {
         "PyYAML": "6.0.3",
@@ -388,7 +388,7 @@
       },
       "python_version": "3.11.14",
       "platform": "macOS-26.0.1-arm64-arm-64bit",
-      "framework_versions_captured_at_iso": "2026-05-20T15:53:53.526570Z"
+      "framework_versions_captured_at_iso": "2026-05-20T19:13:58.443258Z"
     },
     "5_reproducibility": {
       "data_hash": "91e447d4624e25b3",

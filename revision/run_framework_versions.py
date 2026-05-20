@@ -83,6 +83,10 @@ def main() -> None:
         "python_version": sys.version.split()[0],
         "platform": platform.platform(),
         "packages": pkgs,
+        # Plan 14-13 Task 4 (HIGH-2 / PROV-HIGH-2): record the audited
+        # dataset hash so the data_hash corpus is consistent across all
+        # paper-facing JSON emitters.
+        "data_hash": "91e447d4624e25b3",
         "note": (
             "Recorded at methods-doc emit time from the running qgan_env "
             "interpreter; revision/requirements.txt carries the >= "

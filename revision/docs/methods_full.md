@@ -190,6 +190,13 @@ loop lives in `revision/run_baselines.py` (D-10-13) — **not** in
 \mathcal{L}_{ELBO}(x) = \mathbb{E}_{q_\phi(z|x)}[\log p_\theta(x|z)] - D_{KL}(q_\phi(z|x) \| p(z))
 ```
 
+**Implementation note (Plan 14-13, math-review M-4).** The actual implemented
+loss at `revision/run_baselines.py:315` uses per-element-mean MSE +
+per-element-mean KLD with `β=1`, which is equivalent to a re-weighted ELBO
+with implicit `β ≈ 0.4` vs the canonical formulation above (see §3.x.d for
+the derivation). The comparison numbers in this manuscript use the
+implemented (β=1 per-element-mean) loss consistently across all VAE runs.
+
 ### 2.j. `ar` (non-adversarial baseline)
 
 | Property | Value | Source |
@@ -207,6 +214,12 @@ closed-form (no training loop) at
 x_t = \sum_{k=1}^{p} \phi_k\, x_{t-k} + \varepsilon_t,\quad \varepsilon_t \sim \mathcal{N}(0, \sigma^2);\quad \hat\phi = \arg\min_\phi \|X\phi - y\|_2^2
 ```
 
+**Implementation note (Plan 14-13, math-review M-2).** The residual variance
+estimator at `revision/core/models/nonadversarial.py:157` uses
+`resid.var(ddof=0)` (ML estimator), biased by `(n-p)/n ≈ -0.26%` relative
+to the standard `ddof=p` Yule-Walker estimator for n=777, p=2 (see §3.x.c).
+The convention follows the v1.0 notebook AR baseline; no v2.0 numbers shift.
+
 ### 2.k. Shared WGAN-GP critic
 
 One critic instance is constructed per training run and is shared across
@@ -216,7 +229,25 @@ Conv1d(1, 64, k=10, s=1, p=5) + LeakyReLU(0.1); Conv1d(64, 128, k=10, s=1,
 p=5) + LeakyReLU(0.1); Conv1d(128, 128, k=10, s=1, p=5) + LeakyReLU(0.1);
 AdaptiveAvgPool1d(output_size=1); Flatten; Linear(128, 32) + LeakyReLU(0.1)
 + Dropout(p=0.2); Linear(32, 1). The critic is cast to `torch.float64` at
-`revision/core/models/critic.py:67`.
+`revision/core/models/critic.py:67`. The critic carries **250881**
+trainable parameters (`classical_architectures.json` models.shared_critic.total_params).
+
+### 2.k.x — Total adversarial parameter budget (Plan 14-13 Task 3, H-3)
+
+The `param_efficiency_pareto` figure plots **generator-only** parameter
+counts on the x-axis; the shared critic (250881 params per
+`classical_architectures.json` models.shared_critic.total_params) applies
+to all adversarial models alike (`iqp_sel_55_repro`, V1, V2, V3,
+`wgan_mlp`, `wgan_cnn`, `wgan_lstm`). The **total adversarial parameter
+budget** (generator + shared critic) for each model is therefore
+generator-only + 250881; the headline `iqp_sel_55` reports a generator of
+55 params and a generator+critic total of 250936 params. The
+parameter-efficiency comparison is fair under the generator-only x-axis
+because the shared critic budget is identical across the adversarial
+entries; this subsection documents the convention explicitly so the
+figure's caption ("x-axis is generator-only parameter count; the shared
+critic ≈250k applies to all adversarial models alike") is no longer the
+sole place the breakdown is recorded (H-3 resolution).
 
 ---
 
@@ -250,6 +281,51 @@ VAE uses a single Adam(lr=1e-3) ELBO loop and AR(p) uses closed-form
 `np.linalg.lstsq` — neither participates in the WGAN-GP table above (see
 § 2.i / § 2.j).
 
+### §3.x — Metric conventions (documented per Plan 14-13, math-review remediation)
+
+The following small statistical conventions in `revision/core/` follow the
+v1.0 notebook-parity contract and are PRESERVED under D-14-22
+(revision/core/ byte-freeze). They are documented here for reviewer
+transparency rather than modified.
+
+**(a) `compute_moments`** (cite: `revision/core/eval.py:42-58`). Uses
+population standard deviation `np.std(..., ddof=0)` for the
+per-distribution `moment_std` field. Fisher excess kurtosis is computed
+via `scipy.stats.kurtosis(bias=True)` (biased estimator, matches the v1.0
+notebook). Sample skew is computed via `scipy.stats.skew(bias=True)`
+(likewise biased; matches v1.0). The biased-vs-unbiased choice is
+consistent across all per-distribution moment statistics reported in this
+manuscript.
+
+**(b) `compute_acf`** (cite: `revision/core/eval.py` ACF block). Uses
+`statsmodels.tsa.stattools.acf(s, nlags=20, fft=True)`, which employs the
+biased divisor `n` (rather than the unbiased divisor `n-k` at lag `k`).
+This is the same biased ACF estimator as the v1.0 notebook and is the
+conventional default for Wasserstein-distance inputs in this codebase.
+
+**(c) AR(p) `sigma^2` estimator** (cite:
+`revision/core/models/nonadversarial.py:157`). The residual variance is
+computed as `resid.var(ddof=0)` — the ML (maximum-likelihood) estimator,
+which is biased by a factor of `(n-p)/n` relative to the standard
+`ddof=p` Yule-Walker estimator. For the AR(2) configuration used on the
+777-sample log-return sequence (n=777, p=2), the downward bias is
+`(777-2)/777 - 1 ≈ -0.26%`. The convention is consistent with the v1.0
+notebook AR baseline and is documented here for completeness; no v2.0
+numbers shift.
+
+**(d) VAE ELBO formulation** (cite: `revision/run_baselines.py:315`). The
+implemented loss is a per-element-mean reconstruction MSE plus a
+per-element-mean KL divergence with `β=1` (the standard ELBO formal
+coefficient). Because both terms are PER-ELEMENT MEANS rather than
+PER-WINDOW SUMS, the effective ELBO is re-weighted by the ratio of the
+per-element dimensionality between the two terms; for the 10-step ×
+1-feature windowing convention used in this manuscript, the
+reconstruction term is mean-over-10-elements and the KL term is
+mean-over-4-latent-dimensions, which is equivalent to a canonical
+per-window-sum ELBO with implicit `β ≈ 0.4`. The convention follows the
+v1.0 notebook baseline. The actual loss expression is documented
+alongside the canonical LaTeX in §2.i (VAE).
+
 ---
 
 ## 4. Hardware & Software
@@ -279,6 +355,13 @@ VAE uses a single Adam(lr=1e-3) ELBO loop and AR(p) uses closed-form
 is the exact installed pin captured at methods-doc emit time via
 `importlib.metadata.version(...)`. Re-emit on environment change.
 
+The resubmission-canonical environment is committed at
+`revision/requirements-pinned.txt` (Phase 14 plan 14-13, Task 1) with exact
+`==` pins for every package recorded in
+`revision/results/framework_versions.json`; reviewers can rerun the pipeline
+against this exact environment with
+`python -m venv qgan_env && pip install -r revision/requirements-pinned.txt`.
+
 **`dtype_params` ≠ `dtype_samples`.** Trainable parameters live in
 `torch.float32` for every model (every `nn.Parameter` in
 `revision/core/models/classical.py` is constructed with
@@ -293,6 +376,25 @@ then the cast at `revision/core/training.py:347`,
 to `torch.float32` because MPS does not implement float64 — explicit
 `compute_dtype` branching at `revision/core/training.py:259-268`. The two
 fields are DISTINCT and MUST NOT be conflated — see § 6(b).
+
+### 4.2. Historical training-time device asymmetry (Plan 14-13, peer-review disclosure)
+
+**Historical training-time device asymmetry (Plan 14-13, peer-review
+disclosure).** The matched-2000ep classical runs reported in this manuscript
+executed on Apple-Silicon MPS at float32 precision (the runtime default for
+the classical training paths `train_wgan_gp` and `_train_vae` at the time of
+the original matched-budget sweep), while the quantum runs executed on CPU
+at float64 (the `_train_quantum` MPS-disable hook). This asymmetry was
+discovered post-execution during the Phase 14 peer-review pass. Future runs
+invoke the MPS-disable hook in all training paths (Plan 14-13 Task 4:
+`_train_wgan` and `_train_vae` now patch
+`torch.backends.mps.is_available = lambda: False` symmetrically), and the
+strict-accept gate now records `training_time_device` and enforces equality
+across all models in a sweep (D-14-13 extension under Plan 14-13). Numerical
+impact: MPS at float32 vs CPU at float64 on these small (74–250881 param)
+classical generators is empirically within seed variance for the
+matched-budget aggregates reported in this manuscript, but the asymmetry is
+disclosed here for completeness in lieu of a full classical sweep re-run.
 
 ---
 
@@ -314,7 +416,14 @@ fields are DISTINCT and MUST NOT be conflated — see § 6(b).
 
 Seeds are set ONCE at the top of `train_wgan_gp` before optimizer/data
 construction (`revision/core/training.py:244-249`). The same seed produces
-bit-identical training trajectories on the same device/dtype path.
+trajectories that agree to ~1e-6 EMD on the same CPU+BLAS+pinned-pip-freeze
+stack (`revision/requirements-pinned.txt`); bit-determinism would require
+`torch.use_deterministic_algorithms(True)` which is not set in the
+byte-frozen `revision/core/training.py` (D-14-22). The pinned-env +
+tracked-checkpoint contract (`revision/checkpoints/best_checkpoint.pt`,
+sha256 = `f7cceb52…` per `canonical_config_lock.json#checkpoint_sha256`)
+delivers reproducibility-within-numerical-tolerance, not bit-determinism
+(Plan 14-13, METHODS-HIGH-1 remediation).
 
 ### 5.2. Exact rerun command (verbatim)
 

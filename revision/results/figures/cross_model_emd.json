@@ -7,27 +7,46 @@
   "V3",
   "wgan_mlp",
   "wgan_cnn",
-  "wgan_lstm"
+  "wgan_lstm",
+  "vae",
+  "ar"
  ],
- "best_emd_mean": [
-  0.11269164160318393,
-  0.11244795113753729,
-  0.11350972427491031,
-  0.10655275301115315,
-  0.058451476846712466,
-  0.052372386981248076,
-  0.09054842307591268
+ "final_eval_emd_mean_OD": [
+  0.027526430476567092,
+  0.027582604413720145,
+  0.027571997702351646,
+  0.027537862057722535,
+  0.025952441411555126,
+  0.0543233969986812,
+  0.028214100034701418,
+  0.025741708778716454,
+  0.02908435933553529
  ],
- "best_emd_std": [
-  0.005053356378236175,
-  0.004208920789444384,
-  0.0034621239053770664,
-  0.0037629720358517693,
-  0.011622948907636405,
-  0.046683952423489536,
-  0.014166976480487006
+ "final_eval_emd_std_OD": [
+  0.00513321645930008,
+  0.005117587351453461,
+  0.005113350234001529,
+  0.00508518391594749,
+  0.006691711426621164,
+  0.05860604343920932,
+  0.005011968434930132,
+  0.007161769866652516,
+  0.004607360038884859
+ ],
+ "n_seeds": [
+  5,
+  5,
+  5,
+  5,
+  5,
+  5,
+  5,
+  5,
+  5
  ],
  "frozen_headline_OD_emd": 0.023071979442389253,
  "headline_source": "headline_canonical.json (source=frozen_checkpoint_epoch_1969) \u2014 distinct from the iqp_sel_55_repro 2000ep reproduction (D-14-10)",
+ "source": "matched2000_dualscale.json#rows filtered to metric_name=emd, scale=OD (audited per-seed OD-scale EMD); aggregation mean \u00b1 sample std (ddof=1) over seeds 42-46",
+ "caption": "OD scale, final-eval mean \u00b1 std over 5 seeds 42-46; frozen headline reference line on the same scale (Plan 14-13 Task 3, CR-2 / C-2 resolution)",
  "render_only": true
 }

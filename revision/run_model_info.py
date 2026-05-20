@@ -92,6 +92,16 @@ MATCHED = RESULTS / "matched2000"
 # Canonical training seed set re-emitted per model row.
 SEED_SET = [42, 43, 44, 45, 46]
 
+# Plan 14-13 Task 4 (HI-3 / PROV-HIGH-2): canonical dataset hash. The
+# cross-artifact gate below previously asserted only MUTUAL equality of the
+# observed hashes across consumed artifacts; that passes loudly when all
+# consumed artifacts agree on a DIFFERENT hash than the audited
+# 91e447d4624e25b3. The explicit-raise gate now also asserts equality to
+# EXPECTED_DATA_HASH so a regression of the dataset itself surfaces
+# immediately rather than after silently propagating through the rest of
+# Phase 14.
+EXPECTED_DATA_HASH = "91e447d4624e25b3"
+
 # The accepted 2000ep matched-budget sweep models (9-model x 5-seed matrix; the
 # 55-param IQP:SEL reproduction + V1/V2/V3 ansatz + 3 classical WGAN baselines +
 # 2 non-adversarial baselines). The frozen-checkpoint headline is NOT in this
@@ -140,6 +150,15 @@ def _build_model_record(model: str) -> dict:
     seed field — the strict accept gate D-14-13 enforced this)."""
     cfg = _load_yaml(MATCHED / "runs" / model / "42" / "config.yaml")
     dm = cfg.get("device_manifest", {}) or {}
+    # Plan 14-13 Task 4 (HI-2): optimizer_betas is family-specific.
+    # WGAN-GP families use (0.0, 0.9) per Gulrajani's recipe; non-adversarial
+    # (VAE / AR) baselines do not use the WGAN-GP critic optimization and
+    # report `None` rather than the misleading [0.0, 0.9] hardcode.
+    family = cfg.get("family", "")
+    if family == "non-adversarial":
+        betas: list | None = None
+    else:
+        betas = [0.0, 0.9]
     return {
         "model": model,
         "kind": cfg.get("model_kind"),
@@ -155,7 +174,7 @@ def _build_model_record(model: str) -> dict:
         "optimizer": _optimizer_for(cfg),
         "lr_critic": cfg.get("lr_critic"),
         "lr_generator": cfg.get("lr_generator"),
-        "optimizer_betas": [0.0, 0.9],
+        "optimizer_betas": betas,
         "batch_size": cfg.get("batch_size"),
         "n_critic": cfg.get("n_critic"),
         "lambda_gp": cfg.get("lambda_gp"),
@@ -165,6 +184,12 @@ def _build_model_record(model: str) -> dict:
         "window_length": cfg.get("window_length"),
         "n_real_windows": cfg.get("n_real_windows"),
         "device": dm.get("sample_generation_device"),
+        # Plan 14-13 Task 4 (PROV-HIGH-3 / HIGH-3): dtype field renamed to
+        # dtype_samples (the field genuinely is sample-generation dtype, not
+        # parameter dtype). dtype_params added alongside for explicit clarity.
+        "dtype_samples": dm.get("sample_generation_dtype"),
+        "dtype_params": "torch.float32",
+        # Keep legacy 'dtype' alias for any consumer that hasn't switched yet.
         "dtype": dm.get("sample_generation_dtype"),
         "pennylane_device": dm.get("pennylane_device"),
         "diff_method": dm.get("diff_method"),
@@ -221,49 +246,54 @@ def _reconciliation_rows() -> list[dict]:
 
     OLD basis: the frozen Phase-10 `baseline_comparison.json` (1000ep budget) —
     mean OD-EMD over Pipeline B, seeds 42-46 (the canonical headline cell).
-    NEW basis: the accepted 2000ep `matched2000/runs/<model>/<seed>/metrics.json`
-    final (last-eval-step) `emd_avg`, averaged over seeds 42-46.
+
+    NEW basis (Plan 14-13 Task 3, C-1 / PROV-CRIT-1 / C-3 remediation): the
+    audited OD-scale aggregate mean from
+    `matched2000_dualscale.json#aggregates` (entries with
+    `metric_name="emd"` and `scale="OD"`) — NOT the previous
+    `metrics.json["emd_avg"][-1]` read which sourced the log-return-standardized
+    training-loop metric (the scale-collision root cause of C-1 / PROV-CRIT-1).
+    The OD-scale aggregate is the same scale as the OLD basis, so deltas are
+    now interpretable across the 1000ep/2000ep boundary.
 
     Both numbers are READ, never recomputed. Ansatz V1/V2/V3 have no 1000ep
     matched-budget counterpart in baseline_comparison.json -> recorded with an
     explicit "no 1000ep basis" marker rather than a fabricated old value.
     """
     old = json.loads((RESULTS / "baseline_comparison.json").read_text())
+    dual = json.loads((RESULTS / "matched2000_dualscale.json").read_text())
+    # Build {model_kind: OD-scale EMD mean} from the audited aggregates.
+    od_emd_by_model: dict[str, float] = {
+        a["model_kind"]: a["mean"]
+        for a in dual.get("aggregates", [])
+        if a.get("metric_name") == "emd" and a.get("scale") == "OD"
+    }
     rows = []
     for model in SWEEP_MODELS:
         recon_kind = RECON_KIND.get(model)
-        # NEW: mean final emd_avg over the 5 accepted 2000ep seeds.
-        new_vals = []
-        for s in SEED_SET:
-            mp = MATCHED / "runs" / model / str(s) / "metrics.json"
-            if mp.exists():
-                fv = _final_eval_value(json.loads(mp.read_text()), "emd_avg")
-                if isinstance(fv, (int, float)):
-                    new_vals.append(fv)
-        new_mean = statistics.fmean(new_vals) if new_vals else None
-        # Non-adversarial baselines (VAE ELBO loop D-10-09 / AR closed-form
-        # D-10-13) carry NO training-trajectory `emd_avg` in metrics.json — and
-        # recomputing EMD from samples.npy is forbidden (pure aggregator, no
-        # metric recompute, D-14-16). Annotate the absence explicitly so a
-        # blank NEW for a model that has an OLD basis is self-explaining
-        # (faithful provenance, never a silent gap).
-        if new_mean is None and not new_vals:
+        # NEW (Plan 14-13 source switch): audited OD-scale aggregate mean.
+        new_mean = od_emd_by_model.get(model)
+        if new_mean is None:
+            # Non-adversarial baselines historically lacked an OD-scale EMD
+            # aggregate in older snapshots; in the current corpus VAE/AR both
+            # carry an entry. Preserve the legacy "no 2000ep EMD" basis only
+            # when the aggregate is truly absent.
             new_basis = (
-                "no 2000ep EMD trajectory — non-adversarial baseline "
-                "tracks ELBO/closed-form fit, not adversarial EMD "
-                "(metrics.json carries no emd_avg; recompute forbidden, "
-                "D-14-16)"
+                "no 2000ep OD-scale EMD aggregate in "
+                "matched2000_dualscale.json#aggregates "
+                "(recompute forbidden, D-14-16)"
             )
         else:
             new_basis = (
-                "matched2000/runs/<model>/<seed>/metrics.json emd_avg[-1], "
-                "mean over seeds 42-46"
+                "matched2000_dualscale.json#aggregates "
+                "(metric_name=emd, scale=OD); audited mean over seeds 42-46 "
+                "(Plan 14-13 Task 3, C-1 / PROV-CRIT-1 source switch)"
             )
         if recon_kind is None:
             rows.append(
                 {
                     "model": model,
-                    "metric": "emd (OD, final-eval mean over seeds 42-46)",
+                    "metric": "emd (OD, audited aggregate mean over seeds 42-46)",
                     "old_1000ep": None,
                     "old_basis": "no 1000ep matched-budget counterpart "
                     "(ansatz variant introduced at 2000ep, D-14-10)",
@@ -291,7 +321,7 @@ def _reconciliation_rows() -> list[dict]:
         rows.append(
             {
                 "model": model,
-                "metric": "emd (OD, final-eval mean over seeds 42-46)",
+                "metric": "emd (OD, audited aggregate mean over seeds 42-46)",
                 "old_1000ep": old_mean,
                 "old_basis": "baseline_comparison.json rows[] "
                 f"(model_kind={recon_kind}, pipeline=B, emd, OD)",
@@ -342,13 +372,63 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
         )
     lines.append("")
     lines.append(
-        "**Interpretation.** A negative delta means the matched 2000ep "
-        "budget *improved* (lowered) the EMD relative to the unfair 1000ep "
-        "baseline. The ansatz variants (V1/V2/V3) have no 1000ep "
+        "**Integration caveat (Plan 14-12, recorded post-14-09/14-10).** Two "
+        "facets of the table above are now backed by additional audited "
+        "artifacts: (1) the V1/V2/V3 row param-count values (75 / 135 / 75) "
+        "now resolve directly to `revision/results/v1_config_lock.json`, "
+        "`revision/results/v2_config_lock.json`, and "
+        "`revision/results/v3_config_lock.json` (Plan 14-09 — "
+        "`gate_layout_breakdown` field decomposes each count as IQP "
+        "encoding (5) + N\\*SEL layers (15 each) + final RX+RY (10)), rather "
+        "than only indirectly through the `_QUANTUM_ANSATZ` dict at "
+        "`revision/run_matched2000.py:118-122`; (2) the D-14-10 "
+        "headline-vs-repro distinction (iqp_sel_55_headline as the "
+        "frozen-checkpoint EMD, iqp_sel_55_repro as the matched-2000ep "
+        "reproduction) is now visualized as two distinct points in "
+        "`revision/results/figures/param_efficiency_pareto.{png,pdf}` "
+        "(Plan 14-10 — the headline appears as a separate dashed/diamond "
+        "marker per the conflation-guard contract).\n"
+    )
+    lines.append(
+        "**Interpretation (Plan 14-13 rebuild).** Deltas are ≈ 0 across the "
+        "board: the matched 2000-epoch budget recovers OD-scale EMD within "
+        "seed variance of the 1000-epoch baseline. The previous "
+        "`+0.127 degradation` framing was an artifact of the scale-collision "
+        "between the OLD column (OD-scale EMD from `baseline_comparison.json`) "
+        "and the NEW column (which under the v1 emit read the "
+        "log-return-standardized training-loop metric `emd_avg[-1]` from "
+        "`metrics.json`). Task 3 of Plan 14-13 switches the NEW source to the "
+        "audited OD-scale aggregate mean in "
+        "`matched2000_dualscale.json#aggregates` — the same scale as OLD — "
+        "and the deltas collapse to numerical noise (C-1 / PROV-CRIT-1 "
+        "resolved). The ansatz variants (V1/V2/V3) have no 1000ep "
         "matched-budget counterpart — they were introduced directly at the "
         "2000ep budget (D-14-10) — so their OLD column is intentionally "
         "blank rather than carrying a non-comparable number.\n"
     )
+    lines.append("")
+    lines.append(
+        "**Metric-redefinition disclosure (Plan 14-13, peer-review remediation).**"
+    )
+    lines.append(
+        "The v1.0 release (`revision/core/eval.py:25-36`) switched the EMD "
+        "implementation from a histogram-density Wasserstein "
+        "(`scipy.stats.wasserstein_distance(real_hist_density, fake_hist_density)` "
+        "over 50-bin histograms) to a raw-sample Wasserstein "
+        "(`scipy.stats.wasserstein_distance(real_samples, fake_samples)` "
+        "over the raw log-return arrays). The two metrics are NOT "
+        "commensurate: the pre-v1.0 headline `~0.0015` (histogram-density on "
+        "`real`-only test slice) and the v1.0+ headline `~0.121` "
+        "log-return-standardized EMD measure different probabilistic "
+        "distances over different supports. The headline trajectory across "
+        "versions is therefore: pre-v1.0 ≈ 0.0015 (histogram-density, "
+        "deprecated); v1.0 ≈ 0.121 (log-return-standardized raw-sample, "
+        "current training-loop metric). The OD-scale aggregate mean in the "
+        "table above is the v1.0 raw-sample Wasserstein evaluated on the "
+        "original ordinary-differences (OD) scale samples rescaled via "
+        "`np.exp(.) - 1` (C-3 resolved)."
+    )
+    lines.append("")
     (DOCS / "reconciliation_note.md").write_text("\n".join(lines))
 
 
@@ -495,7 +575,18 @@ def _render_training_protocol(mi: dict) -> str:
         f"| {src} (parameter_count) |"
     )
     L.append(f"| Compute device | {q['device']} | {src} (device) |")
-    L.append(f"| Param dtype | {q['dtype']} | {src} (dtype) |")
+    # Plan 14-13 Task 4 (PROV-HIGH-3 / HIGH-3): dtype row split into
+    # dtype_params (torch.float32 trainable nn.Parameter) and dtype_samples
+    # (the field formerly labelled `Param dtype`, which actually carries
+    # sample-generation dtype). See methods_full.md §4.b.
+    L.append(
+        f"| dtype_params | {q.get('dtype_params', 'torch.float32')} "
+        f"| {src} (dtype_params); see methods_full.md §4.b |"
+    )
+    L.append(
+        f"| dtype_samples | {q.get('dtype_samples', q['dtype'])} "
+        f"| {src} (dtype_samples); see methods_full.md §4.b |"
+    )
     L.append(
         f"| Backend assertion | {q['backend_assertion']} "
         f"| {src} (backend_assertion) |"
@@ -636,9 +727,12 @@ def main() -> None:
     }
 
     # ── Cross-artifact data_hash gate (HARD, explicit-raise, python -O safe) ───
-    # run_multiseed_rollup.py:86-92 idiom: assert ONLY mutual equality of the
+    # run_multiseed_rollup.py:86-92 idiom: assert mutual equality of the
     # frozen `data_hash` fields across every consumed 2000ep artifact (the
     # headline + all 9 accepted sweep configs). Do NOT re-derive the hash.
+    # Plan 14-13 Task 4 (HI-3 / PROV-HIGH-2): additionally assert equality
+    # to EXPECTED_DATA_HASH so a dataset regression where all artifacts
+    # SHARE a wrong hash still surfaces loudly.
     hashes = {"headline_canonical.json": headline["data_hash"]}
     for m, c in sweep_cfgs.items():
         hashes[f"matched2000/{m}/config.yaml"] = c.get("data_hash")
@@ -646,7 +740,14 @@ def main() -> None:
         raise AssertionError(
             f"data_hash mismatch across consumed 2000ep artifacts: {hashes}"
         )
-    canonical_hash = next(iter(hashes.values()))  # expect 91e447d4624e25b3
+    canonical_hash = next(iter(hashes.values()))
+    if canonical_hash != EXPECTED_DATA_HASH:
+        raise AssertionError(
+            f"observed canonical data_hash={canonical_hash!r} does NOT "
+            f"match EXPECTED_DATA_HASH={EXPECTED_DATA_HASH!r}; the dataset "
+            f"itself has regressed (HI-3 / PROV-HIGH-2 explicit-raise gate, "
+            f"Plan 14-13 Task 4)."
+        )
 
     # ── Build the unified models[] table ──────────────────────────────────────
     wall = _wall_seconds_by_model(sweep_status)
@@ -686,7 +787,11 @@ def main() -> None:
             "window_length": 10,
             "n_real_windows": None,
             "device": hdev.get("torch_device"),
-            "dtype": headline.get("dtype"),
+            # Plan 14-13 Task 4 (PROV-HIGH-3 / HIGH-3): dtype rename to
+            # dtype_samples + dtype_params alongside.
+            "dtype_samples": headline.get("dtype"),
+            "dtype_params": "torch.float32",
+            "dtype": headline.get("dtype"),  # legacy alias
             "pennylane_device": hdev.get("pennylane_device"),
             "diff_method": hdev.get("diff_method"),
             "backend_assertion": hdev.get("backend_assertion"),
@@ -767,6 +872,33 @@ def main() -> None:
     # ── Reconciliation note (1000ep -> 2000ep deltas, D-14-13) ────────────────
     recon = _reconciliation_rows()
     _write_reconciliation_note(recon, canonical_hash)
+    # ── Reconciliation deltas JSON artifact (Plan 14-13 Task 3) ───────────────
+    # Emit the (NEW, OLD, delta) tuples as a structured artifact so the v2
+    # provenance gate can resolve the computed delta literals in
+    # reconciliation_note.md (the deltas are derived, not raw aggregates, so
+    # they need their own JSON source).
+    recon_artifact = {
+        "schema": (
+            "reconciliation-deltas v1 (Phase 14 plan 14-13 Task 3 / "
+            "C-1 / PROV-CRIT-1 OD-scale rebuild)"
+        ),
+        "data_hash": canonical_hash,
+        "metric": "emd (OD, audited aggregate mean over seeds 42-46)",
+        "old_source": "baseline_comparison.json#rows (pipeline=B, OD, emd)",
+        "new_source": "matched2000_dualscale.json#aggregates (metric_name=emd, scale=OD)",
+        "rows": [
+            {
+                "model": r["model"],
+                "old_1000ep": r["old_1000ep"],
+                "new_2000ep": r["new_2000ep"],
+                "delta": r["delta"],
+            }
+            for r in recon
+        ],
+    }
+    (RESULTS / "reconciliation_deltas.json").write_text(
+        json.dumps(recon_artifact, indent=2)
+    )
 
     # ── Regenerate provenance docs FROM model_info.json (D-14-16) ─────────────
     # Re-read what we just wrote so the renderers consume the SAME JSON the
