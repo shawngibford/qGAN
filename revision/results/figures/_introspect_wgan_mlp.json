@@ -1,4 +1,5 @@
 {
+  "render_only": true,
   "target": "wgan_mlp",
   "seed": 42,
   "epochs": 1000,

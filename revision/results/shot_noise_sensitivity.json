@@ -1,5 +1,6 @@
 {
   "schema": "long-form; extends baseline_comparison six-key contract {model_kind,pipeline,seed,metric_name,scale,value} with {condition,shots}",
+  "data_hash": "91e447d4624e25b3",
   "deliverable": "SENS-01 shot-noise degradation",
   "model_kinds": [
     "quantum"

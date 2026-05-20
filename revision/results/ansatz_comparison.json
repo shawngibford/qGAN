@@ -1,5 +1,6 @@
 {
   "schema": "long-form rows[] + models[] (D-10-16) + ansatz/depth/topology (Phase 13)",
+  "data_hash": "91e447d4624e25b3",
   "model_kinds": [
     "quantum"
   ],
