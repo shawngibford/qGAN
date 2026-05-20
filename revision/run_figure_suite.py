@@ -1039,6 +1039,1182 @@ def render_existing_introspection(figures_dir: Path) -> list[Path]:
 
 
 # ---------------------------------------------------------------------------
+# Plan 14-10: 7 render-only "full story" figures consuming previously-
+# unconsumed audited JSONs (tstr.json, noise_model_sensitivity.json,
+# shot_noise_sensitivity.json) + previously-absent head-to-head views
+# over already-computed artifacts. Render-only: NO retraining, NO sampling,
+# NO checkpoint reload, NO new metric recomputation — only numpy.mean/std
+# aggregations over already-evaluated values (and numpy.histogram for the
+# failure-modes distribution row, which is rendering math, not metric math).
+# revision/core/ remains byte-frozen (D-14-22). The frozen-checkpoint
+# headline is visually distinct from iqp_sel_55_repro on every figure where
+# both could appear (D-14-10).
+# ---------------------------------------------------------------------------
+# Adversarial models that carry per-eval-step ``emd_avg`` (length 201,
+# eval-every-10-epochs over 2000 epochs). VAE has no emd_avg (ELBO loop);
+# AR(p) is closed-form (no training curve). These two are handled as
+# explicit caption/no-trajectory panels in Tasks 1 + 5 — never fabricated.
+ADVERSARIAL_MODELS_WITH_EMD_AVG = [
+    "iqp_sel_55_repro", "V1", "V2", "V3",
+    "wgan_mlp", "wgan_cnn", "wgan_lstm",
+]
+MODELS_NO_TRAJECTORY = ["vae", "ar"]
+
+
+def render_training_convergence_all_models(repo: Path,
+                                           figures_dir: Path) -> list[Path]:
+    """9-model EMD-vs-epoch trajectories + frozen-headline marker (Task 1).
+
+    Render-only over the 35 audited
+    ``matched2000/runs/<adversarial model>/<seed>/metrics.json`` per-run
+    files (7 adversarial models x 5 seeds) + ``headline_canonical.json``.
+    The 7 emd_avg arrays are stacked into (5, 201) per model and the
+    per-epoch MEAN and STD are computed via ``numpy`` over the already-
+    evaluated EMD values (this is aggregation, NOT metric recomputation —
+    revision.core.eval is not invoked here).
+
+    VAE / AR have no eval-epoch emd_avg trajectory; they are explicitly
+    NOT plotted and are surfaced in the in-figure caption + companion
+    JSON ``models_skipped_no_emd_avg``. The frozen-checkpoint headline
+    (``headline_canonical.json``, source=``frozen_checkpoint_epoch_1969``)
+    is rendered as a DISTINCT diamond at x=1969 + a horizontal dashed
+    reference line at y=checkpoint_emd (D-14-10): never merged into the
+    iqp_sel_55_repro mean curve.
+    """
+    # Load the 7-model x 5-seed = 35 per-run metrics.json files.
+    per_model_emd_seedstack: dict[str, np.ndarray] = {}
+    for m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
+        stack: list[np.ndarray] = []
+        for s in SEEDS:
+            mp = _run_dir(repo, m, s) / "metrics.json"
+            j = _load_json(mp, f"{m}/{s} metrics for training-convergence")
+            if "emd_avg" not in j:
+                raise FileNotFoundError(
+                    f"[14-10/T1] {m}/{s} metrics.json missing emd_avg; the "
+                    f"render-only contract requires the pre-evaluated EMD "
+                    f"trajectory be present."
+                )
+            arr = np.asarray(j["emd_avg"], dtype=float)
+            if arr.shape != (201,):
+                raise ValueError(
+                    f"[14-10/T1] {m}/{s} emd_avg has shape {arr.shape}, "
+                    f"expected (201,) — eval-every-10-epochs over 2000 "
+                    f"epochs (the 14-08 / matched2000 schema)."
+                )
+            stack.append(arr)
+        per_model_emd_seedstack[m] = np.stack(stack, axis=0)  # (5, 201)
+
+    # Recover absolute epoch index from the eval-step grid (eval every 10).
+    n_eval_steps = 201
+    epochs_per_step = 10
+    epochs = np.arange(n_eval_steps) * epochs_per_step  # 0, 10, ..., 2000
+
+    # Frozen-checkpoint headline (D-14-10 distinct diamond + dashed line).
+    head = _load_json(
+        repo / HEADLINE_REL, "headline_canonical for training-convergence")
+    head_epoch = int(head["checkpoint_epoch"])
+    head_emd = float(head["checkpoint_emd"])
+    if head_epoch != 1969:
+        raise ValueError(
+            f"[14-10/T1] headline_canonical.checkpoint_epoch={head_epoch}, "
+            f"expected 1969 (frozen_checkpoint_epoch_1969)."
+        )
+
+    fig, ax = plt.subplots(figsize=(10, 6.5))
+    per_model_mean: dict[str, list[float]] = {}
+    per_model_std: dict[str, list[float]] = {}
+    for m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
+        s = per_model_emd_seedstack[m]
+        mean_e = s.mean(axis=0)
+        std_e = s.std(axis=0)
+        per_model_mean[m] = mean_e.tolist()
+        per_model_std[m] = std_e.tolist()
+        c = MODEL_COLORS.get(m, "#0072B2")
+        ax.plot(epochs, mean_e, color=c, linewidth=2.0,
+                label=MODEL_LABELS.get(m, m), zorder=3)
+        ax.fill_between(epochs, mean_e - std_e, mean_e + std_e,
+                        color=c, alpha=0.18, linewidth=0, zorder=2)
+
+    # Frozen headline: DISTINCT diamond + thin horizontal dashed reference.
+    ax.axhline(head_emd, color=HEADLINE_COLOR, linestyle="--",
+               linewidth=1.2, alpha=0.55, zorder=4)
+    ax.scatter([head_epoch], [head_emd], marker="D", s=100,
+               color=HEADLINE_COLOR, edgecolor="white", linewidths=1.2,
+               label=HEADLINE_LABEL, zorder=10)
+
+    ax.set_xlabel("epoch (eval_step × 10)")
+    ax.set_ylabel("EMD (avg over eval window, OD scale)")
+    ax.set_yscale("log")
+    ax.set_xlim(0, 2000)
+    ax.grid(True, alpha=0.3, which="both")
+    ax.set_title(
+        "Training convergence — 7 adversarial models (mean ± std over 5 "
+        "seeds) + frozen-checkpoint headline at epoch 1969 "
+        "(DISTINCT diamond + horizontal reference — D-14-10)"
+    )
+    ax.legend(frameon=False, fontsize=8, ncol=2, loc="upper right")
+    ax.annotate(
+        "VAE / AR: no emd_avg eval trajectory\n(ELBO loop / closed-form fit)",
+        xy=(0.98, 0.02), xycoords="axes fraction",
+        ha="right", va="bottom", fontsize=8,
+        bbox=dict(boxstyle="round,pad=0.3", fc="white",
+                  ec="#888888", alpha=0.85),
+    )
+    fig.tight_layout()
+
+    companion = {
+        "figure": "training_convergence_all_models",
+        "render_only": True,
+        "source_artifacts": [
+            f"revision/results/matched2000/runs/<{','.join(ADVERSARIAL_MODELS_WITH_EMD_AVG)}>/"
+            f"<{','.join(str(s) for s in SEEDS)}>/metrics.json (×35)",
+            "revision/results/headline_canonical.json",
+        ],
+        "models_plotted": list(ADVERSARIAL_MODELS_WITH_EMD_AVG),
+        "models_skipped_no_emd_avg": list(MODELS_NO_TRAJECTORY),
+        "epochs_per_eval_step": epochs_per_step,
+        "n_eval_steps": n_eval_steps,
+        "epoch_axis_range": [0, 2000],
+        "seeds": list(SEEDS),
+        "frozen_headline": {
+            "checkpoint_epoch": head_epoch,
+            "checkpoint_emd": head_emd,
+            "source": "frozen_checkpoint_epoch_1969",
+            "marker_style": "diamond, HEADLINE_COLOR",
+            "conflation_guard": (
+                "D-14-10: frozen headline is a DISTINCT marker (diamond + "
+                "horizontal dashed reference line), never merged into the "
+                "iqp_sel_55_repro mean curve."
+            ),
+        },
+        "per_model_mean_emd_avg": per_model_mean,
+        "per_model_std_emd_avg": per_model_std,
+        "caption_note": (
+            "EMD-vs-epoch on log-y, per matched-2000ep budget; the frozen "
+            "checkpoint epoch 1969 is shown as a distinct diamond + "
+            "horizontal reference (D-14-10). log_return per-epoch "
+            "trajectories were not captured during training; only OD eval "
+            "trajectories exist (single-panel OD)."
+        ),
+    }
+    return _save(fig, figures_dir, "training_convergence_all_models",
+                 companion)
+
+
+# Plan 14-10 Task 2 helpers: model_kinds appear in tstr.json verbatim
+# (NO V1/V2/V3 — tstr.json is the EVAL-01 paper artifact and uses
+# model_kind="quantum" for the 55-param IQP:SEL only).
+TSTR_PIPELINES = ["A", "B"]
+
+
+def render_tstr_crossmodel(repo: Path, figures_dir: Path) -> list[Path]:
+    """Cross-model TSTR R²/MAE/RMSE grouped bars (Task 2).
+
+    Render-only over ``revision/results/tstr.json`` (the SOLE source for
+    this figure; previously unconsumed). The 6 model_kinds present in
+    tstr.json are plotted verbatim — NO fabricated V1/V2/V3 entries. The
+    "quantum" kind here is the 55-param IQP:SEL (matched2000_reproduction
+    in model_info.json terms); it is colored MODEL_COLORS["iqp_sel_55_repro"]
+    so the cross-model legend reads consistently with the rest of the suite.
+
+    NEGATIVE R² IS PLOTTED HONESTLY (no clamp, no abs, no rescale). The
+    R²<0 reviewer-facing note is built into the companion JSON's
+    ``caption_note``; the list of (model, pipeline) entries with r2_mean<0
+    is built DYNAMICALLY from tstr.json — never hard-coded (plan-check fix).
+    """
+    src_path = repo / Path("revision/results/tstr.json")
+    t = _load_json(src_path, "tstr.json (Task 2 source)")
+    tstr_block: dict = t["tstr"]
+    model_kinds: list[str] = list(t["model_kinds"])
+    pipelines: list[str] = list(t["pipelines"])
+    init_seeds: list[int] = list(t.get("init_seeds", [40, 41, 42]))
+    soft_sensor_meta: str = t.get("soft_sensor", "")
+
+    # tstr.json maps "quantum" -> the IQP:SEL 55p case; reuse the
+    # iqp_sel_55_repro color so the cross-suite legend is consistent.
+    def _color_for_tstr_kind(k: str) -> str:
+        if k == "quantum":
+            return MODEL_COLORS["iqp_sel_55_repro"]
+        return MODEL_COLORS.get(k, "#666666")
+
+    def _label_for_tstr_kind(k: str) -> str:
+        if k == "quantum":
+            return "IQP:SEL 55p (quantum, TSTR)"
+        return MODEL_LABELS.get(k, k)
+
+    # Build per-(model, pipeline) verbatim records from tstr.json.
+    per_mp: dict[str, dict] = {}
+    for k, v in tstr_block.items():
+        if "|" not in k:
+            continue
+        m, p = k.split("|", 1)
+        per_mp[k] = {
+            "r2_mean": float(v["r2_mean"]),
+            "r2_std": float(v["r2_std"]),
+            "mae_mean": float(v["mae_mean"]),
+            "mae_std": float(v["mae_std"]),
+            "rmse_mean": float(v["rmse_mean"]),
+            "rmse_std": float(v["rmse_std"]),
+            "n_train_synth": int(v["n_train_synth"]),
+            "n_eval_real": int(v["n_eval_real"]),
+        }
+    # Dynamic list of (model, pipeline) with r2_mean<0 (plan-check fix:
+    # NEVER hard-coded — built from tstr.json's per_model_pipeline block).
+    neg_r2_keys = sorted(
+        k for k, rec in per_mp.items() if rec["r2_mean"] < 0
+    )
+
+    # 1x3 panels: R², MAE, RMSE. Two grouped clusters per panel
+    # (Pipeline A left, Pipeline B right). 6 models per cluster.
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5.2))
+    metrics = [
+        ("r2", "R² (synth → real soft-sensor)"),
+        ("mae", "MAE"),
+        ("rmse", "RMSE"),
+    ]
+    n_models = len(model_kinds)
+    bar_w = 0.36
+    pipeline_x_offset = {"A": -bar_w / 2 - 0.02, "B": +bar_w / 2 + 0.02}
+    # Use a wide gap between A-cluster and B-cluster: x base per model
+    x_base = np.arange(n_models) * 1.6
+
+    for ax, (metric, ylabel) in zip(axes, metrics):
+        for p in pipelines:
+            means = []
+            stds = []
+            for m in model_kinds:
+                k = f"{m}|{p}"
+                rec = per_mp.get(k)
+                if rec is None:
+                    means.append(0.0)
+                    stds.append(0.0)
+                    continue
+                means.append(rec[f"{metric}_mean"])
+                stds.append(rec[f"{metric}_std"])
+            # Two bar groups per cluster: A (hatched) vs B (solid)
+            x_cluster = x_base + pipeline_x_offset[p]
+            colors = [_color_for_tstr_kind(m) for m in model_kinds]
+            hatch = "//" if p == "A" else None
+            alpha = 0.55 if p == "A" else 0.92
+            ax.bar(
+                x_cluster, means, bar_w,
+                yerr=stds, capsize=3, color=colors, alpha=alpha,
+                edgecolor="white", linewidth=0.6, hatch=hatch,
+                label=f"Pipeline {p}",
+            )
+        ax.set_xticks(x_base)
+        ax.set_xticklabels(
+            [_label_for_tstr_kind(m) for m in model_kinds],
+            rotation=30, ha="right", fontsize=8,
+        )
+        ax.set_ylabel(ylabel)
+        ax.set_title(f"TSTR — {ylabel}")
+        ax.grid(True, alpha=0.3, axis="y")
+        if metric == "r2":
+            # HONEST negative axis — extend to include the most negative
+            # value (no clamp, no abs, no log-rescale).
+            r2_vals = [per_mp[f"{m}|{p}"]["r2_mean"]
+                       for m in model_kinds for p in pipelines
+                       if f"{m}|{p}" in per_mp]
+            ymin = min(min(r2_vals) - 0.5, -0.5)
+            ymax = max(max(r2_vals) + 0.2, 1.05)
+            ax.set_ylim(ymin, ymax)
+            ax.axhline(0.0, color="#333333", linewidth=0.8, alpha=0.5)
+            ax.annotate(
+                "R² < 0 ⇒ worse than predicting the mean",
+                xy=(0.02, 0.04), xycoords="axes fraction",
+                fontsize=8, color="#882255",
+                bbox=dict(boxstyle="round,pad=0.25", fc="white",
+                          ec="#882255", alpha=0.85),
+            )
+        if metric == "r2":
+            ax.legend(frameon=False, fontsize=8, loc="lower right")
+
+    fig.suptitle(
+        "TSTR cross-model — synth→real soft-sensor (TSTRLiteLSTM, "
+        "1-layer, hidden=32). Pipeline A (synth on synth init, then "
+        "eval on real) vs Pipeline B (synth→real). Mean ± std over 3 "
+        "init seeds (40-42). Negative R² is PLOTTED HONESTLY.",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+
+    # Build the dynamic caption_note from tstr.json's per_model_pipeline
+    # block (plan-check fix: NEVER hard-code model names; the data ground
+    # truth is the source of record and a hand-typed list would drift).
+    neg_a_models = sorted(
+        k.split("|", 1)[0]
+        for k in neg_r2_keys if k.endswith("|A")
+    )
+    neg_a_str = ", ".join(neg_a_models) if neg_a_models else "(none)"
+    caption_note = (
+        "R² < 0 means the model is worse than predicting the mean — this "
+        "is informative, not a render bug. The exact set of models with "
+        "Pipeline A negative R² (built dynamically from tstr.json's "
+        "per_model_pipeline block, NEVER hard-coded) is: "
+        f"{neg_a_str} — because the soft-sensor trained on synthetic "
+        "windows fails to generalize back to real windows when the "
+        "synthetic distribution is far from real; Pipeline B (synth→real, "
+        "the bioprocess-relevant direction) is positive for all models."
+    )
+
+    companion = {
+        "figure": "tstr_crossmodel",
+        "render_only": True,
+        "source_artifact": "revision/results/tstr.json",
+        "models": model_kinds,
+        "pipelines": pipelines,
+        "init_seeds": init_seeds,
+        "per_model_pipeline": per_mp,
+        "negative_r2_observed": neg_r2_keys,
+        "caption_note": caption_note,
+        "soft_sensor": soft_sensor_meta,
+        "real_only_baseline": tstr_block.get("real_only_baseline"),
+    }
+    return _save(fig, figures_dir, "tstr_crossmodel", companion)
+
+
+def render_failure_modes_summary(repo: Path,
+                                 figures_dir: Path) -> list[Path]:
+    """3-row × 9-column failure-mode diagnostic grid (Task 3).
+
+    Columns are the 9 matched-2000ep models ordered by ASCENDING OD EMD
+    (best-on-the-left). Rows:
+      A) OD distribution overlay (numpy histogram over the already-
+         reconstructed OD windows — this is rendering math, NOT metric
+         math; ``revision.core.eval`` is not invoked).
+      B) ACF lag-1 bar (real vs generated) read DIRECTLY from the
+         pre-written ``acf_<model>.json`` companions (14-04 output).
+      C) log_return EMD bar (model mean ± std) read via ``_agg_lookup``
+         from ``matched2000_dualscale.json``; outliers (> Q3 + 1.5*IQR
+         across the 9 values) get a red bar edge.
+
+    The frozen-checkpoint headline (D-14-10) is rendered as ROW-SPANNING
+    dashed reference lines (one per row where applicable) — NEVER merged
+    into the iqp_sel_55_repro column.
+    """
+    # 1) Load aggregates and sort models by ascending OD EMD.
+    ds_path = repo / MATCHED2000_DUALSCALE_REL
+    ds = _load_json(ds_path, "matched2000_dualscale.json (Task 3 source)")
+    aggs: list[dict] = ds["aggregates"]
+
+    od_emd_per_model: dict[str, float] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        a = _agg_lookup(aggs, m, "OD", "emd")
+        if a is None:
+            raise FileNotFoundError(
+                f"[14-10/T3] missing OD/emd aggregate for {m} in "
+                f"matched2000_dualscale.json; the render-only contract "
+                f"requires every model carry an OD-EMD aggregate row."
+            )
+        od_emd_per_model[m] = float(a["mean"])
+    sorted_models = sorted(
+        DUALSCALE_MODEL_ORDER, key=lambda m: od_emd_per_model[m]
+    )
+
+    # 2) Frozen headline references (row-spanning dashed lines).
+    head_OD_emd = None
+    head_logret_emd = None
+    head_OD_mean = None
+    head_a = _agg_lookup(aggs, HEADLINE_KIND, "OD", "emd")
+    if head_a is not None:
+        head_OD_emd = float(head_a["mean"])
+    head_b = _agg_lookup(aggs, HEADLINE_KIND, "log_return", "emd")
+    if head_b is not None:
+        head_logret_emd = float(head_b["mean"])
+    head_m = _agg_lookup(aggs, HEADLINE_KIND, "OD", "moment_mean")
+    if head_m is not None:
+        head_OD_mean = float(head_m["mean"])
+
+    # 3) Per-model log_return EMD (row C source).
+    logret_emd_per_model: dict[str, tuple[float, float]] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        a = _agg_lookup(aggs, m, "log_return", "emd")
+        if a is None:
+            raise FileNotFoundError(
+                f"[14-10/T3] missing log_return/emd aggregate for {m} "
+                f"in matched2000_dualscale.json."
+            )
+        logret_emd_per_model[m] = (float(a["mean"]), float(a["std"]))
+    # Outlier threshold = Q3 + 1.5 * IQR across the 9 models.
+    lr_vals = np.array([logret_emd_per_model[m][0]
+                        for m in DUALSCALE_MODEL_ORDER])
+    q1, q3 = np.percentile(lr_vals, [25, 75])
+    iqr = q3 - q1
+    lr_outlier_thresh = q3 + 1.5 * iqr
+
+    # 4) Load dist_*.json (row A — for summary stats / failure detection)
+    # and acf_*.json (row B — for lag-1 ACF values).
+    dist_records: dict[str, dict] = {}
+    acf_records: dict[str, dict] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        dp = figures_dir / f"dist_{m}.json"
+        ap = figures_dir / f"acf_{m}.json"
+        dist_records[m] = _load_json(dp, f"dist_{m}.json companion")
+        acf_records[m] = _load_json(ap, f"acf_{m}.json companion")
+
+    # 5) Reconstruct per-model OD windows for row A histogram overlay
+    # (numpy histogram is RENDERING math, not metric math — the OD
+    # windows are reconstructed via the verbatim Pipeline-B logic
+    # already in this module).
+    real_refs = _real_references(repo)
+    real_flat = real_refs["real_OD_flat"]
+    od_by_model_local: dict[str, np.ndarray] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        od_by_model_local[m] = reconstruct_od(repo, m, PRIMARY_SEED)
+
+    # 6) Failure thresholds (per the plan).
+    n_models = len(sorted_models)
+    fig = plt.figure(figsize=(2.0 * n_models + 1.5, 8.2))
+    gs = fig.add_gridspec(3, n_models, hspace=0.55, wspace=0.25)
+    per_cell: dict[str, dict] = {}
+
+    # Shared OD-histogram bin grid (best-quality cross-model overlay).
+    od_lo, od_hi = np.percentile(
+        np.concatenate([real_flat,
+                        *(od_by_model_local[m].reshape(-1)
+                          for m in sorted_models)]),
+        [0.5, 99.5],
+    )
+    bins = np.linspace(od_lo, od_hi, 30)
+
+    for ci, m in enumerate(sorted_models):
+        c = MODEL_COLORS.get(m, "#0072B2")
+        # --- Row A: distribution overlay (real grey vs fake colored).
+        axA = fig.add_subplot(gs[0, ci])
+        fake_flat = od_by_model_local[m].reshape(-1)
+        axA.hist(real_flat, bins=bins, density=True, color="#555555",
+                 alpha=0.4, edgecolor="white", linewidth=0.2)
+        axA.hist(fake_flat, bins=bins, density=True, color=c,
+                 alpha=0.55, edgecolor="white", linewidth=0.2)
+        # Row-spanning headline OD mean reference (a vertical dashed line
+        # at the headline's OD moment_mean — distinct from any per-model
+        # column's bar, D-14-10).
+        if head_OD_mean is not None:
+            axA.axvline(head_OD_mean, color=HEADLINE_COLOR,
+                        linestyle="--", linewidth=1.0, alpha=0.5)
+        # Failure: |fake_mean - real_mean| > 0.1*|real_mean|
+        real_mean = float(dist_records[m]["real_mean"])
+        fake_mean = float(dist_records[m]["fake_mean"])
+        is_fail_A = abs(fake_mean - real_mean) > 0.1 * abs(real_mean)
+        if is_fail_A:
+            axA.set_title(MODEL_LABELS.get(m, m), fontsize=7.5,
+                          color="#D7263D")
+            axA.text(0.98, 0.92, "wrong mean", transform=axA.transAxes,
+                     ha="right", va="top", fontsize=7,
+                     color="#D7263D", weight="bold")
+        else:
+            axA.set_title(MODEL_LABELS.get(m, m), fontsize=7.5)
+        axA.tick_params(labelsize=6)
+        if ci == 0:
+            axA.set_ylabel("dist (density)\nreal grey / fake color",
+                           fontsize=7)
+        else:
+            axA.set_yticks([])
+        per_cell[f"distribution_overlay|{m}"] = {
+            "value": fake_mean,
+            "real_mean": real_mean,
+            "is_failure": bool(is_fail_A),
+            "failure_label": "wrong mean" if is_fail_A else None,
+            "source": f"revision/results/figures/dist_{m}.json + "
+                      f"reconstructed OD (PRIMARY_SEED={PRIMARY_SEED})",
+        }
+
+        # --- Row B: ACF lag-1 (real vs generated) bar pair.
+        axB = fig.add_subplot(gs[1, ci])
+        acf_real = float(acf_records[m]["acf_real_OD"][1])
+        acf_fake = float(acf_records[m]["acf_fake_OD"][1])
+        axB.bar([0, 1], [acf_real, acf_fake], color=["#555555", c],
+                width=0.7, alpha=0.85, edgecolor="white", linewidth=0.4)
+        axB.set_xticks([0, 1])
+        axB.set_xticklabels(["real", "fake"], fontsize=6)
+        axB.set_ylim(-0.1, 1.05)
+        axB.axhline(0, color="#888888", linewidth=0.5, alpha=0.5)
+        is_fail_B = abs(acf_fake - acf_real) > 0.5
+        if is_fail_B:
+            axB.text(0.5, 0.92, "ACF-lag1 mismatch",
+                     transform=axB.transAxes, ha="center", va="top",
+                     fontsize=6.5, color="#D7263D", weight="bold")
+        axB.tick_params(labelsize=6)
+        if ci == 0:
+            axB.set_ylabel("ACF lag-1", fontsize=7)
+        else:
+            axB.set_yticks([])
+        per_cell[f"acf_lag1|{m}"] = {
+            "value": acf_fake,
+            "real_value": acf_real,
+            "is_failure": bool(is_fail_B),
+            "failure_label": "ACF-lag1 mismatch" if is_fail_B else None,
+            "source": f"revision/results/figures/acf_{m}.json (lag-1 idx)",
+        }
+
+        # --- Row C: log_return EMD with red outlier edge.
+        axC = fig.add_subplot(gs[2, ci])
+        lr_mean, lr_std = logret_emd_per_model[m]
+        is_fail_C = lr_mean > lr_outlier_thresh
+        edge_kw = dict(edgecolor=("#D7263D" if is_fail_C else "white"),
+                       linewidth=(1.6 if is_fail_C else 0.4))
+        axC.bar([0], [lr_mean], yerr=[lr_std], capsize=3, color=c,
+                width=0.6, alpha=0.85, **edge_kw)
+        # Row-spanning headline log_return EMD reference (D-14-10).
+        if head_logret_emd is not None:
+            axC.axhline(head_logret_emd, color=HEADLINE_COLOR,
+                        linestyle="--", linewidth=1.0, alpha=0.55)
+        axC.set_xticks([])
+        axC.tick_params(labelsize=6)
+        if is_fail_C:
+            axC.text(0.5, 0.92, "log_ret blowup",
+                     transform=axC.transAxes, ha="center", va="top",
+                     fontsize=6.5, color="#D7263D", weight="bold")
+        if ci == 0:
+            axC.set_ylabel("log_return EMD\n(mean ± std)", fontsize=7)
+        per_cell[f"log_return_emd|{m}"] = {
+            "value": lr_mean,
+            "std": lr_std,
+            "is_failure": bool(is_fail_C),
+            "failure_label": "log_ret blowup" if is_fail_C else None,
+            "outlier_threshold": float(lr_outlier_thresh),
+            "source": "revision/results/matched2000_dualscale.json "
+                      "(log_return/emd aggregate)",
+        }
+
+    fig.suptitle(
+        "Failure-mode triage at a glance — 9 matched-2000ep models "
+        "ordered by ascending OD EMD; rows: (A) OD dist overlay, "
+        "(B) ACF lag-1 vs real, (C) log_return EMD (red-edged outliers). "
+        "Frozen headline (epoch 1969) shown as row-spanning dashed "
+        "reference lines — DISTINCT from iqp_sel_55_repro column "
+        "(D-14-10).",
+        fontsize=10,
+    )
+
+    companion = {
+        "figure": "failure_modes_summary",
+        "render_only": True,
+        "source_artifacts": [
+            "revision/results/matched2000_dualscale.json",
+            "revision/results/figures/dist_<model>.json (×9)",
+            "revision/results/figures/acf_<model>.json (×9)",
+        ],
+        "models_ordered_by_OD_emd_ascending": list(sorted_models),
+        "OD_emd_per_model": {m: float(od_emd_per_model[m])
+                              for m in sorted_models},
+        "rows": ["distribution_overlay", "acf_lag1", "log_return_emd"],
+        "per_cell": per_cell,
+        "log_return_outlier_threshold_iqr": float(lr_outlier_thresh),
+        "frozen_headline_references": {
+            "OD_moment_mean": head_OD_mean,
+            "OD_emd": head_OD_emd,
+            "log_return_emd": head_logret_emd,
+            "source": "frozen_checkpoint_epoch_1969",
+            "conflation_guard": (
+                "D-14-10: headline shown as row-spanning dashed reference "
+                "lines (vertical in row A at OD moment_mean, horizontal "
+                "in row C at log_return EMD), never merged into the "
+                "iqp_sel_55_repro column."
+            ),
+        },
+        "caption_note": (
+            "Failure-mode triage at a glance. Columns are the 9 "
+            "matched-2000ep models in ascending OD EMD; rows are "
+            "(a) OD distribution overlay (real grey, fake color), "
+            "(b) ACF lag-1 vs real, (c) log_return EMD with red-edged "
+            "outliers (> Q3+1.5*IQR). Failure annotations are based on "
+            "natural thresholds: |fake_mean - real_mean| > 0.1*|real_mean| "
+            "(row A), |ACF_fake[1] - ACF_real[1]| > 0.5 (row B), "
+            "log_return EMD > Q3+1.5*IQR (row C)."
+        ),
+    }
+    return _save(fig, figures_dir, "failure_modes_summary", companion)
+
+
+# Family -> marker style for the param-efficiency Pareto scatter.
+_FAMILY_MARKER = {
+    "adversarial-quantum": "o",
+    "adversarial-classical": "s",
+    "non-adversarial": "^",
+}
+
+
+def render_param_efficiency_pareto(repo: Path,
+                                   figures_dir: Path) -> list[Path]:
+    """log10(params) × EMD Pareto scatter, OD vs log_return facets (Task 4).
+
+    Render-only over ``model_info.json`` (parameter_count + family) and
+    ``matched2000_dualscale.json`` (EMD mean ± std at OD + log_return).
+    The frozen-checkpoint headline (iqp_sel_55_headline, 55p,
+    source=frozen_checkpoint_epoch_1969) is a DISTINCT diamond at
+    log10(55) — at the same x as the iqp_sel_55_repro circle but with a
+    different color, marker shape, and y (D-14-10 visually distinct).
+    """
+    mi_path = repo / Path("revision/results/model_info.json")
+    mi = _load_json(mi_path, "model_info.json (Task 4 source)")
+    ds = _load_json(
+        repo / MATCHED2000_DUALSCALE_REL,
+        "matched2000_dualscale.json (Task 4 source)",
+    )
+    aggs: list[dict] = ds["aggregates"]
+
+    # Index model_info[models] by model field for O(1) lookup.
+    mi_by_model: dict[str, dict] = {m["model"]: m for m in mi["models"]}
+
+    per_model: dict[str, dict] = {}
+    for m in DUALSCALE_MODEL_ORDER:
+        rec = mi_by_model.get(m)
+        if rec is None:
+            raise FileNotFoundError(
+                f"[14-10/T4] {m} missing from model_info.json (no "
+                f"parameter_count); the render-only contract requires "
+                f"every matched-2000ep model carry a model_info record."
+            )
+        n_params = int(rec["parameter_count"])
+        family = str(rec["family"])
+        a_od = _agg_lookup(aggs, m, "OD", "emd")
+        a_lr = _agg_lookup(aggs, m, "log_return", "emd")
+        if a_od is None or a_lr is None:
+            raise FileNotFoundError(
+                f"[14-10/T4] {m} missing OD/log_return EMD aggregate "
+                f"in matched2000_dualscale.json."
+            )
+        per_model[m] = {
+            "parameter_count": n_params,
+            "family": family,
+            "log10_params": float(np.log10(n_params)),
+            "OD_emd_mean": float(a_od["mean"]),
+            "OD_emd_std": float(a_od["std"]),
+            "log_return_emd_mean": float(a_lr["mean"]),
+            "log_return_emd_std": float(a_lr["std"]),
+            "marker": _FAMILY_MARKER.get(family, "x"),
+            "color": MODEL_COLORS.get(m, "#666666"),
+        }
+
+    # Frozen-headline diamond: x = log10(iqp_sel_55_headline.parameter_count)
+    head_rec = mi_by_model.get("iqp_sel_55_headline")
+    if head_rec is None:
+        raise FileNotFoundError(
+            "[14-10/T4] iqp_sel_55_headline missing from model_info.json."
+        )
+    head_params = int(head_rec["parameter_count"])
+    if head_params != 55:
+        raise ValueError(
+            f"[14-10/T4] iqp_sel_55_headline.parameter_count={head_params}, "
+            f"expected 55 (frozen_checkpoint_epoch_1969 anchor)."
+        )
+    head_x = float(np.log10(head_params))
+    head_od = _agg_lookup(aggs, HEADLINE_KIND, "OD", "emd")
+    head_lr = _agg_lookup(aggs, HEADLINE_KIND, "log_return", "emd")
+    if head_od is None or head_lr is None:
+        raise FileNotFoundError(
+            f"[14-10/T4] frozen headline OD/log_return EMD aggregate "
+            f"missing from matched2000_dualscale.json."
+        )
+
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.6))
+    panel_specs = [
+        (axes[0], "OD",        "OD_emd_mean",        "OD_emd_std"),
+        (axes[1], "log_return", "log_return_emd_mean", "log_return_emd_std"),
+    ]
+    for ax, scale_label, mean_key, std_key in panel_specs:
+        for m, rec in per_model.items():
+            ax.errorbar(
+                rec["log10_params"], rec[mean_key],
+                yerr=rec[std_key],
+                fmt=rec["marker"], color=rec["color"], markersize=9,
+                markeredgecolor="white", markeredgewidth=0.8,
+                capsize=3, ecolor=rec["color"], elinewidth=0.8,
+                alpha=0.92, zorder=4,
+            )
+            ax.annotate(
+                MODEL_LABELS.get(m, m),
+                (rec["log10_params"], rec[mean_key]),
+                xytext=(6, 4), textcoords="offset points",
+                fontsize=7, color="#222222", alpha=0.9,
+            )
+        # Frozen-headline diamond (D-14-10: distinct marker shape +
+        # distinct color vs the iqp_sel_55_repro circle at the same x).
+        head_y = float((head_od if scale_label == "OD" else head_lr)["mean"])
+        ax.scatter([head_x], [head_y], marker="D", s=140,
+                   color=HEADLINE_COLOR, edgecolor="white",
+                   linewidths=1.2, zorder=10, label=HEADLINE_LABEL)
+        ax.set_xlabel("log10(parameter_count)")
+        ax.set_ylabel(f"{scale_label} EMD (mean ± std, 5 seeds)")
+        ax.set_title(
+            f"{scale_label} scale — lower-left = better param-efficiency"
+        )
+        ax.grid(True, alpha=0.3)
+        ax.legend(
+            handles=[
+                plt.Line2D([], [], linestyle="", marker="o",
+                           color="#0072B2", markersize=8,
+                           label="adversarial-quantum"),
+                plt.Line2D([], [], linestyle="", marker="s",
+                           color="#D55E00", markersize=8,
+                           label="adversarial-classical"),
+                plt.Line2D([], [], linestyle="", marker="^",
+                           color="#882255", markersize=8,
+                           label="non-adversarial"),
+                plt.Line2D([], [], linestyle="", marker="D",
+                           color=HEADLINE_COLOR, markersize=10,
+                           markeredgecolor="white",
+                           label=HEADLINE_LABEL),
+            ],
+            frameon=False, fontsize=7, loc="upper right",
+        )
+
+    fig.suptitle(
+        "Parameter-efficiency Pareto — log10(params) × EMD, "
+        "OD vs log_return. Frozen-checkpoint headline (epoch 1969, 55p) "
+        "is the DISTINCT diamond at log10(55) — different marker shape "
+        "AND color AND y from the iqp_sel_55_repro circle at the same x "
+        "(D-14-10).",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+
+    companion = {
+        "figure": "param_efficiency_pareto",
+        "render_only": True,
+        "source_artifacts": [
+            "revision/results/model_info.json",
+            "revision/results/matched2000_dualscale.json",
+        ],
+        "panels": ["OD", "log_return"],
+        "x_axis": "log10(parameter_count)",
+        "per_model": per_model,
+        "frozen_headline": {
+            "parameter_count": head_params,
+            "log10_params": head_x,
+            "OD_emd_mean": float(head_od["mean"]),
+            "OD_emd_std": float(head_od["std"]),
+            "log_return_emd_mean": float(head_lr["mean"]),
+            "log_return_emd_std": float(head_lr["std"]),
+            "marker_style": "diamond, HEADLINE_COLOR",
+            "source": "frozen_checkpoint_epoch_1969",
+            "conflation_guard": (
+                "D-14-10: headline is a diamond at the same x as "
+                "iqp_sel_55_repro (both 55p) but a distinct color, marker "
+                "shape, AND y — never merged into the repro circle."
+            ),
+        },
+        "family_markers": dict(_FAMILY_MARKER),
+        "caption_note": (
+            "Lower-left = better parameter efficiency. The frozen "
+            "headline (epoch 1969, 55p) is the diamond — distinct from "
+            "the 5-seed iqp_sel_55_repro circle at the same x. "
+            "Markers: circle = adversarial-quantum, square = adversarial-"
+            "classical, triangle = non-adversarial."
+        ),
+    }
+    return _save(fig, figures_dir, "param_efficiency_pareto", companion)
+
+
+def render_seed_variance_per_model(repo: Path,
+                                   figures_dir: Path) -> list[Path]:
+    """3×3 facet grid of per-seed EMD trajectories per model (Task 5).
+
+    Render-only over the 35 audited
+    ``matched2000/runs/<adversarial>/<seed>/metrics.json`` per-run files.
+    Each adversarial panel shows the 5 per-seed emd_avg lines (light) +
+    the across-seed mean (bold). VAE and AR panels carry an explicit
+    "no eval-epoch trajectory" caption — NEVER fabricated.
+
+    Spread label per adversarial panel (tight / moderate / noisy)
+    derived from the across-seed std of the FINAL eval step's EMD value
+    (< 5% of mean = tight, 5-15% = moderate, > 15% = noisy).
+    """
+    # Panel layout MODEL_ORDER row-major (3 rows × 3 cols).
+    panel_order = list(MODEL_ORDER)  # 9 entries; row-major fill
+
+    # Load the 7 adversarial models' 5-seed emd_avg stacks.
+    per_model_seeds: dict[str, np.ndarray] = {}
+    for m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
+        stack = []
+        for s in SEEDS:
+            j = _load_json(
+                _run_dir(repo, m, s) / "metrics.json",
+                f"{m}/{s} metrics for seed-variance",
+            )
+            if "emd_avg" not in j:
+                raise FileNotFoundError(
+                    f"[14-10/T5] {m}/{s} missing emd_avg."
+                )
+            arr = np.asarray(j["emd_avg"], dtype=float)
+            stack.append(arr)
+        per_model_seeds[m] = np.stack(stack, axis=0)
+
+    epochs = np.arange(per_model_seeds[
+        ADVERSARIAL_MODELS_WITH_EMD_AVG[0]
+    ].shape[1]) * 10  # eval every 10 epochs
+
+    # Shared y-range across adversarial panels for fair visual comparison.
+    all_vals = np.concatenate(
+        [per_model_seeds[m].reshape(-1)
+         for m in ADVERSARIAL_MODELS_WITH_EMD_AVG]
+    )
+    y_lo = max(1e-3, float(all_vals[all_vals > 0].min() * 0.85))
+    y_hi = float(all_vals.max() * 1.15)
+
+    fig, axes = plt.subplots(3, 3, figsize=(15, 10), sharex=True)
+    per_model_final_emd_mean: dict[str, float] = {}
+    per_model_final_emd_std: dict[str, float] = {}
+    per_model_spread_label: dict[str, str] = {}
+
+    def _spread_label(mean_v: float, std_v: float) -> str:
+        if mean_v <= 0:
+            return "moderate"
+        ratio = std_v / mean_v
+        if ratio < 0.05:
+            return "tight"
+        if ratio < 0.15:
+            return "moderate"
+        return "noisy"
+
+    for idx, m in enumerate(panel_order):
+        r, c = divmod(idx, 3)
+        ax = axes[r][c]
+        if m in ADVERSARIAL_MODELS_WITH_EMD_AVG:
+            stack = per_model_seeds[m]  # (5, 201)
+            col = MODEL_COLORS.get(m, "#0072B2")
+            for si in range(stack.shape[0]):
+                ax.plot(epochs, stack[si], color=col, alpha=0.35,
+                        linewidth=1.0)
+            mean_curve = stack.mean(axis=0)
+            ax.plot(epochs, mean_curve, color=col, alpha=1.0,
+                    linewidth=2.2, label="mean over 5 seeds")
+            ax.set_yscale("log")
+            ax.set_ylim(y_lo, y_hi)
+            ax.grid(True, alpha=0.3, which="both")
+            ax.set_title(MODEL_LABELS.get(m, m), fontsize=9)
+            ax.tick_params(labelsize=7)
+            # Final-step spread
+            final_vals = stack[:, -1]
+            final_mean = float(final_vals.mean())
+            final_std = float(final_vals.std())
+            per_model_final_emd_mean[m] = final_mean
+            per_model_final_emd_std[m] = final_std
+            label = _spread_label(final_mean, final_std)
+            per_model_spread_label[m] = label
+            ax.text(0.98, 0.04, f"5-seed spread: {label}",
+                    transform=ax.transAxes, ha="right", va="bottom",
+                    fontsize=7, color="#222222",
+                    bbox=dict(boxstyle="round,pad=0.2", fc="white",
+                              ec="#888888", alpha=0.85))
+        else:
+            # VAE / AR — no emd_avg trajectory; honest "no curve" panel.
+            ax.set_title(MODEL_LABELS.get(m, m), fontsize=9)
+            ax.set_yscale("log")
+            ax.set_ylim(y_lo, y_hi)
+            ax.grid(True, alpha=0.3, which="both")
+            note = ("VAE — no emd_avg eval trajectory (ELBO loop)"
+                    if m == "vae"
+                    else "AR — closed-form, no training curve")
+            ax.text(0.5, 0.5, note, transform=ax.transAxes,
+                    ha="center", va="center", fontsize=9,
+                    color="#882255",
+                    bbox=dict(boxstyle="round,pad=0.4", fc="#FFF6F0",
+                              ec="#882255", alpha=0.92))
+        if r == 2:
+            ax.set_xlabel("epoch (eval_step × 10)")
+        if c == 0:
+            ax.set_ylabel("EMD (avg / eval window, OD scale)")
+
+    fig.suptitle(
+        "Per-model 5-seed EMD trajectories (light) + mean (bold) — "
+        "matched-2000ep budget. Quantum cluster (IQP:SEL 55p + V1/V2/V3) "
+        "shows tight seed agreement; wgan_cnn is noisier across seeds. "
+        "VAE/AR have no eval-epoch trajectory (ELBO loop / closed-form fit).",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+
+    companion = {
+        "figure": "seed_variance_per_model",
+        "render_only": True,
+        "source_artifacts": [
+            f"revision/results/matched2000/runs/<{','.join(ADVERSARIAL_MODELS_WITH_EMD_AVG)}>/"
+            f"<{','.join(str(s) for s in SEEDS)}>/metrics.json (×35)",
+        ],
+        "panel_layout_row_major": list(panel_order),
+        "adversarial_panels": list(ADVERSARIAL_MODELS_WITH_EMD_AVG),
+        "no_trajectory_panels": list(MODELS_NO_TRAJECTORY),
+        "seeds": list(SEEDS),
+        "per_model_final_emd_mean": per_model_final_emd_mean,
+        "per_model_final_emd_std": per_model_final_emd_std,
+        "per_model_spread_label": per_model_spread_label,
+        "spread_label_thresholds": {
+            "tight": "std / mean < 5%",
+            "moderate": "5% <= std / mean < 15%",
+            "noisy": "std / mean >= 15%",
+        },
+        "caption_note": (
+            "Per-model 5-seed EMD-vs-epoch trajectories (light) with mean "
+            "(bold). Quantum cluster (IQP:SEL 55p + V1/V2/V3) shows tight "
+            "seed agreement; wgan_cnn is noisier across seeds; VAE/AR "
+            "have no eval-epoch trajectory (ELBO loop / closed-form fit)."
+        ),
+    }
+    return _save(fig, figures_dir, "seed_variance_per_model", companion)
+
+
+def render_noise_robustness_quantum(repo: Path,
+                                    figures_dir: Path) -> list[Path]:
+    """EMD vs noise level for depolarizing & amplitude-damping (Task 6).
+
+    Render-only over ``revision/results/noise_model_sensitivity.json``
+    (previously unconsumed). Filters rows[] to metric_name=='emd' AND
+    scale=='OD', groups by (noise_model, noise_level, pipeline), and
+    aggregates mean ± std over the 3 seeds [42, 43, 44]. The zero anchor
+    (depol_0.0 / ampdamp_0.0 — same physical baseline by zero_anchor_note)
+    is preserved as two distinct curve anchors per the source JSON's
+    explicit note.
+    """
+    src_path = repo / Path("revision/results/noise_model_sensitivity.json")
+    j = _load_json(src_path, "noise_model_sensitivity.json (Task 6 source)")
+    rows = j["rows"]
+    noise_models_decl = j["noise_models"]
+    pipelines = list(j["pipelines"])
+    seeds = list(j["seeds"])
+    channel_insertion = j.get("channel_insertion", "")
+    zero_anchor_note = j.get("zero_anchor_note", "")
+
+    # Filter and group.
+    emd_rows = [r for r in rows
+                if r.get("metric_name") == "emd"
+                and r.get("scale") == "OD"]
+    from collections import defaultdict
+    grouped: dict[tuple, list[float]] = defaultdict(list)
+    for r in emd_rows:
+        key = (r["noise_model"], float(r["noise_level"]), r["pipeline"])
+        grouped[key].append(float(r["value"]))
+
+    per_curve: dict[str, list[dict]] = {}
+    monotonicity: dict[str, str] = {}
+    channels = ["depolarizing", "amplitude_damping"]
+    for ch in channels:
+        for p in pipelines:
+            levels = sorted(noise_models_decl[ch])
+            curve = []
+            for lev in levels:
+                vals = grouped.get((ch, float(lev), p), [])
+                if not vals:
+                    raise FileNotFoundError(
+                        f"[14-10/T6] missing emd|OD rows for "
+                        f"({ch}, {lev}, {p}) in "
+                        f"noise_model_sensitivity.json."
+                    )
+                arr = np.asarray(vals, dtype=float)
+                curve.append({
+                    "noise_level": float(lev),
+                    "emd_mean": float(arr.mean()),
+                    "emd_std": float(arr.std()),
+                    "n_seeds": int(arr.size),
+                })
+            per_curve[f"{ch}|{p}"] = curve
+            # Monotonicity check (post-aggregation, ascending level).
+            means = [c["emd_mean"] for c in curve]
+            deltas = np.diff(means)
+            mono = ("monotonic_increase"
+                    if (len(deltas) == 0 or np.all(deltas >= 0))
+                    else "non_monotonic")
+            monotonicity[f"{ch}|{p}"] = mono
+
+    # 1×2 panels: depolarizing | amplitude_damping. Two curves per panel
+    # (Pipeline A dashed, Pipeline B solid) with markers + error bars.
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.4))
+    for ax, ch in zip(axes, channels):
+        for p in pipelines:
+            curve = per_curve[f"{ch}|{p}"]
+            xs = [c["noise_level"] for c in curve]
+            ys = [c["emd_mean"] for c in curve]
+            es = [c["emd_std"] for c in curve]
+            ls = "--" if p == "A" else "-"
+            mk = "o" if p == "B" else "s"
+            col = "#0072B2" if p == "B" else "#D55E00"
+            ax.errorbar(xs, ys, yerr=es, marker=mk, linestyle=ls,
+                        color=col, capsize=3, markersize=7,
+                        markeredgecolor="white", markeredgewidth=0.6,
+                        elinewidth=0.8, linewidth=1.4,
+                        label=f"Pipeline {p}")
+            # Zero anchor (depol_0.0 / ampdamp_0.0) gets a distinct ring
+            # marker per the source JSON's zero_anchor_note.
+            if curve and curve[0]["noise_level"] == 0.0:
+                ax.scatter([curve[0]["noise_level"]],
+                           [curve[0]["emd_mean"]],
+                           s=130, facecolor="none", edgecolor=col,
+                           linewidths=1.4, zorder=8)
+        ax.set_xlabel(f"{ch} noise level")
+        ax.set_ylabel("OD EMD (mean ± std over 3 seeds)")
+        ax.set_title(
+            f"{ch.replace('_',' ').title()} — "
+            f"{'monotonic↑' if monotonicity[f'{ch}|A'] == 'monotonic_increase' and monotonicity[f'{ch}|B'] == 'monotonic_increase' else 'mixed'} "
+            f"(A: {monotonicity[f'{ch}|A']}, B: {monotonicity[f'{ch}|B']})"
+        )
+        ax.grid(True, alpha=0.3)
+        ax.legend(frameon=False, fontsize=8)
+
+    fig.suptitle(
+        "EMD vs noise level — depolarizing and amplitude-damping channels "
+        "inserted per-layer (after each entangling block). Mean over 3 "
+        "seeds (42-44); error bars = seed std. Open ring at noise_level "
+        "= 0.0 marks the zero anchor (same physical baseline per source "
+        "JSON's zero_anchor_note, kept as distinct rows per curve).",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
+
+    companion = {
+        "figure": "noise_robustness_quantum",
+        "render_only": True,
+        "source_artifact": "revision/results/noise_model_sensitivity.json",
+        "noise_models": channels,
+        "noise_levels": {
+            ch: list(sorted(noise_models_decl[ch])) for ch in channels
+        },
+        "pipelines": pipelines,
+        "seeds": seeds,
+        "channel_insertion": channel_insertion,
+        "zero_anchor_note": zero_anchor_note,
+        "per_curve_aggregates": per_curve,
+        "monotonicity": monotonicity,
+        "caption_note": (
+            "EMD vs noise level for depolarizing and amplitude-damping "
+            "channels inserted per-layer (after each entangling block). "
+            "Mean over 3 seeds (42-44); error bars are seed std. "
+            "Monotonicity per curve recorded in companion JSON. "
+            "Zero anchor (level=0.0) preserved as distinct per-curve "
+            "rows per the source JSON's zero_anchor_note."
+        ),
+    }
+    return _save(fig, figures_dir, "noise_robustness_quantum", companion)
+
+
+def render_shot_noise_robustness(repo: Path,
+                                 figures_dir: Path) -> list[Path]:
+    """EMD vs shot count with analytic-statevector reference (Task 7).
+
+    Render-only over ``revision/results/shot_noise_sensitivity.json``
+    (previously unconsumed). The "analytic" condition (shots=None,
+    statevector simulator) is rendered as a HORIZONTAL REFERENCE LINE
+    per pipeline (the shots=∞ asymptote); finite-shot conditions
+    (currently shots_8192 and shots_1024) are plotted as points connected
+    by lines on a log-x shots axis with error bars over 3 seeds.
+    """
+    src_path = repo / Path("revision/results/shot_noise_sensitivity.json")
+    j = _load_json(src_path, "shot_noise_sensitivity.json (Task 7 source)")
+    rows = j["rows"]
+    pipelines = list(j["pipelines"])
+    seeds = list(j["seeds"])
+    conditions = list(j["conditions"])
+    shot_levels = dict(j["shot_levels"])
+
+    # Filter to emd|OD and group.
+    emd_rows = [r for r in rows
+                if r.get("metric_name") == "emd"
+                and r.get("scale") == "OD"]
+    from collections import defaultdict
+    grouped: dict[tuple, list[float]] = defaultdict(list)
+    for r in emd_rows:
+        cond = r["condition"]
+        p = r["pipeline"]
+        grouped[(cond, p)].append(float(r["value"]))
+
+    finite_conditions = sorted(
+        (c for c in conditions if shot_levels.get(c) is not None),
+        key=lambda c: int(shot_levels[c]),
+    )
+    per_curve: dict[str, list[dict]] = {}
+    analytic_baseline: dict[str, dict] = {}
+    for p in pipelines:
+        curve = []
+        for c in finite_conditions:
+            vals = grouped.get((c, p), [])
+            if not vals:
+                raise FileNotFoundError(
+                    f"[14-10/T7] missing emd|OD rows for ({c}, {p}) "
+                    f"in shot_noise_sensitivity.json."
+                )
+            arr = np.asarray(vals, dtype=float)
+            curve.append({
+                "condition": c,
+                "shots": int(shot_levels[c]),
+                "emd_mean": float(arr.mean()),
+                "emd_std": float(arr.std()),
+                "n_seeds": int(arr.size),
+            })
+        per_curve[p] = curve
+        avals = grouped.get(("analytic", p), [])
+        if not avals:
+            raise FileNotFoundError(
+                f"[14-10/T7] missing emd|OD rows for ('analytic', {p}) "
+                f"in shot_noise_sensitivity.json."
+            )
+        aarr = np.asarray(avals, dtype=float)
+        analytic_baseline[p] = {
+            "emd_mean": float(aarr.mean()),
+            "emd_std": float(aarr.std()),
+            "n_seeds": int(aarr.size),
+        }
+
+    # Single-panel figure: log-x shots, both pipelines on the same axes
+    # with their analytic baselines as horizontal references.
+    fig, ax = plt.subplots(figsize=(10, 5.6))
+    pipeline_styles = {
+        "A": dict(color="#D55E00", linestyle="--", marker="s",
+                  label_prefix="Pipeline A"),
+        "B": dict(color="#0072B2", linestyle="-",  marker="o",
+                  label_prefix="Pipeline B"),
+    }
+    for p in pipelines:
+        st = pipeline_styles[p]
+        curve = per_curve[p]
+        xs = [c["shots"] for c in curve]
+        ys = [c["emd_mean"] for c in curve]
+        es = [c["emd_std"] for c in curve]
+        ax.errorbar(xs, ys, yerr=es, marker=st["marker"],
+                    linestyle=st["linestyle"], color=st["color"],
+                    markersize=8, markeredgecolor="white",
+                    markeredgewidth=0.6, capsize=3, linewidth=1.6,
+                    elinewidth=0.9,
+                    label=f"{st['label_prefix']} (finite shots)")
+        # Horizontal analytic baseline reference (shots=∞ asymptote).
+        ab = analytic_baseline[p]
+        ax.axhline(ab["emd_mean"], color=st["color"], linestyle=":",
+                   linewidth=1.3, alpha=0.75,
+                   label=f"{st['label_prefix']} analytic (shots=∞)")
+    ax.set_xscale("log")
+    ax.set_xlabel("shots (per Pauli measurement, log scale)")
+    ax.set_ylabel("OD EMD (mean ± std over 3 seeds)")
+    ax.set_title(
+        "Shot-noise robustness — EMD vs shot count (log-x). Analytic-"
+        "statevector baseline (shots=∞) shown as horizontal reference "
+        "per pipeline. Mean over 3 seeds (42-44); error bars are seed std."
+    )
+    ax.grid(True, alpha=0.3, which="both")
+    ax.legend(frameon=False, fontsize=8, loc="best")
+    fig.tight_layout()
+
+    companion = {
+        "figure": "shot_noise_robustness",
+        "render_only": True,
+        "source_artifact": "revision/results/shot_noise_sensitivity.json",
+        "conditions": conditions,
+        "shot_levels": shot_levels,
+        "pipelines": pipelines,
+        "seeds": seeds,
+        "per_curve_aggregates": per_curve,
+        "analytic_baseline": analytic_baseline,
+        "x_scale": "log",
+        "caption_note": (
+            "EMD vs shot count (log-x) for Pipeline A and B; the "
+            "analytic-statevector baseline (shots=∞) is shown as a "
+            "horizontal reference per pipeline. Mean over 3 seeds "
+            "(42-44); error bars are seed std."
+        ),
+    }
+    return _save(fig, figures_dir, "shot_noise_robustness", companion)
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 def main() -> None:
@@ -1123,6 +2299,19 @@ def main() -> None:
     written += render_matched2000_dualscale_comparison_table(
         repo, figures_dir
     )
+
+    # --- Plan 14-10: 7 "full story" render-only figures (NO retraining,
+    # NO resampling, NO new metric recomputation). Each function loud-
+    # fails on missing input JSON. Frozen-checkpoint headline rendered
+    # visually distinct from iqp_sel_55_repro on every figure where both
+    # could appear (D-14-10). revision/core/ stays byte-frozen (D-14-22).
+    written += render_training_convergence_all_models(repo, figures_dir)
+    written += render_tstr_crossmodel(repo, figures_dir)
+    written += render_failure_modes_summary(repo, figures_dir)
+    written += render_param_efficiency_pareto(repo, figures_dir)
+    written += render_seed_variance_per_model(repo, figures_dir)
+    written += render_noise_robustness_quantum(repo, figures_dir)
+    written += render_shot_noise_robustness(repo, figures_dir)
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
     written += render_existing_introspection(figures_dir)

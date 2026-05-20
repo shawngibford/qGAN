@@ -1,0 +1,147 @@
+{
+ "figure": "noise_robustness_quantum",
+ "render_only": true,
+ "source_artifact": "revision/results/noise_model_sensitivity.json",
+ "noise_models": [
+  "depolarizing",
+  "amplitude_damping"
+ ],
+ "noise_levels": {
+  "depolarizing": [
+   0.0,
+   0.001,
+   0.01,
+   0.05
+  ],
+  "amplitude_damping": [
+   0.0,
+   0.001,
+   0.01,
+   0.05
+  ]
+ },
+ "pipelines": [
+  "A",
+  "B"
+ ],
+ "seeds": [
+  42,
+  43,
+  44
+ ],
+ "channel_insertion": "per-layer (after each entangling block)",
+ "zero_anchor_note": "depol_0.0 and ampdamp_0.0 are the same physical p=0/gamma=0 baseline; kept as two distinct rows (one per noise_model) so each degradation curve owns its own zero anchor",
+ "per_curve_aggregates": {
+  "depolarizing|A": [
+   {
+    "noise_level": 0.0,
+    "emd_mean": 1.0512427103841697,
+    "emd_std": 0.0007257518342839883,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.001,
+    "emd_mean": 1.0515084012053377,
+    "emd_std": 0.0007179398394246596,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.01,
+    "emd_mean": 1.053733555874045,
+    "emd_std": 0.0006518944262854729,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.05,
+    "emd_mean": 1.0607328517921806,
+    "emd_std": 0.00043302340469124996,
+    "n_seeds": 3
+   }
+  ],
+  "depolarizing|B": [
+   {
+    "noise_level": 0.0,
+    "emd_mean": 0.029676002138766866,
+    "emd_std": 0.004874162405821623,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.001,
+    "emd_mean": 0.029676694085483086,
+    "emd_std": 0.004873648794750993,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.01,
+    "emd_mean": 0.0296817274226531,
+    "emd_std": 0.004869632571277954,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.05,
+    "emd_mean": 0.029690778488981898,
+    "emd_std": 0.004850633775968664,
+    "n_seeds": 3
+   }
+  ],
+  "amplitude_damping|A": [
+   {
+    "noise_level": 0.0,
+    "emd_mean": 1.051242710384174,
+    "emd_std": 0.0007257518342838477,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.001,
+    "emd_mean": 1.0514159566491108,
+    "emd_std": 0.0007148174781357341,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.01,
+    "emd_mean": 1.0529222252358137,
+    "emd_std": 0.0006197754467900938,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.05,
+    "emd_mean": 1.0584830732577923,
+    "emd_std": 0.0004080926390793272,
+    "n_seeds": 3
+   }
+  ],
+  "amplitude_damping|B": [
+   {
+    "noise_level": 0.0,
+    "emd_mean": 0.029676002138766876,
+    "emd_std": 0.004874162405821608,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.001,
+    "emd_mean": 0.029679745720421005,
+    "emd_std": 0.0048739651880464994,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.01,
+    "emd_mean": 0.02971367125351103,
+    "emd_std": 0.004872261093229889,
+    "n_seeds": 3
+   },
+   {
+    "noise_level": 0.05,
+    "emd_mean": 0.02987490771767683,
+    "emd_std": 0.004862070864049077,
+    "n_seeds": 3
+   }
+  ]
+ },
+ "monotonicity": {
+  "depolarizing|A": "monotonic_increase",
+  "depolarizing|B": "monotonic_increase",
+  "amplitude_damping|A": "monotonic_increase",
+  "amplitude_damping|B": "monotonic_increase"
+ },
+ "caption_note": "EMD vs noise level for depolarizing and amplitude-damping channels inserted per-layer (after each entangling block). Mean over 3 seeds (42-44); error bars are seed std. Monotonicity per curve recorded in companion JSON. Zero anchor (level=0.0) preserved as distinct per-curve rows per the source JSON's zero_anchor_note."
+}

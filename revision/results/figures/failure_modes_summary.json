@@ -1,0 +1,245 @@
+{
+ "figure": "failure_modes_summary",
+ "render_only": true,
+ "source_artifacts": [
+  "revision/results/matched2000_dualscale.json",
+  "revision/results/figures/dist_<model>.json (\u00d79)",
+  "revision/results/figures/acf_<model>.json (\u00d79)"
+ ],
+ "models_ordered_by_OD_emd_ascending": [
+  "vae",
+  "wgan_mlp",
+  "iqp_sel_55_repro",
+  "V3",
+  "V2",
+  "V1",
+  "wgan_lstm",
+  "ar",
+  "wgan_cnn"
+ ],
+ "OD_emd_per_model": {
+  "vae": 0.025741708778716454,
+  "wgan_mlp": 0.025952441411555126,
+  "iqp_sel_55_repro": 0.027526430476567092,
+  "V3": 0.027537862057722535,
+  "V2": 0.027571997702351646,
+  "V1": 0.027582604413720145,
+  "wgan_lstm": 0.028214100034701418,
+  "ar": 0.02908435933553529,
+  "wgan_cnn": 0.0543233969986812
+ },
+ "rows": [
+  "distribution_overlay",
+  "acf_lag1",
+  "log_return_emd"
+ ],
+ "per_cell": {
+  "distribution_overlay|vae": {
+   "value": 1.3900480490344411,
+   "real_mean": 1.4042103290557861,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/dist_vae.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|vae": {
+   "value": 0.90149683938042,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_vae.json (lag-1 idx)"
+  },
+  "log_return_emd|vae": {
+   "value": 0.010299878935153753,
+   "std": 0.0010185497410960486,
+   "is_failure": false,
+   "failure_label": null,
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  },
+  "distribution_overlay|wgan_mlp": {
+   "value": 1.4031038477112072,
+   "real_mean": 1.4042103290557861,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/dist_wgan_mlp.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|wgan_mlp": {
+   "value": 0.901621932948114,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_wgan_mlp.json (lag-1 idx)"
+  },
+  "log_return_emd|wgan_mlp": {
+   "value": 0.26993858202582777,
+   "std": 0.035580571917365016,
+   "is_failure": false,
+   "failure_label": null,
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  },
+  "distribution_overlay|iqp_sel_55_repro": {
+   "value": 1.4071833282150938,
+   "real_mean": 1.4042103290557861,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/dist_iqp_sel_55_repro.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|iqp_sel_55_repro": {
+   "value": 0.9011928810220682,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_iqp_sel_55_repro.json (lag-1 idx)"
+  },
+  "log_return_emd|iqp_sel_55_repro": {
+   "value": 0.12286584712632038,
+   "std": 0.0023282438658001905,
+   "is_failure": false,
+   "failure_label": null,
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  },
+  "distribution_overlay|V3": {
+   "value": 1.4069734279240016,
+   "real_mean": 1.4042103290557861,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/dist_V3.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|V3": {
+   "value": 0.9012079701022887,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_V3.json (lag-1 idx)"
+  },
+  "log_return_emd|V3": {
+   "value": 0.13030466424258152,
+   "std": 0.004213264231686552,
+   "is_failure": false,
+   "failure_label": null,
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  },
+  "distribution_overlay|V2": {
+   "value": 1.4072425029329032,
+   "real_mean": 1.4042103290557861,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/dist_V2.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|V2": {
+   "value": 0.9011911778470448,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_V2.json (lag-1 idx)"
+  },
+  "log_return_emd|V2": {
+   "value": 0.1218157301317309,
+   "std": 0.00019082527559026918,
+   "is_failure": false,
+   "failure_label": null,
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  },
+  "distribution_overlay|V1": {
+   "value": 1.407044221977507,
+   "real_mean": 1.4042103290557861,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/dist_V1.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|V1": {
+   "value": 0.9011989424159543,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_V1.json (lag-1 idx)"
+  },
+  "log_return_emd|V1": {
+   "value": 0.12190673604602073,
+   "std": 0.0010091421952335413,
+   "is_failure": false,
+   "failure_label": null,
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  },
+  "distribution_overlay|wgan_lstm": {
+   "value": 1.4045895721604,
+   "real_mean": 1.4042103290557861,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/dist_wgan_lstm.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|wgan_lstm": {
+   "value": 0.9020697697856604,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_wgan_lstm.json (lag-1 idx)"
+  },
+  "log_return_emd|wgan_lstm": {
+   "value": 0.16632064238232588,
+   "std": 0.018339947702398253,
+   "is_failure": false,
+   "failure_label": null,
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  },
+  "distribution_overlay|ar": {
+   "value": 1.4083020232771801,
+   "real_mean": 1.4042103290557861,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/dist_ar.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|ar": {
+   "value": 0.900022270008195,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_ar.json (lag-1 idx)"
+  },
+  "log_return_emd|ar": {
+   "value": 0.7811385570662264,
+   "std": 0.002798117315215629,
+   "is_failure": true,
+   "failure_label": "log_ret blowup",
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  },
+  "distribution_overlay|wgan_cnn": {
+   "value": 1.5629074024985978,
+   "real_mean": 1.4042103290557861,
+   "is_failure": true,
+   "failure_label": "wrong mean",
+   "source": "revision/results/figures/dist_wgan_cnn.json + reconstructed OD (PRIMARY_SEED=42)"
+  },
+  "acf_lag1|wgan_cnn": {
+   "value": 0.9042859203568349,
+   "real_value": 0.9982498162015762,
+   "is_failure": false,
+   "failure_label": null,
+   "source": "revision/results/figures/acf_wgan_cnn.json (lag-1 idx)"
+  },
+  "log_return_emd|wgan_cnn": {
+   "value": 0.6873233973280222,
+   "std": 0.27134323529468446,
+   "is_failure": true,
+   "failure_label": "log_ret blowup",
+   "outlier_threshold": 0.49198635099553834,
+   "source": "revision/results/matched2000_dualscale.json (log_return/emd aggregate)"
+  }
+ },
+ "log_return_outlier_threshold_iqr": 0.49198635099553834,
+ "frozen_headline_references": {
+  "OD_moment_mean": 1.4073796823002893,
+  "OD_emd": 0.023071979442389253,
+  "log_return_emd": 0.12124099500150183,
+  "source": "frozen_checkpoint_epoch_1969",
+  "conflation_guard": "D-14-10: headline shown as row-spanning dashed reference lines (vertical in row A at OD moment_mean, horizontal in row C at log_return EMD), never merged into the iqp_sel_55_repro column."
+ },
+ "caption_note": "Failure-mode triage at a glance. Columns are the 9 matched-2000ep models in ascending OD EMD; rows are (a) OD distribution overlay (real grey, fake color), (b) ACF lag-1 vs real, (c) log_return EMD with red-edged outliers (> Q3+1.5*IQR). Failure annotations are based on natural thresholds: |fake_mean - real_mean| > 0.1*|real_mean| (row A), |ACF_fake[1] - ACF_real[1]| > 0.5 (row B), log_return EMD > Q3+1.5*IQR (row C)."
+}
