@@ -546,6 +546,16 @@ DERIVED from `data.csv` + the locked window config — D-14-16, success criterio
 5) and from `model_info.json` `seed_set`; none is hand-typed. Companion doc:
 `revision/docs/dataset_stats.md` (also rendered from the same JSON).
 
+> **Consolidated Methods document.** The same dataset numbers — plus the
+> model registry, training protocol, hardware/software stack, and
+> reproducibility contract — are consolidated in `revision/docs/methods_full.md`
+> §1 (Dataset) through §5 (Reproducibility), rendered from
+> `revision/results/methods_full.json` + `revision/results/model_info.json` +
+> the 5 config-lock JSONs + `revision/results/classical_architectures.json`
+> + `revision/results/framework_versions.json` (Plan 14-11). The
+> copy-paste LaTeX block below remains the single load-bearing manuscript
+> insertion; methods_full.md is the reviewer-facing audit companion.
+
 **Insertion point:** `main (4) copy.tex` §3.2 "Photobioreactor Experimental
 Setup", immediately after the data-logging sentence (line ~180, "...data logged
 at 10-minute intervals by an internal data acquisition system."), as a new
@@ -658,6 +668,58 @@ EMD, and the distributional moments are reported on both scales as above.
 > (full stored precision is used so the substring resolves);
 > `revision/verify_number_provenance.py` proves every literal resolves to
 > `fidelity_dualscale.json`.
+
+### PAPER-09 — Story-completeness figure citations (Plan 14-10)
+
+> The Methods evaluation-scale table above reports a single representative
+> seed (seed 42, Pipeline B). Six story-completeness figures from Plan
+> 14-10 support specific claims in the surrounding §3 Methods / §4 Results
+> narrative and should be cited at the points they each support:
+>
+> - **Training protocol claim (R1-M4):** the per-epoch convergence behavior
+>   of every matched-2000ep model is rendered at
+>   `revision/results/figures/training_convergence_all_models.{png,pdf}`
+>   (companion JSON `training_convergence_all_models.json`; source = 45
+>   per-run metrics.json + `revision/results/headline_canonical.json`).
+>   Cite alongside the Training Protocol paragraph (PAPER-08 / methods_full.md §3).
+>
+> - **TSTR utility claim (R1-M2):** the cross-model TSTR R²/MAE/RMSE bars
+>   for Pipelines A and B are rendered at
+>   `revision/results/figures/tstr_crossmodel.{png,pdf}` (companion JSON
+>   `tstr_crossmodel.json`; source = `revision/results/tstr.json`).
+>   Negative R² is plotted honestly per the companion JSON's
+>   `caption_note`. Cite alongside the §4.1 utility-evaluation subsection.
+>
+> - **Per-model fidelity / failure modes (R1-M5):** the diagnostic grid
+>   (distribution overlay × ACF lag-1 × log-return EMD, 9 models ordered
+>   by ascending OD EMD) is rendered at
+>   `revision/results/figures/failure_modes_summary.{png,pdf}` (companion
+>   JSON `failure_modes_summary.json`; source =
+>   `revision/results/matched2000_dualscale.json` + per-model dist/acf
+>   companion JSONs). Cite alongside the §4.1 per-model fidelity claim
+>   and the R1-M5 calibration discussion.
+>
+> - **Multi-seed mean ± std claim (R1-M4):** the per-seed EMD trajectories
+>   underneath the seed-aggregated mean ± std are rendered as a 3×3 facet
+>   grid at `revision/results/figures/seed_variance_per_model.{png,pdf}`
+>   (companion JSON `seed_variance_per_model.json`; source = 45 per-run
+>   metrics.json). Cite alongside the multi-seed reporting paragraph
+>   (PAPER-08 / methods_full.md §3).
+>
+> - **Noise-model sensitivity claim (R1-M4):** EMD vs depolarizing /
+>   amplitude-damping noise level is rendered at
+>   `revision/results/figures/noise_robustness_quantum.{png,pdf}`
+>   (companion JSON `noise_robustness_quantum.json`; source =
+>   `revision/results/noise_model_sensitivity.json`). Cite alongside the
+>   noise-sensitivity discussion (R2-1 / R1-M4 backend statement).
+>
+> - **Shot-noise sensitivity claim (R1-M4):** EMD vs shot count (log-x)
+>   with the analytic-statevector reference line is rendered at
+>   `revision/results/figures/shot_noise_robustness.{png,pdf}` (companion
+>   JSON `shot_noise_robustness.json`; source =
+>   `revision/results/shot_noise_sensitivity.json`). Cite alongside the
+>   §3 backend statement (analytic statevector, no shot noise in the
+>   reported headline values) and the R1-M4 shot-noise paragraph.
 
 ---
 
