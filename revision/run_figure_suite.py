@@ -1956,6 +1956,138 @@ def render_seed_variance_per_model(repo: Path,
     return _save(fig, figures_dir, "seed_variance_per_model", companion)
 
 
+def render_noise_robustness_quantum(repo: Path,
+                                    figures_dir: Path) -> list[Path]:
+    """EMD vs noise level for depolarizing & amplitude-damping (Task 6).
+
+    Render-only over ``revision/results/noise_model_sensitivity.json``
+    (previously unconsumed). Filters rows[] to metric_name=='emd' AND
+    scale=='OD', groups by (noise_model, noise_level, pipeline), and
+    aggregates mean ± std over the 3 seeds [42, 43, 44]. The zero anchor
+    (depol_0.0 / ampdamp_0.0 — same physical baseline by zero_anchor_note)
+    is preserved as two distinct curve anchors per the source JSON's
+    explicit note.
+    """
+    src_path = repo / Path("revision/results/noise_model_sensitivity.json")
+    j = _load_json(src_path, "noise_model_sensitivity.json (Task 6 source)")
+    rows = j["rows"]
+    noise_models_decl = j["noise_models"]
+    pipelines = list(j["pipelines"])
+    seeds = list(j["seeds"])
+    channel_insertion = j.get("channel_insertion", "")
+    zero_anchor_note = j.get("zero_anchor_note", "")
+
+    # Filter and group.
+    emd_rows = [r for r in rows
+                if r.get("metric_name") == "emd"
+                and r.get("scale") == "OD"]
+    from collections import defaultdict
+    grouped: dict[tuple, list[float]] = defaultdict(list)
+    for r in emd_rows:
+        key = (r["noise_model"], float(r["noise_level"]), r["pipeline"])
+        grouped[key].append(float(r["value"]))
+
+    per_curve: dict[str, list[dict]] = {}
+    monotonicity: dict[str, str] = {}
+    channels = ["depolarizing", "amplitude_damping"]
+    for ch in channels:
+        for p in pipelines:
+            levels = sorted(noise_models_decl[ch])
+            curve = []
+            for lev in levels:
+                vals = grouped.get((ch, float(lev), p), [])
+                if not vals:
+                    raise FileNotFoundError(
+                        f"[14-10/T6] missing emd|OD rows for "
+                        f"({ch}, {lev}, {p}) in "
+                        f"noise_model_sensitivity.json."
+                    )
+                arr = np.asarray(vals, dtype=float)
+                curve.append({
+                    "noise_level": float(lev),
+                    "emd_mean": float(arr.mean()),
+                    "emd_std": float(arr.std()),
+                    "n_seeds": int(arr.size),
+                })
+            per_curve[f"{ch}|{p}"] = curve
+            # Monotonicity check (post-aggregation, ascending level).
+            means = [c["emd_mean"] for c in curve]
+            deltas = np.diff(means)
+            mono = ("monotonic_increase"
+                    if (len(deltas) == 0 or np.all(deltas >= 0))
+                    else "non_monotonic")
+            monotonicity[f"{ch}|{p}"] = mono
+
+    # 1×2 panels: depolarizing | amplitude_damping. Two curves per panel
+    # (Pipeline A dashed, Pipeline B solid) with markers + error bars.
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.4))
+    for ax, ch in zip(axes, channels):
+        for p in pipelines:
+            curve = per_curve[f"{ch}|{p}"]
+            xs = [c["noise_level"] for c in curve]
+            ys = [c["emd_mean"] for c in curve]
+            es = [c["emd_std"] for c in curve]
+            ls = "--" if p == "A" else "-"
+            mk = "o" if p == "B" else "s"
+            col = "#0072B2" if p == "B" else "#D55E00"
+            ax.errorbar(xs, ys, yerr=es, marker=mk, linestyle=ls,
+                        color=col, capsize=3, markersize=7,
+                        markeredgecolor="white", markeredgewidth=0.6,
+                        elinewidth=0.8, linewidth=1.4,
+                        label=f"Pipeline {p}")
+            # Zero anchor (depol_0.0 / ampdamp_0.0) gets a distinct ring
+            # marker per the source JSON's zero_anchor_note.
+            if curve and curve[0]["noise_level"] == 0.0:
+                ax.scatter([curve[0]["noise_level"]],
+                           [curve[0]["emd_mean"]],
+                           s=130, facecolor="none", edgecolor=col,
+                           linewidths=1.4, zorder=8)
+        ax.set_xlabel(f"{ch} noise level")
+        ax.set_ylabel("OD EMD (mean ± std over 3 seeds)")
+        ax.set_title(
+            f"{ch.replace('_',' ').title()} — "
+            f"{'monotonic↑' if monotonicity[f'{ch}|A'] == 'monotonic_increase' and monotonicity[f'{ch}|B'] == 'monotonic_increase' else 'mixed'} "
+            f"(A: {monotonicity[f'{ch}|A']}, B: {monotonicity[f'{ch}|B']})"
+        )
+        ax.grid(True, alpha=0.3)
+        ax.legend(frameon=False, fontsize=8)
+
+    fig.suptitle(
+        "EMD vs noise level — depolarizing and amplitude-damping channels "
+        "inserted per-layer (after each entangling block). Mean over 3 "
+        "seeds (42-44); error bars = seed std. Open ring at noise_level "
+        "= 0.0 marks the zero anchor (same physical baseline per source "
+        "JSON's zero_anchor_note, kept as distinct rows per curve).",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.93))
+
+    companion = {
+        "figure": "noise_robustness_quantum",
+        "render_only": True,
+        "source_artifact": "revision/results/noise_model_sensitivity.json",
+        "noise_models": channels,
+        "noise_levels": {
+            ch: list(sorted(noise_models_decl[ch])) for ch in channels
+        },
+        "pipelines": pipelines,
+        "seeds": seeds,
+        "channel_insertion": channel_insertion,
+        "zero_anchor_note": zero_anchor_note,
+        "per_curve_aggregates": per_curve,
+        "monotonicity": monotonicity,
+        "caption_note": (
+            "EMD vs noise level for depolarizing and amplitude-damping "
+            "channels inserted per-layer (after each entangling block). "
+            "Mean over 3 seeds (42-44); error bars are seed std. "
+            "Monotonicity per curve recorded in companion JSON. "
+            "Zero anchor (level=0.0) preserved as distinct per-curve "
+            "rows per the source JSON's zero_anchor_note."
+        ),
+    }
+    return _save(fig, figures_dir, "noise_robustness_quantum", companion)
+
+
 # ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
@@ -2052,6 +2184,7 @@ def main() -> None:
     written += render_failure_modes_summary(repo, figures_dir)
     written += render_param_efficiency_pareto(repo, figures_dir)
     written += render_seed_variance_per_model(repo, figures_dir)
+    written += render_noise_robustness_quantum(repo, figures_dir)
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
     written += render_existing_introspection(figures_dir)
