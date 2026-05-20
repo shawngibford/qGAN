@@ -65,7 +65,7 @@ Plans:
 **Wave 6** *(independent — re-evaluates completed 14-02/03/04 sample artifacts; not blocked by 14-07)*
 - [x] 14-08-PLAN.md — Render-only matched-2000ep dual-scale (OD + log_return) side-by-side comparison across all 9 models from saved samples; passes number-provenance gate (supports PAPER-09)
 **Wave 7** *(independent — render-only circuit visualization; not blocked by 14-07)*
-- [ ] 14-09-PLAN.md — Render-only circuit diagrams for all 5 production qubit circuits (default_75, iqp_sel_55, V1, V2, V3) + V1/V2/V3 config locks + circuit_atlas.md (supports PAPER-03)
+- [x] 14-09-PLAN.md — Render-only circuit diagrams for all 5 production qubit circuits (default_75, iqp_sel_55, V1, V2, V3) + V1/V2/V3 config locks + circuit_atlas.md (supports PAPER-03)
 
 ## Progress
 
@@ -87,4 +87,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 7/9 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 8/9 | In Progress|  |
