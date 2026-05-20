@@ -1201,6 +1201,179 @@ def render_training_convergence_all_models(repo: Path,
                  companion)
 
 
+# Plan 14-10 Task 2 helpers: model_kinds appear in tstr.json verbatim
+# (NO V1/V2/V3 — tstr.json is the EVAL-01 paper artifact and uses
+# model_kind="quantum" for the 55-param IQP:SEL only).
+TSTR_PIPELINES = ["A", "B"]
+
+
+def render_tstr_crossmodel(repo: Path, figures_dir: Path) -> list[Path]:
+    """Cross-model TSTR R²/MAE/RMSE grouped bars (Task 2).
+
+    Render-only over ``revision/results/tstr.json`` (the SOLE source for
+    this figure; previously unconsumed). The 6 model_kinds present in
+    tstr.json are plotted verbatim — NO fabricated V1/V2/V3 entries. The
+    "quantum" kind here is the 55-param IQP:SEL (matched2000_reproduction
+    in model_info.json terms); it is colored MODEL_COLORS["iqp_sel_55_repro"]
+    so the cross-model legend reads consistently with the rest of the suite.
+
+    NEGATIVE R² IS PLOTTED HONESTLY (no clamp, no abs, no rescale). The
+    R²<0 reviewer-facing note is built into the companion JSON's
+    ``caption_note``; the list of (model, pipeline) entries with r2_mean<0
+    is built DYNAMICALLY from tstr.json — never hard-coded (plan-check fix).
+    """
+    src_path = repo / Path("revision/results/tstr.json")
+    t = _load_json(src_path, "tstr.json (Task 2 source)")
+    tstr_block: dict = t["tstr"]
+    model_kinds: list[str] = list(t["model_kinds"])
+    pipelines: list[str] = list(t["pipelines"])
+    init_seeds: list[int] = list(t.get("init_seeds", [40, 41, 42]))
+    soft_sensor_meta: str = t.get("soft_sensor", "")
+
+    # tstr.json maps "quantum" -> the IQP:SEL 55p case; reuse the
+    # iqp_sel_55_repro color so the cross-suite legend is consistent.
+    def _color_for_tstr_kind(k: str) -> str:
+        if k == "quantum":
+            return MODEL_COLORS["iqp_sel_55_repro"]
+        return MODEL_COLORS.get(k, "#666666")
+
+    def _label_for_tstr_kind(k: str) -> str:
+        if k == "quantum":
+            return "IQP:SEL 55p (quantum, TSTR)"
+        return MODEL_LABELS.get(k, k)
+
+    # Build per-(model, pipeline) verbatim records from tstr.json.
+    per_mp: dict[str, dict] = {}
+    for k, v in tstr_block.items():
+        if "|" not in k:
+            continue
+        m, p = k.split("|", 1)
+        per_mp[k] = {
+            "r2_mean": float(v["r2_mean"]),
+            "r2_std": float(v["r2_std"]),
+            "mae_mean": float(v["mae_mean"]),
+            "mae_std": float(v["mae_std"]),
+            "rmse_mean": float(v["rmse_mean"]),
+            "rmse_std": float(v["rmse_std"]),
+            "n_train_synth": int(v["n_train_synth"]),
+            "n_eval_real": int(v["n_eval_real"]),
+        }
+    # Dynamic list of (model, pipeline) with r2_mean<0 (plan-check fix:
+    # NEVER hard-coded — built from tstr.json's per_model_pipeline block).
+    neg_r2_keys = sorted(
+        k for k, rec in per_mp.items() if rec["r2_mean"] < 0
+    )
+
+    # 1x3 panels: R², MAE, RMSE. Two grouped clusters per panel
+    # (Pipeline A left, Pipeline B right). 6 models per cluster.
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5.2))
+    metrics = [
+        ("r2", "R² (synth → real soft-sensor)"),
+        ("mae", "MAE"),
+        ("rmse", "RMSE"),
+    ]
+    n_models = len(model_kinds)
+    bar_w = 0.36
+    pipeline_x_offset = {"A": -bar_w / 2 - 0.02, "B": +bar_w / 2 + 0.02}
+    # Use a wide gap between A-cluster and B-cluster: x base per model
+    x_base = np.arange(n_models) * 1.6
+
+    for ax, (metric, ylabel) in zip(axes, metrics):
+        for p in pipelines:
+            means = []
+            stds = []
+            for m in model_kinds:
+                k = f"{m}|{p}"
+                rec = per_mp.get(k)
+                if rec is None:
+                    means.append(0.0)
+                    stds.append(0.0)
+                    continue
+                means.append(rec[f"{metric}_mean"])
+                stds.append(rec[f"{metric}_std"])
+            # Two bar groups per cluster: A (hatched) vs B (solid)
+            x_cluster = x_base + pipeline_x_offset[p]
+            colors = [_color_for_tstr_kind(m) for m in model_kinds]
+            hatch = "//" if p == "A" else None
+            alpha = 0.55 if p == "A" else 0.92
+            ax.bar(
+                x_cluster, means, bar_w,
+                yerr=stds, capsize=3, color=colors, alpha=alpha,
+                edgecolor="white", linewidth=0.6, hatch=hatch,
+                label=f"Pipeline {p}",
+            )
+        ax.set_xticks(x_base)
+        ax.set_xticklabels(
+            [_label_for_tstr_kind(m) for m in model_kinds],
+            rotation=30, ha="right", fontsize=8,
+        )
+        ax.set_ylabel(ylabel)
+        ax.set_title(f"TSTR — {ylabel}")
+        ax.grid(True, alpha=0.3, axis="y")
+        if metric == "r2":
+            # HONEST negative axis — extend to include the most negative
+            # value (no clamp, no abs, no log-rescale).
+            r2_vals = [per_mp[f"{m}|{p}"]["r2_mean"]
+                       for m in model_kinds for p in pipelines
+                       if f"{m}|{p}" in per_mp]
+            ymin = min(min(r2_vals) - 0.5, -0.5)
+            ymax = max(max(r2_vals) + 0.2, 1.05)
+            ax.set_ylim(ymin, ymax)
+            ax.axhline(0.0, color="#333333", linewidth=0.8, alpha=0.5)
+            ax.annotate(
+                "R² < 0 ⇒ worse than predicting the mean",
+                xy=(0.02, 0.04), xycoords="axes fraction",
+                fontsize=8, color="#882255",
+                bbox=dict(boxstyle="round,pad=0.25", fc="white",
+                          ec="#882255", alpha=0.85),
+            )
+        if metric == "r2":
+            ax.legend(frameon=False, fontsize=8, loc="lower right")
+
+    fig.suptitle(
+        "TSTR cross-model — synth→real soft-sensor (TSTRLiteLSTM, "
+        "1-layer, hidden=32). Pipeline A (synth on synth init, then "
+        "eval on real) vs Pipeline B (synth→real). Mean ± std over 3 "
+        "init seeds (40-42). Negative R² is PLOTTED HONESTLY.",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+
+    # Build the dynamic caption_note from tstr.json's per_model_pipeline
+    # block (plan-check fix: NEVER hard-code model names; the data ground
+    # truth is the source of record and a hand-typed list would drift).
+    neg_a_models = sorted(
+        k.split("|", 1)[0]
+        for k in neg_r2_keys if k.endswith("|A")
+    )
+    neg_a_str = ", ".join(neg_a_models) if neg_a_models else "(none)"
+    caption_note = (
+        "R² < 0 means the model is worse than predicting the mean — this "
+        "is informative, not a render bug. The exact set of models with "
+        "Pipeline A negative R² (built dynamically from tstr.json's "
+        "per_model_pipeline block, NEVER hard-coded) is: "
+        f"{neg_a_str} — because the soft-sensor trained on synthetic "
+        "windows fails to generalize back to real windows when the "
+        "synthetic distribution is far from real; Pipeline B (synth→real, "
+        "the bioprocess-relevant direction) is positive for all models."
+    )
+
+    companion = {
+        "figure": "tstr_crossmodel",
+        "render_only": True,
+        "source_artifact": "revision/results/tstr.json",
+        "models": model_kinds,
+        "pipelines": pipelines,
+        "init_seeds": init_seeds,
+        "per_model_pipeline": per_mp,
+        "negative_r2_observed": neg_r2_keys,
+        "caption_note": caption_note,
+        "soft_sensor": soft_sensor_meta,
+        "real_only_baseline": tstr_block.get("real_only_baseline"),
+    }
+    return _save(fig, figures_dir, "tstr_crossmodel", companion)
+
+
 # ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
@@ -1293,6 +1466,7 @@ def main() -> None:
     # visually distinct from iqp_sel_55_repro on every figure where both
     # could appear (D-14-10). revision/core/ stays byte-frozen (D-14-22).
     written += render_training_convergence_all_models(repo, figures_dir)
+    written += render_tstr_crossmodel(repo, figures_dir)
 
     # --- keep the existing introspection figures (extend, not overwrite) ---
     written += render_existing_introspection(figures_dir)
