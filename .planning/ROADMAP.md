@@ -73,7 +73,7 @@ Plans:
 **Wave 10** *(integration only — paper-blocks cross-citation + completeness-sweep manifest; not blocked by 14-07)*
 - [x] 14-12-PLAN.md — Thread 14-09/14-10/14-11 artifacts into paper_blocks_framing.md (PAPER-03 atlas + PAPER-01/02b param_efficiency_pareto), paper_blocks_refs_methods.md (PAPER-08 methods_full.md cross-ref + PAPER-09 6-figure citations), reviewer_response.md (Completeness sweep section, R1-M4 RESOLVED via methods_full.md), reconciliation_note.md (caveat paragraph); emit `revision/docs/completeness_sweep_manifest.md`; aggregate end-to-end provenance verify across all 6 paper-blocks docs; pure-additive, no `revision/core/` edit, no `verify_number_provenance.py` edit (supports PAPER-01/03/08/09)
 **Wave 11** *(independent — peer-review correction sweep over existing artifacts; not blocked by 14-07)*
-- [ ] 14-13-PLAN.md — Peer-review remediation sweep: provenance-gate v2 (LIFTS D-14-16), scale-correct reconciliation + cross_model_emd rebuild, ddof=0→ddof=1 sample-std switch, aggregator integrity (HI-2..HI-8, MD-3), figure render-determinism (CR-1), paper-blocks phantom-number cleanup, pinned `revision/requirements-pinned.txt` + tracked `revision/checkpoints/best_checkpoint.pt`, CR-4 honest disclosure + future-gate (D-14-13 extension), methods_full.md Metric Conventions section honoring D-14-22, `peer_review_remediation.md` reviewer-facing index; passes v2 gate on all 9 paper-facing docs (supports PAPER-01/02/03/08/09 + INFRA-03)
+- [x] 14-13-PLAN.md — Peer-review remediation sweep: provenance-gate v2 (LIFTS D-14-16), scale-correct reconciliation + cross_model_emd rebuild, ddof=0→ddof=1 sample-std switch, aggregator integrity (HI-2..HI-8, MD-3), figure render-determinism (CR-1), paper-blocks phantom-number cleanup, pinned `revision/requirements-pinned.txt` + tracked `revision/checkpoints/best_checkpoint.pt`, CR-4 honest disclosure + future-gate (D-14-13 extension), methods_full.md Metric Conventions section honoring D-14-22, `peer_review_remediation.md` reviewer-facing index; passes v2 gate on all 9 paper-facing docs (supports PAPER-01/02/03/08/09 + INFRA-03)
 
 ## Progress
 
@@ -95,4 +95,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 11/13 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 12/13 | In Progress|  |
