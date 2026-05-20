@@ -45,9 +45,9 @@ Plans:
   4. Repository frozen at tag `v2.0-revision`, Zenodo DOI minted and cited in the manuscript (INFRA-03) — tag + DOI resolvable from `revision/docs/release.md`
   5. All numbers cited in the revised manuscript trace back to a JSON artifact in `revision/results/` (no hand-typed numbers)
 
-**Plans**: 9 plans
+**Plans**: 10 plans
 
-> Scope note (D-14-23, recorded deviation): this phase was intentionally, user-drivenly expanded from "paper edits + freeze" to also recover the lost canonical 55-param IQP:SEL circuit and re-execute Phases 10–13 at a matched 2000-epoch budget so the manuscript numbers are coherent and traceable. Plans 01–04 are that recovery/re-execution/provenance work; Plans 05–06 are the manuscript revision package; Plan 07 is the gated release freeze (LAST, D-14-22). Plan 08 adds the matched-budget dual-scale (OD + log_return) side-by-side comparison across all 9 models for the resubmission, re-evaluating the already-saved 14-02/03/04 sample artifacts (no retraining). Plan 09 adds the previously-absent circuit-architecture diagrams + V1/V2/V3 config locks closing the PAPER-03 visualization gap.
+> Scope note (D-14-23, recorded deviation): this phase was intentionally, user-drivenly expanded from "paper edits + freeze" to also recover the lost canonical 55-param IQP:SEL circuit and re-execute Phases 10–13 at a matched 2000-epoch budget so the manuscript numbers are coherent and traceable. Plans 01–04 are that recovery/re-execution/provenance work; Plans 05–06 are the manuscript revision package; Plan 07 is the gated release freeze (LAST, D-14-22). Plan 08 adds the matched-budget dual-scale (OD + log_return) side-by-side comparison across all 9 models for the resubmission, re-evaluating the already-saved 14-02/03/04 sample artifacts (no retraining). Plan 09 adds the previously-absent circuit-architecture diagrams + V1/V2/V3 config locks closing the PAPER-03 visualization gap. Plan 10 adds the 7 missing story-completeness figures (training convergence, TSTR, failure modes, parameter-efficiency Pareto, seed variance, noise/shot-noise robustness) that consume previously-unconsumed audited JSONs.
 
 Plans:
 **Wave 1**
@@ -66,6 +66,8 @@ Plans:
 - [x] 14-08-PLAN.md — Render-only matched-2000ep dual-scale (OD + log_return) side-by-side comparison across all 9 models from saved samples; passes number-provenance gate (supports PAPER-09)
 **Wave 7** *(independent — render-only circuit visualization; not blocked by 14-07)*
 - [x] 14-09-PLAN.md — Render-only circuit diagrams for all 5 production qubit circuits (default_75, iqp_sel_55, V1, V2, V3) + V1/V2/V3 config locks + circuit_atlas.md (supports PAPER-03)
+**Wave 8** *(independent — render-only story-completeness figures over existing JSONs; consumes previously-unconsumed tstr/noise/shot-noise data; not blocked by 14-07)*
+- [ ] 14-10-PLAN.md — Render-only story-completeness figure suite: training_convergence_all_models, tstr_crossmodel, failure_modes_summary, param_efficiency_pareto, seed_variance_per_model, noise_robustness_quantum, shot_noise_robustness (supports PAPER-01/09)
 
 ## Progress
 
@@ -87,4 +89,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 8/9 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 8/10 | In Progress|  |
