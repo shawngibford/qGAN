@@ -377,6 +377,14 @@ def _comparable_variants_rows() -> list[dict]:
         for a in dist.get("aggregates", [])
         if a.get("scale") == "OD"
     }
+    # Plan 14-16 — 4th column: per-(model_kind) OD-scale DTW mean from
+    # matched2000_dualscale.json (DTW emitter at revision/core/eval.py:38-89
+    # byte-untouched under D-14-22; DTW aggregates byte-stable through 14-16).
+    dtw_od = {
+        a["model_kind"]: a
+        for a in dual.get("aggregates", [])
+        if a.get("metric_name") == "dtw_mean" and a.get("scale") == "OD"
+    }
 
     rows: list[dict] = []
     model_order = list(SWEEP_MODELS)
@@ -391,6 +399,8 @@ def _comparable_variants_rows() -> list[dict]:
             "logret_raw_std": logret_raw.get(model, {}).get("std"),
             "od_hist_mean": od_hist.get(model, {}).get("mean"),
             "od_hist_std": od_hist.get(model, {}).get("std"),
+            "dtw_od_mean": dtw_od.get(model, {}).get("mean"),
+            "dtw_od_std": dtw_od.get(model, {}).get("std"),
             "source_dist_emd": (
                 f"distribution_emd.json#aggregates "
                 f"(model_kind={model}, scale=OD); 50-bin density Wasserstein "
@@ -496,7 +506,42 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
         "computed on the SAME real-data slice and SAME 50-bin convention as "
         "the deprecated v1.0-pre metric, so it IS commensurate with the "
         "pre-v1.0 paper headline (~0.0015) for the first time since the "
-        "v1.0 raw-sample switch (Plan 14-15)."
+        "v1.0 raw-sample switch (Plan 14-15). "
+        "**Plan 14-16 r3 remediation.** "
+        "Column 2 (log-return raw-sample EMD) was corrected for a "
+        "standardization scale mismatch in `run_matched2000_dualscale.py:"
+        "368-372` AND `run_distribution_emd.py:_real_references` at "
+        "`:144-153` (R3-HI-1 sister sites under the same finding ID in "
+        "`peer-review-r3/code-review-r3.md` §H3) via the un-standardize-fake "
+        "recipe from `pipeline-review-r3.md` §2; column 3 (50-bin "
+        "histogram-density EMD on OD scale) was reformulated with "
+        "shared-edges-from-real to eliminate the per-distribution "
+        "renormalization concern documented in `peer-review-r3/"
+        "code-review-r3.md` R3-CR-1 (investigation finding: with shared "
+        "edges the density=True vs density=False formulation is numerically "
+        "inert for `scipy.stats.wasserstein_distance`, which renormalizes "
+        "weights internally — the OD-scale v1->v2 values are byte-identical; "
+        "the fix's genuine contribution is the `fake_in_range_mass` "
+        "disclosure stat confirming no out-of-range truncation). Plan 14-16 "
+        "r3 remediation also revealed that the pre-fix LR-EMD column had "
+        "inverted the quantum-vs-classical ranking due to the R3-CR-2 scale "
+        "mismatch; the corrected column places AR (3-parameter Yule-Walker "
+        "baseline) first at 0.003 and shows quantum/WGAN/VAE clustering in "
+        "the 0.007-0.016 band with no statistically meaningful separation. "
+        "See `peer_review_remediation.md` Plan 14-16 r3-process retraction "
+        "for the full disclosure. "
+        "DTW addendum (Plan 14-16): the comparable-variants table below is "
+        "extended with a 4th column reporting per-(model_kind, scale=OD) "
+        "DTW mean from `matched2000_dualscale.json#aggregates[*, scale='OD', "
+        "metric_name='dtw_mean']` (n=5 seeds per cell, byte-stable through "
+        "Plan 14-16 since the DTW emitter at `revision/core/eval.py:38-89` "
+        "is BYTE-UNTOUCHED under D-14-22). The DTW per-baseline means "
+        "surface the Orlandi-improvement ratio (~6.5x lower than the "
+        "Orlandi et al. reference DTW=1.954) and the LR-scale "
+        "quantum-vs-WGAN/AR dominance disclosed in `peer_review_remediation.md` "
+        "Plan 14-16 DTW phantom asymmetry section. See `methods_full.md` "
+        "`### DTW historical context (Plan 14-16)` paragraph for the "
+        "methodological framing."
     )
     lines.append("")
 
@@ -517,20 +562,27 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
         "OD scale (`distribution_emd.json#aggregates`, scale=OD; Plan 14-15 "
         "reintroduction). Column 3 is commensurate with the pre-v1.0 paper "
         "headline (~0.0015) under the SAME 50-bin convention (see the C-3 "
-        "metric-redefinition disclosure above)."
+        "metric-redefinition disclosure above). Column 4 (Plan 14-16) is the "
+        "per-(model_kind) OD-scale DTW mean over seeds 42-46 from "
+        "`matched2000_dualscale.json#aggregates`, scale=OD, "
+        "metric_name='dtw_mean' — see the C-3 DTW addendum above and "
+        "`methods_full.md` `### DTW historical context (Plan 14-16)`."
     )
     lines.append("")
     lines.append(
         "| model | OD raw-sample EMD | log-return raw-sample EMD "
-        "| histogram-density EMD (50-bin, OD scale) | source: distribution-EMD |"
+        "| histogram-density EMD (50-bin, OD scale) | DTW (OD scale) "
+        "| source: distribution-EMD |"
     )
-    lines.append("|---|---|---|---|---|")
+    lines.append("|---|---|---|---|---|---|")
     for r in comp:
         c1 = "—" if r["od_raw_mean"] is None else f"{r['od_raw_mean']:.6f}"
         c2 = "—" if r["logret_raw_mean"] is None else f"{r['logret_raw_mean']:.6f}"
         c3 = "—" if r["od_hist_mean"] is None else f"{r['od_hist_mean']:.6f}"
+        c4 = "—" if r["dtw_od_mean"] is None else f"{r['dtw_od_mean']:.6f}"
         lines.append(
-            f"| {r['model']} | {c1} | {c2} | {c3} | {r['source_dist_emd']} |"
+            f"| {r['model']} | {c1} | {c2} | {c3} | {c4} "
+            f"| {r['source_dist_emd']} |"
         )
     lines.append("")
 

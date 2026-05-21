@@ -367,6 +367,100 @@ essentially the same approximation. See Figure `qq_overlay.png` (Plan
 OD-marginal-EMD numbers should be read alongside ACF / conditional-moment /
 TimeGAN-style scores for architecture-level discrimination.
 
+**(f) Log-return scale correction (Plan 14-16).** The pre-Plan-14-16 emit
+of `matched2000_dualscale.json`'s log-return-scale EMD column compared the
+raw per-step `log_delta` against the standardized fake samples `r_norm` — a
+scale mismatch inherited from `run_dualscale_fidelity.py` since Plan 14-08
+(finding R3-CR-2, bundled with the sister-site finding R3-HI-1 per
+`peer-review-r3/code-review-r3.md` §H3 + `pipeline-review-r3.md` §2). Plan 14-16 applies the canonical un-standardize-fake recipe from
+`pipeline-review-r3.md` §2: at `revision/run_matched2000_dualscale.py:368-372`
+(and the sister site at `revision/run_distribution_emd.py:144-169`,
+`_real_references`), the fake-side `trans_flat_raw = r["transformed"] *
+sigma + mu` un-standardizes the synthetic log-returns back to raw scale
+before comparison against the unchanged raw `real_log_delta` (the
+standardize-real alternative is mathematically scale-matched but produces
+EMD in standardized units that do not match the §2 anchor table;
+un-standardize-fake produces EMD in raw log-return units that match §2).
+The corrected aggregates anchor at AR 0.00294 best overall (3-param
+closed-form Yule-Walker MLE fits the linear-Gaussian marginal), wgan_cnn
+0.00711, wgan_mlp 0.01031, wgan_lstm 0.01272, V3 0.01432,
+iqp_sel_55_repro 0.01497, V1 0.01497, V2 0.01502, VAE 0.01583 worst.
+The post-fix LR-EMD ranking is structurally different from the pre-fix
+narrative: every WGAN beats every quantum on the corrected LR-EMD scale,
+and quantum/WGAN/VAE cluster in 0.007-0.016 with no statistically
+meaningful quantum-vs-WGAN separation on this marginal distribution. The
+pre-fix `statistical-honesty-r3.md` §3b Welch tests were computed on the
+broken pre-T1 LR-EMD column and DO NOT carry post-fix; this is the Path A
+r3-process retraction documented at `peer_review_remediation.md` Plan 14-16
+r3-process retraction subsection. The OD-scale rows are byte-identical
+pre/post correction because the OD inverse via `inverse_logreturns` already
+cumsum-exps to OD price scale where no standardization-vs-raw mismatch
+exists; the OD-EMD equivalence claim (Welch p > 0.36, |d| ≤ 0.65, n=5) is
+unaffected.
+
+**(g) Shared-edges formulation (Plan 14-16).** The original Plan 14-15 emit
+of `distribution_emd.json`'s histogram-density EMD used
+`np.histogram(..., density=True)` for both real and fake (per
+`peer-review-r3/code-review-r3.md` R3-CR-1). Plan 14-16 replaces this with:
+(a) `density=False` for both histograms; (b) edges derived from real only;
+(c) both histograms normalized to total-mass=1 over the same edge set (no
+per-distribution renormalization); (d) out-of-range fake mass disclosed
+separately as `fake_in_range_mass = fake_hist.sum() / len(fake)`. The
+schema bumps from `'distribution-emd v1 (Phase 14 plan 14-15)'` to
+`'distribution-emd v2 (Phase 14 plan 14-16)'`. Investigation finding: with
+shared edges the `density=True` vs `density=False` formulation is
+numerically inert for `scipy.stats.wasserstein_distance` (which
+renormalizes weights internally) — the OD-scale v1-to-v2 aggregate values
+are byte-identical. The fix's genuine contribution is the
+`fake_in_range_mass` disclosure stat, which confirms no out-of-range
+truncation on either scale (OD ~0.98, log-return ~1.0 post-sister-fix).
+The corrected aggregates cite `distribution_emd.json#aggregates` under
+schema v2.
+
+### DTW historical context (Plan 14-16)
+
+Dynamic Time Warping (DTW) is computed by the byte-frozen emitter at
+`revision/core/eval.py:38-89` (D-14-22); per-(model, seed, scale) values
+are persisted in `matched2000_dualscale.json` since Plan 14-11, and
+per-(model_kind, scale) aggregates (mean ± std, n=5 seeds per cell, ddof=1)
+are in `matched2000_dualscale.json#aggregates` under `metric_name='dtw_mean'`.
+The manuscript headline DTW=0.6843 at `main (4) copy.tex:190` +
+`main (4) copy.tex:266` + `supp_material.tex:290` originates from a
+pre-v1.0 best-case iqp_sel_55 evaluation pipeline; this value is not
+re-emitted by the current matched-budget contract under the strict-accept
+gate (D-14-13) — it is a labeled historical-reference literal preserved for
+narrative continuity with the LaTeX read-only sources (D-14-18). The
+Orlandi et al. reference DTW=1.954 at `main (4) copy.tex:191` is a labeled
+external benchmark, also not re-emitted.
+
+Under the current matched-2000ep evaluation contract, OD-scale DTW means
+(n=5 seeds per cell) cluster across the four quantum variants (V1 0.300,
+V2 0.298, V3 0.299, iqp_sel_55_repro 0.302), mixed with the classical
+generator cluster (wgan_lstm 0.301, wgan_mlp 0.302) at the same order; the
+AR baseline at 0.371 and VAE at 0.307 are slightly higher, and wgan_cnn at
+0.438 is the outlier. The OD-scale ordering is statistically
+non-significant under the strict-accept gate; no equivalence test is
+computed for DTW. On log-return scale, all four quantum variants (range
+0.940–1.122) report log-return DTW lower than every WGAN baseline
+(wgan_lstm 1.581, wgan_mlp 2.624, wgan_cnn 6.863) and the autoregressive
+baseline (ar 7.699). VAE's log-return DTW of 0.088 is an outlier driven by
+posterior collapse (sample std ≈ 0.0004; documented in the 14-15
+marginal-convergence finding and the R3-CR-1 disclosure above) and is
+reported but not interpreted as evidence of model quality.
+
+Relative to the Orlandi et al. reference DTW=1.954, the matched-2000ep
+mean OD-scale DTW of approximately 0.30 across the quantum cluster
+represents an approximately 6.5x lower DTW under the current evaluation
+contract. The methods-section framing for DTW therefore parallels the EMD
+framing: the headline historical value is preserved for narrative
+continuity, the current matched-budget contract reports per-model means
+with seed variance, and the Orlandi-improvement observation holds at the
+matched-budget level. Full forensic disclosure of the historical-vs-current
+asymmetry is in `peer_review_remediation.md`'s `## Plan 14-16 — DTW
+phantom asymmetry (third historical-vs-current case)` section; the
+reviewer-facing summary is in `reviewer_response.md`'s `### DTW addendum
+(Plan 14-16)` subsection.
+
 ---
 
 ## 4. Hardware & Software
