@@ -353,6 +353,20 @@ coefficient in code. The convention follows the v1.0 notebook baseline and
 the actual loss expression is documented alongside the canonical LaTeX in
 §2.i (VAE).
 
+**(e) OD-marginal convergence (Plan 14-15 post-r2 investigation).** At the
+matched-2000ep budget, 8 of 9 models cluster tightly together in their
+OD-marginal approximation (median pairwise model-vs-model max-quantile-diff
+approximately 0.03 OD-units, range 0.004–0.22 across all 28 pairs), with
+WGAN-CNN diverging from this consensus (median approximately 0.69 vs the
+other 8). In absolute terms vs the empirical OD marginal, all 9 models
+exhibit a systematic ~0.25 OD-unit deviation (8/9 fall in 0.24–0.28;
+WGAN-CNN at 0.81 max-abs-quantile-diff over the 0.5–99.5% range) — no
+model recovers the marginal in absolute terms; 8 of them just make
+essentially the same approximation. See Figure `qq_overlay.png` (Plan
+14-15) for the single discriminating figure across architectures;
+OD-marginal-EMD numbers should be read alongside ACF / conditional-moment /
+TimeGAN-style scores for architecture-level discrimination.
+
 ---
 
 ## 4. Hardware & Software

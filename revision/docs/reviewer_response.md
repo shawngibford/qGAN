@@ -204,3 +204,55 @@ matched-budget aggregates reported in this manuscript, but the asymmetry is
 disclosed here for completeness in lieu of a full classical sweep re-run.
 The same disclosure paragraph (verbatim) is recorded in
 `revision/docs/methods_full.md` §4.2.
+
+## Marginal-convergence finding (post-r2 investigation)
+
+A post-r2 investigation triggered by the visually-similar appearance of the
+9 per-model OD-scale QQ plots produced a two-pronged finding, both elements
+of which are necessary for a faithful reading:
+
+1. **Inter-model clustering (pairwise model-vs-model).** 8 of the 9 models
+   produce QQ curves that cluster tightly together: the median pairwise
+   model-vs-model max-quantile-difference across the 8 "clustered" models is
+   approximately 0.03 OD-units (range 0.004–0.22 across all 28 pairs).
+   WGAN-CNN diverges from this consensus with a median pairwise diff of
+   approximately 0.69 OD-units vs the other 8 (range 0.55–0.77). This is why
+   the per-model QQ plots LOOK similar to the eye at the figure-rendering
+   scale.
+2. **Absolute fidelity vs the empirical OD marginal.** Independent of
+   inter-model agreement, **all 9 models exhibit a systematic ~0.25 OD-unit
+   deviation from the empirical OD marginal** (max-abs-quantile-diff over
+   the 0.5–99.5% range; 8/9 fall in 0.24–0.28; WGAN-CNN at 0.81). No model
+   "recovers" the OD marginal in absolute terms — 8 of them just make the
+   SAME approximation, and WGAN-CNN deviates further.
+
+Empirical verification independently reconstructed the per-model OD samples
+from `revision/results/matched2000/runs/{model}/{seed}/samples.npy` and
+matched the rendered QQ companion JSON values to floating-point precision
+(4.44e-16) for every model — confirming the data routing is correct and
+both findings above are genuine, not artifacts of plot-rendering error.
+
+**Implication for architecture discrimination.** The OD marginal is
+therefore NOT the discriminating axis between architectures at the
+matched-2000ep budget. Discrimination lives in the dependence structure:
+autocorrelation function (ACF), conditional moments, and TimeGAN-style
+discriminative/predictive scores. We refer reviewers to:
+
+- `revision/results/figures/qq_overlay.png` (Plan 14-15) — single
+  discriminating QQ figure with delta-QQ panel making the convergence
+  visually obvious
+- `revision/results/figures/training_convergence_all_models.png` — ACF and
+  convergence trajectory (Plan 14-10)
+- `revision/results/figures/failure_modes_summary.png` — per-model failure-
+  mode decomposition (Plan 14-10)
+- `revision/results/figures/seed_variance_per_model.png` — per-architecture
+  seed sensitivity (Plan 14-10)
+- `revision/docs/methods_full.md §3.x` — metric conventions used in the
+  dependence-structure evaluations
+
+The new histogram-density distribution-EMD column in
+`reconciliation_note.md` (Plan 14-15) reintroduces the pre-v1.0 metric so
+the matched-2000ep numbers can be directly compared to the original paper's
+reported headline (~0.0015) under the SAME 50-bin convention — for the
+first time since the v1.0 metric switch (see C-3 disclosure in
+`reconciliation_note.md`).
