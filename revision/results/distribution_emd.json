@@ -1,6 +1,6 @@
 {
-  "schema": "distribution-emd v1 (Phase 14 plan 14-15)",
-  "metric_formulation": "scipy.stats.wasserstein_distance(bin_centers, bin_centers, real_hist_density, fake_hist_density) over 50-bin histograms (np.histogram(..., density=True))",
+  "schema": "distribution-emd v2 (Phase 14 plan 14-16)",
+  "metric_formulation": "np.histogram(real, bins=50, density=False) -> edges from real; np.histogram(fake, bins=edges, density=False); both histograms normalized to total-mass=1 over the same edge set (no per-distribution renormalization); bin_centers = 0.5*(edges[:-1] + edges[1:]); scipy.stats.wasserstein_distance(bin_centers, bin_centers, real_norm, fake_norm); out-of-range fake mass disclosed separately as fake_in_range_mass = fake_hist.sum() / len(fake)",
   "data_hash": "91e447d4624e25b3",
   "n_bins": 50,
   "headline_present": false,
@@ -9,669 +9,777 @@
       "model_kind": "iqp_sel_55_repro",
       "seed": 42,
       "scale": "OD",
-      "value": 0.062034414049341874
+      "value": 0.06203441404934067,
+      "fake_in_range_mass": 0.97671875
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.03342787655473828
+      "value": 0.7096560198776285,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 43,
       "scale": "OD",
-      "value": 0.06516617147604362
+      "value": 0.06516617147604264,
+      "fake_in_range_mass": 0.981875
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.04209509778810391
+      "value": 0.7262169206986686,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 44,
       "scale": "OD",
-      "value": 0.07155138402133177
+      "value": 0.07155138402133093,
+      "fake_in_range_mass": 0.9784114583333333
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.03839713625647252
+      "value": 0.7189108768013478,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 45,
       "scale": "OD",
-      "value": 0.06233066542000551
+      "value": 0.062330665420004705,
+      "fake_in_range_mass": 0.9751041666666667
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.036894378964083395
+      "value": 0.7164648357599834,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 46,
       "scale": "OD",
-      "value": 0.057809500449336276
+      "value": 0.05780950044933558,
+      "fake_in_range_mass": 0.97953125
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.03159030492398813
+      "value": 0.6967842301353674,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V1",
       "seed": 42,
       "scale": "OD",
-      "value": 0.06269668853361246
+      "value": 0.06269668853361127,
+      "fake_in_range_mass": 0.9764583333333333
     },
     {
       "model_kind": "V1",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.03725671669686094
+      "value": 0.7183895893663029,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V1",
       "seed": 43,
       "scale": "OD",
-      "value": 0.06471141571036562
+      "value": 0.06471141571036415,
+      "fake_in_range_mass": 0.9820052083333334
     },
     {
       "model_kind": "V1",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.03671858079450781
+      "value": 0.7162523108826191,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V1",
       "seed": 44,
       "scale": "OD",
-      "value": 0.0701098032812707
+      "value": 0.07010980328127007,
+      "fake_in_range_mass": 0.9791145833333333
     },
     {
       "model_kind": "V1",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.031095908343380593
+      "value": 0.7018928469988068,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V1",
       "seed": 45,
       "scale": "OD",
-      "value": 0.0621542439853092
+      "value": 0.06215424398530805,
+      "fake_in_range_mass": 0.9751822916666667
     },
     {
       "model_kind": "V1",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.03507317394845481
+      "value": 0.7133451309564074,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V1",
       "seed": 46,
       "scale": "OD",
-      "value": 0.058187259759749824
+      "value": 0.05818725975974849,
+      "fake_in_range_mass": 0.9794010416666666
     },
     {
       "model_kind": "V1",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.035506712438637136
+      "value": 0.7138904778115313,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V2",
       "seed": 42,
       "scale": "OD",
-      "value": 0.06239125845396075
+      "value": 0.06239125845395999,
+      "fake_in_range_mass": 0.9765885416666666
     },
     {
       "model_kind": "V2",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.036868118829077756
+      "value": 0.7158833997747412,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V2",
       "seed": 43,
       "scale": "OD",
-      "value": 0.06517075251048582
+      "value": 0.06517075251048496,
+      "fake_in_range_mass": 0.9818229166666667
     },
     {
       "model_kind": "V2",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.03637343781067326
+      "value": 0.7159475582282852,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V2",
       "seed": 44,
       "scale": "OD",
-      "value": 0.07137933878356147
+      "value": 0.0713793387835603,
+      "fake_in_range_mass": 0.9784635416666667
     },
     {
       "model_kind": "V2",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.035155454183214696
+      "value": 0.713301022019596,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V2",
       "seed": 45,
       "scale": "OD",
-      "value": 0.06121033760093792
+      "value": 0.06121033760093704,
+      "fake_in_range_mass": 0.9755729166666667
     },
     {
       "model_kind": "V2",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.03572679653211713
+      "value": 0.7146002307038616,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V2",
       "seed": 46,
       "scale": "OD",
-      "value": 0.05817854908456045
+      "value": 0.058178549084559564,
+      "fake_in_range_mass": 0.979375
     },
     {
       "model_kind": "V2",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.03699102340106762
+      "value": 0.7153581024363498,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V3",
       "seed": 42,
       "scale": "OD",
-      "value": 0.06140110293605657
+      "value": 0.06140110293605525,
+      "fake_in_range_mass": 0.977109375
     },
     {
       "model_kind": "V3",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.02549837533605612
+      "value": 0.6762936240347585,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V3",
       "seed": 43,
       "scale": "OD",
-      "value": 0.06432591266392394
+      "value": 0.06432591266392261,
+      "fake_in_range_mass": 0.9822135416666666
     },
     {
       "model_kind": "V3",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.028945317217200367
+      "value": 0.6926700693018596,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V3",
       "seed": 44,
       "scale": "OD",
-      "value": 0.06987241175321063
+      "value": 0.06987241175320993,
+      "fake_in_range_mass": 0.9791927083333334
     },
     {
       "model_kind": "V3",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.025749348266031955
+      "value": 0.6624594574893377,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V3",
       "seed": 45,
       "scale": "OD",
-      "value": 0.06118519806986004
+      "value": 0.061185198069858934,
+      "fake_in_range_mass": 0.97546875
     },
     {
       "model_kind": "V3",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.027303673371185555
+      "value": 0.6826132317088406,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "V3",
       "seed": 46,
       "scale": "OD",
-      "value": 0.057697376353669616
+      "value": 0.05769737635366915,
+      "fake_in_range_mass": 0.9795833333333334
     },
     {
       "model_kind": "V3",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.02536396843116235
+      "value": 0.6806082800355912,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 42,
       "scale": "OD",
-      "value": 0.058590915914632224
+      "value": 0.05859091591463125,
+      "fake_in_range_mass": 0.9786197916666667
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.01720456645134743
+      "value": 0.5169721442716676,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 43,
       "scale": "OD",
-      "value": 0.06428668911997856
+      "value": 0.06428668911997729,
+      "fake_in_range_mass": 0.98140625
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.025503288928364197
+      "value": 0.43229100540030596,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 44,
       "scale": "OD",
-      "value": 0.06644806142481541
+      "value": 0.06644806142481373,
+      "fake_in_range_mass": 0.98296875
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.026418665951454187
+      "value": 0.4892201296071278,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 45,
       "scale": "OD",
-      "value": 0.05836431203157898
+      "value": 0.05836431203157746,
+      "fake_in_range_mass": 0.9788802083333333
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.01943581358184504
+      "value": 0.4828278172762305,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 46,
       "scale": "OD",
-      "value": 0.05668386902803512
+      "value": 0.05668386902803397,
+      "fake_in_range_mass": 0.98046875
     },
     {
       "model_kind": "wgan_mlp",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.023542295847866664
+      "value": 0.4975241130411486,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 42,
       "scale": "OD",
-      "value": 0.11239516386562896
+      "value": 0.11239516386562914,
+      "fake_in_range_mass": 0.9495833333333333
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.023602872934096672
+      "value": 0.6557766697133894,
+      "fake_in_range_mass": 0.9754166666666667
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 43,
       "scale": "OD",
-      "value": 0.0611510454376917
+      "value": 0.0611510454376901,
+      "fake_in_range_mass": 0.9850260416666666
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.024702529633024755
+      "value": 0.20481587688642372,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 44,
       "scale": "OD",
-      "value": 0.06077608174638682
+      "value": 0.06077608174638501,
+      "fake_in_range_mass": 0.9869270833333333
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.02417473772231788
+      "value": 0.34087407570768646,
+      "fake_in_range_mass": 0.9999739583333334
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 45,
       "scale": "OD",
-      "value": 0.04484218231734409
+      "value": 0.04484218231734266,
+      "fake_in_range_mass": 0.9870572916666667
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.024498554742809094
+      "value": 0.13408197505044042,
+      "fake_in_range_mass": 0.9979427083333333
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 46,
       "scale": "OD",
-      "value": 0.05641528410627619
+      "value": 0.056415284106275006,
+      "fake_in_range_mass": 0.9786979166666666
     },
     {
       "model_kind": "wgan_cnn",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.027840220841282626
+      "value": 0.25511080953461707,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 42,
       "scale": "OD",
-      "value": 0.06193218364970146
+      "value": 0.06193218364969989,
+      "fake_in_range_mass": 0.9771614583333333
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.01444597351346326
+      "value": 0.5706607401779404,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 43,
       "scale": "OD",
-      "value": 0.052704803367968865
+      "value": 0.052704803367967165,
+      "fake_in_range_mass": 0.9919791666666666
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.021793784365027595
+      "value": 0.592416385631982,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 44,
       "scale": "OD",
-      "value": 0.06429059385775478
+      "value": 0.0642905938577534,
+      "fake_in_range_mass": 0.9837239583333334
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.03976835450608096
+      "value": 0.5734235635836781,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 45,
       "scale": "OD",
-      "value": 0.06429077266306392
+      "value": 0.0642907726630629,
+      "fake_in_range_mass": 0.973359375
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.03349066373886436
+      "value": 0.64723438087926,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 46,
       "scale": "OD",
-      "value": 0.04864718857241401
+      "value": 0.048647188572412986,
+      "fake_in_range_mass": 0.9886197916666667
     },
     {
       "model_kind": "wgan_lstm",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.021587709435988155
+      "value": 0.6254579892071321,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "vae",
       "seed": 42,
       "scale": "OD",
-      "value": 0.048250828274475396
+      "value": 0.04825082827447383,
+      "fake_in_range_mass": 0.986875
     },
     {
       "model_kind": "vae",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.009214351470871641
+      "value": 0.7533578663470581,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "vae",
       "seed": 43,
       "scale": "OD",
-      "value": 0.05497585892707987
+      "value": 0.054975858927078576,
+      "fake_in_range_mass": 0.9900520833333334
     },
     {
       "model_kind": "vae",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.008823296267897206
+      "value": 0.7596734641177938,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "vae",
       "seed": 44,
       "scale": "OD",
-      "value": 0.06021971623963398
+      "value": 0.06021971623963225,
+      "fake_in_range_mass": 0.9875
     },
     {
       "model_kind": "vae",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.01178132419014425
+      "value": 0.7653153981263175,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "vae",
       "seed": 45,
       "scale": "OD",
-      "value": 0.04751003420903638
+      "value": 0.04751003420903495,
+      "fake_in_range_mass": 0.98515625
     },
     {
       "model_kind": "vae",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.011018716300503394
+      "value": 0.7646858433009172,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "vae",
       "seed": 46,
       "scale": "OD",
-      "value": 0.05071584618188576
+      "value": 0.05071584618188505,
+      "fake_in_range_mass": 0.987109375
     },
     {
       "model_kind": "vae",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.010985490790531797
+      "value": 0.7616182672408456,
+      "fake_in_range_mass": 1.0
     },
     {
       "model_kind": "ar",
       "seed": 42,
       "scale": "OD",
-      "value": 0.05387745109077181
+      "value": 0.053877451090770793,
+      "fake_in_range_mass": 0.979140625
     },
     {
       "model_kind": "ar",
       "seed": 42,
       "scale": "log_return",
-      "value": 0.024585495447657237
+      "value": 0.13080526774399237,
+      "fake_in_range_mass": 0.9998697916666667
     },
     {
       "model_kind": "ar",
       "seed": 43,
       "scale": "OD",
-      "value": 0.06350091558797466
+      "value": 0.06350091558797338,
+      "fake_in_range_mass": 0.9812239583333333
     },
     {
       "model_kind": "ar",
       "seed": 43,
       "scale": "log_return",
-      "value": 0.02435614024116038
+      "value": 0.14024981988439006,
+      "fake_in_range_mass": 0.9998697916666667
     },
     {
       "model_kind": "ar",
       "seed": 44,
       "scale": "OD",
-      "value": 0.062180461472015607
+      "value": 0.06218046147201396,
+      "fake_in_range_mass": 0.9811979166666667
     },
     {
       "model_kind": "ar",
       "seed": 44,
       "scale": "log_return",
-      "value": 0.02476313804652831
+      "value": 0.1402017724860077,
+      "fake_in_range_mass": 0.999921875
     },
     {
       "model_kind": "ar",
       "seed": 45,
       "scale": "OD",
-      "value": 0.052416515745851766
+      "value": 0.05241651574585113,
+      "fake_in_range_mass": 0.9776041666666667
     },
     {
       "model_kind": "ar",
       "seed": 45,
       "scale": "log_return",
-      "value": 0.024095846013649724
+      "value": 0.14436458605237246,
+      "fake_in_range_mass": 0.99984375
     },
     {
       "model_kind": "ar",
       "seed": 46,
       "scale": "OD",
-      "value": 0.048712202269921234
+      "value": 0.04871220226992018,
+      "fake_in_range_mass": 0.980625
     },
     {
       "model_kind": "ar",
       "seed": 46,
       "scale": "log_return",
-      "value": 0.023598216084135353
+      "value": 0.13601911652561305,
+      "fake_in_range_mass": 0.999921875
     }
   ],
   "aggregates": [
     {
       "model_kind": "iqp_sel_55_repro",
       "scale": "OD",
-      "mean": 0.06377842708321182,
-      "std": 0.00507716393565468,
-      "n": 5
+      "mean": 0.06377842708321091,
+      "std": 0.005077163935654659,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.978328125
     },
     {
       "model_kind": "iqp_sel_55_repro",
       "scale": "log_return",
-      "mean": 0.036480958897477246,
-      "std": 0.004141286496542921,
-      "n": 5
+      "mean": 0.713606576654599,
+      "std": 0.01111220346433692,
+      "n": 5,
+      "fake_in_range_mass_mean": 1.0
     },
     {
       "model_kind": "V1",
       "scale": "OD",
-      "mean": 0.06357188225406156,
-      "std": 0.004353526431861082,
-      "n": 5
+      "mean": 0.06357188225406041,
+      "std": 0.0043535264318613175,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9784322916666666
     },
     {
       "model_kind": "V1",
       "scale": "log_return",
-      "mean": 0.035130218444368255,
-      "std": 0.0024220626316406907,
-      "n": 5
+      "mean": 0.7127540712031335,
+      "std": 0.006395383269412823,
+      "n": 5,
+      "fake_in_range_mass_mean": 1.0
     },
     {
       "model_kind": "V2",
       "scale": "OD",
-      "mean": 0.06366604728670128,
-      "std": 0.004988166914642865,
-      "n": 5
+      "mean": 0.06366604728670036,
+      "std": 0.004988166914642751,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9783645833333333
     },
     {
       "model_kind": "V2",
       "scale": "log_return",
-      "mean": 0.03622296615123009,
-      "std": 0.000776939786895417,
-      "n": 5
+      "mean": 0.7150180626325667,
+      "std": 0.001101273068711831,
+      "n": 5,
+      "fake_in_range_mass_mean": 1.0
     },
     {
       "model_kind": "V3",
       "scale": "OD",
-      "mean": 0.06289640035534416,
-      "std": 0.0045525327749371056,
-      "n": 5
+      "mean": 0.06289640035534319,
+      "std": 0.0045525327749370795,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9787135416666667
     },
     {
       "model_kind": "V3",
       "scale": "log_return",
-      "mean": 0.026572136524327265,
-      "std": 0.001537591176817237,
-      "n": 5
+      "mean": 0.6789289325140774,
+      "std": 0.010993197524455574,
+      "n": 5,
+      "fake_in_range_mass_mean": 1.0
     },
     {
       "model_kind": "wgan_mlp",
       "scale": "OD",
-      "mean": 0.06087476950380806,
-      "std": 0.00423629581823764,
-      "n": 5
+      "mean": 0.06087476950380675,
+      "std": 0.004236295818237472,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.98046875
     },
     {
       "model_kind": "wgan_mlp",
       "scale": "log_return",
-      "mean": 0.022420926152175502,
-      "std": 0.003964267251559644,
-      "n": 5
+      "mean": 0.48376704191929615,
+      "std": 0.03151284052592254,
+      "n": 5,
+      "fake_in_range_mass_mean": 1.0
     },
     {
       "model_kind": "wgan_cnn",
       "scale": "OD",
-      "mean": 0.06711595149466557,
-      "std": 0.026156290837722026,
-      "n": 5
+      "mean": 0.06711595149466439,
+      "std": 0.02615629083772273,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9774583333333332
     },
     {
       "model_kind": "wgan_cnn",
       "scale": "log_return",
-      "mean": 0.024963783174706204,
-      "std": 0.0016608171155726888,
-      "n": 5
+      "mean": 0.31813188137851145,
+      "std": 0.20322878172295525,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9946666666666667
     },
     {
       "model_kind": "wgan_lstm",
       "scale": "OD",
-      "mean": 0.05837310842218061,
-      "std": 0.007235772238242791,
-      "n": 5
+      "mean": 0.058373108422179264,
+      "std": 0.007235772238242788,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9829687500000001
     },
     {
       "model_kind": "wgan_lstm",
       "scale": "log_return",
-      "mean": 0.026217297111884863,
-      "std": 0.010199235570870454,
-      "n": 5
+      "mean": 0.6018386118959984,
+      "std": 0.033492177554530746,
+      "n": 5,
+      "fake_in_range_mass_mean": 1.0
     },
     {
       "model_kind": "vae",
       "scale": "OD",
-      "mean": 0.052334456766422274,
-      "std": 0.005285009395238323,
-      "n": 5
+      "mean": 0.052334456766420935,
+      "std": 0.005285009395238201,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9873385416666668
     },
     {
       "model_kind": "vae",
       "scale": "log_return",
-      "mean": 0.010364635803989658,
-      "std": 0.0012766332486502982,
-      "n": 5
+      "mean": 0.7609301678265865,
+      "std": 0.004814765772149055,
+      "n": 5,
+      "fake_in_range_mass_mean": 1.0
     },
     {
       "model_kind": "ar",
       "scale": "OD",
-      "mean": 0.056137509233307015,
-      "std": 0.006419226272400406,
-      "n": 5
+      "mean": 0.05613750923330589,
+      "std": 0.00641922627240014,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9799583333333333
     },
     {
       "model_kind": "ar",
       "scale": "log_return",
-      "mean": 0.0242797671666262,
-      "std": 0.0004558752308554329,
-      "n": 5
+      "mean": 0.13832811253847513,
+      "std": 0.005137295728192131,
+      "n": 5,
+      "fake_in_range_mass_mean": 0.9998854166666666
     }
   ]
 }

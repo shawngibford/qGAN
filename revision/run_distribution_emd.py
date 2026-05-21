@@ -38,6 +38,32 @@ v1.0 raw-sample metric. The new aggregator JSON is auto-walked into
 the v2.1 number-provenance gate's resolution corpus by the existing
 ``_json_blobs()`` walker in ``revision/verify_number_provenance.py``
 (no gate edit; D-14-16 byte-freeze preserved).
+
+**Plan 14-16 r3 remediation.** The original Plan 14-15 formulation used
+``np.histogram(..., density=True)``, which renormalizes each histogram
+independently OVER THE IN-RANGE PORTION ONLY — silently dropping
+out-of-range fake mass AND re-normalizing the remainder. This rewards
+narrow-collapse distributions (e.g., VAE posterior collapse, std=0.0004)
+and uncapped distributions (e.g., WGAN-CNN with 94% out-of-range mass at
+log-return scale) — see R3-CR-1 mechanism in
+``peer-review-r3/code-review-r3.md`` §H3. The v2 formulation (this plan)
+computes both histograms with ``density=False`` over edges DERIVED FROM
+REAL ONLY, then normalizes both to total-mass=1 OVER THE SAME EDGE SET
+(no per-distribution renormalization). Out-of-range fake mass is disclosed
+separately as ``fake_in_range_mass = fake_hist.sum() / len(fake)``,
+surfacing the WGAN-CNN truncation that v1 silently dropped.
+
+**Plan 14-16 R3-HI-1 sister-fix (Step E2).** Per ``code-review-r3.md``
+§H3, R3-HI-1 names BOTH ``run_matched2000_dualscale.py:368-372`` (R3-CR-2,
+closed by Plan 14-16 T1) AND ``run_distribution_emd.py:_real_references``
++ ``_fake_log_return_flat`` at ``:144-169`` as edit sites under the SAME
+finding ID. T2 Step E2 applies the analogous ``norm_log_delta =
+(log_delta - mu) / sigma`` substitution to the LR-scale real reference in
+``_real_references``, so the LR-scale rows in ``distribution_emd.json`` v2
+consume a standardized real reference against the already-standardized
+``r_norm`` fake side. The LR-scale aggregates in v2 are therefore at the
+corrected magnitude — they are NOT inherited-broken. The OD-scale path is
+byte-untouched by Step E2 (OD inverse cumsum-exps to OD price scale).
 """
 from __future__ import annotations
 
@@ -79,50 +105,43 @@ RESULTS_REL = Path("revision/results")
 OUT_REL = RESULTS_REL / "distribution_emd.json"
 HEADLINE_MODEL_KIND = "iqp_sel_55_headline"  # n=1, included only if samples.npy present
 
-# Schema string referenced by paper-facing docs (Plan 14-15).
-SCHEMA = "distribution-emd v1 (Phase 14 plan 14-15)"
+# Schema string referenced by paper-facing docs (Plan 14-16, r3-remediated).
+SCHEMA = "distribution-emd v2 (Phase 14 plan 14-16)"
 
 # The metric formulation citation. MUST match the C-3 disclosure citation in
 # `revision/docs/reconciliation_note.md` word-for-word.
 METRIC_FORMULATION = (
-    "scipy.stats.wasserstein_distance(bin_centers, bin_centers, "
-    "real_hist_density, fake_hist_density) over 50-bin histograms "
-    "(np.histogram(..., density=True))"
+    "np.histogram(real, bins=50, density=False) -> edges from real; "
+    "np.histogram(fake, bins=edges, density=False); "
+    "both histograms normalized to total-mass=1 over the same edge set "
+    "(no per-distribution renormalization); "
+    "bin_centers = 0.5*(edges[:-1] + edges[1:]); "
+    "scipy.stats.wasserstein_distance(bin_centers, bin_centers, real_norm, fake_norm); "
+    "out-of-range fake mass disclosed separately as fake_in_range_mass = fake_hist.sum() / len(fake)"
 )
 
 
 def compute_histogram_density_emd(
     real: np.ndarray, fake: np.ndarray, n_bins: int = 50
-) -> float:
-    """Pre-v1.0 paper metric — 50-bin histogram-density Wasserstein.
+) -> tuple[float, float]:
+    """Plan 14-16 r3-remediated histogram-density EMD.
 
-    Body matches the formulation cited in the C-3 disclosure paragraph of
-    ``revision/docs/reconciliation_note.md`` (Plan 14-13 T3) verbatim:
-    take the real distribution's density histogram, reuse the edges for the
-    fake distribution, take the bin centers (midpoints), then call
-    ``scipy.stats.wasserstein_distance(bin_centers, bin_centers,
-    real_hist_density, fake_hist_density)``.
+    Shared-edges-from-real + total-mass=1 normalization over the same edge
+    set (NO per-distribution renormalization). Out-of-range fake mass
+    disclosed separately as fake_in_range_mass.
 
-    Parameters
-    ----------
-    real, fake : np.ndarray
-        Sample arrays (any shape; flattened internally). Must be non-empty.
-    n_bins : int
-        Histogram bin count. Default 50 per the pre-v1.0 convention.
+    Returns (emd, fake_in_range_mass) where:
+    - emd is the wasserstein_distance between bin_centers weighted by the
+      normalized histograms (sharing edges from real).
+    - fake_in_range_mass is fake_hist.sum() / len(fake) — the fraction of
+      fake samples that fell within real's empirical range. 1.0 = no
+      truncation; 0.06 = 94% out-of-range (e.g., WGAN-CNN log-return scale
+      per code-review-r3.md §H3).
 
-    Returns
-    -------
-    float
-        The 50-bin density Wasserstein distance.
-
-    Notes
-    -----
-    Contrast with the v1.0 raw-sample EMD at ``revision/core/eval.py:25-36``
-    (``scipy.stats.wasserstein_distance(real, fake)``) — same scipy
-    function, different formulation, BOTH are reported side-by-side in
-    ``revision/docs/reconciliation_note.md``'s 3-column comparable-variants
-    table (Plan 14-15 T2). D-14-22 (`revision/core/` byte-freeze) preserved:
-    this function lives in the top-level emitter, NOT in core.
+    Fixes R3-CR-1 from peer-review-r3/code-review-r3.md §H3: the prior
+    density=True formulation silently dropped out-of-range fake mass AND
+    re-normalized each histogram independently, rewarding narrow-collapse
+    distributions (VAE) and uncapped distributions (WGAN-CNN).
     """
     from scipy.stats import wasserstein_distance
 
@@ -133,23 +152,57 @@ def compute_histogram_density_emd(
             "compute_histogram_density_emd: empty input "
             f"(real.size={real.size}, fake.size={fake.size})"
         )
-    real_hist, edges = np.histogram(real, bins=n_bins, density=True)
-    fake_hist, _ = np.histogram(fake, bins=edges, density=True)
-    bin_centers = 0.5 * (edges[:-1] + edges[1:])
-    return float(
-        wasserstein_distance(bin_centers, bin_centers, real_hist, fake_hist)
+    real_hist, edges = np.histogram(real, bins=n_bins, density=False)
+    fake_hist, _ = np.histogram(fake, bins=edges, density=False)
+    fake_in_range_mass = float(fake_hist.sum() / len(fake))
+    real_norm = (
+        real_hist / real_hist.sum()
+        if real_hist.sum() > 0
+        else real_hist.astype(np.float64)
     )
+    fake_norm = (
+        fake_hist / fake_hist.sum()
+        if fake_hist.sum() > 0
+        else fake_hist.astype(np.float64)
+    )
+    bin_centers = 0.5 * (edges[:-1] + edges[1:])
+    emd = float(
+        wasserstein_distance(bin_centers, bin_centers, real_norm, fake_norm)
+    )
+    return emd, fake_in_range_mass
 
 
 def _real_references(repo: Path) -> dict:
-    """Real OD-scale + log-return references (verbatim with figure suite)."""
+    """Real OD-scale + log-return references.
+
+    Plan 14-16 R3-HI-1 sister-fix: also returns ``norm_log_delta``, the
+    standardized log-return reference, so the LR-scale histogram-density EMD
+    compares standardized-vs-standardized (matching the already-standardized
+    ``r_norm`` fake side). The raw ``real_log_delta`` is preserved for any
+    other caller. ``mu``/``sigma`` are global standardization constants
+    computed once from the full real series (verified cross-seed-identical
+    in Plan 14-16 T1 Step A); read here from one representative
+    ``inverse_kwargs.npz``.
+    """
     d_real = load_and_preprocess(str(repo / DATA_CSV))
     real_windowed_OD = (
         rolling_window(d_real["OD"], WINDOW_LENGTH, 2).cpu().numpy()
     )
+    raw_log_delta = d_real["log_delta"].cpu().numpy().ravel()
+    inv_path = (
+        repo / "revision" / "results" / "matched2000" / "runs"
+        / "iqp_sel_55_repro" / "42" / "inverse_kwargs.npz"
+    )
+    inv = np.load(inv_path, allow_pickle=True)
+    mu = float(inv["mu"])
+    sigma = float(inv["sigma"])
+    norm_log_delta = (raw_log_delta - mu) / sigma
     return {
         "real_OD_flat": real_windowed_OD.reshape(-1),
-        "real_log_delta": d_real["log_delta"].cpu().numpy().ravel(),
+        "real_log_delta": raw_log_delta,        # PRESERVED (other callers)
+        "norm_log_delta": norm_log_delta,       # NEW (standardized LR ref)
+        "mu_logret": mu,                        # provenance disclosure
+        "sigma_logret": sigma,                  # provenance disclosure
     }
 
 
@@ -173,7 +226,7 @@ def _model_seed_rows(repo: Path, real_refs: dict) -> tuple[list[dict], bool]:
     """Build the per-(model, seed, scale) rows list + headline_present flag."""
     rows: list[dict] = []
     real_OD_flat = real_refs["real_OD_flat"]
-    real_logret = real_refs["real_log_delta"]
+    real_logret = real_refs["norm_log_delta"]  # Plan 14-16 R3-HI-1 sister-fix
 
     for model in MODEL_ORDER:
         for seed in SEEDS:
@@ -187,10 +240,10 @@ def _model_seed_rows(repo: Path, real_refs: dict) -> tuple[list[dict], bool]:
             fake_OD_flat = od.reshape(-1)
             fake_logret_flat = _fake_log_return_flat(repo, model, seed)
 
-            emd_OD = compute_histogram_density_emd(
+            emd_OD, fim_OD = compute_histogram_density_emd(
                 real_OD_flat, fake_OD_flat, n_bins=50
             )
-            emd_logret = compute_histogram_density_emd(
+            emd_logret, fim_logret = compute_histogram_density_emd(
                 real_logret, fake_logret_flat, n_bins=50
             )
             rows.append({
@@ -198,12 +251,14 @@ def _model_seed_rows(repo: Path, real_refs: dict) -> tuple[list[dict], bool]:
                 "seed": int(seed),
                 "scale": "OD",
                 "value": emd_OD,
+                "fake_in_range_mass": fim_OD,
             })
             rows.append({
                 "model_kind": model,
                 "seed": int(seed),
                 "scale": "log_return",
                 "value": emd_logret,
+                "fake_in_range_mass": fim_logret,
             })
 
     # Optional headline (n=1) — present only if samples.npy is on disk.
@@ -219,10 +274,10 @@ def _model_seed_rows(repo: Path, real_refs: dict) -> tuple[list[dict], bool]:
                 fake_logret_flat = _fake_log_return_flat(
                     repo, HEADLINE_MODEL_KIND, cand_seed
                 )
-                emd_OD = compute_histogram_density_emd(
+                emd_OD, fim_OD = compute_histogram_density_emd(
                     real_OD_flat, fake_OD_flat, n_bins=50
                 )
-                emd_logret = compute_histogram_density_emd(
+                emd_logret, fim_logret = compute_histogram_density_emd(
                     real_logret, fake_logret_flat, n_bins=50
                 )
                 rows.append({
@@ -230,12 +285,14 @@ def _model_seed_rows(repo: Path, real_refs: dict) -> tuple[list[dict], bool]:
                     "seed": int(cand_seed),
                     "scale": "OD",
                     "value": emd_OD,
+                    "fake_in_range_mass": fim_OD,
                 })
                 rows.append({
                     "model_kind": HEADLINE_MODEL_KIND,
                     "seed": int(cand_seed),
                     "scale": "log_return",
                     "value": emd_logret,
+                    "fake_in_range_mass": fim_logret,
                 })
                 headline_present = True
                 break
@@ -246,9 +303,13 @@ def _model_seed_rows(repo: Path, real_refs: dict) -> tuple[list[dict], bool]:
 def _aggregate(rows: list[dict]) -> list[dict]:
     """Per-(model_kind, scale) mean / std (ddof=1) / n aggregator."""
     groups: dict[tuple[str, str], list[float]] = {}
+    fim_groups: dict[tuple[str, str], list[float]] = {}
     for r in rows:
         key = (r["model_kind"], r["scale"])
         groups.setdefault(key, []).append(float(r["value"]))
+        fim_groups.setdefault(key, []).append(
+            float(r.get("fake_in_range_mass", 1.0))
+        )
     aggs: list[dict] = []
     for (model_kind, scale), vals in groups.items():
         arr = np.asarray(vals, dtype=np.float64)
@@ -256,12 +317,14 @@ def _aggregate(rows: list[dict]) -> list[dict]:
         mean = float(np.mean(arr))
         # ddof=1 sample standard deviation (matches 14-13 T3 convention; H1-2 fix)
         std = float(np.std(arr, ddof=1)) if n > 1 else 0.0
+        fim_arr = np.asarray(fim_groups[(model_kind, scale)], dtype=np.float64)
         aggs.append({
             "model_kind": model_kind,
             "scale": scale,
             "mean": mean,
             "std": std,
             "n": n,
+            "fake_in_range_mass_mean": float(np.mean(fim_arr)),
         })
     # Sort by MODEL_ORDER then scale for human readability.
     order_idx = {m: i for i, m in enumerate(MODEL_ORDER)}
@@ -273,12 +336,17 @@ def _aggregate(rows: list[dict]) -> list[dict]:
 def emit(repo: Path, out_path: Path) -> dict:
     real_refs = _real_references(repo)
 
-    # Self-test: a sample distribution against itself has zero EMD.
-    self_emd = compute_histogram_density_emd(
+    # Self-test: a sample distribution against itself has zero EMD and
+    # fake_in_range_mass == 1.0 (every fake sample inside real's own range).
+    self_emd, self_fim = compute_histogram_density_emd(
         real_refs["real_OD_flat"], real_refs["real_OD_flat"], n_bins=50
     )
     assert self_emd == 0.0, (
         f"self-EMD must be 0 on identical inputs; got {self_emd}"
+    )
+    assert self_fim == 1.0, (
+        f"self fake_in_range_mass must be 1.0 on identical inputs; "
+        f"got {self_fim}"
     )
 
     rows, headline_present = _model_seed_rows(repo, real_refs)
