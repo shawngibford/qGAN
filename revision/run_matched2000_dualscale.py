@@ -209,7 +209,8 @@ def reconstruct_od(model_kind: str, pipeline: str, seed: int,
         if od.shape[1] == 11:
             od = od[:, :10]
         return {"od_samples": od, "transformed": r_norm, "n_synth": od.shape[0],
-                "pipeline": pipeline, "seed": seed}
+                "pipeline": pipeline, "seed": seed,
+                "mu": mu, "sigma": sigma}
 
     raise ValueError(
         f"matched2000 is Pipeline-B only; got pipeline={pipeline} "
@@ -363,13 +364,27 @@ def _log_return_rows(mk: str, p: str, s: int, r: dict,
     64 real). matched2000 is Pipeline-B only, so the Pipeline-A null branch is
     intentionally absent. NO new metric math (D-11-10). The only addition is
     the per-row ``source`` field.
+
+    Plan 14-16 r3 remediation (Path A): the log-return EMD's FAKE side is now
+    un-standardized via ``trans_flat_raw = r["transformed"].reshape(-1) *
+    r["sigma"] + r["mu"]`` before comparison against the unchanged raw
+    ``real_log_delta`` (both sides now in raw log-return units, matching
+    ``pipeline-review-r3.md`` §2 anchor table: AR 0.00294, V1 0.01497, VAE
+    0.01583). The standardize-real alternative inflates EMD by ~47× and does
+    NOT match the §2 anchors; the un-standardize-fake recipe per §2 lines
+    124-135 is canonical. The OD-scale rows are byte-untouched. The moment /
+    ACF / DTW rows are also byte-untouched (the scale mismatch was specific
+    to the EMD call). See R3-CR-2 mechanism in
+    ``peer-review-r3/code-review-r3.md`` §H3 and the corrected aggregates
+    anchored against ``pipeline-review-r3.md`` §2.
     """
     out = []
     trans = r["transformed"]
     trans_flat = trans.reshape(-1)
+    trans_flat_raw = trans_flat * r["sigma"] + r["mu"]  # Plan 14-16 R3-CR-2 fix
     out.append(dict(model_kind=mk, pipeline=p, seed=s, metric_name="emd",
                      scale="log_return",
-                     value=compute_emd(real_log_delta, trans_flat),
+                     value=compute_emd(real_log_delta, trans_flat_raw),
                      source=source))
     for k, v in compute_moments(trans_flat).items():
         out.append(dict(model_kind=mk, pipeline=p, seed=s,
