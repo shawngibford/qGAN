@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 14 plan 14-15 complete (Wave 13 — distribution-EMD + qq_overlay + marginal-convergence)
+stopped_at: Phase 14 plan 14-16 scheduled (Wave 14 — r3 forensic remediation: R3-CR-1 + R3-CR-2 + strong-claim reframe)
 last_updated: "2026-05-21T00:00:00.000Z"
-last_activity: 2026-05-21 -- Phase 14 plan 14-15 landed; only 14-07 (Zenodo deposit) remains
+last_activity: 2026-05-21 -- Phase 14 plan 14-16 scheduled after r3 forensic investigation surfaced R3-CR-1 + R3-CR-2 metric bugs; user chose Path 1 (fix both + reframe)
 progress:
   total_phases: 2
   completed_phases: 1
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 14 (paper-revision-release-freeze) — EXECUTING
-Plan: 14 of 15 complete (14-15 landed; 14-07 Zenodo deposit deferred)
-Status: Executing Phase 14
-Last activity: 2026-05-21 -- 14-15 distribution-EMD + qq_overlay + marginal-convergence merged (Wave 13, 5 tasks)
+Plan: 14 of 16 complete (14-15 landed; 14-16 scheduled for r3 forensic remediation; 14-07 Zenodo deposit deferred)
+Status: Executing Phase 14 (Wave 14 r3 remediation in progress)
+Last activity: 2026-05-21 -- 14-16 scheduled after r3 forensic investigation (commit 961ee12) surfaced R3-CR-1 hist-density structural bias + R3-CR-2 log-return scale mismatch; user chose Path 1 (fix both + reframe to strong-claim parametric-efficiency-equivalence)
 
 Progress: [██████████] 100%
 
