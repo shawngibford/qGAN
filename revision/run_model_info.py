@@ -333,6 +333,73 @@ def _reconciliation_rows() -> list[dict]:
     return rows
 
 
+def _comparable_variants_rows() -> list[dict]:
+    """Plan 14-15 T2 — 3-column comparable-variants table source builder.
+
+    Each row sources three EMD columns from existing aggregator JSONs:
+
+      * **Column 1 — OD raw-sample EMD** from
+        ``matched2000_dualscale.json#aggregates`` filtered by
+        ``metric_name='emd'`` AND ``scale='OD'`` (per-(model_kind) mean
+        over seeds 42-46; ddof=1 sample std).
+      * **Column 2 — log-return raw-sample EMD** from
+        ``matched2000_dualscale.json#aggregates`` filtered by
+        ``metric_name='emd'`` AND ``scale='log_return'`` (per-(model_kind)
+        mean over seeds 42-46; ddof=1 sample std).
+      * **Column 3 — 50-bin histogram-density EMD** (the pre-v1.0 paper
+        metric reintroduced per Plan 14-15) from
+        ``distribution_emd.json#aggregates`` filtered by ``scale='OD'``
+        (per-(model_kind) mean over seeds 42-46; ddof=1 sample std).
+
+    The 50-bin density Wasserstein formulation in column 3 matches the
+    C-3 disclosure citation in ``reconciliation_note.md`` word-for-word
+    so reviewers can verify the formulation actually computed matches the
+    formulation disclosed (Plan 14-15 T1 + T2).
+
+    Sorted by SWEEP_MODELS (MODEL_ORDER from run_figure_suite.py:106-116).
+    Headline iqp_sel_55_headline appears last as a separate row IFF
+    `distribution_emd.json#headline_present == True`.
+    """
+    dual = json.loads((RESULTS / "matched2000_dualscale.json").read_text())
+    dist = json.loads((RESULTS / "distribution_emd.json").read_text())
+
+    def _by_scale(scale: str) -> dict[str, dict]:
+        return {
+            a["model_kind"]: a
+            for a in dual.get("aggregates", [])
+            if a.get("metric_name") == "emd" and a.get("scale") == scale
+        }
+
+    od_raw = _by_scale("OD")
+    logret_raw = _by_scale("log_return")
+    od_hist = {
+        a["model_kind"]: a
+        for a in dist.get("aggregates", [])
+        if a.get("scale") == "OD"
+    }
+
+    rows: list[dict] = []
+    model_order = list(SWEEP_MODELS)
+    if dist.get("headline_present"):
+        model_order.append("iqp_sel_55_headline")
+    for model in model_order:
+        rows.append({
+            "model": model,
+            "od_raw_mean": od_raw.get(model, {}).get("mean"),
+            "od_raw_std": od_raw.get(model, {}).get("std"),
+            "logret_raw_mean": logret_raw.get(model, {}).get("mean"),
+            "logret_raw_std": logret_raw.get(model, {}).get("std"),
+            "od_hist_mean": od_hist.get(model, {}).get("mean"),
+            "od_hist_std": od_hist.get(model, {}).get("std"),
+            "source_dist_emd": (
+                f"distribution_emd.json#aggregates "
+                f"(model_kind={model}, scale=OD); 50-bin density Wasserstein "
+                f"(pre-v1.0 formulation)"
+            ),
+        })
+    return rows
+
+
 def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
     lines: list[str] = []
     lines.append("# 1000ep -> 2000ep Reconciliation Note (D-14-13)\n")
@@ -390,31 +457,26 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
         "marker per the conflation-guard contract).\n"
     )
     lines.append(
-        "**Interpretation (Plan 14-13 rebuild).** Deltas are ≈ 0 across the "
-        "board: the matched 2000-epoch budget recovers OD-scale EMD within "
-        "seed variance of the 1000-epoch baseline. The previous "
-        "`+0.127 degradation` framing was an artifact of the scale-collision "
-        "between the OLD column (OD-scale EMD from `baseline_comparison.json`) "
-        "and the NEW column (which under the v1 emit read the "
-        "log-return-standardized training-loop metric `emd_avg[-1]` from "
-        "`metrics.json`). Task 3 of Plan 14-13 switches the NEW source to the "
-        "audited OD-scale aggregate mean in "
-        "`matched2000_dualscale.json#aggregates` — the same scale as OLD — "
-        "and the deltas collapse to numerical noise (C-1 / PROV-CRIT-1 "
-        "resolved). The ansatz variants (V1/V2/V3) have no 1000ep "
-        "matched-budget counterpart — they were introduced directly at the "
-        "2000ep budget (D-14-10) — so their OLD column is intentionally "
-        "blank rather than carrying a non-comparable number.\n"
+        "**Interpretation (Plan 14-14 rewording — wgan_cnn seed-variance honesty).** All deltas are within seed variance of the 1000-epoch baseline (Welch t-test p ≥ 0.37 for every model). The largest absolute delta is wgan_cnn (-0.059, a ~50% reduction off a small base); seed-42 outliers drive that variance, not a uniform near-zero effect across seeds. The previous `+0.127 degradation` framing was an artifact of the scale-collision between the OLD column (OD-scale EMD from `baseline_comparison.json`) and the NEW column (which under the v1 emit read the log-return-standardized training-loop metric `emd_avg[-1]` from `metrics.json`). Task 3 of Plan 14-13 switches the NEW source to the audited OD-scale aggregate mean in `matched2000_dualscale.json#aggregates` — the same scale as OLD — and the deltas collapse to numerical noise modulo the wgan_cnn seed-variance caveat above (C-1 / PROV-CRIT-1 resolved). The ansatz variants (V1/V2/V3) have no 1000ep matched-budget counterpart — they were introduced directly at the 2000ep budget (D-14-10) — so their OLD column is intentionally blank rather than carrying a non-comparable number."
     )
     lines.append("")
     lines.append(
-        "**Metric-redefinition disclosure (Plan 14-13, peer-review remediation).**"
+        "**Cross-reference (Plan 14-15).** "
+        "See `## EMD comparable across metric variants (matched 2000ep budget)` "
+        "below for the 3-column comparison that adds the log-return raw-sample "
+        "EMD and the 50-bin histogram-density EMD (the pre-v1.0 paper metric "
+        "reintroduced per Plan 14-15)."
+    )
+    lines.append("")
+    lines.append(
+        "**Metric-redefinition disclosure (Plan 14-13, peer-review remediation; Plan 14-15 extension).**"
     )
     lines.append(
         "The v1.0 release (`revision/core/eval.py:25-36`) switched the EMD "
         "implementation from a histogram-density Wasserstein "
-        "(`scipy.stats.wasserstein_distance(real_hist_density, fake_hist_density)` "
-        "over 50-bin histograms) to a raw-sample Wasserstein "
+        "(`scipy.stats.wasserstein_distance(bin_centers, bin_centers, "
+        "real_hist_density, fake_hist_density)` over 50-bin histograms "
+        "(`np.histogram(..., density=True)`)) to a raw-sample Wasserstein "
         "(`scipy.stats.wasserstein_distance(real_samples, fake_samples)` "
         "over the raw log-return arrays). The two metrics are NOT "
         "commensurate: the pre-v1.0 headline `~0.0015` (histogram-density on "
@@ -426,9 +488,52 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
         "current training-loop metric). The OD-scale aggregate mean in the "
         "table above is the v1.0 raw-sample Wasserstein evaluated on the "
         "original ordinary-differences (OD) scale samples rescaled via "
-        "`np.exp(.) - 1` (C-3 resolved)."
+        "`np.exp(.) - 1` (C-3 resolved). "
+        "**Plan 14-15 extension.** "
+        "The matched-2000ep histogram-density EMD on OD scale (reported in "
+        "the new `## EMD comparable across metric variants (matched 2000ep "
+        "budget)` section below; sourced from `distribution_emd.json`) is "
+        "computed on the SAME real-data slice and SAME 50-bin convention as "
+        "the deprecated v1.0-pre metric, so it IS commensurate with the "
+        "pre-v1.0 paper headline (~0.0015) for the first time since the "
+        "v1.0 raw-sample switch (Plan 14-15)."
     )
     lines.append("")
+
+    # Plan 14-15 T2 — append the 3-column comparable-variants section.
+    comp = _comparable_variants_rows()
+    lines.append(
+        "## EMD comparable across metric variants (matched 2000ep budget)"
+    )
+    lines.append("")
+    lines.append(
+        "Each column below reports mean EMD over seeds 42-46 (ddof=1 "
+        "sample std also recorded in the aggregator JSONs). Column 1 is the "
+        "v1.0 raw-sample Wasserstein on OD scale "
+        "(`matched2000_dualscale.json#aggregates`, scale=OD); column 2 is "
+        "the v1.0 raw-sample Wasserstein on log-return scale "
+        "(`matched2000_dualscale.json#aggregates`, scale=log_return); "
+        "column 3 is the pre-v1.0 50-bin histogram-density Wasserstein on "
+        "OD scale (`distribution_emd.json#aggregates`, scale=OD; Plan 14-15 "
+        "reintroduction). Column 3 is commensurate with the pre-v1.0 paper "
+        "headline (~0.0015) under the SAME 50-bin convention (see the C-3 "
+        "metric-redefinition disclosure above)."
+    )
+    lines.append("")
+    lines.append(
+        "| model | OD raw-sample EMD | log-return raw-sample EMD "
+        "| histogram-density EMD (50-bin, OD scale) | source: distribution-EMD |"
+    )
+    lines.append("|---|---|---|---|---|")
+    for r in comp:
+        c1 = "—" if r["od_raw_mean"] is None else f"{r['od_raw_mean']:.6f}"
+        c2 = "—" if r["logret_raw_mean"] is None else f"{r['logret_raw_mean']:.6f}"
+        c3 = "—" if r["od_hist_mean"] is None else f"{r['od_hist_mean']:.6f}"
+        lines.append(
+            f"| {r['model']} | {c1} | {c2} | {c3} | {r['source_dist_emd']} |"
+        )
+    lines.append("")
+
     (DOCS / "reconciliation_note.md").write_text("\n".join(lines))
 
 
