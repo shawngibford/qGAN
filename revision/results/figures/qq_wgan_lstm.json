@@ -609,5 +609,6 @@
   3.8393538354852925,
   3.864169073714874,
   3.890240069640952
- ]
+ ],
+ "caption_note": "Per-model OD-scale QQ; on this scale 8/9 models hug the diagonal and discrimination is hard. See qq_overlay.png for the single discriminating figure."
 }

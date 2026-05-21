@@ -234,3 +234,53 @@ Every line exits 0 under the v2.1 schema as of Plan 14-14 close.
 
 After Plan 14-14 lands, the only remaining open Phase 14 plan is still
 **Plan 14-07** (Zenodo deposit + tag + DOI wiring + release.md).
+
+## Plan 14-15 — Distribution-EMD column + QQ overlay + marginal-convergence reviewer disclosure (Wave 13)
+
+Wave 13 deliverables (per `.planning/phases/14-paper-revision-release-freeze/14-15-PLAN.md`):
+
+- **T1** — `revision/run_distribution_emd.py` (NEW top-level emitter;
+  histogram-density 50-bin Wasserstein per the pre-v1.0 paper formulation
+  reintroduced, `wasserstein_distance(bin_centers, bin_centers,
+  real_hist_density, fake_hist_density)`); `revision/results/distribution_emd.json`
+  (NEW aggregator JSON; 9-model × 5-seed × 2-scale rows + 18 per-(model_kind,
+  scale) aggregates with `ddof=1` sample std; corpus-consistent `data_hash =
+  91e447d4624e25b3`).
+- **T2** — `revision/run_model_info.py` updated to emit a new 3-column
+  comparable-variants table in `reconciliation_note.md` (OD raw / log-return
+  raw / 50-bin histogram-density EMD); existing OD-scale headline table
+  preserved verbatim; C-3 disclosure paragraph extended (formulation citation
+  updated to match `distribution_emd.json#metric_formulation` word-for-word
+  AND extension sentence added acknowledging the histogram-density column
+  is commensurate with the pre-v1.0 paper headline ~0.0015 for the first
+  time since the v1.0 raw-sample switch).
+- **T3** — `revision/results/figures/qq_overlay.{png,pdf,json}` (NEW
+  primary discriminating figure: 9-model QQ overlay + delta-QQ panel;
+  companion JSON carries `convergence_stats`, `cluster_summary`,
+  `model_order_color_keys` (CR-1 sha256-seeded deterministic),
+  `routing_verification` with 4.44e-16 max floating-point diff,
+  `sha256_png`); 9 per-model `qq_{model}.json` companions gain additive
+  `caption_note` field pointing to `qq_overlay.png`; per-model PNG/PDFs
+  NOT regenerated.
+- **T4** — `reviewer_response.md` carries new `## Marginal-convergence
+  finding (post-r2 investigation)` subsection; `methods_full.md` carries
+  the 2-sentence OD-marginal cross-reference at the end of §3.x;
+  `paper_blocks_framing.md` SKIPPED (no natural insertion point in the
+  PAPER-01 LaTeX-replacement framing block; message carried by
+  `methods_full.md` + `reviewer_response.md` alone); `peer_review_remediation.md`
+  carries new `## R2 follow-up — marginal-convergence finding (Plan 14-15)`
+  subsection.
+- **T5** — this section + `14-15-SUMMARY.md`; v2.1 gate PASSES on all 10
+  paper-facing docs.
+
+Locked decisions preserved across the plan: D-14-22 (`revision/core/`
+byte-freeze); D-14-13 (strict-accept gate; new distribution-EMD column is
+informational only); D-14-16 (v2.1 gate byte-freeze; no gate edit); D-14-18
+(Overleaf-canonical LaTeX read-only).
+
+The histogram-density EMD reintroduction makes the matched-2000ep numbers
+commensurate with the pre-v1.0 paper headline (~0.0015) under the SAME
+50-bin convention for the first time since the v1.0 raw-sample switch.
+
+After Plan 14-15 lands, the only remaining open Phase 14 plan is still
+**Plan 14-07** (Zenodo deposit + tag + DOI wiring + release.md).

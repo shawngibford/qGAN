@@ -224,3 +224,41 @@ sign-flip false positive is closed.
 | `revision/docs/training_protocol.md` | PASS | 18 |
 | `revision/docs/dataset_stats.md` | PASS | 5 |
 | `revision/docs/peer_review_remediation.md` | PASS | 31 (pre-Plan-14-14 sweep; T5 SUMMARY commit re-runs to update) |
+
+## R2 follow-up — marginal-convergence finding (Plan 14-15)
+
+A post-r2 user-review observation flagged that all 9 per-model OD-scale QQ
+plots look near-identical to the eye. Plan 14-15 closed this with an
+empirical verification + a new discriminating figure + the reintroduction
+of the pre-v1.0 paper metric as a comparable column in
+`reconciliation_note.md`. The three threads:
+
+(a) **User-observed visual concern.** All 9 per-model OD-scale QQ plots
+(`revision/results/figures/qq_<model>.png`) look near-identical to the eye
+— flagged as a possible data-routing or plot-rendering error.
+
+(b) **Empirical verification result.** Independent reconstruction of
+per-model OD samples from
+`revision/results/matched2000/runs/{model}/{seed}/samples.npy` matched the
+rendered QQ companion JSON values to floating-point precision (4.44e-16)
+across all 9 models × 5 seeds. The routing is correct; the visual
+similarity is genuine: 8/9 models cluster pairwise within median
+approximately 0.03 OD-units (range 0.004–0.22 across 28 pairs), but ALL 9
+deviate from the empirical OD marginal by approximately 0.25 OD-units
+absolute (8/9 in 0.24–0.28; WGAN-CNN diverges from the cluster at median
+approximately 0.69 vs others, range 0.55–0.77, and at 0.81 vs real).
+
+(c) **Resolution.** Plan 14-15 emits
+`revision/results/figures/qq_overlay.{png,pdf,json}` (single 9-model
+discriminating figure with delta-QQ panel) and adds a new 3-column
+comparable-variants table to `revision/docs/reconciliation_note.md`
+(`## EMD comparable across metric variants (matched 2000ep budget)`)
+with the 50-bin histogram-density EMD column reintroduced (the pre-v1.0
+paper metric, now commensurate with the pre-v1.0 paper headline ~0.0015
+under the SAME 50-bin convention for the first time since the v1.0 raw-
+sample switch). The reviewer-facing communication appears in
+`revision/docs/reviewer_response.md` (new `## Marginal-convergence finding
+(post-r2 investigation)` subsection) and as a 2-sentence cross-reference
+at the end of `revision/docs/methods_full.md §3.x`. The full audit trail
+is: user visually-similar QQ observation → 4.44e-16 routing verification →
+qq_overlay + 3-column table → reviewer-facing communication.
