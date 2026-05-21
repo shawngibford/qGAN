@@ -77,7 +77,7 @@ Plans:
 **Wave 12** *(independent — pre-tag punch list from r2 peer-review pass; not blocked by 14-07)*
 - [x] 14-14-PLAN.md — Pre-tag punch list: gate v2.1 (negative-sign-aware lookbehind, LIFTS D-14-16), training_time_device capture-before-`.to(cpu)`, VAE β_eff=2.5 derivation correction + VAE-not-param-matched caveat, wgan_cnn seed-variance honesty, R1-m4 DOI-pending wording, docstring 1-80→1-69, CR-3 line 346→347, apparatus units split, statsmodels pin, REPRODUCE.md, _introspect render_only marks, sensitivity data_hash; passes v2.1 gate on all 10 paper-facing docs (supports PAPER-01/02/08/09 + INFRA-03)
 **Wave 13** *(independent — distribution-EMD column + QQ overlay + marginal-convergence reviewer disclosure; not blocked by 14-07)*
-- [ ] 14-15-PLAN.md — Distribution-EMD column + QQ overlay (Option A) + marginal-convergence finding: new revision/run_distribution_emd.py emitter (50-bin histogram-density Wasserstein, pre-v1.0 formulation), 3-column comparable EMD table in reconciliation_note.md, qq_overlay.{png,pdf,json} single discriminating figure with delta-QQ panel, reviewer_response.md + methods_full.md + peer_review_remediation.md updates carrying the "8/9 models recover OD marginal to within 0.03 OD-units; WGAN-CNN excepted" finding and redirecting reviewers to dependence-structure figures (ACF, conditional moments, TimeGAN-style scores) for architecture discrimination (supports PAPER-01/02/08/09 + INFRA-03)
+- [x] 14-15-PLAN.md — Distribution-EMD column + QQ overlay (Option A) + marginal-convergence finding: new revision/run_distribution_emd.py emitter (50-bin histogram-density Wasserstein, pre-v1.0 formulation), 3-column comparable EMD table in reconciliation_note.md, qq_overlay.{png,pdf,json} single discriminating figure with delta-QQ panel, reviewer_response.md + methods_full.md + peer_review_remediation.md updates carrying the two-pronged convergence finding (pairwise: 8/9 ~0.03 median + WGAN-CNN-vs-others ~0.69 median; vs-real: all-9 ~0.25 + WGAN-CNN ~0.81) and redirecting reviewers to dependence-structure figures (ACF, conditional moments, TimeGAN-style scores) for architecture discrimination (supports PAPER-01/02/08/09 + INFRA-03)
 
 ## Progress
 
@@ -99,4 +99,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 13/15 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 14/15 | In Progress|  |
