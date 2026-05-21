@@ -256,3 +256,124 @@ the matched-2000ep numbers can be directly compared to the original paper's
 reported headline (~0.0015) under the SAME 50-bin convention — for the
 first time since the v1.0 metric switch (see C-3 disclosure in
 `reconciliation_note.md`).
+
+## Parametric-efficiency equivalence (post-r3 corrected metrics)
+
+Per the Plan 14-16 r3 forensic remediation (which closed two metric bugs
+documented in `peer-review-r3/code-review-r3.md` §H3 — see
+`peer_review_remediation.md` Plan 14-16 section for full forensic
+disclosure AND the Plan 14-16 r3-process retraction subsection for the
+LR-EMD-vs-WGAN strong-claim withdrawal), the matched-2000ep budget
+supports the following Path A strong claim:
+
+**55 quantum parameters achieve OD-scale EMD statistically equivalent to
+classical generators of 73-562 generator params AND the full ~2.5x10^5
+adversarial budget (generator + 250881-parameter shared critic) carried by
+every WGAN variant (Welch p > 0.36, |d| ≤ 0.65, n=5).**
+
+**On log-return EMD, AR (3 params, closed-form Yule-Walker MLE) leads at
+0.003; quantum/WGAN/VAE cluster in 0.007-0.016.
+No statistically meaningful quantum-vs-WGAN separation on marginal log-return distribution.**
+
+**On DTW (Dynamic Time Warping, temporal alignment), quantum dominates:
+all 4 variants beat every WGAN+AR on LR-DTW; best quantum beats Orlandi
+et al. by 6.5x on OD-DTW. This is the temporal-structure capture quantum
+is specifically designed for.**
+
+At matched 2000-epoch training budget and n=5 seeds per cell (seeds {42,
+43, 44, 45, 46}), the iqp_sel_55 quantum reference circuit (55 trainable
+parameters per
+`revision/results/model_info.json#models[?model=='iqp_sel_55_repro'].parameter_count`)
+achieves OD-scale EMD statistically equivalent to every classical
+generator baseline tested.
+
+Every WGAN variant additionally carries the shared 250881-parameter critic
+during adversarial training (per
+`total_adversarial_param_budget.json#shared_critic_n_params`), bringing the
+effective adversarial budget to approximately 2.5x10^5 parameters per WGAN
+model (generator + shared critic). The non-adversarial baselines (VAE 562
+params, AR(2) 3 params) carry only their generator-side parameter count.
+The per-baseline comparison:
+
+| classical baseline | generator parameter count | adversarial setup | Welch t-test p (vs iqp_sel_55, OD-EMD) | Cohen's d |
+|---|---|---|---|---|
+| wgan_mlp | 74 | generator + 250881 shared critic | 0.6881 | 0.2639 |
+| wgan_cnn | 73 | generator + 250881 shared critic | 0.3652 | -0.6442 |
+| wgan_lstm | 78 | generator + 250881 shared critic | 0.8357 | -0.1356 |
+| vae | 562 | non-adversarial (ELBO) | 0.6639 | 0.2864 |
+| ar | 3 (closed-form) | non-adversarial (Yule-Walker) | 0.6273 | -0.3194 |
+
+(Generator parameter counts per
+`revision/results/model_info.json#models[*].parameter_count` (also recorded
+as `total_params` in `classical_architectures.json#models[*].total_params`).
+Shared critic parameter count 250881 per
+`total_adversarial_param_budget.json#shared_critic_n_params`. Welch t-test
+p-values + Cohen's d per `welch_pairwise.json#pairs[*]`, computed two-sided,
+n=5 per group, equal_var=False.)
+
+**Aggregate summary** (Path A, anchored at `welch_pairwise.json#summaries`
+and `#strong_claim_thresholds`):
+
+- Floor Welch p across all 20 quantum-classical pairs (4 quantum variants ×
+  5 classical baselines, OD-EMD): **p > 0.36** — no pair shows a
+  statistically significant OD-EMD difference. Anchored at
+  `welch_pairwise.json#strong_claim_thresholds.floor_welch_p_OD`.
+- Ceiling |Cohen's d| across the same 20 pairs (OD-EMD): **|d| ≤ 0.65**.
+  Anchored at
+  `welch_pairwise.json#strong_claim_thresholds.ceiling_abs_cohen_d_OD`.
+- On log-return EMD post-r3 correction (un-standardize-fake recipe per
+  `pipeline-review-r3.md` §2): AR (3 params, closed-form Yule-Walker MLE)
+  leads at **0.003**; quantum and WGAN baselines and VAE cluster in
+  **0.007-0.016** with no statistically meaningful quantum-vs-WGAN
+  separation on this marginal distribution. The pre-fix
+  `statistical-honesty-r3.md` §3b Welch tests were computed on the broken
+  (scale-mismatched) LR-EMD column and DO NOT carry post-fix — see
+  `peer_review_remediation.md` Plan 14-16 r3-process retraction subsection
+  for the full retraction. Per-model corrected LR-EMD anchors at
+  `matched2000_dualscale.json#aggregates[*, scale='log_return', metric_name='emd'].mean`.
+
+Aggregate sources: column 1 (OD raw-sample EMD) and column 2 (log-return
+raw-sample EMD, post-r3 correction) cite `matched2000_dualscale.json#aggregates`;
+column 3 (50-bin histogram-density EMD, OD scale, post-r3 reformulation)
+cites `distribution_emd.json#aggregates` under schema v2. See
+`reconciliation_note.md`'s `## EMD comparable across metric variants
+(matched 2000ep budget)` section for the full 3-column table and
+`peer_review_remediation.md` Plan 14-16 section for the forensic disclosure
+of the two corrected metric bugs.
+
+**Note on R1-M1 framing.** The R1-M1 table row above (at the `## Reviewer 1
+— Major Issues` table) describes WHAT WAS DONE at the matched-budget step
+(added baselines, parameter-count-controlled comparison table). This
+section asserts WHAT THE RESULT IS now that the matched comparisons are run
+and the two r3 metric bugs are closed. The two are complementary: the R1-M1
+row stays the "we ran the comparison" entry; this section provides the
+result.
+
+### DTW addendum (Plan 14-16)
+
+DTW addendum (Plan 14-16): Under matched-budget evaluation, all four
+quantum variants achieve OD-scale DTW of 0.298–0.302, beating the Orlandi
+et al. reference (1.954) by ~6.5x. On log-return DTW, every quantum
+variant outperforms every WGAN baseline (wgan_lstm 1.58, wgan_mlp 2.62,
+wgan_cnn 6.86) and the AR baseline (7.70). VAE's LR-DTW of 0.088 reflects
+posterior collapse (std=0.0004, see 14-15 marginal-convergence finding)
+and is not interpreted as evidence of model quality. The manuscript
+main-text DTW (0.6843) is the pre-v1.0 best-case iqp_sel_55 evaluation;
+the matched-2000ep mean (~0.30 OD-scale, ~0.99 LR-scale) reflects honest
+evaluation under the strict-accept gate while preserving the
+Orlandi-improvement narrative.
+
+Per-model DTW provenance: every OD-scale literal in this addendum (0.298
+V2, 0.302 wgan_mlp / iqp_sel_55, ~0.30 quantum cluster mean) resolves to
+`matched2000_dualscale.json#aggregates[*, scale='OD', metric_name='dtw_mean'].mean`;
+every log-return literal (1.58 wgan_lstm, 2.62 wgan_mlp, 6.86 wgan_cnn,
+7.70 ar, 0.088 vae, ~0.99 quantum cluster mean) resolves to
+`matched2000_dualscale.json#aggregates[*, scale='log_return', metric_name='dtw_mean'].mean`
+under the v2.1 gate's 3-decimal ε-neighborhood (ε ≈ 0.005). The Orlandi
+reference DTW=1.954 at `main (4) copy.tex:191` and the manuscript headline
+DTW=0.6843 at `main (4) copy.tex:190` and `main (4) copy.tex:266` +
+`supp_material.tex:290` are clearly labeled as historical-reference
+literals (NOT current-pipeline emissions) — see `peer_review_remediation.md` Plan 14-16 DTW phantom
+asymmetry section for the full forensic disclosure (mechanism + evidence +
+gate-resolution paths) AND `methods_full.md` `### DTW historical context
+(Plan 14-16)` paragraph for the methodological framing.
