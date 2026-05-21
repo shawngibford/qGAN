@@ -284,3 +284,61 @@ commensurate with the pre-v1.0 paper headline (~0.0015) under the SAME
 
 After Plan 14-15 lands, the only remaining open Phase 14 plan is still
 **Plan 14-07** (Zenodo deposit + tag + DOI wiring + release.md).
+
+## Plan 14-16 — r3 forensic remediation (Wave 14)
+
+Wave 14 deliverables (per
+`.planning/phases/14-paper-revision-release-freeze/14-16-PLAN.md`):
+
+- T1: `revision/run_matched2000_dualscale.py` `_log_return_rows` surgical
+  edit (R3-CR-2 fix — un-standardize-fake recipe per
+  `pipeline-review-r3.md` §2); `revision/results/matched2000_dualscale.json`
+  re-emitted with corrected log-return-scale EMD aggregates and
+  byte-identical OD-scale subset (SHA-256 over OD rows verified preserved).
+- T2: `revision/run_distribution_emd.py` `compute_histogram_density_emd`
+  edit (R3-CR-1 fix variant: shared-edges-from-real + total-mass=1
+  normalization + disclosed `fake_in_range_mass`) plus the R3-HI-1
+  sister-fix (`_real_references` now returns `norm_log_delta` so the
+  log-return histogram-density call uses a scale-matched real reference);
+  `SCHEMA` bumped to `"distribution-emd v2 (Phase 14 plan 14-16)"`;
+  `revision/results/distribution_emd.json` re-emitted under schema v2.
+  Investigation finding: the OD-scale v1-to-v2 EMD values are
+  byte-identical because `scipy.stats.wasserstein_distance` renormalizes
+  weights internally — the `density=True` vs `density=False` distinction
+  is numerically inert with shared edges; the fix's genuine contribution
+  is the `fake_in_range_mass` disclosure stat.
+- T3: NEW top-level emitter `revision/run_welch_aggregator.py` reads the
+  corrected per-seed `matched2000_dualscale.json` rows and emits
+  `revision/results/welch_pairwise.json` (schema
+  `"welch-pairwise v1 (Phase 14 plan 14-16 W2)"`) with per-pair Welch t/p,
+  Cohen's d and Mann-Whitney U for all 40 quantum-classical pairs across
+  OD + log-return EMD. The `strong_claim_thresholds` block emits only the
+  surviving OD-EMD thresholds (Path A); the `notes` field documents the
+  r3-process retraction.
+- T4: `revision/docs/reviewer_response.md` — R1-M1 row preserved verbatim;
+  new H2 `## Parametric-efficiency equivalence (post-r3 corrected metrics)`
+  inserted, asserting the Path A strong claim with a per-baseline OD-EMD
+  table citing `welch_pairwise.json` and a DTW addendum subsection.
+- T5: `revision/docs/methods_full.md` extended with three Plan 14-16
+  paragraphs (Log-return scale correction, Shared-edges formulation, DTW
+  historical context); `revision/run_model_info.py` extended with an
+  OD-scale DTW column and the C-3 disclosure extension;
+  `revision/docs/reconciliation_note.md` re-emitted with the corrected
+  columns and a 4th DTW column.
+- T6: `cross_model_emd` confirmed to be an OD-only figure (companion JSON
+  carries only OD-scale fields); since the T1 fix touched only the
+  log-return EMD column, `cross_model_emd` is byte-stable and required no
+  re-render. `qq_overlay.json` gained a `plan_14_16_verification` field
+  documenting `structural_change=false`. v2.1 gate PASSES on all 10
+  paper-facing docs.
+- T7: `14-16-SUMMARY.md` + the `## Plan 14-16 — r3 forensic remediation`
+  and `## Plan 14-16 — DTW phantom asymmetry` sections in
+  `peer_review_remediation.md` + this manifest section.
+
+Locked decisions preserved across the plan: D-14-22 (`revision/core/`
+byte-freeze); D-14-13 (strict-accept gate); D-14-16
+(`revision/verify_number_provenance.py` v2.1 byte-freeze); D-14-18
+(Overleaf-canonical LaTeX read-only).
+
+After Plan 14-16 lands, the only remaining open Phase 14 plan is still
+**Plan 14-07** (Zenodo deposit + tag + DOI wiring + release.md).

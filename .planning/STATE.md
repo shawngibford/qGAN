@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 14 plan 14-16 scheduled (Wave 14 — r3 forensic remediation: R3-CR-1 + R3-CR-2 + strong-claim reframe)
+stopped_at: Phase 14 plan 14-16 complete (Wave 14 — r3 forensic remediation; Path A reframe; 7 tasks)
 last_updated: "2026-05-21T00:00:00.000Z"
-last_activity: 2026-05-21 -- Phase 14 plan 14-16 scheduled after r3 forensic investigation surfaced R3-CR-1 + R3-CR-2 metric bugs; user chose Path 1 (fix both + reframe)
+last_activity: 2026-05-21 -- Phase 14 plan 14-16 landed (R3-CR-2 fix + R3-CR-1/R3-HI-1 + welch aggregator + Path A reframe + DTW disclosure); only 14-07 (Zenodo deposit) remains
 progress:
   total_phases: 2
   completed_phases: 1
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 14 (paper-revision-release-freeze) — EXECUTING
-Plan: 14 of 16 complete (14-15 landed; 14-16 scheduled for r3 forensic remediation; 14-07 Zenodo deposit deferred)
-Status: Executing Phase 14 (Wave 14 r3 remediation in progress)
-Last activity: 2026-05-21 -- 14-16 scheduled after r3 forensic investigation (commit 961ee12) surfaced R3-CR-1 hist-density structural bias + R3-CR-2 log-return scale mismatch; user chose Path 1 (fix both + reframe to strong-claim parametric-efficiency-equivalence)
+Plan: 15 of 16 complete (14-16 landed; 14-07 Zenodo deposit deferred)
+Status: Executing Phase 14 (only 14-07 Zenodo deposit remains)
+Last activity: 2026-05-21 -- 14-16 r3 forensic remediation merged (7 tasks): R3-CR-2 LR-EMD scale fix, R3-CR-1/R3-HI-1 distribution-emd v2, welch_pairwise.json aggregator, Path A reframe (LR-EMD-vs-WGAN claim withdrawn; OD-EMD equivalence + DTW dominance retained), DTW phantom-asymmetry disclosure
 
 Progress: [██████████] 100%
 

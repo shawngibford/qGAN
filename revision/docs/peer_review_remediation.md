@@ -262,3 +262,249 @@ sample switch). The reviewer-facing communication appears in
 at the end of `revision/docs/methods_full.md §3.x`. The full audit trail
 is: user visually-similar QQ observation → 4.44e-16 routing verification →
 qq_overlay + 3-column table → reviewer-facing communication.
+
+## Plan 14-16 — r3 forensic remediation
+
+**Trigger.** The 5-agent r3 forensic peer-review pass committed at `961ee12`
+(synthesis at
+`.planning/phases/14-paper-revision-release-freeze/peer-review-r3/SYNTHESIS.md`)
+found metric bugs in the matched-2000ep evaluation pipeline. User selection:
+Path 1 (fix the bugs, regenerate aggregates, update reviewer-facing docs),
+followed by a Path A reframe after the executor checkpoint (see r3-process
+retraction below).
+
+### Plan 14-16 r3-process retraction — LR-EMD strong-claim withdrawn after R3-CR-2 fix
+
+**Mechanism.** The original r3 forensic pass reported in
+`statistical-honesty-r3.md` §3b that quantum significantly outperformed
+every WGAN on log-return EMD. Those statistics were computed on the broken
+pre-R3-CR-2 LR-EMD column itself — the same scale-mismatched column the r3
+pass was investigating. During 14-16 execution the R3-CR-2 fix was
+implemented (un-standardize fake side per `pipeline-review-r3.md` §2
+canonical recipe) and the LR-EMD aggregates were recomputed against the
+corrected data.
+
+**What changed.** On corrected LR-EMD: AR (3-parameter Yule-Walker
+closed-form MLE) is the best baseline; every WGAN beats every quantum
+variant; quantum, WGAN and VAE cluster in the 0.007-0.016 band. No
+statistically meaningful quantum-vs-WGAN separation exists on the
+corrected scale.
+
+**What we retract.** The original r3 SYNTHESIS claim that quantum
+"significantly beats every WGAN on LR-EMD" — the LR-EMD half — is
+withdrawn. The OD-EMD equivalence half is grounded in byte-identical data
+and stands.
+
+**What is preserved.** OD-EMD equivalence (Welch p > 0.36, |d| ≤ 0.65,
+n=5). DTW log-return-scale dominance (independent metric, byte-stable JSON
+aggregates). DTW Orlandi improvement (byte-stable).
+
+**Why this discovery is a forensic-process win.** This is exactly what the
+r3 dragnet was designed to catch — except the r3 agents themselves derived
+their LR-EMD headline from the broken column. The closure only became
+visible after executing the fix and recomputing against corrected data.
+The plan-check-execute loop surfaced the false load-bearing claim at the
+executor checkpoint protocol, before the manuscript shipped with the
+unsupportable claim.
+
+**References.** `pipeline-review-r3.md` §2 (the canonical scale-fix
+recipe), `statistical-honesty-r3.md` §3b (the now-retracted pre-fix Welch
+tests), `14-16-DEVIATION-NOTE.md` (executor checkpoint analysis),
+`welch_pairwise.json` `notes` field (machine-readable retraction
+provenance).
+
+### R3-CR-2: log-return EMD scale mismatch (HIGH, inherited since 14-08)
+
+**Mechanism** (per `peer-review-r3/code-review-r3.md` §H3). The pre-14-16
+`revision/run_matched2000_dualscale.py:368-372` compared the raw per-step
+`log_delta` (real reference) against the standardized fake samples
+`r_norm` — a scale mismatch (raw vs standardized log-return space). The
+mismatch inflated every log-return EMD value and inverted the cross-model
+ranking. The bug was inherited from `run_dualscale_fidelity.py` since Plan
+14-08.
+
+**Fix** (Plan 14-16 T1, Path A — un-standardize-fake per
+`pipeline-review-r3.md` §2). The fake side is un-standardized via
+`trans_flat_raw = r["transformed"] * sigma + mu` (using the same global
+`mu`, `sigma` from each seed's `inverse_kwargs.npz` that `reconstruct_od`
+uses to build the fake-side `r_norm`), then compared against the unchanged
+raw `real_log_delta`. The standardize-real alternative is scale-matched but
+produces EMD in standardized units that do not match the §2 anchor table;
+the un-standardize-fake recipe produces EMD in raw log-return units
+matching §2 exactly. The OD-scale rows are byte-identical pre/post
+correction (the OD inverse via `inverse_logreturns` already cumsum-exps to
+OD price scale where no standardization-vs-raw mismatch exists).
+
+**Corrected log-return EMD aggregates** (mean over seeds 42-46, per
+`matched2000_dualscale.json#aggregates`, ordered best to worst):
+
+| model_kind | corrected log-return EMD |
+|---|---|
+| ar | 0.00294 |
+| wgan_cnn | 0.00711 |
+| wgan_mlp | 0.01031 |
+| wgan_lstm | 0.01272 |
+| V3 | 0.01432 |
+| iqp_sel_55_repro | 0.01497 |
+| V1 | 0.01497 |
+| V2 | 0.01502 |
+| vae | 0.01583 |
+
+**Path A retraction (see r3-process retraction subsection above).** Every
+WGAN beats every quantum on corrected log-return EMD. The pre-fix
+`statistical-honesty-r3.md` §3b strong claim was computed on the broken
+column and is withdrawn. On the corrected scale, AR (Yule-Walker
+closed-form MLE) is structurally optimal for the marginal log-return EMD
+because it fits the linear-Gaussian marginal exactly; quantum, WGAN and VAE
+all cluster in the 0.007-0.016 band with no statistically meaningful
+quantum-vs-WGAN separation on this marginal-distribution metric.
+
+### R3-CR-1: histogram-density EMD — investigated, found numerically inert
+
+**Synthesis claim.** `peer-review-r3/code-review-r3.md` §H3 flagged R3-CR-1
+as a CRITICAL structural bias: `revision/run_distribution_emd.py` used
+`np.histogram(..., density=True)` for both real and fake, which (the
+synthesis argued) renormalizes each histogram independently and silently
+drops out-of-range fake mass, rewarding narrow-collapse distributions (VAE)
+and uncapped distributions (WGAN-CNN).
+
+**Investigation finding (Plan 14-16 T2).** The fix variant was implemented
+as locked: `density=False` for both histograms, edges derived from real
+only, both histograms normalized to total-mass=1 over the same edge set,
+out-of-range fake mass disclosed separately as `fake_in_range_mass`. The
+schema bumped from `"distribution-emd v1 (Phase 14 plan 14-15)"` to
+`"distribution-emd v2 (Phase 14 plan 14-16)"`. However, on recomputation
+the v1-to-v2 OD-scale aggregate EMD values are **byte-identical** (delta
+0.00000 for all 9 models). The reason: `scipy.stats.wasserstein_distance`
+renormalizes its weight arguments internally to sum to 1, so the
+`density=True` vs `density=False` distinction is numerically inert when
+both histograms share the same edges. The structural-bias narrative was
+overstated by the synthesis — on the matched-2000ep data, where every
+model's OD-scale samples are ~98% in-range, the `density=True` formulation
+produced the same EMD values the corrected formulation does.
+
+**What the fix genuinely contributes.** The `fake_in_range_mass` disclosure
+stat: it confirms there is no out-of-range truncation problem on either
+scale (OD ~0.98, log-return ~1.0 post-sister-fix). The WGAN-CNN "94%
+out-of-range" figure cited by the synthesis was an artifact of the
+pre-fix scale mismatch (R3-HI-1, below) — once both LR-scale sides are
+standardized, WGAN-CNN samples land in range and `fake_in_range_mass`
+reads near 1.0. The v2 emitter is more transparent code (explicit
+normalization) and carries the disclosure stat; it does not change the
+OD-scale EMD column.
+
+### R3-HI-1 sister-site coverage
+
+Per `code-review-r3.md` §H3, R3-HI-1 is a single finding naming both
+`run_matched2000_dualscale.py:368-372` (R3-CR-2) and
+`run_distribution_emd.py` `_real_references` + `_fake_log_return_flat` at
+`:144-169`. T2 Step E2 closes the sister site: `_real_references` now also
+returns `norm_log_delta = (log_delta - mu) / sigma`, and `_model_seed_rows`
+consumes the standardized real reference for the log-return-scale
+histogram-density call, so both log-return call sites in both top-level
+emitters use a scale-matched comparison.
+
+### Resulting strong-claim framing (Path A)
+
+The matched-2000ep budget supports the Path A strong claim asserted in
+`revision/docs/reviewer_response.md`'s new `## Parametric-efficiency
+equivalence (post-r3 corrected metrics)` H2: 55 quantum parameters achieve
+OD-scale EMD statistically equivalent to classical generators of 73-562
+generator parameters and to the full adversarial budget (generator +
+250881-parameter shared critic) carried by every WGAN variant (Welch
+p > 0.36, |d| ≤ 0.65, n=5); on log-return EMD there is no statistically
+meaningful quantum-vs-WGAN separation; on DTW the quantum variants
+dominate. The OD-EMD equivalence half is grounded in `welch_pairwise.json`
+(byte-stable OD column). The log-return-EMD half from pre-fix
+`statistical-honesty-r3.md` §3b is withdrawn (see r3-process retraction
+subsection above). DTW dominance is grounded in
+`matched2000_dualscale.json#aggregates` `dtw_mean` rows, byte-stable
+since 14-11.
+
+## Plan 14-16 — DTW phantom asymmetry (third historical-vs-current case)
+
+**Mechanism.** Dynamic Time Warping (DTW) carries a historical-vs-current
+asymmetry structurally parallel to R3-CR-2 (log-return-scale mismatch)
+closed above. The manuscript headline `DTW = 0.6843` at
+`main (4) copy.tex:190` (Results), `main (4) copy.tex:266` (Conclusions
+restatement) and `supp_material.tex:290` (Supplementary Algorithm DTW
+interpretation) is a pre-v1.0 best-case iqp_sel_55 evaluation. The current
+matched-2000ep pipeline under the strict-accept gate (D-14-13) reports a
+different value. Since D-14-18 locks the LaTeX read-only, the remediation
+is disclosure in `revision/docs/`, not an edit to the manuscript.
+
+**Evidence — current pipeline OD-scale DTW** (mean ± std, n=5 seeds per
+cell, per `matched2000_dualscale.json#aggregates` `dtw_mean` / `dtw_std`,
+scale=OD):
+
+| model_kind | OD-scale DTW mean ± std |
+|---|---|
+| iqp_sel_55_repro | 0.302 ± 0.030 |
+| V1 | 0.300 ± 0.032 |
+| V2 | 0.298 ± 0.032 |
+| V3 | 0.299 ± 0.034 |
+| wgan_mlp | 0.302 ± 0.027 |
+| wgan_lstm | 0.301 ± 0.034 |
+| vae | 0.307 ± 0.037 |
+| ar | 0.371 ± 0.037 |
+| wgan_cnn | 0.438 ± 0.255 |
+
+**Evidence — log-return-scale DTW** (mean ± std, scale=log_return):
+
+| model_kind | log-return DTW mean ± std |
+|---|---|
+| V1 | 0.940 ± 0.017 |
+| V2 | 0.949 ± 0.043 |
+| iqp_sel_55_repro | 0.985 ± 0.065 |
+| V3 | 1.122 ± 0.060 |
+| wgan_lstm | 1.581 ± 0.212 |
+| wgan_mlp | 2.624 ± 0.401 |
+| wgan_cnn | 6.863 ± 2.947 |
+| ar | 7.699 ± 0.240 |
+| vae | 0.088 ± 0.009 |
+
+**Strong claim — Orlandi improvement, OD-scale.** All four quantum variants
+(OD-scale DTW range 0.298-0.302) beat the Orlandi et al. reference
+DTW=1.954 (at `main (4) copy.tex:191`) by approximately 6.5x. The
+manuscript main-text Orlandi-improvement narrative is structurally
+preserved post-r3 — the matched-2000ep evaluation under the strict-accept
+gate still beats the Orlandi reference by the same order of magnitude as
+the pre-v1.0 headline, on a more defensible n=5 mean estimator with
+disclosed seed variance.
+
+**Strong claim — every quantum variant outperforms every WGAN/AR on
+log-return DTW.** The quantum cluster on log-return DTW ranges 0.940 (V1)
+to 1.122 (V3). Every WGAN and the autoregressive baseline rank worse:
+wgan_lstm 1.581, wgan_mlp 2.624, wgan_cnn 6.863, ar 7.699. The dominance is
+total across the 12 quantum-vs-{WGAN,AR} pairs — even the worst quantum
+log-return DTW beats the best classical adversarial/autoregressive
+baseline.
+
+**VAE log-return DTW caveat — posterior collapse, NOT model quality.** VAE's
+log-return DTW of 0.088 ± 0.009 is anomalously low because the collapsed
+distribution trivially aligns with the temporal envelope at a high cost in
+spread fidelity (sample std on log-return far narrower than real — the
+same posterior-collapse mechanism documented in the 14-15
+marginal-convergence finding). VAE's log-return DTW is reported but
+explicitly NOT interpreted as evidence of model quality; the
+quantum-vs-WGAN/AR dominance claim is made against the classical
+adversarial and autoregressive baselines, not against VAE.
+
+**Why missed by r3 agents.** The 5-agent r3 forensic pass was EMD-focused —
+all 5 agents targeted EMD line items. DTW was outside the dragnet's search
+corpus. DTW was flagged as the third historical-vs-current asymmetry case
+during post-checker scope review; the user authorized expansion of Plan
+14-16 rather than spawning a new plan, to keep the r3 closure coherent.
+
+**Resolution: disclose-not-fix.** The DTW emitter at
+`revision/core/eval.py:38-89` is byte-untouched (D-14-22) — DTW values are
+already computed and persisted in `matched2000_dualscale.json` since Plan
+14-11. The remediation is purely disclosure: surface the matched-budget
+DTW values into the reviewer-facing docs so reviewers can read the
+manuscript headline DTW=0.6843 in proper historical context. The Orlandi
+et al. reference DTW=1.954 still holds as a defensible improvement claim.
+
+**Cross-references.** `reviewer_response.md` `### DTW addendum (Plan
+14-16)` H3 (user-facing tightened addendum); `methods_full.md` `### DTW
+historical context (Plan 14-16)` paragraph (methodological framing);
+`reconciliation_note.md` comparable-variants table 4th DTW column.
