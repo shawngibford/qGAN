@@ -13,7 +13,7 @@
 
 - [ ] **INFRA-01**: `revision/core/` package exists with importable modules (`data.py`, `eval.py`, `training.py`, `models/quantum.py`, `models/critic.py`, `models/classical_wgan.py`, `models/vae.py`). All logic lives in modules; revision notebooks only orchestrate + plot + write JSON.
 - [ ] **INFRA-02**: Extracted modules reproduce main-notebook behavior — EMD and moment metrics match within numerical tolerance when `qgan_pennylane.ipynb` is re-run using the imported `revision/core/` modules (sanity check, no behavior change).
-- [ ] **INFRA-03**: Repository frozen via tagged release (`v2.0-revision`) and Zenodo DOI minted; DOI cited in manuscript.
+- [x] **INFRA-03**: Repository frozen via tagged release (`v2.0-revision`) and Zenodo DOI minted; DOI cited in manuscript.
 
 ### Baselines (addresses R1-M1, R2-1)
 
@@ -138,7 +138,7 @@ See `.planning/MILESTONES.md` for shipped milestones. Legacy requirement IDs (RE
 |-------------|-------|--------|
 | INFRA-01    | Phase 8  | Pending |
 | INFRA-02    | Phase 8  | Pending |
-| INFRA-03    | Phase 14 | Pending |
+| INFRA-03    | Phase 14 | Complete |
 | BASE-01     | Phase 10 | Complete |
 | BASE-02     | Phase 10 | Complete |
 | BASE-03     | Phase 10 | Complete |
