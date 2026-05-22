@@ -1,0 +1,367 @@
+\documentclass[12pt,twocolumn]{article}
+% Required packages
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[numbers]{natbib}
+\usepackage{booktabs}
+\usepackage{subcaption}
+
+\usepackage{braket}
+\usepackage{enumitem}
+\usepackage{pifont}
+\usepackage{hyperref}
+\usepackage{newunicodechar}
+\newunicodechar{ }{~}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Double spacing as required
+\doublespacing
+
+% Title and author information
+\title{Quantum Synthetic Data Generation for Industrial Bioprocess Monitoring}
+
+\author{
+Shawn M. Gibford\textsuperscript{1}, Mohammad Reza Boskabadi\textsuperscript{1},\\ Christopher J. Savoie\textsuperscript{2}, Seyed Soheil Mansouri\textsuperscript{1}\\
+\textsuperscript{1}Dept. Chemical and Biochemical Engineering, \\
+Technical University of Denmark,
+Kongens Lyngby, Denmark\\
+\textsuperscript{2}SiC Systems Inc., Franklin, TN, USA
+}
+
+\date{} % Leave empty for submission
+
+\begin{document}
+
+\maketitle
+% Abstract section (max 150 words)
+\begin{abstract}
+\noindent
+Data scarcity in biomanufacturing poses challenges for model development, process monitoring, and optimization. We propose a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP) to generate synthetic time series data for laboratory-scale bioprocesses. The generator employs a Parameterized Quantum Circuit (PQC), with the aim of reducing dependence on scarce experimental data. Under a matched parameter budget and matched training epochs, the quantum generator reproduces the temporal dynamics of the optical density series within the evaluated metrics, at a fidelity comparable to size-matched classical baselines, focusing on optical density as a key measurement for dry biomass estimation. These results provide a proof-of-concept for quantum-enhanced synthetic data generation in bioprocess engineering, with potential downstream applications in soft sensor development and predictive control.
+\end{abstract}
+
+% Topical Heading and Keywords
+\noindent\textbf{Topical Heading:} Process Systems Engineering
+
+\noindent\textbf{Keywords:} quantum machine learning, Generative adversarial network, Bioprocess monitoring, Synthetic time series generation, Data augmentation
+
+% Plain Language Summary (max 250 characters)
+\section*{Plain Language Summary}
+We developed a quantum computing method to create realistic artificial data for biomanufacturing processes. This helps overcome data shortages and improves process control and monitoring in industrial biotechnology applications.
+
+\section{Introduction}
+
+\begin{figure*}
+    \centering
+    \includegraphics[height = 7cm, width = 17cm]{concept_diagram.png}
+    \caption{Conceptual diagram of how we envision using quantum generative AI within industrial bioprocess engineering.}
+    \label{fig:concept_diagram}
+\end{figure*}
+
+Machine Learning (ML) and Artificial Intelligence (AI) have emerged as transformative tools in diverse scientific disciplines, from cancer research to financial analysis (Figure~\ref{fig:concept_diagram}). \cite{clinical_iqbal_2021} \cite{vakili2024quantumcomputingenhancedalgorithmunveils} \cite{artificial_ahmed_2022} \cite{Orus2019QuantumCF}  However, complex systems such as manufacturing, drug discovery, and formulated products \cite{emerson2021} have lagged in fully embracing ML/AI methodologies compared to other fields. This discrepancy reflects unique challenges including high dimensionality, inherent variability, and complex underlying chemical, physical, or biological mechanisms. \cite{boskabadi2025virtual}
+
+Bioprocess engineering exemplifies these challenges. The field is crucial for producing biofuels, pharmaceuticals, and sustainable materials, yet data analytics applications often grapple with limited datasets due to time-consuming and expensive experiments. \cite{stoneOptimize} This scarcity hinders development of accurate predictive models, particularly for hard-to-quantify quality indicator variables (QIVs) essential for process optimization and real-time monitoring.
+
+Critical QIVs in bioprocesses include biomass concentration, which is often estimated through optical density measurements or viable cell counts but requires complex calibration and suffers from interference in high-density cultures. \cite{kiviharju2008biomass} Product concentration and quality, such as monoclonal antibody titers and glycosylation patterns in mammalian cell culture, typically require offline analytical methods such as High-Performance Liquid Chromatography (HPLC) or mass spectrometry. Metabolic activity indicators, including specific growth rates, substrate consumption rates, and metabolic flux distributions, are fundamental QIVs that are difficult to quantify in real-time without sophisticated analytical platforms. The integration of ML with bioprocess engineering has been gradually expanding, with applications spanning process monitoring, \cite{peng2025machinelearningmethodssmall} optimization, \cite{sharma2025ai} and control. \cite{mondal2023review} These approaches have demonstrated potential to address limitations of traditional mechanistic models, particularly when dealing with non-linear dynamics and multivariate nature of biological systems.
+
+\subsection{Data Scarcity as a Fundamental Limitation}
+
+A fundamental challenge limiting widespread adoption of machine learning in bioprocess engineering is data scarcity. \cite{lim2023opportunities, duongtrung2023when} Unlike fields such as computer vision or natural language processing, where datasets may be comprised of millions of samples, bioprocess datasets are typically constrained by several factors. Bioprocess experiments, particularly on pilot and production scales, involve substantial costs in terms of equipment, raw materials, personnel, and time.  \cite{shariatifar2025digital} \cite{exploring_hernndezromero_2025} A single bioreactor run at pilot or production scale may take weeks to complete and can be costly, often on the order of several hundreds of thousands of dollars or more, severely limiting the number of experimental conditions that can be feasibly explored. \cite{exploring_hernndezromero_2025} Biological systems exhibit inherent stochasticity and sensitivity to environmental conditions, resulting in significant batch-to-batch variability even under nominally identical operating conditions. Commercial bioprocesses represent significant intellectual property, which results in limited data sharing across the industry. While fields such as computer vision benefit from open datasets with millions of examples, bioprocess data typically remains siloed within individual companies or research groups. These factors collectively result in datasets that are often too small to effectively train complex ML models, particularly deep learning architectures that typically require substantial amounts of diverse training data.
+
+\subsection{Synthetic Data Generation Approaches}
+
+Synthetic data generation is a promising approach to address data scarcity challenges in bioprocess engineering. \cite{liu2024bestpracticeslessonslearned} By creating artificial datasets that faithfully represent statistical properties and dynamic behaviors of real bioprocesses, synthetic data approaches can potentially overcome limitations in data availability while avoiding confidentiality concerns (a comparison of approaches is provided in Supplementary Table A1 %~\ref{tbl:bioprocess_methods}).
+
+First-principles models have been used to simulate bioprocess dynamics under various conditions, generating synthetic time series data. \cite{vidossich2021role}  Although this approach ensures physical consistency, its fidelity is limited by the accuracy of the underlying model and its ability to capture process variability and uncertainty. Methods such as Gaussian process regression and multivariate statistical models can generate synthetic data based on estimated probability distributions.  \cite{chokwitthaya2020applying}  These approaches excel at reproducing statistical properties, but often struggle to capture complex temporal dependencies and rare events.
+
+Machine learning models such as variational autoencoders (VAEs) and generative adversarial networks (GANs) can learn directly from available data to generate synthetic samples.  \cite{wang2018esrganenhancedsuperresolutiongenerative, akkem2024comprehensive} These approaches offer flexibility in generating diverse datasets without requiring detailed mechanistic understanding, although their performance is highly dependent on the quality and quantity of training data. Combining mechanistic knowledge with data-driven techniques represents a promising direction for generation of synthetic bioprocess data.
+
+Despite these advances, significant challenges remain in generation of high-quality data: accurate capture of complex temporal dependencies, incorporation of mechanistic knowledge constraints, ensuring physical realizability, and validating the quality of synthetic data. Addressing these challenges requires novel methodological approaches that can effectively combine the strengths of both classical and quantum computational paradigms.
+
+\subsection{Quantum Generative Adversarial Networks}
+
+Quantum Generative Adversarial Networks (QGANs) embed Parameterized Quantum Circuits within the generator of a GAN \cite{Dallaire_Demers_2018, Lloyd_2018, Zoufal_2019}. This motivates the falsifiable question that frames the present study: \emph{can a PQC generator, operating in an exponentially large Hilbert space with $\mathcal{O}(\mathrm{poly}(n))$ parameters, match or exceed a classical generator of equivalent parameter count on a low-data bioprocess task?} Prior work has reported QGAN results in low-data regimes and on multimodal distributions \cite{rudolph2022generationhighresolutionhandwrittendigits, he2025qganbaseddataaugmentationhybrid}, with applications in finance \cite{orlandi2024enhancing} and optimization \cite{Mugel2022}; GANs more broadly, including classical recurrent variants, have also been applied to healthcare time series \cite{esteban2017realvaluedmedicaltimeseries}. We test this claim directly under a matched-parameter, matched-epoch protocol. Current quantum hardware constraints, noise, decoherence, and limited circuit depth, restrict practical scalability \cite{Cerezo_2021}, but QGANs offer a candidate alternative when classical GANs struggle with intricate temporal dependencies in limited datasets \cite{goodfellow2014generativeadversarialnetworks, lloyd2013quantumalgorithmssupervisedunsupervised}. A detailed review of QGANs and their relationship to classical GANs is provided in Section~2.
+
+
+\subsection{Principal Contributions}
+
+The principal contributions of this work are:
+
+- Matched-Parameter Comparison Protocol: A parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against size-matched classical baselines on a data-scarce bioprocess task.
+
+- QWGAN-GP for Process Data Synthesis: A hybrid QWGAN-GP architecture, with a Parameterized Quantum Circuit generator and a classical critic, applied to laboratory-scale bioprocess time series.
+
+- Empirical Evaluation on a Photobioreactor Campaign: A quantitative evaluation on a single real-world cultivation dataset, reporting fidelity comparable to classical baselines under the matched protocol rather than a demonstrated quantum advantage.
+
+- Open Science and Reproducibility: We make our code and datasets publicly available, facilitating independent verification and future advances in quantum-enhanced bioprocess engineering.
+
+A decision-driven workflow is also outlined in the Outlook as an organising concept for future closed-loop deployment; it is not an empirical contribution of this study.
+
+The remainder of this paper is structured as follows. Section~2 reviews classical and quantum machine learning foundations. Section~3 describes the QWGAN-GP architecture and the photobioreactor experimental setup. Section~4 presents results, key contributions, and discusses implications and limitations. Section~5 offers concluding remarks.
+
+\section{Classical and Quantum Machine Learning}
+
+
+This section reviews the classical and quantum machine learning foundations underpinning our approach, beginning with GANs and the WGAN-GP formulation before turning to quantum machine learning and QGANs.
+
+
+\subsection{Generative Adversarial Networks and WGAN-GP}
+
+GANs represent the foundation of modern synthetic data generation. \cite{goodfellow2014generativeadversarialnetworks} The GAN framework (illustrated in Supplementary Figure A1 %~\ref{fig:classical_gan}) 
+consists of two neural networks engaged in a competitive minimax game: a generator G that learns to produce synthetic data, and a discriminator D that distinguishes between real and synthetic samples. The objective function is formulated as:
+
+
+
+\begin{multline}
+\min_G \max_D V(D,G) = \mathbb{E}_{x\sim p_{data}(x)}[\log D(x)] \\
++ \, \mathbb{E}_{z\sim p_z(z)}[\log(1-D(G(z)))]
+\end{multline}
+
+where $p_{data}(x)$ represents the real data distribution and $p_z(z)$ is the noise distribution.
+
+For time-series applications, specialized architectures such as TimeGAN \cite{yoon2019TimeGAN} incorporate recurrent components to better capture temporal dependencies. However, classical GANs remain constrained by training stability issues, limited ability to capture multimodal distributions, and sensitivity to hyperparameter selection \cite{Arjovsky2017, gulrajani2017improved}, limitations that become pronounced with the small datasets typical of bioprocess engineering.
+
+Despite their success, the original GAN formulation suffers from mode collapse and vanishing gradients \cite{Arjovsky2017}. The Wasserstein GAN (WGAN) addressed these instabilities by replacing the Jensen--Shannon divergence with the Earth Mover's distance \cite{arjovsky17a}, but its reliance on weight clipping introduced pathological behavior. The Wasserstein GAN with Gradient Penalty (WGAN-GP) \cite{gulrajani2017improved} refined this by imposing a soft gradient constraint:
+
+\begin{equation}
+\label{eq:wgangp}
+\begin{split}
+\min_G \max_D \bigl[ & \mathbb{E}_{x\sim P_r}[D(x)] - \mathbb{E}_{z\sim P_z}[D(G(z))] \\
+& - \lambda\mathbb{E}_{\hat{x}\sim P_{\hat{x}}}\bigl[(\|\nabla_{\hat{x}}D(\hat{x})\|_2 - 1)^2\bigr] \bigr]
+\end{split}
+\end{equation}
+
+
+The WGAN-GP framework employs a critic network D(·) and generator network G(·) in a minimax optimization scheme. The objective approximates the Wasserstein distance between the real data distribution $P_r$ and the distribution of generated samples produced from noise distribution $P_z$. To enforce the Lipschitz constraint, a gradient penalty term is introduced with coefficient $\lambda $(typically set to 10), which operates on interpolated samples $\hat{x} = \epsilon x + (1-\epsilon)G(z)$ where $\epsilon \sim \text{Uniform}(0,1)$. These interpolated points, distributed according to $P_{\hat{x}}$, provide a differentiable path between real and generated samples, enabling stable enforcement of the 1-Lipschitz continuity requirement without weight clipping.
+
+This solution stabilizes training across architectures and mitigates issues with weight clipping, leading to improved sample quality and more reliable convergence \cite{villani2008optimal}. A detailed mathematical derivation of the Wasserstein distance and the Kantorovich--Rubinstein duality is provided in Supplementary Section~A.2.2.
+
+\subsection{Quantum Machine Learning and QGANs}
+
+Quantum machine learning (QML) leverages quantum mechanical principles to improve learning algorithms, with recent advances demonstrating potential advantages in expressivity, training efficiency, and generalization \cite{Biamonte2017, kashyap2025advancesmachinelearningquantum}. Relevant approaches include quantum-enhanced sampling, quantum kernels \cite{giraldo2025q2sar}, and variational quantum algorithms, each offering potential benefits for data-scarce bioprocess applications \cite{Cerezo_2021}. 
+
+
+QGANs are a hybrid quantum-classical approach in which a Parameterized Quantum Circuit (PQC) serves as the generator, first introduced by Dallaire-Demers and Killoran \cite{Dallaire_Demers_2018}. Superposition and entanglement give a PQC access to a state space that grows exponentially with qubit count; whether this translates into a practical advantage over a parameter-matched classical generator is an empirical question that remains open and is one we examine directly in this work rather than assume \cite{rudolph2022generationhighresolutionhandwrittendigits}. QGANs have been applied to finance \cite{orlandi2024enhancing} and optimization \cite{Mugel2022}; classical recurrent GAN variants have also been applied to healthcare time series \cite{esteban2017realvaluedmedicaltimeseries}. For time-series generation, models such as TimeGAN \cite{yoon2019TimeGAN} and DoppelGANger \cite{Lin_2020} have shown strong classical performance, but remain limited by computational constraints with high-dimensional distributions, a gap that quantum approaches may help address.
+
+\section{Methods}
+
+\subsection{QWGAN-GP Architecture Overview}
+
+Our QWGAN-GP employs a hybrid quantum-classical architecture in which the generator
+is a Parameterized Quantum Circuit (PQC) and the critic is a classical convolutional
+neural network trained under the WGAN-GP objective (Eq.~\ref{eq:wgangp}). The quantum
+generator uses 5 qubits arranged in three layers, incorporating Hadamard gates for
+superposition, IQP encoding with parameterized $R_z$ rotations, two strongly entangling
+layers with $\text{Rot}(\phi, \theta, \omega)$ gates, and range-based CNOT gates for
+entanglement. The circuit outputs 10-dimensional samples via Pauli-X and Pauli-Z
+expectation values, matching the rolling window subsequence length. The generator
+contains 45 trainable parameters. Full circuit specifications and the critic architecture
+are detailed in Supplementary Sections A.5 and A.8, respectively (see also Figure A4).%~\ref{fig:quantum_circuit}).
+
+The raw optical density time series was transformed to log returns, normalized to zero
+mean and unit variance, and passed through an inverse Lambert W transform to reduce
+heavy-tailed characteristics prior to training (details in Supplementary Section A.7).
+Overlapping subsequences of length 10 with stride 2 were extracted using a rolling
+window approach \cite{dimoudis2023utilizing}.
+
+The WGAN-GP loss formulation (Eq.~\ref{eq:wgangp}) was chosen for the quantum generator because it provides stable gradients and meaningful convergence metrics, and mitigates mode collapse issues that can be exacerbated by the discrete nature of quantum measurements; we do not attribute reduced mode collapse to the quantum generator.
+
+\subsection{Circuit Design Rationale}
+
+The generator circuit was fixed by three deliberate design choices, each
+constrained by the matched-parameter, low-data setting of this study.
+
+\textbf{Qubit count.} The generator uses 5 qubits. The qubit count is
+dictated by the rolling-window length: each length-10 subsequence is produced
+from Pauli-X and Pauli-Z expectation values over the 5-qubit register
+($5$ qubits $\times\,2$ observables $=10$ outputs), so the window length and
+qubit count are coupled by construction rather than tuned independently. Five
+qubits give a $2^{5}$-dimensional state space, which is more than sufficient
+to embed a length-10 log-return window while keeping the parameterised circuit
+trainable by exact backpropagation on a state-vector simulator at the data
+scale available here. The locked configuration therefore has 5 qubits,
+3 layers, and 55 trainable parameters, decomposed as one IQP-encoding
+parameter per qubit plus 3 strongly-entangling rotation parameters per qubit
+per layer.
+
+\textbf{Ansatz expressibility versus trainability.} The reported circuit
+(IQP encoding $+$ strongly-entangling layers, range entangler, 55 parameters)
+was selected against a multi-seed ansatz comparison at a matched 2000-epoch
+budget. We compared three alternatives at increased capacity or different
+connectivity: a depth-4 range-entangled circuit (75 parameters), a depth-8
+range-entangled circuit (135 parameters), and a depth-4 linear-entangled
+circuit (75 parameters), each over 5 seeds. Increasing parameter count and
+circuit depth, or changing the entangler topology, did \emph{not} yield a
+fidelity improvement over the compact 55-parameter circuit at the matched
+budget on this dataset (per-model values reported in Section~4 and the
+supplementary figure suite). Consistent with the expressibility--trainability
+tradeoff for variational circuits, the deeper/larger ansatz is harder to
+optimise in the low-data, fixed-epoch regime without a corresponding accuracy
+gain, motivating the choice of the smaller circuit as the reported
+configuration.
+
+\textbf{Classical critic with a quantum generator.} The critic is a classical
+convolutional network and only the generator is quantum. This is deliberate:
+the WGAN-GP objective requires a gradient penalty on interpolated samples,
+which is cheap and stable to evaluate with a classical critic, whereas placing
+the discriminator on the quantum device would add measurement-shot noise to
+the critic gradient and substantially increase circuit evaluations per step
+without benefiting the quantity of interest (the generated distribution). A
+classical critic also makes the comparison against the matched classical
+WGAN-GP baselines clean: the only component that differs between the quantum
+and classical entrants is the generator, isolating the effect of the quantum
+circuit.
+
+\subsection{Photobioreactor Experimental Setup}
+
+Time-series data were collected from a 20-liter photobioreactor (LUCY\textregistered, Synoxis Algae) designed for laboratory and pilot-scale cultivation of microalgae, see Figure \label{fig:lucy}  for the 300L configuration of the 20L version of LUCY. The system comprises six vertical borosilicate glass tubes (6~cm OD, 120~cm length) connected in parallel, with SALT technology (spiral air lift tubular circulation) for gentle mixing, controlled aeration, and programmable lighting managed by an integrated automated controller.  
+
+The system continuously monitors pH, temperature, optical density, dissolved oxygen, and pressure via feedback control loops, with data logged at 10-minute intervals by an internal data acquisition system. The OD sensor operates at 880~nm and reports values in arbitrary units based on logarithmic attenuation, calibrated against fresh culture medium. 
+
+
+\section{Results and Discussion}
+
+\subsection{Results}
+
+We evaluate the fidelity of the generated synthetic time series using four complementary metrics. Dynamic Time Warping (DTW) distance measures temporal alignment, capturing non-linear dependencies where process variations cause phase shifts in growth events. Probability density and cumulative distribution functions assess distributional fidelity. Quantile--quantile plots evaluate tail behavior. Autocorrelation functions verify that no spurious temporal structure is introduced. Together, these metrics cover the statistical properties most critical for downstream bioprocess modeling applications.
+
+\textbf{Dynamic Time Warping.}
+The DTW distance between original and synthetic sequences was 0.6843 (Figure~\ref{fig:DTWD}).
+For reference, Orlandi et al.\ \cite{orlandi2024enhancing} reported a DTW distance of 1.954
+using a similar QWGAN-GP architecture applied to S\&P 500 financial time series.
+While direct comparison across different datasets and domains is limited, the lower
+DTW score suggests effective capture of temporal dynamics in the bioprocess setting (the DTW algorithm is detailed in Supplementary Algorithm~\ref{alg:dtw}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{dtwd.png}
+  \caption{DTW alignment path between historical and synthetic data. 
+  A fully diagonal path indicates perfect temporal alignment.}
+  \label{fig:DTWD}
+\end{figure}
+
+\textbf{Distributional Fidelity.}
+The probability density functions of the original and generated log 
+returns show strong agreement in both central tendency and spread 
+(Figure~\ref{fig:pdf}). The corresponding CDFs confirm this overlap 
+across the full range of values, with only minor deviations in the 
+tails (Figure~\ref{fig:cdf}).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{pdf.png}
+  \caption{PDF comparison of original and generated log returns.}
+  \label{fig:pdf}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{cdf.png}
+  \caption{CDF comparison of original and generated log returns.}
+  \label{fig:cdf}
+\end{figure}
+
+\textbf{Normality Assessment.}
+Q--Q plots for both original and generated distributions 
+(Figure~\ref{fig:qq}) reveal comparable deviation from normality in 
+the tails, indicating that the QWGAN-GP reproduces the heavy-tailed 
+characteristics of the real bioprocess data rather than 
+over-smoothing toward a Gaussian distribution.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=0.5\linewidth]{qq.png}
+  \caption{Q--Q plots of original (left) and generated (right) log 
+  returns against a theoretical normal distribution.}
+  \label{fig:qq}
+\end{figure*}
+
+\textbf{Temporal Structure.}
+The autocorrelation functions for both original and generated 
+sequences fall within the 95\% confidence bounds across all lags 
+(Figure~\ref{fig:acf}), confirming that the synthetic data do not 
+introduce spurious temporal correlations absent in the original data.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=1\linewidth]{acf.png}
+  \caption{ACF comparison of original (left) and generated (right) 
+  log returns (log $\delta$), where $\delta$  is the return calculation. Shaded regions indicate 95\% confidence intervals.}
+  \label{fig:acf}
+\end{figure*}
+
+Taken together, these results demonstrate that the QWGAN-GP 
+produces synthetic time series that preserve the distributional properties, 
+tail behavior, and temporal independence structure of the original 
+bioprocess data.
+
+\subsection{Key Contributions and Findings}
+
+Our research presents the following principal contributions. First, we outline a decision-driven workflow (Supplementary Figure~A5) as an organising concept for future closed-loop deployment; it is described in the Outlook and is not evaluated empirically here. This framework provides a systematic perspective on bioprocess monitoring that can adapt to varying data availability constraints and sensor limitations.
+
+Second, we developed and evaluated a QWGAN-GP architecture for bioprocess applications, where the generator component employs a Parameterized Quantum Circuit (PQC) with three layers of quantum gates, including Hadamard gates for superposition creation, rotation gates for amplitude control, and CNOT gates for entanglement generation. This quantum generator reproduces the temporal dependencies and non-linear dynamics of the evaluated bioprocess series within the assessed metrics, at a fidelity comparable to size-matched classical baselines.
+
+Third, our empirical validation on a single real-world photobioreactor cultivation campaign characterizes the behaviour of the proposed approach. Under a matched parameter budget and matched training epochs, the quantum generator produces synthetic log-return sequences whose distributional and autocorrelation structure are comparable to, but do not exceed, those of size-matched classical WGAN-GP baselines (Section~4; full per-model figures in the supplementary figure suite). We therefore present the QWGAN-GP as a viable hybrid generator on this data-scarce task rather than as a method of demonstrated advantage over classical baselines, and we restrict claims to the laboratory-scale single-variable setting actually evaluated.
+
+We note that the present study does not include a direct comparison against a classical
+WGAN-GP with a matched generator capacity, which would be needed to isolate the
+contribution of the quantum circuit. Such an ablation study is a priority for future work.
+
+Fourth, we have contributed to open science practices by making our code and datasets publicly available at \url{https://github.com/shawngibford/qgan}, facilitating independent verification and accelerating future advances in quantum-enhanced bioprocess engineering.
+
+\subsection{Theoretical and Practical Implications}
+
+The contribution of this work is methodological: it provides a parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against classical baselines on a data-scarce bioprocess task, together with a reproducible result. Our results show that quantum circuits can represent the probability distributions found in this bioprocess time series, but do not provide evidence of a computational advantage over classical approaches at matched capacity; extending the comparison to multivariate distributions remains an important next step.
+
+From a practical perspective, this research addresses a fundamental bottleneck in bioprocess development where experimental data generation is constrained by high operational costs, regulatory requirements, and time limitations. By generating high-fidelity synthetic data that preserves the essential characteristics of real bioprocess dynamics, our approach enables the development of more robust soft sensors for monitoring critical quality indicator variables such as biomass concentration, product quality, and metabolic activity, variables that are typically difficult or expensive to measure online.
+
+\subsection{Limitations and Future Directions}
+
+Practical deployment of QGANs faces several challenges. Current quantum hardware limitations, including limited qubit counts, decoherence, and noise, restrict applicability to larger, more complex datasets. Additionally, the present study focuses on a single process variable (optical density) from one
+cultivation campaign; extension to multivariate bioprocess data with multiple
+correlated sensor channels remains an important next step. Furthermore, while our study focused on PQC-based generators, alternative quantum and hybrid classical-quantum architectures may offer additional benefits in generating diverse and realistic synthetic data. Exploring these architectures, optimizing circuit depth, and refining hybrid training strategies are promising future directions.
+
+\subsection*{Outlook}
+
+The directions below are \emph{proposed extensions} that were not implemented or evaluated in this study; they are stated as future work, not as contributions or results.
+
+\textbf{Closed-loop decision-driven pipeline.} The eight-stage sensor-feasibility / mechanistic / data-driven / quantum-synthetic workflow (Supplementary Figure~A5, decision-tree schematic) is an envisioned framework. It is presented here as an organising concept for future work and is not part of the empirical evaluation of this paper.
+
+\textbf{Hybrid-GAN-mechanistic structures.} A second proposed direction combines GANs with physics-informed mechanistic components for data-scarce environments \cite{mansouri2025models, nielsen2020hybrid, nazemzadeh2021integration, ehtesham2025dynamics}. This would couple first-principles parametric models with data-driven techniques \cite{sharma2022hybrid, O'Brien2021A} and could extend PINN-style training with an adversarial objective. The mathematical formulation, integration schematic, and comparative table are given in Supplementary Section~A.3 (Supplementary Figure~A2, Figure~A3, and Table~A2) as a \emph{proposed} architecture only; no Hybrid-GAN was trained or evaluated in this work.
+
+Additionally, extending the framework to multivariate, multimodal bioprocess datasets and exploring alternative quantum generative models such as quantum diffusion models or quantum variational autoencoders could further enhance the versatility and performance of synthetic data generation for bioprocess applications.
+
+\subsection*{Data Availability and Reproducibility Statement}
+The complete source code and datasets used in this study are publicly available at \url{https://github.com/shawngibford/qgan}. All experiments were conducted using PennyLane for quantum circuit simulation and PyTorch for classical components. Detailed hyperparameters, circuit specifications, and data preprocessing steps are provided in the Supplementary Information to enable independent reproduction of the reported results.
+
+\section{Concluding Remarks}
+
+This research demonstrates that quantum-enhanced generative adversarial networks are a viable approach to addressing data scarcity challenges in industrial bioprocess engineering. By successfully demonstrating that QWGAN-GPs can generate synthetic time-series data while preserving the complex statistical properties of real bioprocess systems, we have opened new possibilities for advanced bioprocess monitoring, optimization, and control strategies.
+
+As quantum hardware matures, the methodologies developed here may provide a foundation for bioprocess management systems that operate effectively under data-constrained conditions. Realizing this potential will require direct comparison against classical baselines, extension to multivariate process data, and validation on larger-scale industrial datasets.
+
+
+
+% --- end of main text ---
+\bibliographystyle{ama}
+\bibliography{bib}\\
+
+
+
+\newpage
+\newpage
+\clearpage
+\appendix
+\input{supp_material}
+
+\end{document}
+
