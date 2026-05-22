@@ -2,21 +2,30 @@
 
 This is the LAST gate before the repository is frozen at tag
 ``v2.0-revision`` and a Zenodo DOI is minted (RESEARCH Pattern 2,
-reserve-DOI-first). It refuses to let the freeze proceed unless THREE
+reserve-DOI-first). It refuses to let the freeze proceed unless FIVE
 invariants hold, each enforced with the explicit-``raise AssertionError``
-idiom (run_multiseed_rollup.py:86-92) so ``python -O`` cannot disable it:
+idiom (run_multiseed_rollup.py:86-92) so ``python -O`` cannot disable it.
+
+Plan 14-19 (Agent 6 HIGH-3) hardened this gate: it now certifies the
+COMMITTED tag candidate, not the live working tree. Gate 0 asserts
+``git status --porcelain`` is empty; gate (a) reads ``HEAD:.gitignore`` and
+``git ls-files`` rather than the working file and NO LONGER self-heals
+(self-healing would dirty the tree and contradict gate 0); gate (d)
+asserts ``revision/docs/release.md`` (a 14-07 deliverable) exists.
+
+  (0) clean-tree invariant (Agent 6 HIGH-3, Plan 14-19)
+      ``git status --porcelain`` MUST be empty — a green freeze run over a
+      dirty working tree is a false-green certification (T-14-30).
 
   (a) gitignore / archive-content invariant (RESEARCH Pitfall 4)
-      Every ``revision/results/*.json`` provenance artifact MUST ship
-      inside the frozen tag archive. ``.gitignore`` line 62 in the main
-      checkout is ``results/`` — a broad pattern that could exclude the
-      nested provenance JSON, which would publish a DOI'd archive WITHOUT
-      its number backbone (success-criterion 5 broken, T-14-18). If any
-      provenance JSON matches ``git check-ignore`` this script SELF-HEALS
-      by appending a ``!revision/results/`` negation to ``.gitignore``
-      (or staging with ``git add -f``) and re-verifying until
-      ``git check-ignore`` is empty AND
-      ``git ls-files revision/results | wc -l`` is non-zero.
+      Every committed ``revision/results/*.json`` provenance artifact MUST
+      ship inside the frozen tag archive. ``.gitignore`` carries a broad
+      ``results/`` pattern that could exclude the nested provenance JSON,
+      which would publish a DOI'd archive WITHOUT its number backbone
+      (success-criterion 5 broken, T-14-18). The committed ``.gitignore``
+      MUST carry the ``!revision/results/`` negation and
+      ``git check-ignore`` over the committed provenance JSON MUST be
+      empty; if not, the gate FAILS hard (no self-heal).
 
   (b) number-provenance invariant (D-14-22, T-14-20)
       Every paper-blocks file
@@ -35,6 +44,11 @@ idiom (run_multiseed_rollup.py:86-92) so ``python -O`` cannot disable it:
       committed by earlier waves are out of this plan's scope to delete
       (destructive-git prohibition) and are explicitly tolerated below
       the threshold.
+
+  (d) release-note invariant (Agent 6 HIGH-3, Plan 14-19)
+      ``revision/docs/release.md`` MUST exist. It is authored by plan
+      14-07, so this assertion correctly fails until 14-07 runs — the
+      intended ordering guard.
 
 No torch / no pennylane / no shared-model-package import — pure
 git+filesystem+subprocess consumer (same posture as
@@ -85,51 +99,96 @@ def _check_ignored_json() -> list[str]:
     previous .glob walked only the top-level revision/results/*.json files
     and silently skipped nested subdir JSONs (e.g. sensitivity/*, matched2000/*),
     so freeze-ready could pass even when nested provenance was gitignored.
+
+    Plan 14-19 (Agent 6 HIGH-3): the provenance set is the COMMITTED tree's
+    tracked JSON (``git ls-files``), not the live working tree's rglob — the
+    gate certifies the tag candidate, not whatever happens to be on disk.
+    ``git check-ignore`` is still the ignore oracle (it consults the
+    committed ``.gitignore`` once that file is itself committed).
     """
-    jsons = sorted(str(p.relative_to(REPO_ROOT)) for p in RESULTS_DIR.rglob("*.json"))
-    if not jsons:
+    tracked_json = [
+        p
+        for p in _git("ls-files", "revision/results").splitlines()
+        if p.endswith(".json")
+    ]
+    if not tracked_json:
         raise AssertionError(
-            "No revision/results/*.json present — the provenance backbone "
-            "is missing; refusing to freeze (T-14-18)."
+            "No revision/results/*.json tracked in the committed tree — the "
+            "provenance backbone is missing; refusing to freeze (T-14-18)."
         )
     # git check-ignore exits 1 when NOTHING is ignored (that is the safe
     # case); the ignored paths, if any, are printed one per line.
     out = subprocess.run(
-        ["git", "-C", str(REPO_ROOT), "check-ignore", *jsons],
+        ["git", "-C", str(REPO_ROOT), "check-ignore", *tracked_json],
         capture_output=True,
         text=True,
     )
     return [ln for ln in out.stdout.splitlines() if ln.strip()]
 
 
-def gate_a_gitignore_archive() -> None:
-    """(a) No provenance JSON may be gitignored out of the frozen tag."""
-    ignored = _check_ignored_json()
-    if ignored:
-        # Self-heal (RESEARCH Pitfall 4 remediation): add an explicit
-        # negation so the nested provenance JSON re-enters the tag.
-        # Plan 14-13 Task 5 (HI-6): negation now uses the recursive
-        # glob pattern matching the actual .rglob walk.
-        negation = "!revision/results/\n!revision/results/**/*.json\n"
-        existing = GITIGNORE.read_text() if GITIGNORE.exists() else ""
-        if "!revision/results/" not in existing:
-            with GITIGNORE.open("a") as fh:
-                if existing and not existing.endswith("\n"):
-                    fh.write("\n")
-                fh.write(
-                    "\n# Pitfall-4 remediation (D-14-22): the provenance "
-                    "backbone MUST ship in the v2.0-revision tag archive\n"
-                )
-                fh.write(negation)
-        # Belt-and-braces: force-stage so they are definitely in the tree
-        # (rglob — recursive walk, Plan 14-13 Task 5 HI-6).
-        _git("add", "-f", "--", *[str(p) for p in RESULTS_DIR.rglob("*.json")])
-        ignored = _check_ignored_json()
+def gate_zero_clean_tree() -> None:
+    """(0) The working tree MUST be clean — the gate certifies the COMMITTED
+    tag candidate, not a dirty working tree (Agent 6 HIGH-3, Plan 14-19).
 
+    A non-empty ``git status --porcelain`` means uncommitted edits or
+    untracked files exist; a green freeze run over a dirty tree is a
+    false-green certification (T-14-30). Enforced with the explicit
+    ``raise AssertionError`` idiom so ``python -O`` cannot disable it.
+    """
+    porcelain = _git("status", "--porcelain")
+    if porcelain:
+        raise AssertionError(
+            "Working tree is NOT clean — `git status --porcelain` is "
+            "non-empty; the freeze gate certifies the COMMITTED tag "
+            "candidate, not a dirty working tree (Agent 6 HIGH-3, "
+            f"T-14-30):\n{porcelain}"
+        )
+    print("(0) clean-tree OK — git status --porcelain is empty.")
+
+
+def gate_d_release_md() -> None:
+    """(d) revision/docs/release.md MUST exist — it is a 14-07 must_have
+    the prior gate did not check (Agent 6 HIGH-3, Plan 14-19).
+
+    release.md is authored by plan 14-07, so this assertion correctly fails
+    until 14-07 runs — that is the intended ordering guard: the freeze
+    sequence cannot be certified complete before the release note exists.
+    """
+    release_md = REPO_ROOT / "revision" / "docs" / "release.md"
+    if not release_md.is_file():
+        raise AssertionError(
+            f"release note absent: {release_md} — revision/docs/release.md "
+            "is a 14-07 deliverable; the freeze cannot be certified until "
+            "14-07 authors it (Plan 14-19 ordering guard)."
+        )
+    print(f"(d) release.md OK — {release_md.relative_to(REPO_ROOT)} exists.")
+
+
+def gate_a_gitignore_archive() -> None:
+    """(a) No provenance JSON may be gitignored out of the frozen tag.
+
+    Plan 14-19 (Agent 6 HIGH-3): the self-heal block was REMOVED — this gate
+    now validates the COMMITTED tree and MUST NOT mutate ``.gitignore`` or
+    stage files (that would dirty the tree and contradict gate 0). The
+    ``results/`` exclusion + both ``!revision/results/`` negations are
+    committed atomically by plan 14-19 Task 2; if a provenance JSON is still
+    ignored here, the gate FAILS hard rather than self-healing.
+    """
+    # The committed .gitignore is the ignore oracle — verify the negations
+    # are in the committed tree, not just the working file.
+    committed_gitignore = _git("show", "HEAD:.gitignore")
+    if "!revision/results/" not in committed_gitignore:
+        raise AssertionError(
+            "The committed .gitignore (HEAD:.gitignore) is missing the "
+            "'!revision/results/' negation — the provenance backbone would "
+            "be ignored out of the frozen tag (RESEARCH Pitfall 4, T-14-18)."
+        )
+
+    ignored = _check_ignored_json()
     tracked = _git("ls-files", "revision/results").splitlines()
     if ignored:
         raise AssertionError(
-            f"revision/results/*.json STILL gitignored after remediation: "
+            f"revision/results/*.json gitignored in the committed tree: "
             f"{ignored} — the DOI'd archive would ship without its number "
             f"backbone (RESEARCH Pitfall 4, T-14-18)."
         )
@@ -220,12 +279,14 @@ def gate_c_tag_scope() -> None:
 
 def main() -> int:
     print("=== verify_freeze_ready.py — D-14-22 step-7 pre-tag hard block ===")
+    gate_zero_clean_tree()
     gate_a_gitignore_archive()
     gate_b_number_provenance()
     gate_c_tag_scope()
+    gate_d_release_md()
     print(
-        "FREEZE-READY: all three invariants hold — gitignore/archive, "
-        "number-provenance, tag-scope. The tag may be cut."
+        "FREEZE-READY: all invariants hold — clean tree, gitignore/archive, "
+        "number-provenance, tag-scope, release note. The tag may be cut."
     )
     return 0
 
