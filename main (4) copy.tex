@@ -164,7 +164,7 @@ superposition, IQP encoding with parameterized $R_z$ rotations, two strongly ent
 layers with $\text{Rot}(\phi, \theta, \omega)$ gates, and range-based CNOT gates for
 entanglement. The circuit outputs 10-dimensional samples via Pauli-X and Pauli-Z
 expectation values, matching the rolling window subsequence length. The generator
-contains 45 trainable parameters. Full circuit specifications and the critic architecture
+contains 55 trainable parameters. Full circuit specifications and the critic architecture
 are detailed in Supplementary Sections A.5 and A.8, respectively (see also Figure A4).%~\ref{fig:quantum_circuit}).
 
 The raw optical density time series was transformed to log returns, normalized to zero
@@ -223,7 +223,7 @@ circuit.
 
 \subsection{Photobioreactor Experimental Setup}
 
-Time-series data were collected from a 20-liter photobioreactor (LUCY\textregistered, Synoxis Algae) designed for laboratory and pilot-scale cultivation of microalgae, see Figure \label{fig:lucy}  for the 300L configuration of the 20L version of LUCY. The system comprises six vertical borosilicate glass tubes (6~cm OD, 120~cm length) connected in parallel, with SALT technology (spiral air lift tubular circulation) for gentle mixing, controlled aeration, and programmable lighting managed by an integrated automated controller.  
+Time-series data were collected from a 20-liter photobioreactor (LUCY\textregistered, Synoxis Algae) designed for laboratory- and pilot-scale cultivation of microalgae; the system is also available in a larger 300-liter configuration. The 20-liter unit used in this study is shown schematically in Figure~\ref{fig:lucy}. The system comprises six vertical borosilicate glass tubes (6~cm OD, 120~cm length) connected in parallel, with SALT technology (spiral air lift tubular circulation) for gentle mixing, controlled aeration, and programmable lighting managed by an integrated automated controller.  
 
 The system continuously monitors pH, temperature, optical density, dissolved oxygen, and pressure via feedback control loops, with data logged at 10-minute intervals by an internal data acquisition system. The OD sensor operates at 880~nm and reports values in arbitrary units based on logarithmic attenuation, calibrated against fresh culture medium.
 
@@ -298,11 +298,20 @@ original-OD-scale versions are provided as regenerated figures
 EMD, and the distributional moments are reported on both scales as above.
 
 \textbf{Dynamic Time Warping.}
-The DTW distance between original and synthetic sequences was 0.6843 (Figure~\ref{fig:DTWD}).
+Under the matched parameter budget and matched 2000-epoch training contract,
+the OD-scale DTW distance between original and synthetic sequences for the
+55-parameter IQP:SEL quantum generator was approximately 0.30 (mean over 5
+seeds; Figure~\ref{fig:DTWD}). An earlier frozen pre-v1.0 best-case checkpoint
+reported a DTW distance of 0.6843; that value was not re-emitted under the
+matched-budget contract and is retained only as a historical reference point
+(see the reconciliation note in the supplementary material).
 For reference, Orlandi et al.\ \cite{orlandi2024enhancing} reported a DTW distance of 1.954
 using a similar QWGAN-GP architecture applied to S\&P 500 financial time series.
-While direct comparison across different datasets and domains is limited, the lower
-DTW score suggests effective capture of temporal dynamics in the bioprocess setting (the DTW algorithm is detailed in Supplementary Algorithm~\ref{alg:dtw}).
+While direct comparison across different datasets and domains is limited, the
+matched-budget DTW of approximately 0.30 is roughly 6.5 times lower than the
+Orlandi et al.\ reference, consistent with effective capture of temporal
+dynamics in this bioprocess setting (the DTW algorithm is detailed in
+Supplementary Algorithm~\ref{alg:dtw}).
 
 \begin{figure}[h]
   \centering
@@ -357,8 +366,8 @@ introduce spurious temporal correlations absent in the original data.
 \begin{figure*}
   \centering
   \includegraphics[width=1\linewidth]{acf.png}
-  \caption{ACF comparison of original (left) and generated (right) 
-  log returns (log $\delta$), where $\delta$  is the return calculation. Shaded regions indicate 95\% confidence intervals.}
+  \caption{ACF comparison of original (left) and generated (right)
+  log returns $r_t$, where $r_t = \ln(\mathrm{OD}_t) - \ln(\mathrm{OD}_{t-1})$ is the per-step log return (Supp.\ Eq.~A8). Shaded regions indicate 95\% confidence intervals.}
   \label{fig:acf}
 \end{figure*}
 
@@ -404,11 +413,11 @@ The directions below are \emph{proposed extensions} that were not implemented or
 Additionally, extending the framework to multivariate, multimodal bioprocess datasets and exploring alternative quantum generative models such as quantum diffusion models or quantum variational autoencoders could further enhance the versatility and performance of synthetic data generation for bioprocess applications.
 
 \subsection*{Data Availability and Reproducibility Statement}
-The complete source code and datasets used in this study are publicly available at \url{https://github.com/shawngibford/qgan}. All experiments were conducted using PennyLane for quantum circuit simulation and PyTorch for classical components. Detailed hyperparameters, circuit specifications, and data preprocessing steps are provided in the Supplementary Information to enable independent reproduction of the reported results.
+The complete source code and datasets used in this study are publicly available at \url{https://github.com/shawngibford/qgan}, with an archived snapshot of the tagged release deposited at Zenodo, DOI: \texttt{ZENODO-DOI-PLACEHOLDER} (to be assigned; the Zenodo DOI is minted at release-freeze time). All experiments were conducted using PennyLane for quantum circuit simulation and PyTorch for classical components. Detailed hyperparameters, circuit specifications, and data preprocessing steps are provided in the Supplementary Information to enable independent reproduction of the reported results.
 
 \section{Concluding Remarks}
 
-This research demonstrates that quantum-enhanced generative adversarial networks are a viable approach to addressing data scarcity challenges in industrial bioprocess engineering. By successfully demonstrating that QWGAN-GPs can generate synthetic time-series data while preserving the complex statistical properties of real bioprocess systems, we have opened new possibilities for advanced bioprocess monitoring, optimization, and control strategies.
+This research investigates quantum-enhanced generative adversarial networks as one candidate approach to data scarcity in laboratory-scale bioprocess time-series modelling. On a single optical-density cultivation dataset, a QWGAN-GP can generate synthetic sequences that preserve key statistical properties of the measured signal at a fidelity comparable to parameter-matched classical baselines; establishing whether any quantum-specific benefit exists will require multivariate data, larger campaigns, and validation beyond the single-variable laboratory setting studied here.
 
 As quantum hardware matures, the methodologies developed here may provide a foundation for bioprocess management systems that operate effectively under data-constrained conditions. Realizing this potential will require direct comparison against classical baselines, extension to multivariate process data, and validation on larger-scale industrial datasets.
 

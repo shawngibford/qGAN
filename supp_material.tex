@@ -302,13 +302,15 @@ Dynamic Time Warping (DTW) represents a powerful technique for measuring similar
 \end{algorithm}
 
 \textbf{Interpretation:} 
-Lower DTW scores indicate better temporal alignment. Our score of 0.6843 indicates strong temporal fidelity in the generated bioprocess sequences. DTW is robust to phase shifts and speed variations in time series.
+Lower DTW scores indicate better temporal alignment. Under the matched parameter budget and matched 2000-epoch training contract, the OD-scale DTW distance for the 55-parameter IQP:SEL quantum generator is approximately 0.30 (mean over 5 seeds). A frozen pre-v1.0 best-case checkpoint reported a DTW score of 0.6843; this value is not re-emitted under the matched-budget contract and is retained here only as a historical reference. DTW is robust to phase shifts and speed variations in time series.
 
 The selection of DTW for temporal sequence comparison stems from its ability to accommodate local temporal distortions while preserving the overall sequential structure. Unlike rigid distance metrics, DTW provides robust similarity measurements for time-dependent data by dynamically adjusting for speed variations, length differences, and localized temporal shifts that commonly occur in real-world temporal patterns.
 
 
 \subsection{Code and Data Availability}
 Complete code repository: \url{https://github.com/shawngibford/qgan}
+
+Archived snapshot of the tagged release: Zenodo, DOI: \texttt{ZENODO-DOI-PLACEHOLDER} (to be assigned at release-freeze time).
 
 The complete code, trained models, and datasets have been released for transparency, independent verification, and acceleration of subsequent advances in quantum-enhanced chemical and biochemical engineering.
 
@@ -322,7 +324,7 @@ The quantum circuit employs a dual-stage encoding strategy as described in Secti
   \item Strongly entangling layers with $\text{Rot}(\phi, \theta, \omega)$ gates
   \item Range-based CNOT gates: $r = (\text{layer} \bmod (n_{\text{qubits}} - 1)) + 1$
   \item Enhanced Pauli measurements ($X$ and $Z$ expectation values)
-  \item Total parameters: 45 (5 for IQP encoding, 30 for strongly entangled layers, 10 for measurement preparation)
+  \item Total parameters: 55 (5 for IQP encoding, 45 for the three strongly entangling layers, 5 for measurement-preparation rotations)
 \end{itemize}
 
 \subsection{Additional Figures}
@@ -358,7 +360,7 @@ This figure illustrates the decision-driven workflow described in Section~4.2 of
 \begin{figure*}
     \centering
     \includegraphics[width=1\linewidth]{lucy_diagram.jpg}
-    \caption{Schematic of the 300L LUCY \textcopyright  photobioreactor, sensors, and actuators.}
+    \caption{Schematic of the 20\,L LUCY\textregistered{} photobioreactor used in this study, with its sensors and actuators.}
     \label{fig:lucy}
 \end{figure*}
 
