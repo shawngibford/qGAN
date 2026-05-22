@@ -81,11 +81,11 @@ A fundamental challenge limiting widespread adoption of machine learning in biop
 
 Synthetic data generation is a promising approach to address data scarcity challenges in bioprocess engineering. \cite{liu2024bestpracticeslessonslearned} By creating artificial datasets that faithfully represent statistical properties and dynamic behaviors of real bioprocesses, synthetic data approaches can potentially overcome limitations in data availability while avoiding confidentiality concerns (a comparison of approaches is provided in Supplementary Table A1 %~\ref{tbl:bioprocess_methods}).
 
-First-principles models have been used to simulate bioprocess dynamics under various conditions, generating synthetic time series data. \cite{vidossich2021role}  Although this approach ensures physical consistency, its fidelity is limited by the accuracy of the underlying model and its ability to capture process variability and uncertainty. Methods such as Gaussian process regression and multivariate statistical models can generate synthetic data based on estimated probability distributions.  \cite{chokwitthaya2020applying}  These approaches excel at reproducing statistical properties, but often struggle to capture complex temporal dependencies and rare events.
+First-principles models have been used to simulate bioprocess dynamics under various conditions, generating synthetic time series data. \cite{vidossich2021role}  Although this approach ensures physical consistency, its fidelity is limited by the accuracy of the underlying model and its ability to capture process variability and uncertainty. Methods such as Gaussian process regression \cite{rasmussen2006gaussian} and multivariate statistical models can generate synthetic data based on estimated probability distributions. These approaches excel at reproducing statistical properties, but often struggle to capture complex temporal dependencies and rare events.
 
-Machine learning models such as variational autoencoders (VAEs) and generative adversarial networks (GANs) can learn directly from available data to generate synthetic samples.  \cite{wang2018esrganenhancedsuperresolutiongenerative, akkem2024comprehensive} These approaches offer flexibility in generating diverse datasets without requiring detailed mechanistic understanding, although their performance is highly dependent on the quality and quantity of training data. Combining mechanistic knowledge with data-driven techniques represents a promising direction for generation of synthetic bioprocess data.
+Machine learning models such as variational autoencoders (VAEs) and generative adversarial networks (GANs), including time-series-specific architectures \cite{yoon2019TimeGAN}, can learn directly from available data to generate synthetic samples.  \cite{akkem2024comprehensive} These approaches offer flexibility in generating diverse datasets without requiring detailed mechanistic understanding, although their performance is highly dependent on the quality and quantity of training data. Combining mechanistic knowledge with data-driven techniques represents a promising direction for generation of synthetic bioprocess data.
 
-Despite these advances, significant challenges remain in generation of high-quality data: accurate capture of complex temporal dependencies, incorporation of mechanistic knowledge constraints, ensuring physical realizability, and validating the quality of synthetic data. Addressing these challenges requires novel methodological approaches that can effectively combine the strengths of both classical and quantum computational paradigms.
+Despite these advances, significant challenges remain in generation of high-quality data: accurate capture of complex temporal dependencies, incorporation of mechanistic knowledge constraints, ensuring physical realizability, and validating the quality of synthetic data. Addressing these challenges requires novel methodological approaches. These limitations motivate exploring alternative computational paradigms, including quantum approaches, which \emph{may} offer advantages for certain structured learning tasks in chemical and biochemical engineering \cite{bernal2022perspectives}.
 
 \subsection{Quantum Generative Adversarial Networks}
 
@@ -147,7 +147,7 @@ This solution stabilizes training across architectures and mitigates issues with
 
 \subsection{Quantum Machine Learning and QGANs}
 
-Quantum machine learning (QML) leverages quantum mechanical principles to improve learning algorithms, with recent advances demonstrating potential advantages in expressivity, training efficiency, and generalization \cite{Biamonte2017, kashyap2025advancesmachinelearningquantum}. Relevant approaches include quantum-enhanced sampling, quantum kernels \cite{giraldo2025q2sar}, and variational quantum algorithms, each offering potential benefits for data-scarce bioprocess applications \cite{Cerezo_2021}. 
+Quantum machine learning (QML) leverages quantum mechanical principles to improve learning algorithms, with recent advances demonstrating potential advantages in expressivity, training efficiency, and generalization \cite{Biamonte2017, kashyap2025advancesmachinelearningquantum}. Relevant approaches include quantum-enhanced sampling, quantum kernels \cite{havlicek2019supervised, schuld2019quantum}, and variational quantum algorithms, each offering potential benefits for data-scarce bioprocess applications \cite{Cerezo_2021}.
 
 
 QGANs are a hybrid quantum-classical approach in which a Parameterized Quantum Circuit (PQC) serves as the generator, first introduced by Dallaire-Demers and Killoran \cite{Dallaire_Demers_2018}. Superposition and entanglement give a PQC access to a state space that grows exponentially with qubit count; whether this translates into a practical advantage over a parameter-matched classical generator is an empirical question that remains open and is one we examine directly in this work rather than assume \cite{rudolph2022generationhighresolutionhandwrittendigits}. QGANs have been applied to finance \cite{orlandi2024enhancing} and optimization \cite{Mugel2022}; classical recurrent GAN variants have also been applied to healthcare time series \cite{esteban2017realvaluedmedicaltimeseries}. For time-series generation, models such as TimeGAN \cite{yoon2019TimeGAN} and DoppelGANger \cite{Lin_2020} have shown strong classical performance, but remain limited by computational constraints with high-dimensional distributions, a gap that quantum approaches may help address.
@@ -171,7 +171,7 @@ The raw optical density time series was transformed to log returns, normalized t
 mean and unit variance, and passed through an inverse Lambert W transform to reduce
 heavy-tailed characteristics prior to training (details in Supplementary Section A.7).
 Overlapping subsequences of length 10 with stride 2 were extracted using a rolling
-window approach \cite{dimoudis2023utilizing}.
+window approach \cite{dimoudis2023utilizing}.  % [41] removed: it was adaptive rolling-median anomaly detection, not subsequence extraction (R1-m1)
 
 The WGAN-GP loss formulation (Eq.~\ref{eq:wgangp}) was chosen for the quantum generator because it provides stable gradients and meaningful convergence metrics, and mitigates mode collapse issues that can be exacerbated by the discrete nature of quantum measurements; we do not attribute reduced mode collapse to the quantum generator.
 
@@ -225,7 +225,34 @@ circuit.
 
 Time-series data were collected from a 20-liter photobioreactor (LUCY\textregistered, Synoxis Algae) designed for laboratory and pilot-scale cultivation of microalgae, see Figure \label{fig:lucy}  for the 300L configuration of the 20L version of LUCY. The system comprises six vertical borosilicate glass tubes (6~cm OD, 120~cm length) connected in parallel, with SALT technology (spiral air lift tubular circulation) for gentle mixing, controlled aeration, and programmable lighting managed by an integrated automated controller.  
 
-The system continuously monitors pH, temperature, optical density, dissolved oxygen, and pressure via feedback control loops, with data logged at 10-minute intervals by an internal data acquisition system. The OD sensor operates at 880~nm and reports values in arbitrary units based on logarithmic attenuation, calibrated against fresh culture medium. 
+The system continuously monitors pH, temperature, optical density, dissolved oxygen, and pressure via feedback control loops, with data logged at 10-minute intervals by an internal data acquisition system. The OD sensor operates at 880~nm and reports values in arbitrary units based on logarithmic attenuation, calibrated against fresh culture medium.
+
+\paragraph{Dataset and preprocessing.}
+The study uses a single LUCY photobioreactor cultivation campaign
+% source: revision/results/model_info.json#dataset.independent_campaigns (=1)
+% source: revision/results/model_info.json#dataset.raw_csv_rows (=778)
+comprising 778 raw optical-density time points logged at 10-minute intervals.
+% source: revision/results/model_info.json#dataset.log_return_rows (=777)
+First differencing into log-returns yields 777 log-return observations
+($r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$), which are standardized to
+zero mean and unit variance, passed through an inverse Lambert~$W$ heavy-tail
+correction, and rescaled to $[-1, 1]$.
+% source: revision/results/model_info.json#dataset.window_length (=10)
+% source: revision/results/model_info.json#dataset.window_stride (=2)
+% source: revision/results/model_info.json#dataset.rolling_windows (=384)
+Overlapping subsequences of length 10 with stride 2 are then extracted with a
+rolling window, producing 384 training windows.
+% source: revision/results/model_info.json#dataset.train_windows (=384)
+% source: revision/results/model_info.json#dataset.val_windows (=0)
+% source: revision/results/model_info.json#dataset.test_windows (=0)
+Because only one independent campaign is available, all 384 windows are used for
+training; no held-out validation or test split is carved out, as a 384-window
+single campaign is too small to support a held-out split without severely
+under-powering training (stated openly per the calibration-honesty standard,
+R1-M5). Multi-campaign generalization is identified as future work.
+% source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
+All reported quantitative results are aggregated over 5 independent random
+seeds (42, 43, 44, 45, 46) and reported as mean $\pm$ standard deviation.
 
 
 \section{Results and Discussion}
@@ -233,6 +260,42 @@ The system continuously monitors pH, temperature, optical density, dissolved oxy
 \subsection{Results}
 
 We evaluate the fidelity of the generated synthetic time series using four complementary metrics. Dynamic Time Warping (DTW) distance measures temporal alignment, capturing non-linear dependencies where process variations cause phase shifts in growth events. Probability density and cumulative distribution functions assess distributional fidelity. Quantile--quantile plots evaluate tail behavior. Autocorrelation functions verify that no spurious temporal structure is introduced. Together, these metrics cover the statistical properties most critical for downstream bioprocess modeling applications.
+
+\paragraph{Evaluation scale.}
+Every fidelity metric is reported on \emph{both} the transformed log-return
+scale (the space the generator is trained in) and the original optical-density
+(OD) scale (obtained by inverting the preprocessing pipeline), so that the
+physical-unit fidelity is explicit (R1-m3). Table~\ref{tbl:eval_scale} states
+the scale of each metric family and the headline 55-parameter IQP:SEL quantum
+generator value on each scale.
+
+\begin{table}[h]
+\centering
+\caption{Evaluation metrics and the scale on which each is computed. Values are
+for the 55-parameter IQP:SEL quantum generator, Pipeline~B (native
+preprocessing), representative seed.}
+\label{tbl:eval_scale}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Metric} & \textbf{Transformed (log-return)} & \textbf{Original (OD)} & \textbf{Reported on} \\
+\midrule
+EMD                 & 0.1209437521974767 & 0.022937980562900886 & both scales \\
+DTW (mean)          & 0.9343404967853801 & 0.2648187239898106   & both scales \\
+Moment: mean        & 0.1232816505352802 & 1.4070339987298917   & both scales \\
+Moment: std         & 0.07206523080095577 & 0.8839933147241738  & both scales \\
+Moment: skewness    & -0.03262545792264619 & 1.3655798412279025 & both scales \\
+Moment: kurtosis    & -0.08214151764010014 & 0.7768219209344931 & both scales \\
+ACF (lag~1, mean)   & -0.0814285239177223 & 0.6965233188661055  & both scales \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+PDF/CDF, Q--Q, and ACF diagnostic plots in the main text are shown on the
+transformed log-return scale (the training space); the corresponding
+original-OD-scale versions are provided as regenerated figures
+(\texttt{revision/results/figures/acf\_iqp\_sel\_55\_repro}, dual-scale). DTW,
+EMD, and the distributional moments are reported on both scales as above.
 
 \textbf{Dynamic Time Warping.}
 The DTW distance between original and synthetic sequences was 0.6843 (Figure~\ref{fig:DTWD}).

@@ -135,15 +135,15 @@ Specific advantages include:
   \item \textbf{Entanglement:} Creates correlations impossible in classical probability, potentially affecting convergence behaviour; we do not claim a mode-collapse advantage and did not measure one  \cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}
 \end{itemize}
 
-Quantum interference effects can enhance the model's ability to capture subtle correlations and nonlinear relationships present in real-world data, making them particularly suited for complex temporal dependencies found in bioprocess systems. \cite{Liu_2019, Stamatopoulos_2020} Furthermore, quantum algorithms demonstrate theoretical advantages in certain optimization landscapes, suggesting that QGANs may overcome some of the training instabilities that plague classical GANs when working with limited datasets. \cite{farhi2014quantumapproximateoptimizationalgorithm, Cerezo_2021}
+Quantum interference effects can enhance the model's ability to capture subtle correlations and nonlinear relationships present in real-world data, making them particularly suited for complex temporal dependencies found in bioprocess systems. Practical scalability nonetheless remains constrained by current NISQ-device noise and limited circuit depth \cite{Cerezo_2021}.  % [55]-[57],[59] (VQE / option-pricing / QAOA / adversarial-robustness) removed: they do not support a quantum-advantage-for-bioprocess-generation claim (R1-m1)
 
 Recent experimental implementations have demonstrated proof-of-concept QGANs on noisy intermediate-scale quantum (NISQ) devices.  \cite{rudolph2022generationhighresolutionhandwrittendigits, Huang_2021} Rudolph et al. demonstrated that QGANs can generate high-resolution images using an ion trap quantum computer, highlighting the potential of quantum models to exceed classical limitations in certain generative tasks. \cite{rudolph2022generationhighresolutionhandwrittendigits}
 
-\subsection{Hybrid-GAN Framework for Future Work}
+\subsection{Proposed Extension (Outlook): Hybrid-GAN-Mechanistic Framework}
 
-\subsubsection{Mathematical Formulation}
+\subsubsection{Proposed Mathematical Formulation (not implemented in this study)}
 
-The Hybrid-GAN-mechanistic structure represents an advanced architecture that integrates generative adversarial networks with physics-informed mechanistic components to enhance predictive modeling in data-scarce environments. This approach complements hybrid machine learning approaches prevalent in chemical and biological process modeling applications, particularly when data availability is limited.  \cite{mansouri2025models, nielsen2020hybrid,nazemzadeh2021integration, ehtesham2025dynamics}
+\emph{The following Hybrid-GAN-mechanistic structure is a proposed extension and was not implemented, trained, or evaluated in this work; it is included to motivate future research and is presented as a formulation only.} The proposed Hybrid-GAN-mechanistic structure would integrate generative adversarial networks with physics-informed mechanistic components to enhance predictive modeling in data-scarce environments. This approach complements hybrid machine learning approaches prevalent in chemical and biological process modeling applications, particularly when data availability is limited.  \cite{mansouri2025models, nielsen2020hybrid,nazemzadeh2021integration, ehtesham2025dynamics}
 
 \begin{figure*}
     \centering
@@ -163,6 +163,21 @@ The Hybrid-GAN structure integrates GANs with physics-informed mechanistic compo
 & \qquad - f(M(G(z)), t, \theta)\biggr\|^2\biggr] \bigr]
 \end{split}
 \end{equation}
+
+\paragraph{Relationship to the trained objective.} The objective above is
+written in the original (log-GAN / Jensen--Shannon) form,
+$\mathbb{E}[\log D(x)] + \mathbb{E}[\log(1-D(G(z)))]$, augmented with a
+mechanistic-residual penalty. This is deliberately distinct from the objective
+actually trained in this study, which is the Wasserstein GAN with gradient
+penalty (Eq.~\ref{eq:wgangp}, Earth-Mover formulation). The log-GAN form is
+retained here only because it most transparently exposes where a mechanistic
+residual term would attach; any future implementation of this proposed
+extension would substitute the Wasserstein--gradient-penalty critic used
+throughout the present work (Section~3) for the $\log D$ discriminator, so that
+the Hybrid-GAN inherits the training stability documented for the deployed
+QWGAN-GP rather than the mode-collapse and vanishing-gradient pathologies of
+the original GAN objective.
+
 \textbf{Components:}
 \begin{itemize}[nosep, leftmargin=*]
   \item $G$: Generator mapping latent variables $z$ to generated process variables
