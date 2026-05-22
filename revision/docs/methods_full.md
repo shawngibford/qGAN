@@ -395,8 +395,14 @@ r3-process retraction documented at `peer_review_remediation.md` Plan 14-16
 r3-process retraction subsection. The OD-scale rows are byte-identical
 pre/post correction because the OD inverse via `inverse_logreturns` already
 cumsum-exps to OD price scale where no standardization-vs-raw mismatch
-exists; the OD-EMD equivalence claim (Welch p > 0.36, |d| ≤ 0.65, n=5) is
-unaffected.
+exists; the OD-EMD no-detectable-difference result (Welch p > 0.36,
+|d| ≤ 0.65, n=5) is unaffected. That OD-EMD result is reported as a
+non-significant difference at an underpowered n=5 — the two-sample Welch
+test has only ~15% power against d=0.65 and an 80%-power detection floor
+of d ≈ 2.0 — and is *not* an equivalence claim; no TOST equivalence test
+is satisfied, mirroring the DTW register at §3 below ("statistically
+non-significant under the strict-accept gate; no equivalence test is
+computed").
 
 **(g) Shared-edges formulation (Plan 14-16).** The original Plan 14-15 emit
 of `distribution_emd.json`'s histogram-density EMD used

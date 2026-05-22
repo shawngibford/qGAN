@@ -257,19 +257,29 @@ reported headline (~0.0015) under the SAME 50-bin convention — for the
 first time since the v1.0 metric switch (see C-3 disclosure in
 `reconciliation_note.md`).
 
-## Parametric-efficiency equivalence (post-r3 corrected metrics)
+## Parametric efficiency: no detectable OD-EMD difference at matched budget (n=5, underpowered)
 
 Per the Plan 14-16 r3 forensic remediation (which closed two metric bugs
 documented in `peer-review-r3/code-review-r3.md` §H3 — see
 `peer_review_remediation.md` Plan 14-16 section for full forensic
 disclosure AND the Plan 14-16 r3-process retraction subsection for the
 LR-EMD-vs-WGAN strong-claim withdrawal), the matched-2000ep budget
-supports the following Path A strong claim:
+supports the following Path A claim:
 
-**55 quantum parameters achieve OD-scale EMD statistically equivalent to
-classical generators of 73-562 generator params AND the full ~2.5x10^5
+**55 quantum parameters show no statistically detectable OD-EMD difference
+from classical generators of 73-562 generator params AND the full ~2.5x10^5
 adversarial budget (generator + 250881-parameter shared critic) carried by
-every WGAN variant (Welch p > 0.36, |d| ≤ 0.65, n=5).**
+every WGAN variant (Welch p > 0.36, |d| ≤ 0.65, n=5).** This is a
+non-significant difference result at an underpowered sample size — it is
+*not* an equivalence claim. At n=5/group the two-sample Welch t-test has
+only ~15% power against an effect of d=0.65, and its 80%-power detection
+floor is d ≈ 2.0 (the minimum effect detectable at 80% power, n=5/group);
+a proper TOST equivalence test is not satisfied at any defensible margin.
+The high p-values therefore record an *absence of detectable difference*
+under low power, not positive evidence of equivalence, mirroring the
+register used for DTW at `methods_full.md` §3 ("statistically
+non-significant under the strict-accept gate; no equivalence test is
+computed").
 
 **On log-return EMD, AR (3 params, closed-form Yule-Walker MLE) leads at
 0.003; quantum/WGAN/VAE cluster in 0.007-0.016.
@@ -284,8 +294,13 @@ At matched 2000-epoch training budget and n=5 seeds per cell (seeds {42,
 43, 44, 45, 46}), the iqp_sel_55 quantum reference circuit (55 trainable
 parameters per
 `revision/results/model_info.json#models[?model=='iqp_sel_55_repro'].parameter_count`)
-achieves OD-scale EMD statistically equivalent to every classical
-generator baseline tested.
+shows no statistically detectable OD-scale EMD difference from any
+classical generator baseline tested. The claim's direction is retained —
+the 55-parameter quantum generator's OD-EMD is not statistically
+distinguishable from the size-matched classical generators — but at n=5
+this reflects an underpowered non-significant difference test (~15% power
+against d=0.65, 80%-power detection floor d ≈ 2.0), not a positive
+equivalence finding.
 
 Every WGAN variant additionally carries the shared 250881-parameter critic
 during adversarial training (per
