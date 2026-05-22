@@ -1,0 +1,32 @@
+model: vae
+pipeline: A
+seed: 45
+epochs: 1000
+num_qubits: 5
+num_layers: 4
+window_length: 10
+batch_size: 12
+eval_every: 10
+noise_low: 0.0
+noise_high: 12.566370614359172
+n_real_windows: 385
+inverse_kwargs_keys:
+- od_max
+- od_min
+csv_path: data.csv
+data_hash: 91e447d4624e25b3
+model_kind: vae
+parameter_count: 562
+family: non-adversarial
+n_critic: null
+lambda_gp: null
+lr_critic: null
+lr_generator: null
+vae_lr: 0.001
+vae_beta: 1.0
+vae_kl_warmup_epochs: 0
+train_protocol_notes: "VAE trained via a LOCAL ELBO loop (D-10-09): single Adam(lr=1e-3),\
+  \ NO critic / NO n_critic / NO gradient penalty; loss = MSE(x_hat,x) + beta*KLD,\
+  \ beta=1.0 (no KL warmup applied). sample() emits directly in the [-1,1] window\
+  \ space \u2014 the WGAN *0.1 scaling is a quantum-output artifact and is deliberately\
+  \ NOT applied to VAE samples (RESEARCH Pitfall 3)."

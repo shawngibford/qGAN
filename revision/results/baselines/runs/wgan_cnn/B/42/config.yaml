@@ -1,0 +1,30 @@
+model: wgan_cnn
+pipeline: B
+seed: 42
+epochs: 1000
+num_qubits: 5
+num_layers: 4
+window_length: 10
+batch_size: 12
+eval_every: 10
+noise_low: 0.0
+noise_high: 12.566370614359172
+n_real_windows: 384
+inverse_kwargs_keys:
+- mu
+- od_starts
+- r_max
+- r_min
+- sigma
+csv_path: data.csv
+data_hash: 91e447d4624e25b3
+model_kind: wgan_cnn
+parameter_count: 73
+family: adversarial-classical
+n_critic: 9
+lambda_gp: 2.16
+lr_critic: 1.8046e-05
+lr_generator: 6.9173e-05
+train_protocol_notes: WGAN-GP via train_wgan_gp UNCHANGED (D-10-08); shared Critic(window_length=WINDOW_LENGTH);
+  generator output is scaled by *0.1 (quantum/WGAN-output magnitude artifact, training.py:283)
+  before saving samples.

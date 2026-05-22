@@ -1,0 +1,32 @@
+model: ar
+pipeline: B
+seed: 43
+epochs: 1000
+num_qubits: 5
+num_layers: 4
+window_length: 10
+batch_size: 12
+eval_every: 10
+noise_low: 0.0
+noise_high: 12.566370614359172
+n_real_windows: 384
+inverse_kwargs_keys:
+- mu
+- od_starts
+- r_max
+- r_min
+- sigma
+csv_path: data.csv
+data_hash: 91e447d4624e25b3
+model_kind: ar
+parameter_count: 3
+family: non-adversarial
+n_critic: null
+lambda_gp: null
+lr_critic: null
+lr_generator: null
+ar_order_p: 2
+train_protocol_notes: "AR(p=2) fit closed-form via np.linalg.lstsq (D-10-13), recursively\
+  \ simulated with a 50-step burn-in. Samples are in the [-1,1] window space \u2014\
+  \ the WGAN *0.1 scaling is a quantum-output artifact and is deliberately NOT applied\
+  \ (RESEARCH Pitfall 3)."

@@ -10,8 +10,10 @@
 # Captured: 2026-05-20T15:53:53Z
 # Platform at capture: macOS-26.0.1-arm64-arm-64bit
 # Python interpreter at capture: 3.11.14
+fastdtw==0.3.4
 matplotlib==3.10.7
 numpy==2.3.4
+pandas<3.0
 pennylane==0.43.0
 PyYAML==6.0.3
 scipy==1.16.2
