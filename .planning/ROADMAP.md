@@ -83,7 +83,7 @@ Plans:
 
 **Wave 15** *(independent — r4 peer-review remediation: manuscript revision + claims recalibration; 14-17 and 14-18 run in parallel; both must complete before Wave 16)*
 - [x] 14-17-PLAN.md — Manuscript revision integration: apply ALL PAPER-01..11 revised LaTeX blocks (incl. LOCKED D-14-20 de-overclaiming set) from paper_blocks_*.md into `main (4) copy.tex` + `supp_material.tex`; de-overclaim the abstract (drop "high fidelity" / "strong performance"); resolve the stale headline DTW 0.6843 to the matched-budget ~0.30; add a Zenodo DOI placeholder to Data Availability; unify r_t notation, fix the 20L/300L LUCY mismatch + malformed `\label`; provenance-check the `.tex` numbers (closes SYNTHESIS C2/C3/H2/H3/H4/M6/M7/M8/M9)
-- [ ] 14-18-PLAN.md — Claims recalibration: reframe the OD-EMD "equivalence" claim to "no statistically detectable difference at n=5 (underpowered)" in reviewer_response.md + methods_full.md + a welch_pairwise.json notes field; align the OD-DTW Orlandi claim to matched-budget-wide framing; state the LR-DTW multiple-comparisons posture; disclose the wgan_cnn seed-42 outlier + n=5 power limitation; number-provenance gate must still pass (wording-only, no recompute — closes SYNTHESIS C1/H1/M1/M2/M3/M5)
+- [x] 14-18-PLAN.md — Claims recalibration: reframe the OD-EMD "equivalence" claim to "no statistically detectable difference at n=5 (underpowered)" in reviewer_response.md + methods_full.md + a welch_pairwise.json notes field; align the OD-DTW Orlandi claim to matched-budget-wide framing; state the LR-DTW multiple-comparisons posture; disclose the wgan_cnn seed-42 outlier + n=5 power limitation; number-provenance gate must still pass (wording-only, no recompute — closes SYNTHESIS C1/H1/M1/M2/M3/M5)
 
 **Wave 16** *(freeze hygiene — after manuscript revision; depends on 14-17 so the revised `.tex` is committed, not the un-revised version; must complete before 14-07 cuts the tag)*
 - [ ] 14-19-PLAN.md — Freeze hygiene pre-conditions: restore LICENSE, atomically commit the `.gitignore` results/ exclusion + `!revision/results/` negations, track baseline runs/ metrics+config, commit the 14-17-revised `.tex`, fix requirements-pinned.txt (fastdtw + pandas<3.0), harden verify_freeze_ready.py to validate the committed tree; record + certify the post-14-19 committed HEAD as the freeze candidate (H5); owner-decision checkpoints for canonical CSVs / phase4_validation drift / `.planning/` in the deposit (closes SYNTHESIS C4/C5/C6/H5/H6/H7/M4/M10/M11/M12)
@@ -108,4 +108,4 @@ Phases execute in numeric order: 8 → 9 → 10 → 11 → 12 → 13 → 14
 | 11. Utility Evaluation | v2.0 | 8/8 | Complete    | 2026-05-18 |
 | 12. Sensitivity Analysis | v2.0 | 3/3 | Complete    | 2026-05-18 |
 | 13. Architecture & Introspection | v2.0 | 4/4 | Complete    | 2026-05-19 |
-| 14. Paper Revision & Release Freeze | v2.0 | 16/19 | In Progress|  |
+| 14. Paper Revision & Release Freeze | v2.0 | 17/19 | In Progress|  |

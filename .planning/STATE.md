@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 14 context gathered
-last_updated: "2026-05-22T05:27:25.551Z"
+stopped_at: Completed 14-18-PLAN.md
+last_updated: "2026-05-22T05:56:38.687Z"
 last_activity: 2026-05-22
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 23
-  completed_plans: 20
+  completed_plans: 21
   percent: 50
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 14 (paper-revision-release-freeze) — EXECUTING
-Plan: 2 of 19
+Plan: 3 of 19
 Status: Ready to execute
 Last activity: 2026-05-22
 
-Progress: [█████████░] 87%
+Progress: [█████████░] 91%
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [█████████░] 87%
 | Phase 09.1 P02 (cli-driver + smoke) | ~10 min | 2 | 18 |
 | Phase 09.1 P03 (multi-seed sweep resumable) | 29.1 min (sweep wall @ parallel=2) | 3 | 76 (1 driver script + 75 artifacts) |
 | Phase 14 P17 | 18min | 3 tasks | 2 files |
+| Phase 14 P18 | ~15 min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,7 @@ v1.1 highlights retained:
 - **Phase 09.1 P03:** Archived (not deleted) wave-2 100-epoch smoke artifacts at A/42, B/42, C/42 before launching the 1000-epoch sweep — `is_complete()` checks file presence not epoch count, so silent mixed-budget contamination was the alternative. Sweep then ran clean: 15/15 in 29.1 min @ parallel=2 (vs plan estimate ~24 h; v2.0 PennyLane backprop path is ~50× faster per epoch than v1.1). The conditional +2 seeds gate (D-09.1-06) is deferred to plan 04 (analysis-time decision based on observed inter-seed spread).
 - [Phase ?]: Plan 14-17: Manuscript .tex revised directly (D-14-18 READ-ONLY superseded by r4 BLOCK verdict); all PAPER-01..11 blocks integrated, abstract de-overclaimed, stale DTW 0.6843 reconciled to matched-budget ~0.30
 - [Phase ?]: Plan 14-17: Zenodo DOI uses symbolic placeholder token ZENODO-DOI-PLACEHOLDER (digit-free) so verify_number_provenance.py passes over the .tex; 14-07 mints the real DOI into it
+- [Phase ?]: Plan 14-18: OD-EMD claim recalibrated from 'statistically equivalent' to 'no statistically detectable difference at n=5 (underpowered)'; LR-DTW uniform-dominance posture stated, OD-DTW Orlandi improvement reframed matched-budget-wide
 
 ### Pending Todos
 
@@ -97,8 +99,8 @@ None.
 
 ## Session Continuity
 
-**Last Session:** 2026-05-22T05:27:07.420Z
-**Stopped At:** Phase 14 context gathered
+**Last Session:** 2026-05-22T05:56:38.673Z
+**Stopped At:** Completed 14-18-PLAN.md
 **Resume File:** None
 
 **Planned Phase:** 8 (Core Module Extraction) — 5 plans — 2026-04-23T16:46:36.017Z
