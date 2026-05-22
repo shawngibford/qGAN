@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 14 plan 14-16 complete (Wave 14 — r3 forensic remediation; Path A reframe; 7 tasks)
-last_updated: "2026-05-21T00:00:00.000Z"
-last_activity: 2026-05-21 -- Phase 14 plan 14-16 landed (R3-CR-2 fix + R3-CR-1/R3-HI-1 + welch aggregator + Path A reframe + DTW disclosure); only 14-07 (Zenodo deposit) remains
+stopped_at: Phase 14 context gathered
+last_updated: "2026-05-22T05:27:25.551Z"
+last_activity: 2026-05-22
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 11
-  completed_plans: 4
-  percent: 36
+  total_plans: 23
+  completed_plans: 20
+  percent: 50
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 ## Current Position
 
 Phase: 14 (paper-revision-release-freeze) — EXECUTING
-Plan: 15 of 16 complete (14-16 landed; 14-07 Zenodo deposit deferred)
-Status: Executing Phase 14 (only 14-07 Zenodo deposit remains)
-Last activity: 2026-05-21 -- 14-16 r3 forensic remediation merged (7 tasks): R3-CR-2 LR-EMD scale fix, R3-CR-1/R3-HI-1 distribution-emd v2, welch_pairwise.json aggregator, Path A reframe (LR-EMD-vs-WGAN claim withdrawn; OD-EMD equivalence + DTW dominance retained), DTW phantom-asymmetry disclosure
+Plan: 2 of 19
+Status: Ready to execute
+Last activity: 2026-05-22
 
-Progress: [██████████] 100%
+Progress: [█████████░] 87%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [██████████] 100%
 |------|----------|-------|-------|
 | Phase 09.1 P02 (cli-driver + smoke) | ~10 min | 2 | 18 |
 | Phase 09.1 P03 (multi-seed sweep resumable) | 29.1 min (sweep wall @ parallel=2) | 3 | 76 (1 driver script + 75 artifacts) |
+| Phase 14 P17 | 18min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,8 @@ v1.1 highlights retained:
 - backprop replaces parameter-shift due to PennyLane #4462 broadcasting gradient bugs
 - **Phase 09.1 P02:** Redefined Pipeline C smoke parity gate from 2% absolute-EMD to structural-evidence gate (Rule 4 deviation, user-approved). Rationale: the 0.12048789 baseline was measured at 2000-epoch convergence — comparing it to a 100-epoch fresh-init run is physically incoherent. Pipeline C code-path identity is independently proven by 09.1-01's ABL-01 round-trip (max_abs_err 4.44e-16).
 - **Phase 09.1 P03:** Archived (not deleted) wave-2 100-epoch smoke artifacts at A/42, B/42, C/42 before launching the 1000-epoch sweep — `is_complete()` checks file presence not epoch count, so silent mixed-budget contamination was the alternative. Sweep then ran clean: 15/15 in 29.1 min @ parallel=2 (vs plan estimate ~24 h; v2.0 PennyLane backprop path is ~50× faster per epoch than v1.1). The conditional +2 seeds gate (D-09.1-06) is deferred to plan 04 (analysis-time decision based on observed inter-seed spread).
+- [Phase ?]: Plan 14-17: Manuscript .tex revised directly (D-14-18 READ-ONLY superseded by r4 BLOCK verdict); all PAPER-01..11 blocks integrated, abstract de-overclaimed, stale DTW 0.6843 reconciled to matched-budget ~0.30
+- [Phase ?]: Plan 14-17: Zenodo DOI uses symbolic placeholder token ZENODO-DOI-PLACEHOLDER (digit-free) so verify_number_provenance.py passes over the .tex; 14-07 mints the real DOI into it
 
 ### Pending Todos
 
@@ -94,8 +97,8 @@ None.
 
 ## Session Continuity
 
-**Last Session:** 2026-05-19T11:59:36.062Z
+**Last Session:** 2026-05-22T05:27:07.420Z
 **Stopped At:** Phase 14 context gathered
-**Resume File:** .planning/phases/14-paper-revision-release-freeze/14-CONTEXT.md
+**Resume File:** None
 
 **Planned Phase:** 8 (Core Module Extraction) — 5 plans — 2026-04-23T16:46:36.017Z

@@ -64,23 +64,23 @@
 
 ### Framing & Calibration (addresses R1-M5, R2-1, R2-2)
 
-- [ ] **PAPER-01**: Hypothesis reframed in Section 1: "Can a PQC generator, operating in an exponentially large Hilbert space with O(poly(n)) parameters, match or exceed a classical generator of equivalent parameter count on a low-data bioprocess task?" Quantum-necessity transition softened.
-- [ ] **PAPER-02**: Overclaiming language ("industrial bioprocess monitoring," "computational advantages," "exponential representational compactness," "reduced mode collapse") removed or explicitly softened to literature-motivated hypotheses.
-- [ ] **PAPER-03**: Circuit design rationale subsection added (why 5 qubits, why this ansatz w/ expressibility–trainability tradeoff, why classical critic + quantum generator).
-- [ ] **PAPER-04**: Log-returns justified in bioprocess context (growth-rate interpretation, not imported from finance).
-- [ ] **PAPER-05**: Decision-tree workflow + Hybrid-GAN mechanistic material moved to explicit "Outlook" section; Supp. Table A2 either removed or explicitly caveated as aspirational; 20L vs 300L caption mismatch fixed.
+- [x] **PAPER-01**: Hypothesis reframed in Section 1: "Can a PQC generator, operating in an exponentially large Hilbert space with O(poly(n)) parameters, match or exceed a classical generator of equivalent parameter count on a low-data bioprocess task?" Quantum-necessity transition softened.
+- [x] **PAPER-02**: Overclaiming language ("industrial bioprocess monitoring," "computational advantages," "exponential representational compactness," "reduced mode collapse") removed or explicitly softened to literature-motivated hypotheses.
+- [x] **PAPER-03**: Circuit design rationale subsection added (why 5 qubits, why this ansatz w/ expressibility–trainability tradeoff, why classical critic + quantum generator).
+- [x] **PAPER-04**: Log-returns justified in bioprocess context (growth-rate interpretation, not imported from finance).
+- [x] **PAPER-05**: Decision-tree workflow + Hybrid-GAN mechanistic material moved to explicit "Outlook" section; Supp. Table A2 either removed or explicitly caveated as aspirational; 20L vs 300L caption mismatch fixed.
 
 ### References & Methods (addresses R1-m1, R1-m2, R1-m3, R1-m6, R1-M4)
 
-- [ ] **PAPER-06**: Misplaced references corrected — rewrite sentence for [27]; remove/reassign [28]; replace [39] with Havlíček 2019 + Schuld & Killoran 2019; replace [18] with GPR reference; replace [19] with time-series GAN; replace [41] with rolling-window subsequence reference; remove/replace [55]–[57], [59]. Anchors [21]–[23], [34]–[36], [61] retained.
-- [ ] **PAPER-07**: Bernal et al. "Perspectives of quantum computing for chemical engineering" cited in Section 1.3/2 transition.
-- [ ] **PAPER-08**: Dataset details reported in Methods (raw time points, rolling windows, splits + counts, independent-run count).
-- [ ] **PAPER-09**: Every evaluation metric explicitly labeled in Methods as transformed (log-return) or original OD.
-- [ ] **PAPER-10**: Appendix A3 log-GAN vs. Wasserstein discrepancy clarified.
+- [x] **PAPER-06**: Misplaced references corrected — rewrite sentence for [27]; remove/reassign [28]; replace [39] with Havlíček 2019 + Schuld & Killoran 2019; replace [18] with GPR reference; replace [19] with time-series GAN; replace [41] with rolling-window subsequence reference; remove/replace [55]–[57], [59]. Anchors [21]–[23], [34]–[36], [61] retained.
+- [x] **PAPER-07**: Bernal et al. "Perspectives of quantum computing for chemical engineering" cited in Section 1.3/2 transition.
+- [x] **PAPER-08**: Dataset details reported in Methods (raw time points, rolling windows, splits + counts, independent-run count).
+- [x] **PAPER-09**: Every evaluation metric explicitly labeled in Methods as transformed (log-return) or original OD.
+- [x] **PAPER-10**: Appendix A3 log-GAN vs. Wasserstein discrepancy clarified.
 
 ### Copy Edits (addresses R1-M5, R1-m7)
 
-- [ ] **PAPER-11**: Typos + notation unified — Fig. 6 "Laas"→"Lags"; "Figure A5).This"→"Figure A5). This"; "LUCY ©photobioreactor"→"LUCY® photobioreactor"; 300L/20L sentence completed; "Dry Biomass"→"dry biomass"; "bio-manufacturing" vs. "biomanufacturing" standardized; Ref [39] "Approac"→"Approach"; Ref [51] title capitalization; "QWGAN-GPs"→"QWGAN-GP" in conclusions; single return-variable symbol (log δ vs ς) chosen; Figures 2–6 enlarged for journal format.
+- [x] **PAPER-11**: Typos + notation unified — Fig. 6 "Laas"→"Lags"; "Figure A5).This"→"Figure A5). This"; "LUCY ©photobioreactor"→"LUCY® photobioreactor"; 300L/20L sentence completed; "Dry Biomass"→"dry biomass"; "bio-manufacturing" vs. "biomanufacturing" standardized; Ref [39] "Approac"→"Approach"; Ref [51] title capitalization; "QWGAN-GPs"→"QWGAN-GP" in conclusions; single return-variable symbol (log δ vs ς) chosen; Figures 2–6 enlarged for journal format.
 
 ---
 
@@ -158,17 +158,17 @@ See `.planning/MILESTONES.md` for shipped milestones. Legacy requirement IDs (RE
 | INTRO-03    | Phase 13 | Complete |
 | DOC-01      | Phase 9  | Pending |
 | DOC-02      | Phase 9  | Pending |
-| PAPER-01    | Phase 14 | Pending |
-| PAPER-02    | Phase 14 | Pending |
-| PAPER-03    | Phase 14 | Pending |
-| PAPER-04    | Phase 14 | Pending |
-| PAPER-05    | Phase 14 | Pending |
-| PAPER-06    | Phase 14 | Pending |
-| PAPER-07    | Phase 14 | Pending |
-| PAPER-08    | Phase 14 | Pending |
-| PAPER-09    | Phase 14 | Pending |
-| PAPER-10    | Phase 14 | Pending |
-| PAPER-11    | Phase 14 | Pending |
+| PAPER-01    | Phase 14 | Complete |
+| PAPER-02    | Phase 14 | Complete |
+| PAPER-03    | Phase 14 | Complete |
+| PAPER-04    | Phase 14 | Complete |
+| PAPER-05    | Phase 14 | Complete |
+| PAPER-06    | Phase 14 | Complete |
+| PAPER-07    | Phase 14 | Complete |
+| PAPER-08    | Phase 14 | Complete |
+| PAPER-09    | Phase 14 | Complete |
+| PAPER-10    | Phase 14 | Complete |
+| PAPER-11    | Phase 14 | Complete |
 
 **Coverage:**
 - v2.0 requirements: 33 total (22 code, 11 paper)
