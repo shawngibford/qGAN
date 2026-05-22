@@ -285,10 +285,29 @@ computed").
 0.003; quantum/WGAN/VAE cluster in 0.007-0.016.
 No statistically meaningful quantum-vs-WGAN separation on marginal log-return distribution.**
 
-**On DTW (Dynamic Time Warping, temporal alignment), quantum dominates:
-all 4 variants beat every WGAN+AR on LR-DTW; best quantum beats Orlandi
-et al. by 6.5x on OD-DTW. This is the temporal-structure capture quantum
-is specifically designed for.**
+**On DTW (Dynamic Time Warping, temporal alignment): the ~6.5x OD-DTW
+improvement over the Orlandi et al. reference (1.954) is achieved by the
+matched-budget cluster as a whole — wgan_lstm (0.301) and wgan_mlp (0.302)
+sit inside the same 0.298-0.302 OD-DTW cluster as the quantum variants, so
+the OD-DTW Orlandi improvement is matched-budget-wide and is NOT
+quantum-specific. The only quantum-distinguishing DTW result is on
+log-return DTW (LR-DTW): every quantum variant (0.94-1.12) beats every
+WGAN+AR baseline (WGAN 1.58-6.86, AR 7.70). LR-DTW is therefore the sole
+DTW claim scoped to quantum.**
+
+The LR-DTW dominance claim is a *uniform-dominance* (conjunctive) claim —
+it asserts that every quantum variant beats every WGAN+AR baseline on
+log-return DTW, i.e. the conjunction over the full pairwise family, and is
+reported as the worst-case margin over that family (the smallest
+quantum-minus-classical gap). A conjunctive "holds for every pair" claim
+over a finite pairwise family does not require a multiple-comparisons
+(multiplicity) correction, unlike a disjunctive "≥1 significant pair"
+claim where multiplicity inflates the family-wise false-positive rate.
+The OD-EMD non-significance result is correspondingly reported WITHOUT a
+positive-equivalence inference, so multiplicity does not inflate a false
+claim there either — a high p-value is not asserted as a finding. This
+makes the multiple-comparisons posture explicit and consistent across both
+the OD-EMD and LR-DTW pairwise families.
 
 At matched 2000-epoch training budget and n=5 seeds per cell (seeds {42,
 43, 44, 45, 46}), the iqp_sel_55 quantum reference circuit (55 trainable
@@ -325,6 +344,16 @@ Shared critic parameter count 250881 per
 `total_adversarial_param_budget.json#shared_critic_n_params`. Welch t-test
 p-values + Cohen's d per `welch_pairwise.json#pairs[*]`, computed two-sided,
 n=5 per group, equal_var=False.)
+
+**Outlier-seed disclosure (wgan_cnn).** The wgan_cnn OD-EMD column is
+dominated by a single anomalous seed: seed 42 = 0.1587 versus the other
+four seeds at 0.020-0.034 (~5x). That single seed sets BOTH
+`strong_claim_thresholds` extrema — the p-floor (0.3652) and the
+|d|-ceiling (0.6442). The |d| = 0.65 ceiling reported above is therefore an
+outlier-driven extremum, not a typical pair; the four non-outlier wgan_cnn
+seeds and the other classical baselines sit well inside it. This is a
+further reason the result is read as a non-significant difference under low
+power rather than as equivalence.
 
 **Aggregate summary** (Path A, anchored at `welch_pairwise.json#summaries`
 and `#strong_claim_thresholds`):
