@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Completed 14-18-PLAN.md
-last_updated: "2026-05-22T06:36:34.274Z"
-last_activity: 2026-05-22
+stopped_at: Phase 14 wave 2 complete — 14-17 + 14-18 + 14-19 landed; 14-07 deferred to acceptance per owner decision 2026-05-24
+last_updated: "2026-05-24T00:00:00.000Z"
+last_activity: 2026-05-24 -- Phase 14 18/19 complete: 14-17 (manuscript revision integration into .tex), 14-18 (OD-EMD/OD-DTW claim recalibration), 14-19 (pre-freeze hygiene + hardened freeze gate); freeze candidate committed at 6518323; 14-07 (Zenodo deposit + tag) deferred to acceptance — placeholder + commit SHA in Data Availability is sufficient for first-round revision response
 progress:
   total_phases: 2
   completed_phases: 1
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 
 ## Current Position
 
-Phase: 14 (paper-revision-release-freeze) — EXECUTING
-Plan: 4 of 19
-Status: Ready to execute
-Last activity: 2026-05-22
+Phase: 14 (paper-revision-release-freeze) — PARTIAL (18/19; 14-07 deferred)
+Plan: 18 of 19 complete
+Status: Stopped after Wave 2 by owner decision (2026-05-24). 14-07 (tag + Zenodo deposit) deferred to acceptance — first-round revision can resubmit with the ZENODO-DOI-PLACEHOLDER + committed freeze-candidate SHA `6518323` in Data Availability; real DOI minted at acceptance.
+Last activity: 2026-05-24 -- 14-17/14-18/14-19 completed in this session; freeze candidate certified at commit 6518323 (hardened verify_freeze_ready.py passes every gate except release.md, which is 14-07's deliverable)
 
 Progress: [██████████] 96%
 
@@ -97,7 +97,7 @@ None.
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| *(none)* | | | |
+| Phase 14 | 14-07 (tag v2.0-revision + Zenodo manual deposit + release.md + DOI wire-in) | deferred to acceptance — first-round revision resubmits with ZENODO-DOI-PLACEHOLDER + committed freeze-candidate SHA `6518323` in Data Availability; mint real DOI when AIChE accepts and update camera-ready then | 2026-05-24 |
 
 ## Session Continuity
 
