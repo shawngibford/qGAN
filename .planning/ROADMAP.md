@@ -88,6 +88,9 @@ Plans:
 **Wave 16** *(freeze hygiene — after manuscript revision; depends on 14-17 so the revised `.tex` is committed, not the un-revised version; must complete before 14-07 cuts the tag)*
 - [x] 14-19-PLAN.md — Freeze hygiene pre-conditions: restore LICENSE, atomically commit the `.gitignore` results/ exclusion + `!revision/results/` negations, track baseline runs/ metrics+config, commit the 14-17-revised `.tex`, fix requirements-pinned.txt (fastdtw + pandas<3.0), harden verify_freeze_ready.py to validate the committed tree; record + certify the post-14-19 committed HEAD as the freeze candidate (H5); owner-decision checkpoints for canonical CSVs / phase4_validation drift / `.planning/` in the deposit (closes SYNTHESIS C4/C5/C6/H5/H6/H7/M4/M10/M11/M12)
 
+**Wave 17** *(R1-M2 regime-mismatch closure — surfaced while drafting the rebuttal letter; the existing utility JSONs were generated against 1000-epoch phase-09.1/10 runs, not the matched-budget 2000-epoch artefacts that back R1-M1; depends on 14-19)*
+- [ ] 14-20-PLAN.md — Re-run the utility battery (TSTR, predictive, discriminative, augmentation) against the matched-budget Pipeline B artefacts at `revision/results/matched2000/runs/` (9 trainable model_kinds × 5 seeds × 2000 epochs, already trained in 14-02); emit sibling `*_matched2000.json` files; leave legacy 1000-epoch JSONs in place as provenance reference; add matched-budget `tstr_crossmodel_matched2000` figure renderer; rewrite reviewer_response.md R1-M2 against the matched-budget numbers so R1-M1 + R1-M2 share a single matched-budget evidence base; re-certify freeze candidate at post-14-20 HEAD (supersedes pre-14-20 `6518323`); no retraining, no `revision/core/` edit
+
 ## Progress
 
 **Execution Order:**
