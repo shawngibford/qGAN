@@ -467,6 +467,57 @@ phantom asymmetry (third historical-vs-current case)` section; the
 reviewer-facing summary is in `reviewer_response.md`'s `### DTW addendum
 (Plan 14-16)` subsection.
 
+### §3.y — Utility-oriented evaluation at matched-budget Pipeline B (Plan 14-20)
+
+The TimeGAN-convention utility battery requested by R1-M2 is implemented
+in `revision/run_utility.py` and `revision/run_timegan_scores.py`. As of
+Plan 14-20 (post-rebuttal-prep regime-alignment), the battery consumes
+the matched-budget Pipeline B artefacts at
+`revision/results/matched2000/runs/<model_kind>/<seed>/` (2000 epochs,
+9 trainable model_kinds × 5 generator seeds = 45 cells). The same nine
+model_kinds that back the R1-M1 parametric-efficiency analysis
+(`matched2000_dualscale.json`, `welch_pairwise.json`) therefore back the
+R1-M2 utility analysis — a single matched-budget evidence base.
+
+| Metric | Driver | Output | TimeGAN convention |
+|---|---|---|---|
+| TSTR R²/MAE/RMSE | `run_utility.py` `run_tstr` | `revision/results/tstr_matched2000.json` | 1-layer LSTM (hidden=32) soft sensor trained on pooled synthetic OD windows, evaluated on held-out real OD windows (n_eval_real = 320, n_train_synth = 19200 = 5 seeds × 3840) |
+| Predictive score | `run_timegan_scores.py` | `revision/results/predictive_discriminative_matched2000.json` `scores[*].predictive_*` | Canonical Yoon et al. predictive_metrics.py (post-hoc one-step-ahead forecast objective, normalized error) |
+| Discriminative score | `run_timegan_scores.py` | `revision/results/predictive_discriminative_matched2000.json` `scores[*].discriminative_*` | Canonical Yoon et al. discriminative_metrics.py — `discriminative_score = |classifier_accuracy − 0.5|`, lower is better, 0.0 optimal (synthetic at chance from real), 0.5 worst (classifier perfectly separates). Univariate-input adaptation: `hidden_dim = 10` per D-11-04 (the canonical `int(dim/2)` produces a degenerate zero-width GRU when dim = 1; see RESEARCH Pitfall 1 / Assumptions-Log A1) |
+| Augmentation lift | `run_utility.py` `run_augmentation` | `revision/results/augmentation_matched2000.json` | Orlandi-style: same soft sensor trained on n_real ∈ {65} ∪ {65 + k × n_synth} for injection ratios k ∈ {+25%, +50%, +100%}; lift reported as Δr2/Δmae/Δrmse vs real-only baseline (D-11-06/07) |
+
+**data_hash invariance gate (Plan 14-20).** The matched-budget driver
+mode asserts `91e447d4624e25b3` against `_compute_data_hash(csv_path)`
+AND against every one of the 45 matched-budget `config.yaml` `data_hash`
+fields before any soft-sensor or post-hoc-net training starts; the
+shortcut "quantum by construction" used by the legacy 1000-epoch driver
+mode is removed because all 45 matched-budget configs carry the
+canonical hash directly.
+
+**Matched-budget headline (per-variant numbers).** TSTR R² in
+[0.993, 0.998] across all 9 generators against a real-only baseline of
+R² = -13.354 ± 0.583 (n = 65 real training windows, 3 init seeds);
+TimeGAN discriminative score = 0.40888 (to five decimal places)
+identically across all 45 cells; Orlandi +100% augmentation R² in
+[0.957, 0.971] across all 9 generators. Per-variant numbers anchored at
+`tstr_matched2000.json#tstr` / `predictive_discriminative_matched2000.json#scores`
+/ `augmentation_matched2000.json#lift`; the reviewer-facing interpretation
+of the cross-generator convergence (the cumulative-sum back-transform
+encodes near-perfect lag-1 autocorrelation into synthetic OD regardless
+of generator) is in `reviewer_response.md`'s `### R1-M2 — Utility-oriented
+evaluation — matched-budget re-run (Plan 14-20)` section.
+
+**Legacy 1000-epoch utility JSONs.** `tstr.json`,
+`predictive_discriminative.json`, and `augmentation.json` were generated
+in Phases 10 and 11 against the pre-recovery `default_75` quantum
+entrant (via `revision/results/transform_ablation/runs/` for the quantum
+row) and the Phase-10 `baselines/runs/` directory for the classical
+baselines — a 1000-epoch regime that pre-dates the Plan 14-01 canonical
+55-parameter IQP:SEL recovery. They remain on disk as provenance
+reference but are not cited in the rebuttal; every utility number in
+the manuscript and `reviewer_response.md` resolves to the
+`*_matched2000.json` sibling files.
+
 ---
 
 ## 4. Hardware & Software

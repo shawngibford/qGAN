@@ -34,7 +34,7 @@ quantitative claim is traceable to a `revision/results/*.json` artifact via
 | ID | Verbatim concern (abbrev.) | Change made | Manuscript location | Supporting artifact |
 |----|----------------------------|-------------|---------------------|---------------------|
 | R1-M1 | No matched classical baseline — quantum contribution cannot be isolated | Added matched-parameter classical WGAN-GP (MLP/CNN/LSTM critics) and a non-adversarial VAE + AR baseline, all at matched 2000-epoch budget, identical critic/optimizer/seed set; parameter-count-controlled comparison table | §4.1 Results (new baseline comparison table); §4.2 Key Contributions (honest framing) | `revision/results/baseline_comparison.json`; `revision/results/model_info.json` |
-| R1-M2 | Validation is diagnostic only — need utility-oriented tests (TSTR, predictive/discriminative) | Added TSTR (train-on-synthetic, test-on-real soft sensor), predictive score, discriminative score, and real-only vs synthetic-augmented comparison | §4.1 Results (new utility-evaluation subsection) | `revision/results/tstr.json`; `revision/results/predictive_discriminative.json`; `revision/results/augmentation.json` |
+| R1-M2 | Validation is diagnostic only — need utility-oriented tests (TSTR, predictive/discriminative) | Added TSTR (train-on-synthetic, test-on-real soft sensor), TimeGAN predictive + discriminative scores, and Orlandi-style real-only vs synthetic-augmented comparison, re-run at matched 2000-epoch Pipeline B budget (Plan 14-20) so R1-M1 and R1-M2 share a single matched-budget evidence base; legacy 1000-epoch JSONs preserved as provenance but not cited | §4.1 Results (utility-evaluation subsection) | `revision/results/tstr_matched2000.json`; `revision/results/predictive_discriminative_matched2000.json`; `revision/results/augmentation_matched2000.json`; figure `revision/results/figures/tstr_crossmodel_matched2000.{png,pdf,json}` |
 | R1-M3 | Log-returns + Lambert W may strip temporal structure; no OD back-transformation | Added original-OD-scale results (generate → invert → metrics on physical units); ACF on both transformed and OD scale; explicit per-metric scale statement; growth-rate justification of log-returns | §3 Methods (evaluation-scale paragraph + Table); §4.1 (dual-scale ACF) | `revision/results/fidelity_dualscale.json`; `revision/docs/dataset_stats.md` |
 | R1-M4 | Incomplete optimization / training details (n_critic, λ, LR, epochs, stopping, seeds, analytic vs shot) | Added full Training Protocol (all hyperparameters rendered from JSON); stated analytic statevector (no shot noise) backend; added shot-noise sensitivity; multi-seed (5 seeds) mean ± std; clarified Supp Eq. A3 log-GAN vs Wasserstein discrepancy | §3 Methods (Training Protocol); Supp §A.3 (PAPER-10 block) | `revision/docs/training_protocol.md`; `revision/results/shot_noise_sensitivity.json`; `revision/results/multiseed_summary.json` |
 | R1-M5 | Claim calibration — language oversells a simulator-based, single-variable, single-campaign proof-of-concept | Toned language to "proof-of-concept feasibility study"; moved decision-tree workflow + Hybrid-GAN to a labeled Outlook; caveated Supp Table A2 as aspirational; clarified 20L/300L; softened "exponential compactness"/"reduced mode collapse" to literature-motivated hypotheses | Abstract; §1; §4.2–4.4; §5; Supp §A.3 (PAPER-02/05/10/11 blocks) | `revision/docs/paper_blocks_refs_methods.md`; `revision/results/model_info.json` |
@@ -126,19 +126,111 @@ the atlas resolves to one of the five config-lock JSONs
 `revision/results/v3_config_lock.json`) and is gated by
 `revision/verify_number_provenance.py` unmodified.
 
-### R1-M2 — Utility-oriented tests — strengthened by Plan 14-10
+### R1-M2 — Utility-oriented evaluation — matched-budget re-run (Plan 14-20)
 
-The TSTR cross-model bars are now rendered at
-`revision/results/figures/tstr_crossmodel.{png,pdf}` (source =
-`revision/results/tstr.json`; negative R² plotted honestly per the
-companion JSON's `caption_note`). The per-model failure-mode diagnostic
-grid (distribution overlay × ACF lag-1 × log-return EMD across 9 models,
-ordered by ascending OD EMD) is rendered at
+The TimeGAN-convention utility battery is implemented in
+`revision/run_utility.py` + `revision/run_timegan_scores.py` and, as of
+Plan 14-20, consumes the matched-budget Pipeline B artefacts at
+`revision/results/matched2000/runs/` (2000 epochs, 9 trainable
+model_kinds × 5 generator seeds = 45 cells, evaluated with 3 init seeds
+per cell — the same protocol that backs the R1-M1 parametric-efficiency
+analysis). R1-M1 and R1-M2 therefore share a single matched-budget
+evidence base. Outputs: `revision/results/tstr_matched2000.json` (108
+rows, 9-variant TSTR R²/MAE/RMSE + real-only baseline),
+`revision/results/predictive_discriminative_matched2000.json` (90 rows,
+TimeGAN |acc − 0.5| convention for the discriminative score), and
+`revision/results/augmentation_matched2000.json` (135 rows, Orlandi-style
++25%/+50%/+100% injection-ratio grid against n_real_train = 65). The
+matched-budget cross-model figure is rendered at
+`revision/results/figures/tstr_crossmodel_matched2000.{png,pdf,json}`.
+
+**Headline matched-budget result (Pipeline B, 2000 epochs):**
+
+| Model | n_params (gen) | TSTR R² | TSTR MAE | TSTR RMSE | Predictive score | Discriminative score | +100% augmented R² |
+|---|---|---|---|---|---|---|---|
+| iqp_sel_55_repro | 55 | 0.9945 | 0.0286 | 0.0361 | 0.01944 | 0.40888 | 0.9695 |
+| V1 | 75 | 0.9942 | 0.0295 | 0.0370 | 0.01947 | 0.40888 | 0.9688 |
+| V2 | 135 | 0.9946 | 0.0283 | 0.0358 | 0.01953 | 0.40888 | 0.9685 |
+| V3 | 75 | 0.9949 | 0.0275 | 0.0345 | 0.01925 | 0.40888 | 0.9706 |
+| wgan_mlp | 74 | 0.9976 | 0.0183 | 0.0236 | 0.01963 | 0.40888 | 0.9667 |
+| wgan_cnn | 73 | 0.9971 | 0.0202 | 0.0260 | 0.02538 | 0.40888 | 0.9624 |
+| wgan_lstm | 78 | 0.9966 | 0.0220 | 0.0282 | 0.01981 | 0.40888 | 0.9565 |
+| vae | 562 | 0.9930 | 0.0319 | 0.0407 | 0.01960 | 0.40888 | 0.9641 |
+| ar(2) | 3 | 0.9977 | 0.0184 | 0.0235 | 0.01884 | 0.40888 | 0.9568 |
+| **real-only baseline (n = 65 real windows)** | — | **-13.354** | **1.802** | **1.840** | — | — | — |
+
+Across nine generators ranging from a closed-form 3-parameter AR(2) to a
+250881-parameter adversarial WGAN-CNN (generator + shared critic), the
+TSTR R² band on Pipeline B is [0.993, 0.998] — a width of 0.005 against
+a real-only baseline of -13.354. The TimeGAN discriminative score is
+**exactly 0.40888 across every one of the 45 matched-budget cells** —
+identical to five decimal places across all six architecture families
+(quantum, MLP, CNN, LSTM, VAE, AR), all five generator seeds, all three
+init seeds. Under the TimeGAN |acc − 0.5| convention this corresponds
+to a held-out classifier accuracy of approximately 0.91 (the Yoon et al.
+TimeGAN benchmark reports competitive scores in the 0.05-0.12 range),
+and no generator separates from any other on this metric. Predictive
+scores cluster tightly at 0.0188-0.0198 across eight of the nine
+variants; wgan_cnn is the only deviation at 0.0254 ± 0.0077, driven by
+the same seed-42 outlier disclosed under R1-M1.
+
+The Orlandi-style augmentation comparison shows a dramatic lift in
+every generator. The real-only soft-sensor baseline at n = 65 real
+training windows is catastrophic (R² = -13.354) — the task is too
+data-starved to be learned from real alone. Adding synthetic windows
+raises R² to ~0.96-0.97 at +100% augmentation across all nine
+generators (V1 highest at 0.971, AR(2) lowest at 0.957). The lift is
+not generator-discriminative; it confirms that synthetic OD windows are
+useful for augmenting a data-starved soft-sensor training set
+regardless of which generator produced them.
+
+**Honest reading.** The matched-budget Pipeline B utility battery is
+dominated by structural features of the preprocessing pipeline rather
+than by generator behaviour. Pipeline B's cumulative-sum back-transform
+from log-returns to OD mathematically encodes near-perfect lag-1
+autocorrelation into the synthetic OD regardless of which generator
+produced the underlying log-returns, so a soft sensor trained on
+Pipeline-B-derived synthetic OD essentially learns the persistence
+forecast OD_{t+1} ≈ OD_t — a forecast that is near-optimal on the real
+OD series (also strongly autocorrelated), yielding R² ≈ 0.99 across all
+generators. The corroborating evidence sits in the discriminative-score
+column: six generator architectures spanning a 3-parameter Gaussian fit
+to a 250881-parameter adversarial network all converge to the same
+discriminative score (0.40888) to five decimal places — a result not
+consistent with the metric discriminating among generators on the basis
+of model quality. The matched-budget Pipeline B utility result
+therefore reads as *the synthetic data are useful for downstream OD
+forecasting at n = 65 real training windows* (the augmentation lift
+from R² = -13.354 to R² ~ 0.97 confirms this directly, in the Orlandi
+style) but *no generator outperforms any other on this utility battery
+at this scale*. We report this honestly in Section 4.1.
+
+The only utility-adjacent metric on which quantum variants distinguish
+themselves in the matched-budget comparison is log-return DTW (LR-DTW),
+addressed under R1-M1: every quantum variant beats every classical
+WGAN and the AR(2) baseline on LR-DTW, reported as a uniform-dominance
+(conjunctive) claim over the full pairwise family with the worst-case
+margin. That is the sole quantum-distinguishing result we claim.
+
+**Scope note.** The matched-budget protocol is Pipeline B only — the
+phase-09.1 preprocessing ablation already established log-returns as
+the better preprocessing on the bioprocess-relevant direction, and the
+matched 2000-epoch sweep was run on Pipeline B accordingly. The legacy
+1000-epoch utility JSONs (`tstr.json`, `predictive_discriminative.json`,
+`augmentation.json`) cover an earlier evaluation regime and a different
+quantum entrant (the pre-recovery `default_75`, prior to the Plan 14-01
+canonical 55-parameter IQP:SEL recovery); they remain on disk as
+provenance reference but are NOT cited in the rebuttal. Every utility
+number in this section resolves to the matched-budget sibling
+`*_matched2000.json` files.
+
+Companion-figure caveat: the per-model failure-mode diagnostic grid
+(distribution overlay × ACF lag-1 × log-return EMD across 9 models,
+ordered by ascending OD EMD) at
 `revision/results/figures/failure_modes_summary.{png,pdf}` (source =
 `revision/results/matched2000_dualscale.json` + per-model dist/acf
-companion JSONs). Both close the "utility-oriented" gap by visualizing
-the previously-unconsumed `tstr.json` and the cross-model fidelity
-structure.
+companion JSONs) is retained from Plan 14-10 and continues to visualize
+the cross-model fidelity structure.
 
 ### R2-1 / R1-M4 — Backend statement (analytic statevector vs shot noise) — strengthened by Plan 14-10
 
