@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 14 wave 2 complete — 14-17 + 14-18 + 14-19 landed; 14-07 deferred to acceptance per owner decision 2026-05-24
-last_updated: "2026-05-24T00:00:00.000Z"
-last_activity: 2026-05-24 -- Phase 14 18/19 complete: 14-17 (manuscript revision integration into .tex), 14-18 (OD-EMD/OD-DTW claim recalibration), 14-19 (pre-freeze hygiene + hardened freeze gate); freeze candidate committed at 6518323; 14-07 (Zenodo deposit + tag) deferred to acceptance — placeholder + commit SHA in Data Availability is sufficient for first-round revision response
+stopped_at: Phase 14 plan 14-20 complete — matched-budget utility battery re-run on Pipeline B; R1-M2 doc rewrite + provenance gate PASS across all paper-facing docs; freeze candidate refreshed at 3c8502c; 14-07 remains deferred
+last_updated: "2026-05-24T12:00:00.000Z"
+last_activity: 2026-05-24 -- Phase 14 plan 14-20 closed: re-ran utility battery (TSTR + augmentation + predictive/discriminative) against matched2000/runs/ artefacts at 2000 epochs, Pipeline B only; emitted *_matched2000.json sibling JSONs (legacy 1000-epoch JSONs preserved as provenance, not cited); R1-M2 in reviewer_response.md + methods_full.md §3.y + completeness_sweep_manifest.md updated against matched-budget numbers; provenance gate PASS on all 7 paper-facing docs; freeze candidate refreshed at 3c8502c (supersedes 6518323); 14-07 still deferred to acceptance
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 23
-  completed_plans: 22
-  percent: 50
+  total_plans: 24
+  completed_plans: 23
+  percent: 51
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-04-23)
 
 ## Current Position
 
-Phase: 14 (paper-revision-release-freeze) — PARTIAL (18/19; 14-07 deferred)
-Plan: 18 of 19 complete
-Status: Stopped after Wave 2 by owner decision (2026-05-24). 14-07 (tag + Zenodo deposit) deferred to acceptance — first-round revision can resubmit with the ZENODO-DOI-PLACEHOLDER + committed freeze-candidate SHA `6518323` in Data Availability; real DOI minted at acceptance.
-Last activity: 2026-05-24 -- 14-17/14-18/14-19 completed in this session; freeze candidate certified at commit 6518323 (hardened verify_freeze_ready.py passes every gate except release.md, which is 14-07's deliverable)
+Phase: 14 (paper-revision-release-freeze) — PARTIAL (19/20; 14-07 deferred)
+Plan: 19 of 20 complete (14-20 closed the R1-M2 utility-coverage gap surfaced during rebuttal drafting)
+Status: 14-20 closed the R1-M2 regime mismatch (utility battery re-run on matched2000 artefacts at 2000 epochs, Pipeline B only). R1-M1 and R1-M2 now share a single matched-budget evidence base. 14-07 (tag + Zenodo deposit) remains deferred to acceptance — first-round revision resubmits with the ZENODO-DOI-PLACEHOLDER + the new freeze-candidate SHA `3c8502c` in Data Availability; real DOI minted at acceptance.
+Last activity: 2026-05-24 -- 14-20 landed (matched-budget utility battery + figure + R1-M2 rewrite + methods + manifest); freeze candidate refreshed at commit 3c8502c (hardened verify_freeze_ready.py passes every gate except release.md, which is 14-07's deliverable); legacy 1000-epoch utility JSONs preserved on disk for provenance, not cited in rebuttal
 
 Progress: [██████████] 96%
 
@@ -97,7 +97,7 @@ None.
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| Phase 14 | 14-07 (tag v2.0-revision + Zenodo manual deposit + release.md + DOI wire-in) | deferred to acceptance — first-round revision resubmits with ZENODO-DOI-PLACEHOLDER + committed freeze-candidate SHA `6518323` in Data Availability; mint real DOI when AIChE accepts and update camera-ready then | 2026-05-24 |
+| Phase 14 | 14-07 (tag v2.0-revision + Zenodo manual deposit + release.md + DOI wire-in) | deferred to acceptance — first-round revision resubmits with ZENODO-DOI-PLACEHOLDER + new freeze-candidate SHA `3c8502c` in Data Availability (supersedes pre-14-20 SHA `6518323` after 14-20 closed the R1-M2 utility-coverage gap); mint real DOI when AIChE accepts and update camera-ready then | 2026-05-24 |
 
 ## Session Continuity
 
