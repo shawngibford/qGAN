@@ -62,20 +62,26 @@ from revision.core import WINDOW_LENGTH  # noqa: E402  (== 10)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Module constants (RESEARCH "Constants"; 6 model_kinds × 2 pipelines × 5 seeds
-# = 60 frozen run dirs, all verified on disk).
+# Module constants (matched-budget driver mode, 14-20):
+# 9 trainable model_kinds × 1 pipeline (B) × 5 seeds = 45 frozen run dirs under
+# revision/results/matched2000/runs/<model_kind>/<seed>/. All 45 cells carry the
+# canonical data_hash 91e447d4624e25b3 directly (no quantum-by-construction
+# shortcut needed — the matched2000 sweep wrote data_hash into every config.yaml).
 # ─────────────────────────────────────────────────────────────────────────────
-MODEL_KINDS = ["quantum", "wgan_mlp", "wgan_cnn", "wgan_lstm", "vae", "ar"]
-PIPELINES = ["A", "B"]                 # Pipeline C dropped (D-10-05)
+MODEL_KINDS = ["iqp_sel_55_repro", "V1", "V2", "V3",
+               "wgan_mlp", "wgan_cnn", "wgan_lstm", "vae", "ar"]
+PIPELINES = ["B"]                      # Pipeline B only (matched-budget driver mode, 14-20)
 SEEDS = [42, 43, 44, 45, 46]           # 5 training seeds
 INIT_SEEDS = (40, 41, 42)              # LSTM init seeds (NOT training seeds)
 HELD_OUT_N = 320                       # D-10-21 real held-out split
 EXPECTED_DATA_HASH = "91e447d4624e25b3"  # cross-phase invariant (D-10-15)
 
-# The 5 NEW Phase-10 baseline families carry a `data_hash` field; the quantum
-# (09.1) runs predate the convention and carry NONE — equivalence is
-# by-construction (RESEARCH Pitfall 4). Do NOT grep transform_ablation configs.
-NEW_MODELS = ["wgan_mlp", "wgan_cnn", "wgan_lstm", "vae", "ar"]
+# Matched-budget driver mode: every cell under matched2000/runs/<mk>/<seed>/
+# carries the canonical data_hash in its config.yaml (verified 2026-05-24
+# subagent sweep audit) — the assert loop iterates all 9 model_kinds × 5 seeds
+# = 45 cells (no quantum-by-construction shortcut).
+ALL_MODELS = ["iqp_sel_55_repro", "V1", "V2", "V3",
+              "wgan_mlp", "wgan_cnn", "wgan_lstm", "vae", "ar"]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -90,10 +96,12 @@ def _compute_data_hash(csv_path: Path) -> str:
 
 def _assert_data_hash_invariant(csv_path: Path) -> tuple[str, str]:
     """Recompute the OD-tensor hash and assert it == EXPECTED_DATA_HASH AND ==
-    every one of the 50 baseline `config.yaml` `data_hash` fields. Quantum runs
-    carry no `data_hash` (Pitfall 4) — equivalence is by-construction.
+    every one of the 45 matched-budget `config.yaml` `data_hash` fields (9
+    trainable model_kinds × 1 pipeline (B) × 5 seeds). Every cell under
+    matched2000/runs/<mk>/<seed>/ carries the canonical data_hash directly —
+    no quantum-by-construction shortcut needed (14-20).
 
-    Returns (recomputed_hash, quantum_equivalence_note).
+    Returns (recomputed_hash, matched_budget_note).
     """
     recomputed = _compute_data_hash(csv_path)
     assert recomputed == EXPECTED_DATA_HASH, (
@@ -101,29 +109,30 @@ def _assert_data_hash_invariant(csv_path: Path) -> tuple[str, str]:
         f"expected {EXPECTED_DATA_HASH!r} (RESEARCH Pitfall 6 — wrong csv?)"
     )
     checked = 0
-    mismatches: list[tuple[str, str, int, object]] = []
-    for m in NEW_MODELS:
-        for p in PIPELINES:
-            for s in SEEDS:
-                cfg_path = (
-                    REPO / "revision" / "results" / "baselines" / "runs"
-                    / m / p / str(s) / "config.yaml"
-                )
-                cfg = yaml.safe_load(cfg_path.read_text())
-                checked += 1
-                if cfg.get("data_hash") != recomputed:
-                    mismatches.append((m, p, s, cfg.get("data_hash")))
-    assert checked == 50, f"expected 50 baseline configs, checked {checked}"
+    mismatches: list[tuple[str, int, object]] = []
+    for m in ALL_MODELS:
+        for s in SEEDS:
+            cfg_path = (
+                REPO / "revision" / "results" / "matched2000" / "runs"
+                / m / str(s) / "config.yaml"
+            )
+            cfg = yaml.safe_load(cfg_path.read_text())
+            checked += 1
+            if cfg.get("data_hash") != recomputed:
+                mismatches.append((m, s, cfg.get("data_hash")))
+    assert checked == 45, f"expected 45 matched-budget configs, checked {checked}"
     assert not mismatches, (
         f"data_hash mismatch (UNEXPECTED — report loudly): {mismatches}"
     )
-    quantum_equiv_note = (
-        "Quantum (09.1) data equivalence established BY CONSTRUCTION: the 09.1 "
-        "transform_ablation runs used the identical load_and_preprocess(data.csv) "
-        "OD tensor; 09.1 wrote no data_hash field, so no grep is performed "
-        "(D-10-15, RESEARCH Pitfall 4)."
+    matched_budget_note = (
+        "Matched-budget driver mode (14-20): all 45 cells under "
+        "revision/results/matched2000/runs/<model_kind>/<seed>/ carry the "
+        "canonical data_hash 91e447d4624e25b3 in their config.yaml directly. "
+        "The 4 quantum variants (iqp_sel_55_repro, V1, V2, V3) and 5 classical "
+        "baselines (wgan_mlp, wgan_cnn, wgan_lstm, vae, ar) all assert by-value, "
+        "not by-construction; no shortcut applied (D-14-10 + 14-20)."
     )
-    return recomputed, quantum_equiv_note
+    return recomputed, matched_budget_note
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -134,15 +143,29 @@ def _assert_data_hash_invariant(csv_path: Path) -> tuple[str, str]:
 # driver works from any cwd (Pitfall 6).
 # ─────────────────────────────────────────────────────────────────────────────
 def _run_base(model_kind: str, pipeline: str, seed: int) -> Path:
-    if model_kind == "quantum":
-        # reused 09.1 quantum runs (D-10-18)
-        return REPO / "revision" / "results" / "transform_ablation" / "runs" / pipeline / str(seed)
-    # new Phase 10 baseline runs (D-10-14 layout: runs/<model>/<pipeline>/<seed>)
-    return REPO / "revision" / "results" / "baselines" / "runs" / model_kind / pipeline / str(seed)
+    # Matched-budget driver mode (14-20): single branch, all 9 trainable
+    # model_kinds resolve to revision/results/matched2000/runs/<mk>/<seed>/.
+    # No pipeline subdir (Pipeline B is implicit; an A-branch lookup raises in
+    # reconstruct_od via the NotImplementedError guard below).
+    return REPO / "revision" / "results" / "matched2000" / "runs" / model_kind / str(seed)
 
 
 def reconstruct_od(model_kind: str, pipeline: str, seed: int,
                    n_synth_subsample: int | None = None) -> dict:
+    # 14-20 guard: matched-budget driver mode is Pipeline B only. Pipeline A
+    # has no matched2000 artefacts — every cell under matched2000/runs/ was
+    # trained as Pipeline B with log-return transform (see config.yaml). The
+    # Pipeline-A branch below is retained as dead-but-not-deleted reference
+    # but is unreachable in matched-budget driver mode.
+    if pipeline != "B":
+        raise NotImplementedError(
+            f"Matched-budget driver mode supports Pipeline B only; "
+            f"got pipeline={pipeline!r}. The matched2000 sweep "
+            f"(revision/results/matched2000/runs/) has no Pipeline-A cells. "
+            f"To run utility against legacy Pipeline-A artefacts, revert "
+            f"_run_base() and _assert_data_hash_invariant() to the pre-14-20 "
+            f"layout."
+        )
     base = _run_base(model_kind, pipeline, seed)
     samples_pm1 = np.load(base / "samples.npy").astype(np.float64)
     inv = np.load(base / "inverse_kwargs.npz", allow_pickle=True)
@@ -268,7 +291,7 @@ def train_eval_tstr(train_windows: np.ndarray, eval_windows: np.ndarray,
 # Long-form JSON header (mirrors `revision/results/baseline_comparison.json`
 # top-level keys — RESEARCH Pattern 4).
 # ─────────────────────────────────────────────────────────────────────────────
-def _json_header(schema: str, data_hash: str, quantum_note: str) -> dict:
+def _json_header(schema: str, data_hash: str, matched_budget_note: str) -> dict:
     return {
         "schema": schema,
         "model_kinds": MODEL_KINDS,
@@ -277,9 +300,9 @@ def _json_header(schema: str, data_hash: str, quantum_note: str) -> dict:
         "data_hash": data_hash,
         "data_hash_verification": {
             "recomputed_from": "load_and_preprocess('data.csv')['OD'].tobytes() sha256[:16]",
-            "n_new_configs_checked": 50,
+            "n_matched_budget_configs_checked": 45,
             "all_equal": True,
-            "quantum_equivalence": quantum_note,
+            "matched_budget_note": matched_budget_note,
         },
     }
 
@@ -302,7 +325,7 @@ def run_tstr(csv_path: Path, out_dir: Path, epochs: int,
     """EVAL-01: train soft-sensor on synthetic OD windows pooled across the 5
     training seeds, evaluate on the 320 held-out real windows. Reproduces the
     Phase-10 `real_only_baseline` anchor (n_train_real=65, R2 ~ -13.354)."""
-    data_hash, quantum_note = _assert_data_hash_invariant(csv_path)
+    data_hash, matched_budget_note = _assert_data_hash_invariant(csv_path)
     real_windowed_OD = _real_windowed_od(csv_path)
     real_eval = real_windowed_OD[:HELD_OUT_N]
     real_train_for_baseline = real_windowed_OD[HELD_OUT_N:]
@@ -359,8 +382,8 @@ def run_tstr(csv_path: Path, out_dir: Path, epochs: int,
           f"+/- {rob['r2_std']:.3f} (Phase-10 anchor ~ -13.354 +/- 0.583)")
 
     obj = _json_header(
-        "long-form rows[] + tstr block (D-10-21, EVAL-01)",
-        data_hash, quantum_note,
+        "long-form rows[] + tstr block (D-10-21, EVAL-01, matched-budget 14-20)",
+        data_hash, matched_budget_note,
     )
     obj["soft_sensor"] = (
         "TSTRLiteLSTM (1-layer LSTM, hidden=32) copied verbatim from "
@@ -373,7 +396,7 @@ def run_tstr(csv_path: Path, out_dir: Path, epochs: int,
     obj["rows"] = rows
     obj["tstr"] = tstr
 
-    out_path = out_dir / "tstr.json"
+    out_path = out_dir / "tstr_matched2000.json"
     out_path.write_text(json.dumps(obj, indent=2))
     print(f"[tstr] wrote {out_path} ({len(rows)} rows, "
           f"{len(tstr)} aggregate blocks)")
@@ -397,7 +420,7 @@ def run_augmentation(csv_path: Path, out_dir: Path, epochs: int,
     Partition-disjointness guard (RESEARCH Pitfall 5 / T-11-02): the real
     portion mixed in is ALWAYS `real_windowed_OD[320:]`, NEVER `[:320]`.
     """
-    data_hash, quantum_note = _assert_data_hash_invariant(csv_path)
+    data_hash, matched_budget_note = _assert_data_hash_invariant(csv_path)
     real_windowed_OD = _real_windowed_od(csv_path)
     n_total = real_windowed_OD.shape[0]
     eval_idx = set(range(0, HELD_OUT_N))
@@ -521,8 +544,8 @@ def run_augmentation(csv_path: Path, out_dir: Path, epochs: int,
             }
 
     obj = _json_header(
-        "long-form rows[] + lift block (EVAL-04, Orlandi-style)",
-        data_hash, quantum_note,
+        "long-form rows[] + lift block (EVAL-04, Orlandi-style, matched-budget 14-20)",
+        data_hash, matched_budget_note,
     )
     obj["soft_sensor"] = (
         "Same one-step-ahead OD TSTRLiteLSTM as EVAL-01 (D-11-06). Eval set is "
@@ -557,7 +580,7 @@ def run_augmentation(csv_path: Path, out_dir: Path, epochs: int,
     obj["rows"] = rows
     obj["lift"] = lift
 
-    out_path = out_dir / "augmentation.json"
+    out_path = out_dir / "augmentation_matched2000.json"
     out_path.write_text(json.dumps(obj, indent=2))
     print(f"[aug] wrote {out_path} ({len(rows)} rows, "
           f"{len(lift)} (model|pipeline) lift blocks)")
@@ -572,7 +595,8 @@ def main() -> None:
         description="Phase 11 utility driver — EVAL-01 TSTR + EVAL-04 augmentation."
     )
     ap.add_argument("--out", type=Path, default=Path("revision/results"),
-                    help="Output dir for tstr.json / augmentation.json.")
+                    help=("Output dir for tstr_matched2000.json / "
+                          "augmentation_matched2000.json (matched-budget driver, 14-20)."))
     ap.add_argument("--csv-path", type=Path, default=Path("./data.csv"),
                     help="OD CSV (repo-root relative; resolved to absolute).")
     ap.add_argument("--epochs", type=int, default=50,

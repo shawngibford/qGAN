@@ -74,9 +74,11 @@ from revision.core.preprocessing import inverse_logreturns  # noqa: E402
 from revision.core.data import load_and_preprocess, rolling_window  # noqa: E402
 from revision.core import WINDOW_LENGTH  # noqa: E402
 
-# 6 model_kinds: quantum reused from 09.1; the 5 new ones from Phase 10 sweep.
-MODEL_KINDS = ["quantum", "wgan_mlp", "wgan_cnn", "wgan_lstm", "vae", "ar"]
-PIPELINES = ["A", "B"]            # Pipeline C dropped (D-10-05)
+# Matched-budget driver mode (14-20): 9 trainable model_kinds × 1 pipeline (B)
+# × 5 seeds = 45 frozen cells under revision/results/matched2000/runs/<mk>/<seed>/.
+MODEL_KINDS = ["iqp_sel_55_repro", "V1", "V2", "V3",
+               "wgan_mlp", "wgan_cnn", "wgan_lstm", "vae", "ar"]
+PIPELINES = ["B"]                 # Pipeline B only (matched-budget driver mode, 14-20)
 SEEDS = [42, 43, 44, 45, 46]
 
 # TimeGAN reference pin (recorded in JSON metadata, T-11-06 mitigation).
@@ -100,51 +102,65 @@ def _compute_data_hash(csv_path: Path) -> str:
 
 
 def _assert_baseline_data_hashes(expected: str) -> dict:
-    """Assert all 50 *baseline* config.yaml data_hash fields equal `expected`.
+    """Assert all 45 matched-budget config.yaml data_hash fields equal `expected`.
 
-    Quantum (09.1) runs wrote NO data_hash field, so they are deliberately NOT
-    grepped — equivalence is by construction (same load_and_preprocess on the
-    same data.csv). This is RESEARCH Pitfall 4 (Pitfall-4 anti-pattern guard).
+    Matched-budget driver mode (14-20): 9 trainable model_kinds × 5 seeds = 45
+    cells under matched2000/runs/<model_kind>/<seed>/. Every cell carries the
+    canonical data_hash directly — no quantum-by-construction shortcut needed
+    (the matched2000 sweep wrote data_hash into every config.yaml, including
+    the 4 quantum variants iqp_sel_55_repro/V1/V2/V3).
     """
-    new_models = ["wgan_mlp", "wgan_cnn", "wgan_lstm", "vae", "ar"]
+    all_models = ["iqp_sel_55_repro", "V1", "V2", "V3",
+                  "wgan_mlp", "wgan_cnn", "wgan_lstm", "vae", "ar"]
     checked = 0
     mismatches = []
-    for m in new_models:
-        for p in PIPELINES:
-            for s in SEEDS:
-                cfg_path = REPO / f"revision/results/baselines/runs/{m}/{p}/{s}/config.yaml"
-                cfg = yaml.safe_load(cfg_path.read_text())
-                checked += 1
-                if cfg.get("data_hash") != expected:
-                    mismatches.append((m, p, s, cfg.get("data_hash")))
-    assert checked == 50, f"expected 50 new configs, checked {checked}"
+    for m in all_models:
+        for s in SEEDS:
+            cfg_path = REPO / f"revision/results/matched2000/runs/{m}/{s}/config.yaml"
+            cfg = yaml.safe_load(cfg_path.read_text())
+            checked += 1
+            if cfg.get("data_hash") != expected:
+                mismatches.append((m, s, cfg.get("data_hash")))
+    assert checked == 45, f"expected 45 matched-budget configs, checked {checked}"
     assert not mismatches, f"data_hash mismatch (UNEXPECTED — report loudly): {mismatches}"
-    quantum_equiv_note = (
-        "Quantum (09.1) data equivalence established BY CONSTRUCTION: the 09.1 "
-        "transform_ablation runs used the identical load_and_preprocess(data.csv) "
-        "OD tensor; 09.1 wrote no data_hash field, so no grep is performed "
-        "(Pitfall 4)."
+    matched_budget_note = (
+        "Matched-budget driver mode (14-20): all 45 cells under "
+        "revision/results/matched2000/runs/<model_kind>/<seed>/ carry the "
+        "canonical data_hash 91e447d4624e25b3 in their config.yaml directly. "
+        "The 4 quantum variants (iqp_sel_55_repro, V1, V2, V3) and 5 classical "
+        "baselines (wgan_mlp, wgan_cnn, wgan_lstm, vae, ar) all assert by-value, "
+        "not by-construction; no Pitfall-4 shortcut applied."
     )
     return {
         "recomputed_from": "load_and_preprocess('data.csv')['OD'].tobytes() sha256[:16]",
-        "n_new_configs_checked": checked,
+        "n_matched_budget_configs_checked": checked,
         "all_equal": True,
-        "quantum_equivalence": quantum_equiv_note,
+        "matched_budget_note": matched_budget_note,
     }
 
 
 # ── reconstruct_od — copied VERBATIM (A + B branches only) ────────────────────
 # Byte-identical to _build_baseline_notebook.py:167-210 (Plan 01 Task 1 too).
 def _run_base(model_kind: str, pipeline: str, seed: int) -> Path:
-    if model_kind == "quantum":
-        # reused 09.1 quantum runs (D-10-18)
-        return REPO / f"revision/results/transform_ablation/runs/{pipeline}/{seed}"
-    # new Phase 10 baseline runs (D-10-14 layout: runs/<model>/<pipeline>/<seed>)
-    return REPO / f"revision/results/baselines/runs/{model_kind}/{pipeline}/{seed}"
+    # Matched-budget driver mode (14-20): single branch, all 9 trainable
+    # model_kinds resolve to revision/results/matched2000/runs/<mk>/<seed>/.
+    # No pipeline subdir (Pipeline B is implicit; an A-branch lookup raises in
+    # reconstruct_od via the NotImplementedError guard below).
+    return REPO / f"revision/results/matched2000/runs/{model_kind}/{seed}"
 
 
 def reconstruct_od(model_kind: str, pipeline: str, seed: int,
                    n_synth_subsample: int | None = None) -> dict:
+    # 14-20 guard: matched-budget driver mode is Pipeline B only. The
+    # matched2000 sweep has no Pipeline-A cells — every cell was trained as
+    # Pipeline B with log-return transform. The Pipeline-A branch below is
+    # retained as dead-but-not-deleted reference but is unreachable here.
+    if pipeline != "B":
+        raise NotImplementedError(
+            f"Matched-budget driver mode supports Pipeline B only; "
+            f"got pipeline={pipeline!r}. The matched2000 sweep "
+            f"(revision/results/matched2000/runs/) has no Pipeline-A cells."
+        )
     base = _run_base(model_kind, pipeline, seed)
     samples_pm1 = np.load(base / "samples.npy").astype(np.float64)
     inv = np.load(base / "inverse_kwargs.npz", allow_pickle=True)
@@ -455,7 +471,7 @@ def main() -> None:
     if not out_dir.is_absolute():
         out_dir = REPO / out_dir
     out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / "predictive_discriminative.json"
+    out_path = out_dir / "predictive_discriminative_matched2000.json"
     out_path.write_text(json.dumps(obj, indent=2))
     print(f"wrote {out_path} ({len(obj['rows'])} rows, "
           f"{len(obj['scores'])} (model,pipeline) groups, "
