@@ -1690,6 +1690,161 @@ def render_tstr_crossmodel(repo: Path, figures_dir: Path) -> list[Path]:
     return _save(fig, figures_dir, "tstr_crossmodel", companion)
 
 
+def render_tstr_crossmodel_matched2000(repo: Path,
+                                       figures_dir: Path) -> list[Path]:
+    """Cross-model TSTR R²/MAE/RMSE grouped bars — matched-budget Pipeline B
+    (Plan 14-20).
+
+    Render-only over ``revision/results/tstr_matched2000.json`` (the 14-20
+    matched-budget driver-mode output: 9 trainable model_kinds × Pipeline B
+    × 2000 epochs, 5 generator seeds × 3 init seeds per cell, consumed from
+    ``revision/results/matched2000/runs/``). The four quantum variants
+    (iqp_sel_55_repro, V1, V2, V3) are labeled explicitly — no generic
+    "quantum" alias — so the figure aligns with the R1-M1 matched-budget
+    family.
+
+    Single Pipeline-B panel (matched-budget protocol is Pipeline B only;
+    Pipeline A has no matched2000 artefacts — see D-11-10 + 14-20 plan).
+    NEGATIVE R² IS PLOTTED HONESTLY (no clamp, no abs, no rescale) — the
+    matched-budget data may or may not show negative R² depending on the
+    generator; the axis treatment is preserved from the legacy renderer
+    for safety.
+    """
+    src_path = repo / Path("revision/results/tstr_matched2000.json")
+    t = _load_json(src_path, "tstr_matched2000.json (Plan 14-20 source)")
+    tstr_block: dict = t["tstr"]
+    model_kinds: list[str] = list(t["model_kinds"])
+    pipelines: list[str] = list(t["pipelines"])
+    assert pipelines == ["B"], (
+        f"tstr_matched2000.json must be Pipeline B only; got {pipelines}"
+    )
+    init_seeds: list[int] = list(t.get("init_seeds", [40, 41, 42]))
+    soft_sensor_meta: str = t.get("soft_sensor", "")
+
+    # Build per-(model, pipeline=B) records.
+    per_mp: dict[str, dict] = {}
+    for k, v in tstr_block.items():
+        if "|" not in k:
+            continue  # skips 'real_only_baseline'
+        per_mp[k] = {
+            "r2_mean": float(v["r2_mean"]),
+            "r2_std": float(v["r2_std"]),
+            "mae_mean": float(v["mae_mean"]),
+            "mae_std": float(v["mae_std"]),
+            "rmse_mean": float(v["rmse_mean"]),
+            "rmse_std": float(v["rmse_std"]),
+            "n_train_synth": int(v["n_train_synth"]),
+            "n_eval_real": int(v["n_eval_real"]),
+        }
+    neg_r2_keys = sorted(
+        k for k, rec in per_mp.items() if rec["r2_mean"] < 0
+    )
+
+    # 1×3 panels: R², MAE, RMSE. Single-pipeline (B) means single bar
+    # per model in each panel.
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5.2))
+    metrics = [
+        ("r2", "R² (synth → real soft-sensor)"),
+        ("mae", "MAE"),
+        ("rmse", "RMSE"),
+    ]
+    n_models = len(model_kinds)
+    bar_w = 0.6
+    x_base = np.arange(n_models) * 1.0
+
+    real_only = tstr_block.get("real_only_baseline") or {}
+    real_only_r2 = float(real_only.get("r2_mean", float("nan")))
+
+    for ax, (metric, ylabel) in zip(axes, metrics):
+        means = []
+        stds = []
+        for m in model_kinds:
+            k = f"{m}|B"
+            rec = per_mp.get(k)
+            if rec is None:
+                means.append(0.0); stds.append(0.0); continue
+            means.append(rec[f"{metric}_mean"])
+            stds.append(rec[f"{metric}_std"])
+        colors = [MODEL_COLORS.get(m, "#666666") for m in model_kinds]
+        ax.bar(
+            x_base, means, bar_w,
+            yerr=stds, capsize=3, color=colors, alpha=0.92,
+            edgecolor="white", linewidth=0.6,
+        )
+        ax.set_xticks(x_base)
+        ax.set_xticklabels(
+            [MODEL_LABELS.get(m, m) for m in model_kinds],
+            rotation=30, ha="right", fontsize=8,
+        )
+        ax.set_ylabel(ylabel)
+        ax.set_title(f"TSTR (matched-budget, Pipeline B) — {ylabel}")
+        ax.grid(True, alpha=0.3, axis="y")
+        if metric == "r2":
+            r2_vals = [per_mp[f"{m}|B"]["r2_mean"]
+                       for m in model_kinds if f"{m}|B" in per_mp]
+            ymin = min(min(r2_vals + [real_only_r2 if not np.isnan(real_only_r2)
+                                      else 0.0]) - 0.5, -0.5)
+            ymax = max(max(r2_vals) + 0.2, 1.05)
+            ax.set_ylim(ymin, ymax)
+            ax.axhline(0.0, color="#333333", linewidth=0.8, alpha=0.5)
+            if not np.isnan(real_only_r2):
+                ax.axhline(
+                    real_only_r2, color="#882255", linewidth=1.2,
+                    linestyle="--", alpha=0.7,
+                    label=f"real-only (n=65) R²={real_only_r2:.2f}",
+                )
+                ax.legend(frameon=False, fontsize=8, loc="lower right")
+            if any(v < 0 for v in r2_vals):
+                ax.annotate(
+                    "R² < 0 ⇒ worse than predicting the mean",
+                    xy=(0.02, 0.04), xycoords="axes fraction",
+                    fontsize=8, color="#882255",
+                    bbox=dict(boxstyle="round,pad=0.25", fc="white",
+                              ec="#882255", alpha=0.85),
+                )
+
+    fig.suptitle(
+        "TSTR cross-model — matched-budget Pipeline B (2000 epochs, "
+        "9 trainable variants). TSTRLiteLSTM (1-layer, hidden=32) trained "
+        "on synthetic OD windows; tested on held-out real OD. Mean ± std "
+        "over 3 init seeds (40-42). Real-only baseline (n=65 real windows) "
+        "plotted as dashed reference line in R² panel.",
+        fontsize=10,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
+
+    convergence_note = (
+        "All 9 matched-budget generators (3-562 generator params, plus the "
+        "250 881-param shared critic for the WGAN family) converge to "
+        "TSTR R² ≈ 0.99 on Pipeline B against a real-only baseline of "
+        f"R² = {real_only_r2:.3f} (n=65 real windows). The cross-generator "
+        "convergence is structural — the cumulative-sum back-transform "
+        "from log-returns to OD mathematically encodes near-perfect lag-1 "
+        "autocorrelation, so a soft sensor trained on Pipeline-B-derived "
+        "synthetic OD essentially learns the persistence forecast, which "
+        "is near-optimal on the real OD series regardless of which "
+        "generator produced the underlying log-returns. The Pipeline-B "
+        "TSTR therefore does not discriminate among generators."
+    )
+
+    companion = {
+        "figure": "tstr_crossmodel_matched2000",
+        "render_only": True,
+        "source_artifact": "revision/results/tstr_matched2000.json",
+        "matched_budget": True,
+        "training_epochs": 2000,
+        "model_kinds": model_kinds,
+        "pipelines": pipelines,
+        "init_seeds": init_seeds,
+        "per_model_pipeline": per_mp,
+        "negative_r2_observed": neg_r2_keys,
+        "caption_note": convergence_note,
+        "soft_sensor": soft_sensor_meta,
+        "real_only_baseline": tstr_block.get("real_only_baseline"),
+    }
+    return _save(fig, figures_dir, "tstr_crossmodel_matched2000", companion)
+
+
 def render_failure_modes_summary(repo: Path,
                                  figures_dir: Path) -> list[Path]:
     """3-row × 9-column failure-mode diagnostic grid (Task 3).
@@ -2640,6 +2795,7 @@ def main() -> None:
     # could appear (D-14-10). revision/core/ stays byte-frozen (D-14-22).
     written += render_training_convergence_all_models(repo, figures_dir)
     written += render_tstr_crossmodel(repo, figures_dir)
+    written += render_tstr_crossmodel_matched2000(repo, figures_dir)
     written += render_failure_modes_summary(repo, figures_dir)
     written += render_param_efficiency_pareto(repo, figures_dir)
     written += render_seed_variance_per_model(repo, figures_dir)

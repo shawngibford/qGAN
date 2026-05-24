@@ -1,0 +1,153 @@
+{
+ "figure": "tstr_crossmodel_matched2000",
+ "render_only": true,
+ "source_artifact": "revision/results/tstr_matched2000.json",
+ "matched_budget": true,
+ "training_epochs": 2000,
+ "model_kinds": [
+  "iqp_sel_55_repro",
+  "V1",
+  "V2",
+  "V3",
+  "wgan_mlp",
+  "wgan_cnn",
+  "wgan_lstm",
+  "vae",
+  "ar"
+ ],
+ "pipelines": [
+  "B"
+ ],
+ "init_seeds": [
+  40,
+  41,
+  42
+ ],
+ "per_model_pipeline": {
+  "iqp_sel_55_repro|B": {
+   "r2_mean": 0.9944748011091523,
+   "r2_std": 0.00024621936898915894,
+   "mae_mean": 0.028639792154232662,
+   "mae_std": 0.0007204049882188973,
+   "rmse_mean": 0.03609003499150276,
+   "rmse_std": 0.0008060380168173734,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "V1|B": {
+   "r2_mean": 0.9941836568872148,
+   "r2_std": 0.0003887650226758158,
+   "mae_mean": 0.029456260924537975,
+   "mae_std": 0.0011272175252137904,
+   "rmse_mean": 0.037017655869325004,
+   "rmse_std": 0.0012251487926623656,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "V2|B": {
+   "r2_mean": 0.994576089850376,
+   "r2_std": 0.00017741501188664314,
+   "mae_mean": 0.02832738806804021,
+   "mae_std": 0.0004972165891854263,
+   "rmse_mean": 0.035761866718530655,
+   "rmse_std": 0.0005829118613000092,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "V3|B": {
+   "r2_mean": 0.9949187840171589,
+   "r2_std": 0.0008274911393976243,
+   "mae_mean": 0.027508944272994995,
+   "mae_std": 0.0024428005556866245,
+   "rmse_mean": 0.03450785577297211,
+   "rmse_std": 0.0027627974313063097,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "wgan_mlp|B": {
+   "r2_mean": 0.9976387576359071,
+   "r2_std": 0.00011642456501359857,
+   "mae_mean": 0.01831633908053239,
+   "mae_std": 0.0005040505021849654,
+   "rmse_mean": 0.023591602842013042,
+   "rmse_std": 0.0005871327001865795,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "wgan_cnn|B": {
+   "r2_mean": 0.997131445078696,
+   "r2_std": 0.00020531641439193365,
+   "mae_mean": 0.02021346737941106,
+   "mae_std": 0.0006684726738630584,
+   "rmse_mean": 0.025994264831145603,
+   "rmse_std": 0.000926498186838499,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "wgan_lstm|B": {
+   "r2_mean": 0.9966336003132547,
+   "r2_std": 1.226055405458498e-05,
+   "mae_mean": 0.0219703558832407,
+   "mae_std": 0.00029999850177927215,
+   "rmse_mean": 0.02817758359014988,
+   "rmse_std": 5.1344254438133264e-05,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "vae|B": {
+   "r2_mean": 0.992960592408299,
+   "r2_std": 0.00021699367776029994,
+   "mae_mean": 0.03191070258617401,
+   "mae_std": 0.0006848508258023352,
+   "rmse_mean": 0.04074161251386007,
+   "rmse_std": 0.0006272268729770787,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "ar|B": {
+   "r2_mean": 0.9976528493844808,
+   "r2_std": 0.00028013490635831004,
+   "mae_mean": 0.01844084511200587,
+   "mae_std": 0.001187152578362895,
+   "rmse_mean": 0.023485714569687843,
+   "rmse_std": 0.001416367866489912,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  }
+ },
+ "negative_r2_observed": [],
+ "caption_note": "All 9 matched-budget generators (3-562 generator params, plus the 250 881-param shared critic for the WGAN family) converge to TSTR R\u00b2 \u2248 0.99 on Pipeline B against a real-only baseline of R\u00b2 = -13.354 (n=65 real windows). The cross-generator convergence is structural \u2014 the cumulative-sum back-transform from log-returns to OD mathematically encodes near-perfect lag-1 autocorrelation, so a soft sensor trained on Pipeline-B-derived synthetic OD essentially learns the persistence forecast, which is near-optimal on the real OD series regardless of which generator produced the underlying log-returns. The Pipeline-B TSTR therefore does not discriminate among generators.",
+ "soft_sensor": "TSTRLiteLSTM (1-layer LSTM, hidden=32) copied verbatim from _build_baseline_notebook.py:395-440; MAE/RMSE added (sklearn ABSENT, RESEARCH Pitfall 2). One-step-ahead OD forecast: X=window[:,:9], y=window[:,9:10] (D-11-01).",
+ "real_only_baseline": {
+  "n_train_real": 65,
+  "n_eval_real": 320,
+  "per_init_seed": {
+   "40": {
+    "mse": 3.395045757293701,
+    "r2": -13.394692347707348,
+    "mae": 1.8083972930908203,
+    "rmse": 1.8425649404525757
+   },
+   "41": {
+    "mse": 3.2124176025390625,
+    "r2": -12.620364816181741,
+    "mae": 1.7538245916366577,
+    "rmse": 1.792321801185608
+   },
+   "42": {
+    "mse": 3.548990249633789,
+    "r2": -14.04740289396927,
+    "mae": 1.8431751728057861,
+    "rmse": 1.8838764429092407
+   }
+  },
+  "mse_mean": 3.385484536488851,
+  "mse_std": 0.1375714345362611,
+  "r2_mean": -13.354153352619454,
+  "r2_std": 0.5832906516514351,
+  "mae_mean": 1.8017990191777546,
+  "mae_std": 0.036774397822299625,
+  "rmse_mean": 1.8395877281824748,
+  "rmse_std": 0.03743626539388085
+ }
+}
