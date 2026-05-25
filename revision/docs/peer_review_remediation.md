@@ -480,15 +480,22 @@ total across the 12 quantum-vs-{WGAN,AR} pairs — even the worst quantum
 log-return DTW beats the best classical adversarial/autoregressive
 baseline.
 
-**VAE log-return DTW caveat — posterior collapse, NOT model quality.** VAE's
-log-return DTW of 0.088 ± 0.009 is anomalously low because the collapsed
-distribution trivially aligns with the temporal envelope at a high cost in
-spread fidelity (sample std on log-return far narrower than real — the
-same posterior-collapse mechanism documented in the 14-15
-marginal-convergence finding). VAE's log-return DTW is reported but
-explicitly NOT interpreted as evidence of model quality; the
-quantum-vs-WGAN/AR dominance claim is made against the classical
-adversarial and autoregressive baselines, not against VAE.
+**VAE log-return DTW caveat — degenerate generation regime, NOT model
+quality.** VAE's log-return DTW of 0.088 ± 0.009 is anomalously low
+(the lowest of any model, 11.2x below the next-lowest variant) because
+the VAE produces a near-zero-mean tightly-fluctuating log-return signal
+whose marginal is well-aligned with the real data (LR-EMD = 0.016,
+sample std ≈ 0.0186 vs real ≈ 0.0217) but whose lag-1 autocorrelation
+is sharply different from real (ACF lag-1 = -0.648 vs real -0.029).
+DTW's global alignment metric is small because both series are tightly
+fluctuating near zero, while the temporal-structure mismatch is not
+captured by DTW alone. The prior characterization "posterior collapse
+(sample std ≈ 4e-04)" propagated from a forensic-narrative comment and
+is NOT supported by the matched-budget data — the VAE's log-return std
+is only ~1.17x narrower than real, not 54x narrower. VAE's log-return
+DTW is reported but explicitly NOT interpreted as evidence of model
+quality; the quantum-vs-WGAN/AR dominance claim is made against the
+classical adversarial and autoregressive baselines, not against VAE.
 
 **Why missed by r3 agents.** The 5-agent r3 forensic pass was EMD-focused —
 all 5 agents targeted EMD line items. DTW was outside the dragnet's search

@@ -449,10 +449,17 @@ non-significant under the strict-accept gate; no equivalence test is
 computed for DTW. On log-return scale, all four quantum variants (range
 0.940–1.122) report log-return DTW lower than every WGAN baseline
 (wgan_lstm 1.581, wgan_mlp 2.624, wgan_cnn 6.863) and the autoregressive
-baseline (ar 7.699). VAE's log-return DTW of 0.088 is an outlier driven by
-posterior collapse (sample std ≈ 0.0004; documented in the 14-15
-marginal-convergence finding and the R3-CR-1 disclosure above) and is
-reported but not interpreted as evidence of model quality.
+baseline (ar 7.699). VAE's log-return DTW of 0.088 is an outlier — the lowest of any model
+and 11.2x below the next-lowest variant — but reflects a degenerate
+generation regime rather than temporal-structure fidelity. The VAE's
+log-return marginal is well-aligned with the real data (LR-EMD = 0.016,
+sample std ≈ 0.0186 vs real ≈ 0.0217) but its lag-1 autocorrelation is
+sharply different from real (ACF lag-1 = -0.648 vs real -0.029). DTW's
+global alignment metric is small because both series are tightly
+fluctuating near zero, while the temporal-structure mismatch is not
+captured by DTW alone. The VAE is therefore excluded from the
+uniform-dominance LR-DTW comparison and is reported but not
+interpreted as evidence of model quality.
 
 Relative to the Orlandi et al. reference DTW=1.954, the matched-2000ep
 mean OD-scale DTW of approximately 0.30 across the quantum cluster

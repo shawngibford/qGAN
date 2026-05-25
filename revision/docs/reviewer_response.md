@@ -491,9 +491,14 @@ DTW addendum (Plan 14-16): Under matched-budget evaluation, all four
 quantum variants achieve OD-scale DTW of 0.298–0.302, beating the Orlandi
 et al. reference (1.954) by ~6.5x. On log-return DTW, every quantum
 variant outperforms every WGAN baseline (wgan_lstm 1.58, wgan_mlp 2.62,
-wgan_cnn 6.86) and the AR baseline (7.70). VAE's LR-DTW of 0.088 reflects
-posterior collapse (std=0.0004, see 14-15 marginal-convergence finding)
-and is not interpreted as evidence of model quality. The manuscript
+wgan_cnn 6.86) and the AR baseline (7.70). VAE's LR-DTW of 0.088 is
+anomalously low (the lowest of any model, 11.2x below the next-lowest
+variant) and reflects a degenerate generation regime rather than
+temporal-structure fidelity: log-return marginal well-aligned
+(LR-EMD = 0.016) but lag-1 autocorrelation sharply different from real
+(-0.65 vs real -0.03). It is reported but excluded from the
+uniform-dominance LR-DTW comparison and not interpreted as evidence of
+model quality. The manuscript
 main-text DTW (0.6843) is the pre-v1.0 best-case iqp_sel_55 evaluation;
 the matched-2000ep mean (~0.30 OD-scale, ~0.99 LR-scale) reflects honest
 evaluation under the strict-accept gate while preserving the
