@@ -299,11 +299,144 @@ original-OD-scale versions are provided as regenerated figures
 (\texttt{revision/results/figures/acf\_iqp\_sel\_55\_repro}, dual-scale). DTW,
 EMD, and the distributional moments are reported on both scales as above.
 
+\subsubsection*{Cross-Model Comparison}
+
+The headline empirical finding of this study is bifurcated. On the
+log-return temporal-structure axis (Dynamic Time Warping on the
+log-return scale, and the lag-1 autocorrelation of the log-return
+series), the four quantum WGAN-GP variants \emph{uniformly} outperformed
+the three parameter-matched classical adversarial baselines and the
+AR(2) reference. On the optical-density marginal-distribution axis
+(OD-EMD), under the n=5-seed budget the present study cannot resolve a
+parametric-efficiency difference between quantum and classical
+adversarial generators. We report the structural-fidelity finding here
+as the principal result and the OD-marginal finding as a scope-honest
+caveat.
+
+On the log-return scale, the four quantum generators clustered at
+mean LR-DTW between $0.94$ and $1.12$ (V1$=0.94$, V2$=0.95$,
+iqp\_sel\_55\_repro$=0.99$, V3$=1.12$), while the three classical
+adversarial baselines spanned $1.58$ to $6.86$ (wgan\_lstm$=1.58$,
+wgan\_mlp$=2.62$, wgan\_cnn$=6.86$) and the AR(2) reference reached
+$7.70$ (Figure~\ref{fig:cross_model_dtw_dualscale}). The worst-case
+quantum variant (V3, LR-DTW$=1.12$) was below the best-case classical
+adversarial baseline (wgan\_lstm, LR-DTW$=1.58$), and no
+quantum--classical cell in the matched-budget grid showed a classical
+adversarial generator achieving a lower LR-DTW than any quantum
+variant. The VAE, with mean LR-DTW$=0.0876$, is excluded from this
+comparison: its anomalously small DTW reflects a degenerate generation
+regime in which the synthetic log-return standard deviation collapses
+toward zero (see VAE characterization below), so the small DTW does
+not correspond to faithful temporal alignment.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_dtw_dualscale.pdf}
+  \caption{DTW distance under matched 2000-epoch training (n=5 seeds;
+  mean $\pm$ sample standard deviation). Left: optical-density (OD)
+  scale. Right: log-return (LR) scale, on which the quantum cluster
+  (V1$=0.94$, V2$=0.95$, iqp\_sel\_55$=0.99$, V3$=1.12$) uniformly
+  outperforms the classical adversarial baselines (wgan\_lstm$=1.58$,
+  wgan\_mlp$=2.62$, wgan\_cnn$=6.86$) and AR(2)$=7.70$. VAE
+  LR-DTW$=0.0876$ reflects a degenerate generation regime (see text)
+  and is excluded from the dominance comparison. Source:
+  \texttt{revision/results/matched2000\_dualscale.json}, filtered to
+  \texttt{metric\_name=dtw\_mean}.}
+  \label{fig:cross_model_dtw_dualscale}
+\end{figure}
+
+The lag-1 autocorrelation of the generated log-return series tells the
+same structural-fidelity story and is best read jointly with LR-DTW
+rather than as an independent metric. The real-data log-return lag-1
+ACF, computed under the same matched preprocessing pipeline as the
+generators, was $-0.064$ (Figure~\ref{fig:cross_model_acf_overlay},
+dashed reference). Every quantum variant produced a mean lag-1 ACF
+within a narrow band closer to the real reference than any other
+generator: V3$=-0.0895$, iqp\_sel\_55\_repro$=-0.0949$, V2$=-0.0968$,
+V1$=-0.0997$ (range $-0.09$ to $-0.10$). The classical adversarial
+baselines overshot the negative lag-1 magnitude: wgan\_cnn$=-0.111$,
+wgan\_mlp$=-0.142$, wgan\_lstm$=-0.242$; the AR(2) reference produced
+lag-1$=-0.136$. The VAE lag-1 ACF was $-0.648$, an order of magnitude
+larger in absolute value than the real-data reference and outside the
+cross-model spread on this metric. The LR-DTW ranking and the lag-1
+ACF closeness-to-real ranking are concordant: the quantum cluster
+leads on both, the classical adversarial cluster trails on both, and
+the VAE is anomalous on both. We therefore treat the two observations
+as a single structural-fidelity finding rather than as two independent
+metric outcomes.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_acf_overlay.pdf}
+  \caption{Log-return autocorrelation function (lags 0--9) across all
+  nine generators (n=5 seeds; per-model mean), with the real-data ACF
+  shown as a dashed reference (lag-1 $= -0.064$, matched-pipeline).
+  The quantum cluster (lag-1 ACF $-0.09$ to $-0.10$) is closest to
+  real of any generator. Classical adversarial baselines and AR(2)
+  overshoot the negative lag-1 magnitude; VAE (lag-1
+  ACF $= -0.648$) is anomalous, consistent with the degenerate regime
+  discussed in the text. Source:
+  \texttt{revision/results/figures/cross\_model\_acf\_overlay.json};
+  real-data ACF computed via
+  \texttt{revision.core.data.load\_and\_preprocess}.}
+  \label{fig:cross_model_acf_overlay}
+\end{figure}
+
+\paragraph{VAE characterization.}
+The VAE baseline did not fit cleanly into either side of the
+bifurcated finding and we characterize it separately. On the
+OD-marginal it is well-aligned (OD-EMD $\approx 0.026$); its
+LR-EMD$\,\approx 0.016$ is also in-cluster with the other generators on
+the marginal axis, indicating that the per-step distribution is
+captured. However, its mean LR-DTW of $0.0876$ is anomalously small
+because the synthetic log-return standard deviation collapses --- a
+near-constant sequence is trivially close in DTW to any reference, and
+the small DTW therefore does not reflect faithful temporal alignment.
+The lag-1 ACF $-0.648$, sharply different from the real-data
+$-0.064$, is the diagnostic that exposes the collapse: the VAE
+produces a strongly anti-correlated step-to-step structure that real
+log returns do not exhibit. We refer to this as a \emph{degenerate
+generation regime} (faithful one-step marginal, broken temporal
+structure) and exclude the VAE from the LR-DTW dominance comparison
+above.
+
+\paragraph{OD marginal: non-significant difference under low power.}
+On the optical-density single-step marginal, per-model OD-EMD means
+were tightly clustered for three of the four matched-budget
+configurations: iqp\_sel\_55\_repro$=0.0275$, wgan\_mlp$=0.0260$,
+wgan\_lstm$=0.0282$, with wgan\_cnn$=0.0543$ (the
+wgan\_cnn mean is inflated by a single seed-42 outlier at OD-EMD
+$=0.1587$, while the other four wgan\_cnn seeds lie between $0.020$
+and $0.034$; we disclose this rather than excluding it). We tested
+each of the 20 quantum-vs-classical OD-EMD pairs (4 quantum $\times$
+5 classical, including VAE and AR(2)) with a Welch two-sample
+t-test under the n=5 seed budget. The maximum p-value floor is
+$> 0.36$ and the maximum absolute Cohen's $d$ ceiling is $\leq 0.65$;
+the ceiling is itself driven by the wgan\_cnn seed-42 outlier
+described above. At n=5 per group the Welch t-test has approximately
+$15\%$ power against $|d|=0.65$ and an $80\%$-power detection floor of
+$|d| \approx 2.0$; a two one-sided test (TOST) for equivalence is not
+satisfied at any defensible margin. We therefore report the OD-marginal
+result as a non-significant difference under low power, not as positive
+evidence of equivalence: at the present seed budget the matched-capacity
+quantum and classical adversarial generators are statistically
+indistinguishable on this single-step distributional axis, but the data
+do not positively support an equivalence claim. Acquiring the seed
+budget needed for a TOST-grade equivalence test is a priority for
+future work.
+
 \textbf{Dynamic Time Warping.}
 Under the matched parameter budget and matched 2000-epoch training contract,
 the OD-scale DTW distance between original and synthetic sequences for the
 55-parameter IQP:SEL quantum generator was approximately 0.30 (mean over 5
-seeds; Figure~\ref{fig:DTWD}). An earlier frozen pre-v1.0 best-case checkpoint
+seeds; Figure~\ref{fig:DTWD}). This single-model OD-scale value is consistent
+with the cross-model picture in
+Figure~\ref{fig:cross_model_dtw_dualscale}: at the OD scale, the iqp\_sel\_55
+generator sits inside the cross-model OD-DTW cluster rather than separating
+from it; the separation between the quantum and classical adversarial
+clusters appears on the log-return scale, where the same generator yields
+LR-DTW$=0.99$ against the classical 1.58--6.86 range.
+An earlier frozen pre-v1.0 best-case checkpoint
 reported a DTW distance of 0.6843; that value was not re-emitted under the
 matched-budget contract and is retained only as a historical reference point
 (see the reconciliation note in the supplementary material).
@@ -360,10 +493,15 @@ over-smoothing toward a Gaussian distribution.
 \end{figure*}
 
 \textbf{Temporal Structure.}
-The autocorrelation functions for both original and generated 
-sequences fall within the 95\% confidence bounds across all lags 
-(Figure~\ref{fig:acf}), confirming that the synthetic data do not 
+The autocorrelation functions for both original and generated
+sequences fall within the 95\% confidence bounds across all lags
+(Figure~\ref{fig:acf}), confirming that the synthetic data do not
 introduce spurious temporal correlations absent in the original data.
+The matched-pipeline lag-1 ACF for this single-model diagnostic
+($-0.0949$ for iqp\_sel\_55\_repro against the real-data reference
+$-0.064$) is the per-model entry of the cross-model lag-1 ACF
+comparison shown in Figure~\ref{fig:cross_model_acf_overlay}, where
+the quantum cluster as a whole is closest to the real-data reference.
 
 \begin{figure*}
   \centering
@@ -373,10 +511,25 @@ introduce spurious temporal correlations absent in the original data.
   \label{fig:acf}
 \end{figure*}
 
-Taken together, these results demonstrate that the QWGAN-GP 
-produces synthetic time series that preserve the distributional properties, 
-tail behavior, and temporal independence structure of the original 
-bioprocess data.
+Taken together, the Section~4.1 results constitute a bifurcated empirical
+finding.
+On log-return temporal structure --- LR-DTW and lag-1 ACF read jointly as one
+structural-fidelity axis --- the four quantum WGAN-GP variants
+(LR-DTW $0.94$--$1.12$; lag-1 ACF $-0.09$ to $-0.10$) uniformly outperformed
+the three parameter-matched classical adversarial baselines
+(LR-DTW $1.58$--$6.86$; lag-1 ACF $-0.111$ to $-0.242$) and the AR(2)
+reference (LR-DTW $7.70$; lag-1 $-0.136$), reproducing the real-data
+lag-1 ACF of $-0.064$ more closely than any classical generator. On the
+optical-density single-step marginal, the n=5 seed budget yields
+Welch $p > 0.36$ and max $|\text{Cohen's } d| \leq 0.65$
+between quantum and classical adversarial OD-EMD distributions, with
+TOST equivalence not satisfied at any defensible margin: we report a
+non-significant difference under low power, not positive evidence of
+equivalence. The VAE is characterized as a degenerate generation
+regime (lag-1 ACF $-0.648$, anomalous) and excluded from the
+LR-DTW dominance claim. These observations are restricted to the
+laboratory-scale single-variable photobioreactor cultivation actually
+evaluated.
 
 \subsection{Key Contributions and Findings}
 
