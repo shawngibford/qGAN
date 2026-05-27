@@ -368,6 +368,19 @@ This schematic depicts the photobioreactor experimental setup described in Secti
 
 \subsection{Data Transformation Details}
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_pipeline_4panel.pdf}
+  \caption{Four-stage preprocessing pipeline (Pipeline~B, native): raw OD ($n=778$),
+  log-returns $r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$ ($n=777$),
+  standardized ($\mu=0$, $\sigma=1$), and inverse Lambert~$W$ heavy-tail correction
+  $+$ rescale to $[-1, 1]$. The trained generators operate on the final-stage
+  rescaled log-return windows; all matched-budget evaluation results in
+  Section~4 of the main text are reported under this pipeline. Source:
+  \texttt{revision/results/figures/preprocessing\_pipeline\_4panel.json}.}
+  \label{fig:preprocessing_pipeline}
+\end{figure}
+
 The transformation from optical density measurements to log differences is motivated by the bioprocess itself: for an exponentially growing culture the optical density follows $\mathrm{OD}_t \approx \mathrm{OD}_0\,e^{\mu t}$, so the log difference between successive samples is a direct discrete estimate of the instantaneous specific growth rate. For optical density measurements $OD_t$ at time $t$:
 
 $$r_t = \ln(\text{OD}_t) - \ln(\text{OD}_{t-1}) \;\approx\; \mu_t\,\Delta t$$

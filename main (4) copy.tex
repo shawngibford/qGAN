@@ -641,23 +641,26 @@ evaluated.
 
 \subsection{Key Contributions and Findings}
 
-Our research presents the following principal contributions. First, we outline a decision-driven workflow (Supplementary Figure~A5) as an organising concept for future closed-loop deployment; it is described in the Outlook and is not evaluated empirically here. This framework provides a systematic perspective on bioprocess monitoring that can adapt to varying data availability constraints and sensor limitations.
+Our research presents the following principal contributions. First, we outline a decision-tree triage workflow (Supplementary Figure~A5) as an organising concept for future work; it is described in the Outlook below and is not evaluated empirically here. This schematic provides a systematic perspective on choosing between sensor-feasibility, mechanistic, data-driven, and quantum-synthetic options under varying data-availability constraints, but the decision tree itself is not a measured result of this paper.
 
-Second, we developed and evaluated a QWGAN-GP architecture for bioprocess applications, where the generator component employs a Parameterized Quantum Circuit (PQC) with three layers of quantum gates, including Hadamard gates for superposition creation, rotation gates for amplitude control, and CNOT gates for entanglement generation. This quantum generator reproduces the temporal dependencies and non-linear dynamics of the evaluated bioprocess series within the assessed metrics, at a fidelity comparable to size-matched classical baselines.
+Second, we developed and evaluated a QWGAN-GP architecture for bioprocess applications, where the generator component employs a Parameterized Quantum Circuit (PQC) with three layers of quantum gates, including Hadamard gates for superposition creation, rotation gates for amplitude control, and CNOT gates for entanglement generation. Under the matched-budget protocol (Section~3), this quantum generator outperforms every parameter-matched classical adversarial baseline on log-return temporal alignment (LR-DTW 0.94--1.12 vs 1.58--6.86) and reproduces the lag-1 autocorrelation of the real series ($-0.064$) more closely than any classical generator (quantum cluster $-0.0997$ to $-0.0895$); on the optical-density single-step marginal, no parametric-efficiency advantage between quantum and classical adversarial generators is resolved at $n=5$.
 
-Third, our empirical validation on a single real-world photobioreactor cultivation campaign characterizes the behaviour of the proposed approach. Under a matched parameter budget and matched training epochs, the quantum generator produces synthetic log-return sequences whose distributional and autocorrelation structure are comparable to, but do not exceed, those of size-matched classical WGAN-GP baselines (Section~4; full per-model figures in the supplementary figure suite). We therefore present the QWGAN-GP as a viable hybrid generator on this data-scarce task rather than as a method of demonstrated advantage over classical baselines, and we restrict claims to the laboratory-scale single-variable setting actually evaluated.
+Third, our empirical evaluation on a single real-world photobioreactor cultivation campaign produces a bifurcated finding (Section~4.1, Figures~\ref{fig:cross_model_dtw_dualscale} and~\ref{fig:cross_model_acf_overlay}). The quantum generators \emph{exceed} the parameter-matched classical adversarial baselines on the two log-return temporal-structure metrics (LR-DTW and lag-1 ACF closeness to real), \emph{match} them (statistically indistinguishable under the achievable $n=5$ power) on the OD single-step marginal, and \emph{fall short} on the log-return single-step marginal (LR-EMD). We present the QWGAN-GP as outperforming size-matched classical adversarial baselines on the log-return temporal-structure axis on this dataset, while restricting positive claims to that axis and to the laboratory-scale single-variable setting actually evaluated.
 
-We note that the present study does not include a direct comparison against a classical
-WGAN-GP with a matched generator capacity, which would be needed to isolate the
-contribution of the quantum circuit. Such an ablation study is a priority for future work.
+The matched-budget protocol (Section~3) already isolates the contribution of the
+quantum circuit: three parameter-matched classical WGAN-GP baselines
+(\texttt{wgan\_mlp}: 74, \texttt{wgan\_cnn}: 73, \texttt{wgan\_lstm}: 78 parameters)
+are trained against the 55--135-parameter quantum entrants under a shared
+250881-parameter critic, with all other adversarial hyperparameters held fixed.
+The per-model evaluation is reported in Section~4.1.
 
 Fourth, we have contributed to open science practices by making our code and datasets publicly available at \url{https://github.com/shawngibford/qgan}, facilitating independent verification and accelerating future advances in quantum-enhanced bioprocess engineering.
 
 \subsection{Theoretical and Practical Implications}
 
-The contribution of this work is methodological: it provides a parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against classical baselines on a data-scarce bioprocess task, together with a reproducible result. Our results show that quantum circuits can represent the probability distributions found in this bioprocess time series, but do not provide evidence of a computational advantage over classical approaches at matched capacity; extending the comparison to multivariate distributions remains an important next step.
+The contribution of this work is methodological: it provides a parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against classical baselines on a data-scarce bioprocess task, together with a reproducible bifurcated result. On the log-return temporal-structure axis (LR-DTW + lag-1 ACF closeness to real), the quantum generators uniformly outperform the parameter-matched classical adversarial baselines on the evaluated photobioreactor dataset (Section~4.1). On the log-return single-step marginal axis (LR-EMD) the direction reverses, and on the OD single-step marginal axis no parametric-efficiency difference is resolved at $n=5$. Whether the structural-alignment finding generalizes beyond a single cultivation, holds at higher qubit counts past the simulable boundary, and survives extension to multivariate process variables is a substantive empirical question for future work.
 
-From a practical perspective, this research addresses a fundamental bottleneck in bioprocess development where experimental data generation is constrained by high operational costs, regulatory requirements, and time limitations. By generating high-fidelity synthetic data that preserves the essential characteristics of real bioprocess dynamics, our approach enables the development of more robust soft sensors for monitoring critical quality indicator variables such as biomass concentration, product quality, and metabolic activity, variables that are typically difficult or expensive to measure online.
+From a practical perspective, this research addresses a fundamental bottleneck in bioprocess development where experimental data generation is constrained by high operational costs, regulatory requirements, and time limitations. The log-return temporal-structure properties demonstrated here (LR-DTW alignment and lag-1 ACF closeness to real) are prerequisites for downstream applications such as soft-sensor training and process-monitoring augmentation; demonstrating downstream utility (e.g., train-on-synthetic / test-on-real accuracy uplift for soft sensors of biomass concentration, product quality, or metabolic activity) requires multivariate process data and is identified as future work, not as a contribution of the present study.
 
 \subsection{Limitations and Future Directions}
 
@@ -665,11 +668,83 @@ Practical deployment of QGANs faces several challenges. Current quantum hardware
 cultivation campaign; extension to multivariate bioprocess data with multiple
 correlated sensor channels remains an important next step. Furthermore, while our study focused on PQC-based generators, alternative quantum and hybrid classical-quantum architectures may offer additional benefits in generating diverse and realistic synthetic data. Exploring these architectures, optimizing circuit depth, and refining hybrid training strategies are promising future directions.
 
+\paragraph{Scope of the matched-budget finding.} The bifurcated empirical
+result reported in Section~4.1 is bounded by the following scope conditions,
+each of which the present protocol does \emph{not} establish:
+\begin{itemize}[nosep, leftmargin=*]
+  \item \textbf{Metric scope of the positive direction.} The
+    structural-alignment finding is reported on log-return DTW alignment
+    cost and on the lag-1 autocorrelation of the log-return series. It is
+    not a claim about bulk distributional fidelity; on the log-return
+    single-step marginal (LR-EMD) the cross-model ordering reverses, with
+    every classical adversarial baseline outperforming every quantum
+    variant (Section~4.1).
+  \item \textbf{Per-step autocorrelation only.} The autocorrelation result
+    is reported at lag 1. Higher-lag temporal structure, multi-step
+    autocorrelation, and Fourier-spectral fidelity are not evaluated under
+    the matched-budget protocol.
+  \item \textbf{Sample size and statistical power.} The $n=5$ seed budget
+    is sufficient for the per-seed-dominance reading of LR-DTW (no quantum
+    seed overlaps any classical seed) but underpowered for both
+    OD-EMD equivalence testing (Welch power $\approx 15\%$ against
+    $d=0.65$; TOST not satisfied at any defensible margin) and for
+    Welch-significant pairwise lag-1 ACF mean separations
+    (per-seed overlap observed; see Section~4.1).
+  \item \textbf{Qubit count and window dimensionality.} The five-qubit,
+    ten-dimensional rolling-window regime is dictated by the
+    rolling-window choice (Section~3.1). The finding does not extrapolate
+    to higher qubit counts without re-tuning the comparator architectures
+    to higher input dimensionality.
+  \item \textbf{Comparator architecture set.} The comparison is against
+    three classical adversarial architectures (MLP, CNN, LSTM) plus
+    AR(2) and a VAE. The protocol does not include a transformer
+    baseline, a diffusion baseline, or a TimeGAN-vs-TimeGAN comparison.
+\end{itemize}
+The conditions under which the LR-DTW + lag-1 ACF finding is expected to
+extend are discussed in the Outlook below.
+
 \subsection*{Outlook}
 
 The directions below are \emph{proposed extensions} that were not implemented or evaluated in this study; they are stated as future work, not as contributions or results.
 
-\textbf{Closed-loop decision-driven pipeline.} The eight-stage sensor-feasibility / mechanistic / data-driven / quantum-synthetic workflow (Supplementary Figure~A5, decision-tree schematic) is an envisioned framework. It is presented here as an organising concept for future work and is not part of the empirical evaluation of this paper.
+\paragraph{Conditions under which the LR-DTW + lag-1 ACF finding is expected to extend.}
+The structural-alignment result reported in Section~4.1 is bounded to a
+single laboratory-scale optical-density cultivation under a five-qubit,
+ten-dimensional rolling-window regime at $n=5$ seeds. Whether it
+generalizes is itself an empirical question; we identify four conditions
+under which a targeted follow-up study could test that extension:
+\begin{enumerate}[nosep, leftmargin=*]
+  \item \textbf{Multivariate process variables.} Extending the protocol
+    beyond a single channel (optical density) to multivariate bioprocess
+    state vectors (e.g., dissolved oxygen, pH, off-gas, biomass,
+    substrate, product) is required to test whether log-return temporal
+    alignment persists when the generator must capture correlated
+    channels rather than a single growth signal.
+  \item \textbf{Longer time series.} The present single campaign yields
+    778 raw OD samples and 384 rolling windows. Larger cultivation
+    libraries (multiple campaigns, longer durations, finer sampling)
+    would both increase the per-seed effective sample size and expose
+    longer-horizon temporal structure that the present length-10
+    windows cannot resolve.
+  \item \textbf{Higher qubit count past the simulable boundary.} The
+    matched-budget protocol uses 5 qubits, which sits inside the
+    statevector-simulable regime. Testing the LR-DTW + lag-1 ACF
+    dominance at higher qubit counts (and on real hardware) is the
+    natural next probe of whether the structural-alignment advantage
+    is a 5-qubit artefact or a property of the PQC class.
+  \item \textbf{Larger seed budget for TOST-grade equivalence and
+    pairwise ACF significance.} The $n=5$ budget is sufficient for the
+    per-seed-dominance reading of LR-DTW but underpowered for OD-EMD
+    equivalence testing and for Welch-significant pairwise lag-1 ACF
+    mean separations. A larger seed budget ($n \gg 5$) would enable
+    TOST-grade equivalence on OD-EMD and resolve per-seed overlap on
+    lag-1 ACF.
+\end{enumerate}
+The corresponding hardware-validation, multivariate, and longer-series
+extensions are the natural targets for follow-up work and are not
+contributions of the present paper.
+
+\textbf{Decision-tree triage workflow.} The eight-stage sensor-feasibility / mechanistic / data-driven / quantum-synthetic workflow (Supplementary Figure~A5, decision-tree schematic) is an envisioned framework. It is presented here as an organising concept for future work and is not part of the empirical evaluation of this paper.
 
 \textbf{Hybrid-GAN-mechanistic structures.} A second proposed direction combines GANs with physics-informed mechanistic components for data-scarce environments \cite{mansouri2025models, nielsen2020hybrid, nazemzadeh2021integration, ehtesham2025dynamics}. This would couple first-principles parametric models with data-driven techniques \cite{sharma2022hybrid, O'Brien2021A} and could extend PINN-style training with an adversarial objective. The mathematical formulation, integration schematic, and comparative table are given in Supplementary Section~A.3 (Supplementary Figure~A2, Figure~A3, and Table~A2) as a \emph{proposed} architecture only; no Hybrid-GAN was trained or evaluated in this work.
 
@@ -680,9 +755,36 @@ The complete source code and datasets used in this study are publicly available 
 
 \section{Concluding Remarks}
 
-This research investigates quantum-enhanced generative adversarial networks as one candidate approach to data scarcity in laboratory-scale bioprocess time-series modelling. On a single optical-density cultivation dataset, a QWGAN-GP can generate synthetic sequences that preserve key statistical properties of the measured signal at a fidelity comparable to parameter-matched classical baselines; establishing whether any quantum-specific benefit exists will require multivariate data, larger campaigns, and validation beyond the single-variable laboratory setting studied here.
+Returning to the falsifiable question posed in Section~1.3 --- whether a
+PQC generator can match or exceed a parameter-matched classical generator
+on a low-data bioprocess task --- the matched-budget evidence on this
+single dataset is bifurcated. The quantum generators \emph{exceed} the
+parameter-matched classical adversarial baselines on log-return temporal
+alignment (LR-DTW 0.94--1.12 vs 1.58--6.86) and on lag-1 autocorrelation
+closeness to the real series ($-0.064$); they \emph{match} the classical
+adversarial baselines (statistically indistinguishable under the achievable
+$n=5$ power, Welch $p > 0.36$ and $|\text{Cohen's } d| \leq 0.65$) on the
+optical-density single-step marginal; and they \emph{fall short} on the
+log-return single-step marginal (LR-EMD), where every classical adversarial
+baseline outperforms every quantum variant. We treat this as a positive
+but scope-limited answer.
 
-As quantum hardware matures, the methodologies developed here may provide a foundation for bioprocess management systems that operate effectively under data-constrained conditions. Realizing this potential will require direct comparison against classical baselines, extension to multivariate process data, and validation on larger-scale industrial datasets.
+The empirical envelope is narrow: a single 778-point optical-density
+cultivation campaign, 384 length-10 rolling windows, five qubits, five
+seeds. Whether the structural-alignment benefit on log-return temporal
+structure generalizes beyond a single cultivation, holds at higher qubit
+counts past the simulable boundary, or translates into measurable
+downstream utility (e.g., train-on-synthetic / test-on-real soft-sensor
+accuracy uplift) requires multivariate data, longer time series, and a
+larger seed budget for TOST-grade equivalence testing on OD-EMD and
+Welch-significant pairwise separations on lag-1 ACF.
+
+As quantum hardware matures, the methodologies developed here may inform
+future bioprocess synthetic-data workflows. Realizing that potential will
+require the multivariate, longer-series, higher-qubit-count, and
+larger-seed-budget extensions identified in the Outlook above, together
+with downstream-utility evaluation that the present matched-budget
+protocol does not undertake.
 
 
 
