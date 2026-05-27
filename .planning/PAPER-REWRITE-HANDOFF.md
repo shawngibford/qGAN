@@ -1,11 +1,30 @@
 ---
 created: 2026-05-27
+updated: 2026-05-27 (post-swarm; rewrite complete)
 purpose: Session handoff for rewriting main (4) copy.tex + supp_material.tex against the matched-budget evidence base ahead of AIChE aic-4719598 resubmission
-status: Rebuttal letter submitted; 3-week extension granted (deadline ~2026-06-17); bib.bib cleaned and aligned; manuscript rewrite is the remaining work
+status: SUPERSEDED — rewrite swarm complete at commit a50cb0f. Open .planning/PAPER-SUBMISSION-HANDOFF.md for the post-swarm submission-readiness state.
 predecessor: .planning/REBUTTAL-HANDOFF.md (rebuttal-drafting state; load this if you want the per-comment response text)
+successor: .planning/PAPER-SUBMISSION-HANDOFF.md (Wave 8 / post-swarm / submission readiness)
 ---
 
-# Paper Rewrite Handoff — AIChE aic-4719598
+> **⚠️ THIS DOC IS HISTORICAL — DO NOT RE-EXECUTE THE WORK IT DESCRIBES**
+>
+> The paper-rewrite swarm consumed this handoff and executed it across 10 atomic commits between `d81306f` and `a50cb0f` on 2026-05-27. The manuscript is now submission-ready.
+>
+> **If you're a fresh session:** open `.planning/PAPER-SUBMISSION-HANDOFF.md` for the current state and Wave 8 (human ACT) checklist. This doc is preserved as the archeological record of what the rewrite plan asked for.
+>
+> **§4 (prohibitions) and §3 (load-bearing facts) below remain authoritative** as the prohibition list and JSON-traceability standard. The A5 peer-review simulator surfaced two additional empirical findings during the swarm that this handoff did not anticipate, both documented in PAPER-SUBMISSION-HANDOFF.md §5:
+>
+> 1. **LR-EMD asymmetry**: quantum models are statistically significantly WORSE than every classical adversarial baseline on the log-return marginal (AR=0.003, classical 0.007–0.013, quantum 0.014–0.015, VAE 0.016). The current §4.1 discloses this honestly. This is NOT a "withdrawn LR-EMD claim" violation per §4.1 — it is the OPPOSITE-direction scope-honest disclosure.
+> 2. **OD-EMD pipeline-invariance**: the four quantum ansatze produce near-identical OD-EMD per seed (within 0.0002), because the inverse-preprocessing pipeline projects them to a near-identical OD support. Disclosed in §4.1.
+>
+> Also: **handoff §3 stated Adam β₁ = 0.5; the JSON ground truth (revision/results/model_info.json) is β₁ = 0.0**. The manuscript now uses 0.0; DECISIONS.md was synced.
+>
+> Also: **handoff §2.3 figure-caption examples list AR(2)=7.70 inside the classical adversarial range**. The actual classical adversarial range is **1.58–6.86** (wgan_lstm to wgan_cnn); AR(2)=7.70 is a 3-parameter non-adversarial reference. The current manuscript splits them correctly.
+
+---
+
+# Paper Rewrite Handoff — AIChE aic-4719598 (HISTORICAL)
 
 ## 0. Resume in 90 seconds
 

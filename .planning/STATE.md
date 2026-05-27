@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: Phase 14 plan 14-20 complete — matched-budget utility battery re-run on Pipeline B; R1-M2 doc rewrite + provenance gate PASS across all paper-facing docs; freeze candidate refreshed at 3c8502c; 14-07 remains deferred
-last_updated: "2026-05-24T12:00:00.000Z"
-last_activity: 2026-05-24 -- Phase 14 plan 14-20 closed: re-ran utility battery (TSTR + augmentation + predictive/discriminative) against matched2000/runs/ artefacts at 2000 epochs, Pipeline B only; emitted *_matched2000.json sibling JSONs (legacy 1000-epoch JSONs preserved as provenance, not cited); R1-M2 in reviewer_response.md + methods_full.md §3.y + completeness_sweep_manifest.md updated against matched-budget numbers; provenance gate PASS on all 7 paper-facing docs; freeze candidate refreshed at 3c8502c (supersedes 6518323); 14-07 still deferred to acceptance
+stopped_at: 2026-05-27 -- Paper-rewrite swarm complete at HEAD a50cb0f; manuscript submission-ready; provenance gate v2.2 PASS on both .tex files; pdflatex compile clean (53 pages, 0 undefined cites/refs, all 3 new figures render); only Wave 8 (human ACT + tag + AIChE upload) remains. See .planning/PAPER-SUBMISSION-HANDOFF.md.
+last_updated: "2026-05-27T16:30:00.000Z"
+last_activity: 2026-05-27 -- Paper-rewrite swarm completed across 10 atomic commits (d81306f → a50cb0f). 4 writer agents (W1 Abstract+§1.4, W2 §4.1 cross-model, W3 §3 methods, W4 §4.2-§5 + supp) and 7 audit agents (A1 provenance, A2 prohibitions, A3 fact-checker, A4 coherence, A5 Reviewer-2 sim, A6 style polish, A7 compile). Two patch waves (3b LR-EMD/ACF-hedge/OD-pipeline; 5b Table 1 + AR(2) attribution) addressed issues surfaced by A5. Provenance gate patched to v2.2 (LaTeX `--` range handling). 122 main + 26 supp literals all resolve to revision/results/*.json. A5 verdict trajectory: pre-swarm Finding 2 absent → post-W4b+A6 all major+critical issues resolved. Plan 14-20 still the last GSD plan; this swarm work is meta to the GSD phase structure.
 progress:
   total_phases: 2
   completed_phases: 1
