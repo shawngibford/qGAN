@@ -1,0 +1,27 @@
+{
+ "figure": "cross_model_dtw_dualscale",
+ "source": "revision/results/matched2000_dualscale.json#rows filtered to metric_name=dtw_mean, scale in {OD, log_return}; per-model mean \u00b1 sample std (ddof=1) over seeds 42-46",
+ "OD": {
+  "iqp_sel_55_repro": 0.3018999021914496,
+  "V1": 0.30046510255405945,
+  "V2": 0.2984436472866185,
+  "V3": 0.29912670527715796,
+  "wgan_mlp": 0.3024031498949442,
+  "wgan_cnn": 0.43766359639609326,
+  "wgan_lstm": 0.3010011524918504,
+  "vae": 0.3069225868102129,
+  "ar": 0.37068840649566187
+ },
+ "log_return": {
+  "iqp_sel_55_repro": 0.9854792492996086,
+  "V1": 0.9399995627620527,
+  "V2": 0.9494885448744956,
+  "V3": 1.1224550162777311,
+  "wgan_mlp": 2.624278220997848,
+  "wgan_cnn": 6.862971673492635,
+  "wgan_lstm": 1.5811864829474733,
+  "vae": 0.08764663398028764,
+  "ar": 7.699062820833899
+ },
+ "render_only": true
+}

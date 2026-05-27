@@ -1,0 +1,36 @@
+{
+ "figure": "preprocessing_pipeline_4panel",
+ "source": "revision/core/data.load_and_preprocess(csv_path='data.csv') \u2014 Pipeline C (current paper): log-returns + standardize + inverse Lambert W + rescale to [-1, 1]",
+ "stages": [
+  {
+   "panel": 1,
+   "name": "raw_OD",
+   "n": 778,
+   "min": 0.4699999988079071,
+   "max": 3.799999952316284
+  },
+  {
+   "panel": 2,
+   "name": "log_returns",
+   "n": 777,
+   "mean": 0.0024491515941917896,
+   "std": 0.021758602932095528
+  },
+  {
+   "panel": 3,
+   "name": "standardized_log_returns",
+   "n": 777,
+   "mean": 4.909520345819374e-09,
+   "std": 0.9999999403953552
+  },
+  {
+   "panel": 4,
+   "name": "lambert_w_corrected_rescaled",
+   "n": 777,
+   "delta": 0.14693491911976345,
+   "min": -1.0,
+   "max": 1.0
+  }
+ ],
+ "render_only": true
+}
