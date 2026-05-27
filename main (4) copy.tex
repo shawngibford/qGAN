@@ -239,8 +239,10 @@ range-entangled circuit (135 parameters), and a depth-4 linear-entangled
 circuit (75 parameters), each over 5 seeds. Increasing parameter count and
 circuit depth, or changing the entangler topology, did \emph{not} yield a
 fidelity improvement over the compact 55-parameter circuit at the matched
-budget on this dataset (per-model values reported in Section~4 and the
-supplementary figure suite). Consistent with the expressibility--trainability
+budget on this dataset (per-model values reported in Section~4, with full
+per-model numbers tabulated in
+\texttt{revision/results/matched2000\_dualscale.json}). Consistent with the
+expressibility--trainability
 tradeoff for variational circuits, the deeper/larger ansatz is harder to
 optimise in the low-data, fixed-epoch regime without a corresponding accuracy
 gain, motivating the choice of the smaller circuit as the reported
@@ -260,7 +262,7 @@ circuit.
 
 \subsection{Photobioreactor Experimental Setup}
 
-Time-series data were collected from a 20-liter photobioreactor (LUCY\textregistered, Synoxis Algae) designed for laboratory- and pilot-scale cultivation of microalgae; the system is also available in a larger 300-liter configuration. The 20-liter unit used in this study is shown schematically in Figure~\ref{fig:lucy}. The system comprises six vertical borosilicate glass tubes (6~cm OD, 120~cm length) connected in parallel, with SALT technology (spiral air lift tubular circulation) for gentle mixing, controlled aeration, and programmable lighting managed by an integrated automated controller.  
+Time-series data were collected from a 20-liter photobioreactor (LUCY\textregistered, Synoxis Algae) designed for laboratory- and pilot-scale cultivation of microalgae; the system is also available in a larger 300-liter configuration. The 20-liter unit used in this study is shown schematically in Supplementary Figure~A6 (Figure~\ref{fig:lucy}). The system comprises six vertical borosilicate glass tubes (6~cm OD, 120~cm length) connected in parallel, with SALT technology (spiral air lift tubular circulation) for gentle mixing, controlled aeration, and programmable lighting managed by an integrated automated controller.  
 
 The system continuously monitors pH, temperature, optical density, dissolved oxygen, and pressure via feedback control loops, with data logged at 10-minute intervals by an internal data acquisition system. The OD sensor operates at 880~nm and reports values in arbitrary units based on logarithmic attenuation, calibrated against fresh culture medium.
 
@@ -296,21 +298,6 @@ R1-M5). Multi-campaign generalization is identified as future work.
 % source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
 All reported quantitative results are aggregated over 5 independent random
 seeds (42, 43, 44, 45, 46) and reported as mean $\pm$ standard deviation.
-
-\paragraph{Discriminative-score uniformity (evaluation-protocol note).}
-% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_mean (=0.4088757634162903)
-% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_std (=0.0)
-As a property of the evaluation protocol rather than a generator-quality
-result, we note that under Pipeline~B the TimeGAN discriminative score
-collapses to a near-fixed value of approximately 0.4089 (more precisely,
-0.40888) across all 9 generators evaluated in this study (4 quantum + 3
-classical adversarial + AR + VAE), with seed-to-seed standard deviation of
-zero. We therefore treat this metric as a property of the discriminative
-post-hoc network under the matched preprocessing, not as a discriminator of
-generator quality. Predictive-score values, by contrast, do vary across
-models and are reported in the supplementary figure suite alongside the
-per-model TimeGAN scores.
-
 
 \section{Results and Discussion}
 
@@ -416,10 +403,11 @@ relative to LR-DTW. Per-model LR-EMD means under the same
 matched-budget contract (Pipeline B, n=5 seeds) were: AR(2)$=0.0029$,
 wgan\_cnn$=0.0071$, wgan\_mlp$=0.0103$, wgan\_lstm$=0.0127$,
 V3$=0.0143$, iqp\_sel\_55\_repro$=0.0150$, V1$=0.0150$, V2$=0.0150$,
-VAE$=0.0158$. Every classical adversarial baseline ($0.0071$--$0.0127$)
-outperforms every quantum variant ($0.0143$--$0.0150$) on LR-EMD, and
-AR(2) leads at $0.0029$ --- roughly five times lower than the quantum
-cluster. We disclose this asymmetry rather than report it as a
+VAE$=0.0158$. On per-model means, every classical adversarial baseline
+($0.0071$--$0.0127$) is lower than every quantum variant
+($0.0143$--$0.0150$) on LR-EMD, and AR(2) leads at $0.0029$ --- roughly
+five times lower than the quantum cluster (per-seed dominance was not
+separately tested on this axis). We disclose this asymmetry rather than report it as a
 positive finding: LR-DTW and LR-EMD measure different fidelity axes
 (temporal-alignment cost under non-linear time warping versus
 single-step marginal-distributional distance), and the cross-model
@@ -529,6 +517,20 @@ indistinguishable on this single-step distributional axis, but the data
 do not positively support an equivalence claim. Acquiring the seed
 budget needed for a TOST-grade equivalence test is a priority for
 future work.
+
+\paragraph{Discriminative-score uniformity (evaluation-protocol observation).}
+% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_mean (=0.4088757634162903)
+% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_std (=0.0)
+As a property of the evaluation protocol rather than a generator-quality
+result, we note that under Pipeline~B the TimeGAN discriminative score
+collapses to a near-fixed value of approximately 0.4089 (more precisely,
+0.40888) across all 9 generators evaluated in this study (4 quantum + 3
+classical adversarial + AR + VAE), with seed-to-seed standard deviation of
+zero. We therefore treat this metric as a property of the discriminative
+post-hoc network under the matched preprocessing, not as a discriminator of
+generator quality. Predictive-score values, by contrast, do vary across
+models and are reported alongside the per-model TimeGAN scores in the
+artifact set at \texttt{revision/results/predictive\_discriminative\_matched2000.json}.
 
 \textbf{Dynamic Time Warping.}
 Under the matched parameter budget and matched 2000-epoch training contract,
