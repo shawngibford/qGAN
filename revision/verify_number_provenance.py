@@ -64,7 +64,7 @@ import sys
 from pathlib import Path
 
 
-_SCHEMA = "v2.1 (Phase 14 plan 14-14 — negative-sign-aware lookbehind)"
+_SCHEMA = "v2.2 (paper-rewrite — v2.1 negative-sign lookbehind + en-dash range split)"
 
 
 def _find_repo_root() -> Path:
@@ -141,6 +141,19 @@ def _strip_identifiers(text: str) -> str:
     for pat in _ID_PATTERNS:
         out = re.sub(pat, " ", out)
     return out
+
+
+# v2.2 (Phase 14 paper-rewrite swarm W1) — LaTeX en-dash numeric ranges
+# (`0.94--1.12`, `55--135`) parse as `[first, -second]` under `_NUM` because
+# `--` is not a recognized range separator and the second `-` glues to the
+# trailing digits as a sign. Split the range into two whitespace-separated
+# positive endpoints before identifier-strip + tokenization fires, so each
+# endpoint resolves to its own JSON cell.
+_RANGE = re.compile(r"(\d+(?:\.\d+)?)--(\d+(?:\.\d+)?)")
+
+
+def _normalize_numeric_ranges(text: str) -> str:
+    return _RANGE.sub(r"\1 \2", text)
 
 
 def _walk_json(obj, path=""):
@@ -269,6 +282,7 @@ def _resolves(token: str, corpus: dict[str, dict]) -> tuple[str, str] | None:
 
 def verify(target: Path, manifest: bool = False) -> int:
     text = target.read_text()
+    text = _normalize_numeric_ranges(text)
     scrubbed = _strip_identifiers(text)
     corpus = _json_corpus()
 
