@@ -90,7 +90,7 @@ W1 (Main-Reframer) inspects the current title against the §4.1 prohibition on "
 - 2000 epochs (NOT 1000)
 - n=5 seeds: {42, 43, 44, 45, 46}
 - Shared 250881-parameter critic
-- Adam β₁=0.5, β₂=0.9; LR_gen = 6.9173×10⁻⁵; LR_critic = 1.8046×10⁻⁵
+- Adam β₁=0.0, β₂=0.9 (per `revision/results/model_info.json#models[*].optimizer_betas`; handoff §3 had stale β₁=0.5 transcription); LR_gen = 6.9173×10⁻⁵; LR_critic = 1.8046×10⁻⁵
 - n_critic = 9; λ_gp = 2.16; batch = 12
 
 ### Robustness sweeps
