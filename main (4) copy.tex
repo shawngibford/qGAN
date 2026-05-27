@@ -177,6 +177,41 @@ window approach \cite{dimoudis2023utilizing}.  % [41] removed: it was adaptive r
 
 The WGAN-GP loss formulation (Eq.~\ref{eq:wgangp}) was chosen for the quantum generator because it provides stable gradients and meaningful convergence metrics, and mitigates mode collapse issues that can be exacerbated by the discrete nature of quantum measurements; we do not attribute reduced mode collapse to the quantum generator.
 
+\paragraph{Training protocol (matched-budget contract).}
+% source: revision/results/model_info.json#models[*].epochs (=2000)
+% source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
+% source: revision/results/model_info.json#models[*].optimizer ("Adam")
+% source: revision/results/model_info.json#models[*].optimizer_betas ([0.0, 0.9])
+% source: revision/results/model_info.json#models[*].lr_generator (6.9173e-05)
+% source: revision/results/model_info.json#models[*].lr_critic (1.8046e-05)
+% source: revision/results/model_info.json#models[*].n_critic (=9)
+% source: revision/results/model_info.json#models[*].lambda_gp (=2.16)
+% source: revision/results/model_info.json#models[*].batch_size (=12)
+% source: revision/results/total_adversarial_param_budget.json#shared_critic_n_params (=250881)
+All adversarial models in this study are trained under a single matched-budget
+contract so that the only component that differs between the quantum and
+classical entrants is the generator. The contract is: 2000 training epochs
+(no early stopping during matched-budget reproduction), 5 independent random
+seeds $\{42, 43, 44, 45, 46\}$, a shared 250881-parameter classical critic
+used identically across all WGAN-GP runs, Adam with $\beta_1 = 0.0$ and
+$\beta_2 = 0.9$, generator learning rate $\eta_G = 6.9173 \times 10^{-5}$,
+critic learning rate $\eta_C = 1.8046 \times 10^{-5}$, $n_\text{critic} = 9$
+critic updates per generator update, gradient-penalty coefficient
+$\lambda_\text{GP} = 2.16$, and batch size 12. The four quantum ansatz
+variants (the 55-parameter \texttt{iqp\_sel\_55} reproduction and three
+\texttt{default\_75}-family circuits V1, V2, V3 at 75, 135, and 75 parameters
+respectively), the three classical adversarial baselines (\texttt{wgan\_mlp},
+\texttt{wgan\_cnn}, \texttt{wgan\_lstm}), and the two non-adversarial
+baselines (AR(2), VAE) are all trained under the same 2000-epoch, 5-seed
+budget. AR(2) is fit in closed form via least squares; the VAE uses a
+single-Adam ELBO loop ($\eta = 1 \times 10^{-3}$) and does not consume the
+shared critic or gradient-penalty terms. The remaining hyperparameter values
+are hyperparameter-optimization-locked from the v1.0 release (frozen prior to
+this revision); the matched-budget reproduction inherits them unchanged so
+that all 2000-epoch comparison runs share identical optimizer machinery.
+Full per-model dtype and backend pinning details are given in
+Supplementary Section~A.8 and Appendix.
+
 \subsection{Circuit Design Rationale}
 
 The generator circuit was fixed by three deliberate design choices, each
@@ -243,7 +278,13 @@ correction, and rescaled to $[-1, 1]$.
 % source: revision/results/model_info.json#dataset.window_stride (=2)
 % source: revision/results/model_info.json#dataset.rolling_windows (=384)
 Overlapping subsequences of length 10 with stride 2 are then extracted with a
-rolling window, producing 384 training windows.
+rolling window, producing 384 training windows. We refer to this preprocessing
+chain (log-return $\to$ standardization $\to$ inverse Lambert~$W$ $\to$
+rescale to $[-1, 1]$) as \textbf{Pipeline~B} (native preprocessing); it is
+the only preprocessing under which the matched-budget evaluation results
+reported in Section~4 are computed. A pre-v1.0 legacy normalization
+(\emph{Pipeline~A}) is retained solely for the historical reconciliation note
+and is not used for any matched-budget result in this paper.
 % source: revision/results/model_info.json#dataset.train_windows (=384)
 % source: revision/results/model_info.json#dataset.val_windows (=0)
 % source: revision/results/model_info.json#dataset.test_windows (=0)
@@ -255,6 +296,20 @@ R1-M5). Multi-campaign generalization is identified as future work.
 % source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
 All reported quantitative results are aggregated over 5 independent random
 seeds (42, 43, 44, 45, 46) and reported as mean $\pm$ standard deviation.
+
+\paragraph{Discriminative-score uniformity (evaluation-protocol note).}
+% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_mean (=0.4088757634162903)
+% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_std (=0.0)
+As a property of the evaluation protocol rather than a generator-quality
+result, we note that under Pipeline~B the TimeGAN discriminative score
+collapses to a near-fixed value of approximately 0.4089 (more precisely,
+0.40888) across all 9 generators evaluated in this study (4 quantum + 3
+classical adversarial + AR + VAE), with seed-to-seed standard deviation of
+zero. We therefore treat this metric as a property of the discriminative
+post-hoc network under the matched preprocessing, not as a discriminator of
+generator quality. Predictive-score values, by contrast, do vary across
+models and are reported in the supplementary figure suite alongside the
+per-model TimeGAN scores.
 
 
 \section{Results and Discussion}

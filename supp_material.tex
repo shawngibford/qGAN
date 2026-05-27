@@ -148,7 +148,7 @@ Recent experimental implementations have demonstrated proof-of-concept QGANs on 
 \begin{figure*}
     \centering
     \includegraphics[width=1\linewidth]{hybridgan.png}
-    \caption{QGAN and synthetic data implementation within a hybrid-model approach to process monitoring.}\label{fig:qgan_hybrid_appraoch}
+    \caption{QGAN and synthetic data implementation within a hybrid-model approach to process monitoring.}\label{fig:qgan_hybrid_approach}
 \end{figure*}
 
 Hybrid modeling typically combines parametric models derived from first-principles knowledge such as reaction kinetics or mass balances with nonparametric, data-driven techniques like neural networks to mitigate the challenges of sparse datasets. \cite{sharma2022hybrid} For example, hybrid models augment mechanistic simulations with machine learning to improve accuracy in bioprocessing, where experimental data are often costly and scarce due to lack of process analytical technology (PAT) or regulatory restrictions (especially in biopharmaceutical production processes), enabling reliable predictions for process optimization and control.\cite{O'Brien2021A}
@@ -354,7 +354,7 @@ The circuit implements the architecture described in Section 3, leveraging quant
 \begin{figure*}
     \centering
     \includegraphics[width=0.75\linewidth]{bpm_qgan.drawio.png}
-    \caption{Decision-tree of the bioprocesses monitoring framework.}\label{fig:qgan_schemcatic}
+    \caption{Decision-tree of the bioprocesses monitoring framework.}\label{fig:qgan_schematic}
 \end{figure*}
 This figure illustrates the decision-driven workflow described in Section~4.2 of the main text, integrating sensor feasibility checks, mechanistic modeling, data-driven learning, and quantum synthetic data generation within a unified feedback loop.
 \begin{figure*}
@@ -420,6 +420,15 @@ The window length ($m$) is set longer than ($s$) to guarantee enough overlap. Ac
 \subsection{Critic Network Architecture Details}
 
 The Critic model is a convolutional neural network that processes sequential data to distinguish between real and generated data from the quantum generator. The network follows the WGAN-GP architecture~\cite{gulrajani2017improved} with specific adaptations for time series data.
+
+% source: revision/results/total_adversarial_param_budget.json#shared_critic_n_params (=250881)
+% source: revision/results/classical_architectures.json#models.shared_critic.total_params (=250881)
+The critic network has a total of 250881 trainable parameters. This same
+critic was used for all WGAN-GP generators (quantum and classical) under the
+matched-budget protocol defined in main-text Section~3.1; the only component
+that varies between the quantum and classical entrants is the generator,
+which isolates the effect of the quantum circuit on the generated
+distribution.
 
 \textbf{Architecture Specifications:}
 
