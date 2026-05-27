@@ -496,7 +496,7 @@ anomalously low (the lowest of any model, 11.2x below the next-lowest
 variant) and reflects a degenerate generation regime rather than
 temporal-structure fidelity: log-return marginal well-aligned
 (LR-EMD = 0.016) but lag-1 autocorrelation sharply different from real
-(-0.65 vs real -0.03). It is reported but excluded from the
+(-0.65 vs real -0.06). It is reported but excluded from the
 uniform-dominance LR-DTW comparison and not interpreted as evidence of
 model quality. The manuscript
 main-text DTW (0.6843) is the pre-v1.0 best-case iqp_sel_55 evaluation;

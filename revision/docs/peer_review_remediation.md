@@ -486,7 +486,7 @@ quality.** VAE's log-return DTW of 0.088 ± 0.009 is anomalously low
 the VAE produces a near-zero-mean tightly-fluctuating log-return signal
 whose marginal is well-aligned with the real data (LR-EMD = 0.016,
 sample std ≈ 0.0186 vs real ≈ 0.0217) but whose lag-1 autocorrelation
-is sharply different from real (ACF lag-1 = -0.648 vs real -0.029).
+is sharply different from real (ACF lag-1 = -0.648 vs real -0.064).
 DTW's global alignment metric is small because both series are tightly
 fluctuating near zero, while the temporal-structure mismatch is not
 captured by DTW alone. The prior characterization "posterior collapse

@@ -454,7 +454,7 @@ and 11.2x below the next-lowest variant — but reflects a degenerate
 generation regime rather than temporal-structure fidelity. The VAE's
 log-return marginal is well-aligned with the real data (LR-EMD = 0.016,
 sample std ≈ 0.0186 vs real ≈ 0.0217) but its lag-1 autocorrelation is
-sharply different from real (ACF lag-1 = -0.648 vs real -0.029). DTW's
+sharply different from real (ACF lag-1 = -0.648 vs real -0.064). DTW's
 global alignment metric is small because both series are tightly
 fluctuating near zero, while the temporal-structure mismatch is not
 captured by DTW alone. The VAE is therefore excluded from the
