@@ -46,7 +46,7 @@ Kongens Lyngby, Denmark\\
 % Abstract section (max 150 words)
 \begin{abstract}
 \noindent
-Data scarcity in biomanufacturing poses challenges for model development, process monitoring, and optimization. We propose a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP) to generate synthetic time series data for laboratory-scale bioprocesses. The generator employs a Parameterized Quantum Circuit (PQC), with the aim of reducing dependence on scarce experimental data. Under a matched parameter budget and matched training epochs, the quantum generator reproduces the temporal dynamics of the optical density series within the evaluated metrics, at a fidelity comparable to size-matched classical baselines, focusing on optical density as a key measurement for dry biomass estimation. These results provide a proof-of-concept for quantum-enhanced synthetic data generation in bioprocess engineering, with potential downstream applications in soft sensor development and predictive control.
+Data scarcity in biomanufacturing constrains model development for process monitoring and optimization. We evaluate a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP), whose generator is a Parameterized Quantum Circuit (PQC), against parameter-matched classical adversarial baselines on a single laboratory-scale photobioreactor cultivation. Under a matched parameter budget and 2000 training epochs (n=5 seeds), quantum WGAN-GPs with 55--135 parameters uniformly outperform parameter-matched classical baselines (73--78 parameters) on log-return temporal structure (LR-DTW 0.94--1.12 vs 1.58--7.70), and reproduce the lag-1 autocorrelation of the real series (-0.064) more closely than any classical generator. On the optical-density marginal, no parametric-efficiency advantage is observed: Welch p > 0.36, max |Cohen's d| <= 0.65 at n=5 power approx 15\%, and TOST equivalence is not satisfied. These findings constitute a proof-of-concept for quantum-enhanced synthetic time-series generation on this dataset, with potential downstream relevance to soft-sensor development and predictive control.
 \end{abstract}
 
 % Topical Heading and Keywords
@@ -56,7 +56,7 @@ Data scarcity in biomanufacturing poses challenges for model development, proces
 
 % Plain Language Summary (max 250 characters)
 \section*{Plain Language Summary}
-We developed a quantum computing method to create realistic artificial data for biomanufacturing processes. This helps overcome data shortages and improves process control and monitoring in industrial biotechnology applications.
+On a small bioprocess dataset, a quantum generator reproduced short-term temporal structure more faithfully than parameter-matched classical adversarial baselines, while overall single-point distributions were statistically indistinguishable.
 
 \section{Introduction}
 
@@ -100,11 +100,13 @@ The principal contributions of this work are:
 
 - QWGAN-GP for Process Data Synthesis: A hybrid QWGAN-GP architecture, with a Parameterized Quantum Circuit generator and a classical critic, applied to laboratory-scale bioprocess time series.
 
-- Empirical Evaluation on a Photobioreactor Campaign: A quantitative evaluation on a single real-world cultivation dataset, reporting fidelity comparable to classical baselines under the matched protocol rather than a demonstrated quantum advantage.
+- Bifurcated Empirical Finding: Under the matched protocol, quantum generators (55--135 parameters) uniformly outperform parameter-matched classical adversarial baselines (73--78 parameters) on log-return temporal structure, with concordant evidence from log-return dynamic time warping (LR-DTW 0.94--1.12 vs 1.58--7.70) and the lag-1 autocorrelation of the real series (quantum cluster -0.089 to -0.100 vs real -0.064; closest of any generator evaluated). On the optical-density marginal, no advantage is observed.
 
-- Open Science and Reproducibility: We make our code and datasets publicly available, facilitating independent verification and future advances in quantum-enhanced bioprocess engineering.
+- Empirical Evaluation on a Photobioreactor Campaign: A quantitative evaluation on a single real-world cultivation dataset, in which optical-density-marginal differences between the quantum generator and parameter-matched classical baselines are not statistically significant under the achievable power (Welch p > 0.36, max |Cohen's d| <= 0.65, n=5 power approx 15\%, TOST equivalence not demonstrated). Reported as a non-significant difference under low power rather than as demonstrated equivalence.
 
-A decision-driven workflow is also outlined in the Outlook as an organising concept for future closed-loop deployment; it is not an empirical contribution of this study.
+- Open Science and Reproducibility: We make our code and datasets publicly available, facilitating independent verification and future studies of quantum generators for bioprocess time series.
+
+A decision-tree triage workflow is also outlined in the Outlook as an organising concept for future work; it is not implemented or evaluated here and is not an empirical contribution of this study.
 
 The remainder of this paper is structured as follows. Section~2 reviews classical and quantum machine learning foundations. Section~3 describes the QWGAN-GP architecture and the photobioreactor experimental setup. Section~4 presents results, key contributions, and discusses implications and limitations. Section~5 offers concluding remarks.
 
