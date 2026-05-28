@@ -358,9 +358,12 @@ Models are grouped by family. Bold marks the row leader: lowest mean for
 EMD/DTW (lower-is-better), or the mean closest to the real-data lag-1 ACF
 reference (\,$-0.064$\,) for ACF lag-1. The VAE LR-DTW value (marked
 $\dagger$) is excluded from the LR-DTW row leader because the VAE operates
-in a degenerate generation regime in which the synthetic log-return
-standard deviation collapses toward zero, making DTW vacuously small (see
-``VAE characterization'' paragraph below). For OD-EMD the
+in a degenerate generation regime: the synthetic log-return series
+exhibits a strongly anti-correlated step-to-step structure (lag-1 ACF
+$\approx -0.65$ vs real $\approx -0.064$), producing a high-frequency
+oscillation that is warped-aligned to the real series at low DTW cost
+without carrying real temporal information (see ``VAE characterization''
+paragraph below). For OD-EMD the
 9-model differences are within the achievable n=5 statistical resolution
 (Welch~$p > 0.36$, max~$|d| \leq 0.65$, TOST not satisfied); bolding the
 lowest sample mean is an arithmetic convention, not a significance claim.
@@ -389,9 +392,10 @@ lag-1 ACF  & $-0.0949$ & $-0.0997$ & $-0.0968$ & $\mathbf{-0.0895}$ & $-0.1418$ 
 \end{tabular}
 \\[2pt]
 {\scriptsize $^{\dagger}$VAE LR-DTW excluded from row leader: the small
-value reflects a degenerate generation regime (collapsed synthetic
-log-return variance), not faithful temporal alignment; see the ``VAE
-characterization'' paragraph below.}
+value reflects a degenerate generation regime (lag-1 ACF
+$\approx -0.65$ vs real $\approx -0.064$ produces a high-frequency
+oscillation that is warped-aligned at low DTW cost), not faithful
+temporal alignment; see the ``VAE characterization'' paragraph below.}
 \end{table*}
 
 PDF/CDF, Q--Q, and ACF diagnostic plots in the main text are shown on the
@@ -432,9 +436,11 @@ quantum--classical cell in the matched-budget grid showed a classical
 adversarial generator achieving a lower LR-DTW than any quantum
 variant. The VAE, with mean LR-DTW$=0.0876$, is excluded from this
 comparison: its anomalously small DTW reflects a degenerate generation
-regime in which the synthetic log-return standard deviation collapses
-toward zero (see VAE characterization below), so the small DTW does
-not correspond to faithful temporal alignment.
+regime in which the synthetic log-return series exhibits a strongly
+anti-correlated step-to-step structure (lag-1 ACF $\approx -0.65$ vs
+real $\approx -0.064$; see VAE characterization below), producing a
+high-frequency oscillation that is warped-aligned to the real series
+at low DTW cost without carrying real temporal information.
 
 \begin{figure}[!htbp]
   \centering
@@ -524,9 +530,12 @@ OD-marginal it is well-aligned (OD-EMD $\approx 0.026$); its
 LR-EMD$\,\approx 0.016$ is also in-cluster with the other generators on
 the marginal axis, indicating that the per-step distribution is
 captured. However, its mean LR-DTW of $0.0876$ is anomalously small
-because the synthetic log-return standard deviation collapses --- a
-near-constant sequence is trivially close in DTW to any reference, and
-the small DTW therefore does not reflect faithful temporal alignment.
+because the synthetic log-return series exhibits a strongly
+anti-correlated step-to-step structure (lag-1 ACF $\approx -0.65$,
+vs real $\approx -0.064$). The resulting high-frequency oscillation
+is warped-aligned to the real series at low DTW cost despite
+carrying no real temporal information, so the small DTW does not
+reflect faithful temporal alignment.
 The lag-1 ACF $-0.648$, sharply different from the real-data
 $-0.064$, is the diagnostic that exposes the collapse: the VAE
 produces a strongly anti-correlated step-to-step structure that real
