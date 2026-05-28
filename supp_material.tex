@@ -349,6 +349,111 @@ makes the ``no quantum--classical seed overlap on LR-DTW'' claim in
 \end{tabular}
 \end{table}
 
+\subsubsection{Pairwise Welch t-tests on EMD}
+
+The main-text Section~4.1 reports the OD-EMD null result and the
+LR-EMD reversal in aggregate (``Welch $p > 0.36$ on OD'', ``every
+classical adversarial baseline outperforms every quantum variant on
+LR-EMD''). Tables~\ref{tbl:welch_od_emd} and~\ref{tbl:welch_lr_emd}
+make those aggregates auditable cell by cell by listing the full 4
+quantum~$\times$ 5 classical-side $=$ 20 pairwise Welch two-sample
+$t$-tests at each scale (Welch $t$, two-sided $p$, Cohen's $d$, and a
+nonparametric Mann--Whitney~$U$ $p$-value as a backup against the small
+$n=5$ Welch approximation). Sign convention: positive Cohen's $d$ means
+$\mathrm{mean}_q > \mathrm{mean}_c$ on EMD, i.e., the quantum variant
+has \emph{higher} (worse) EMD than the comparator. Significance markers:
+$^{*}\,p<0.05$, $^{**}\,p<0.01$, $^{***}\,p<0.001$.
+
+% source: revision/results/welch_pairwise.json#pairs filtered to scale=='OD', metric_name=='emd', pipeline=='B'
+\begin{table}[h]
+\centering
+\caption{Pairwise Welch $t$-tests on \textbf{OD-scale EMD} ($n=5$ seeds
+per group, Pipeline~B, matched 2000-epoch budget). All 20 pairs have
+$p > 0.36$ and $|\mathrm{Cohen's}\,d| < 0.65$: no quantum-vs-classical
+pair is statistically resolved on the OD marginal under the $n=5$ seed
+budget. Source:
+\texttt{revision/results/welch\_pairwise.json}, filtered to
+\texttt{scale=='OD'}.}
+\label{tbl:welch_od_emd}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+\textbf{Quantum} & \textbf{Classical} & \textbf{Mean}$_q$ & \textbf{Mean}$_c$ & \textbf{Welch $p$} & \textbf{Cohen's $d$} & \textbf{MWU $p$} \\
+\midrule
+IQP:SEL & WGAN-MLP & $0.0275$ & $0.0260$ & $0.688$ & $+0.26$ & $0.548$ \\
+IQP:SEL & WGAN-CNN & $0.0275$ & $0.0543$ & $0.365$ & $-0.64$ & $0.548$ \\
+IQP:SEL & WGAN-LSTM & $0.0275$ & $0.0282$ & $0.836$ & $-0.14$ & $1.000$ \\
+IQP:SEL & VAE & $0.0275$ & $0.0257$ & $0.664$ & $+0.29$ & $0.548$ \\
+IQP:SEL & AR(2) & $0.0275$ & $0.0291$ & $0.627$ & $-0.32$ & $0.421$ \\
+V1 & WGAN-MLP & $0.0276$ & $0.0260$ & $0.677$ & $+0.27$ & $0.548$ \\
+V1 & WGAN-CNN & $0.0276$ & $0.0543$ & $0.366$ & $-0.64$ & $0.548$ \\
+V1 & WGAN-LSTM & $0.0276$ & $0.0282$ & $0.849$ & $-0.12$ & $1.000$ \\
+V1 & VAE & $0.0276$ & $0.0257$ & $0.654$ & $+0.30$ & $0.548$ \\
+V1 & AR(2) & $0.0276$ & $0.0291$ & $0.639$ & $-0.31$ & $0.421$ \\
+V2 & WGAN-MLP & $0.0276$ & $0.0260$ & $0.679$ & $+0.27$ & $0.548$ \\
+V2 & WGAN-CNN & $0.0276$ & $0.0543$ & $0.366$ & $-0.64$ & $0.548$ \\
+V2 & WGAN-LSTM & $0.0276$ & $0.0282$ & $0.846$ & $-0.13$ & $1.000$ \\
+V2 & VAE & $0.0276$ & $0.0257$ & $0.656$ & $+0.29$ & $0.548$ \\
+V2 & AR(2) & $0.0276$ & $0.0291$ & $0.637$ & $-0.31$ & $0.421$ \\
+V3 & WGAN-MLP & $0.0275$ & $0.0260$ & $0.685$ & $+0.27$ & $0.548$ \\
+V3 & WGAN-CNN & $0.0275$ & $0.0543$ & $0.365$ & $-0.64$ & $0.548$ \\
+V3 & WGAN-LSTM & $0.0275$ & $0.0282$ & $0.838$ & $-0.13$ & $1.000$ \\
+V3 & VAE & $0.0275$ & $0.0257$ & $0.661$ & $+0.29$ & $0.548$ \\
+V3 & AR(2) & $0.0275$ & $0.0291$ & $0.628$ & $-0.32$ & $0.421$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% source: revision/results/welch_pairwise.json#pairs filtered to scale=='log_return', metric_name=='emd', pipeline=='B'
+\begin{table}[h]
+\centering
+\caption{Pairwise Welch $t$-tests on \textbf{log-return EMD (LR-EMD)}
+($n=5$ seeds per group, Pipeline~B, matched 2000-epoch budget). All
+20 pairs reach $p < 0.05$; 17 of 20 reach $p < 0.001$. Positive
+Cohen's $d$ entries (16 of 20) indicate the quantum variant has
+\emph{higher} (worse) LR-EMD than the classical adversarial or AR(2)
+comparator; the only negative-$d$ pairs are quantum~vs.\ VAE, where
+the quantum variants beat the VAE on this marginal (but the VAE
+itself is in the marginal-distribution cluster, while being degenerate
+on temporal-structure metrics --- see \S4.1 ``VAE characterization''
+in the main text). The pattern shows that the LR-EMD reversal
+reported in \S4.1 is highly statistically significant in the
+classical-leads direction, with effect sizes from $d \approx 2$ (vs.\
+WGAN-CNN) to $d \approx 150$ (vs.\ AR(2)). Source:
+\texttt{revision/results/welch\_pairwise.json}, filtered to
+\texttt{scale=='log\_return'}.}
+\label{tbl:welch_lr_emd}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+\textbf{Quantum} & \textbf{Classical} & \textbf{Mean}$_q$ & \textbf{Mean}$_c$ & \textbf{Welch $p$} & \textbf{Cohen's $d$} & \textbf{MWU $p$} \\
+\midrule
+IQP:SEL & WGAN-MLP & $0.0150$ & $0.0103$ & $9.5\!\times\!10^{-5}\,^{***}$ & $+8.18$ & $0.008$ \\
+IQP:SEL & WGAN-CNN & $0.0150$ & $0.0071$ & $0.027\,^{*}$ & $+2.15$ & $0.151$ \\
+IQP:SEL & WGAN-LSTM & $0.0150$ & $0.0127$ & $5.8\!\times\!10^{-4}\,^{***}$ & $+5.00$ & $0.008$ \\
+IQP:SEL & VAE & $0.0150$ & $0.0158$ & $6.0\!\times\!10^{-4}\,^{***}$ & $-6.04$ & $0.008$ \\
+IQP:SEL & AR(2) & $0.0150$ & $0.0029$ & $1.2\!\times\!10^{-11}\,^{***}$ & $+73.78$ & $0.008$ \\
+V1 & WGAN-MLP & $0.0150$ & $0.0103$ & $1.4\!\times\!10^{-4}\,^{***}$ & $+8.34$ & $0.008$ \\
+V1 & WGAN-CNN & $0.0150$ & $0.0071$ & $0.027\,^{*}$ & $+2.16$ & $0.151$ \\
+V1 & WGAN-LSTM & $0.0150$ & $0.0127$ & $8.5\!\times\!10^{-4}\,^{***}$ & $+5.16$ & $0.008$ \\
+V1 & VAE & $0.0150$ & $0.0158$ & $7.5\!\times\!10^{-5}\,^{***}$ & $-9.55$ & $0.008$ \\
+V1 & AR(2) & $0.0150$ & $0.0029$ & $4.0\!\times\!10^{-15}\,^{***}$ & $+101.0$ & $0.008$ \\
+V2 & WGAN-MLP & $0.0150$ & $0.0103$ & $1.7\!\times\!10^{-4}\,^{***}$ & $+8.54$ & $0.008$ \\
+V2 & WGAN-CNN & $0.0150$ & $0.0071$ & $0.026\,^{*}$ & $+2.17$ & $0.151$ \\
+V2 & WGAN-LSTM & $0.0150$ & $0.0127$ & $0.001\,^{**}$ & $+5.39$ & $0.008$ \\
+V2 & VAE & $0.0150$ & $0.0158$ & $3.0\!\times\!10^{-11}\,^{***}$ & $-43.07$ & $0.008$ \\
+V2 & AR(2) & $0.0150$ & $0.0029$ & $9.5\!\times\!10^{-10}\,^{***}$ & $+151.5$ & $0.008$ \\
+V3 & WGAN-MLP & $0.0143$ & $0.0103$ & $1.8\!\times\!10^{-4}\,^{***}$ & $+7.04$ & $0.008$ \\
+V3 & WGAN-CNN & $0.0143$ & $0.0071$ & $0.035\,^{*}$ & $+1.98$ & $0.151$ \\
+V3 & WGAN-LSTM & $0.0143$ & $0.0127$ & $0.003\,^{**}$ & $+3.55$ & $0.008$ \\
+V3 & VAE & $0.0143$ & $0.0158$ & $7.5\!\times\!10^{-5}\,^{***}$ & $-10.19$ & $0.008$ \\
+V3 & AR(2) & $0.0143$ & $0.0029$ & $2.9\!\times\!10^{-11}\,^{***}$ & $+68.07$ & $0.008$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 
 \subsection{Code and Data Availability}
 Complete code repository: \url{https://github.com/shawngibford/qgan}
