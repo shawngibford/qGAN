@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: 2026-05-27 -- Paper-rewrite swarm complete at HEAD a50cb0f; manuscript submission-ready; provenance gate v2.2 PASS on both .tex files; pdflatex compile clean (53 pages, 0 undefined cites/refs, all 3 new figures render); only Wave 8 (human ACT + tag + AIChE upload) remains. See .planning/PAPER-SUBMISSION-HANDOFF.md.
-last_updated: "2026-05-27T16:30:00.000Z"
-last_activity: 2026-05-27 -- Paper-rewrite swarm completed across 10 atomic commits (d81306f → a50cb0f). 4 writer agents (W1 Abstract+§1.4, W2 §4.1 cross-model, W3 §3 methods, W4 §4.2-§5 + supp) and 7 audit agents (A1 provenance, A2 prohibitions, A3 fact-checker, A4 coherence, A5 Reviewer-2 sim, A6 style polish, A7 compile). Two patch waves (3b LR-EMD/ACF-hedge/OD-pipeline; 5b Table 1 + AR(2) attribution) addressed issues surfaced by A5. Provenance gate patched to v2.2 (LaTeX `--` range handling). 122 main + 26 supp literals all resolve to revision/results/*.json. A5 verdict trajectory: pre-swarm Finding 2 absent → post-W4b+A6 all major+critical issues resolved. Plan 14-20 still the last GSD plan; this swarm work is meta to the GSD phase structure.
+stopped_at: 2026-05-28 -- Paper rewrite + post-swarm audit-cleanup complete; tagged v1.2 at HEAD 34eb34e; pushed to origin/main + tag. Manuscript submission-ready. All gates PASS (143 main + 156 supp literals; 52-page compile, 0 undefined refs/cites, 0 hyperref duplicate-destination warnings, all 11 figures in repo). Only AIChE-portal upload + GitHub release notes + plan 14-07 (Zenodo DOI at acceptance) remain. See .planning/PAPER-SUBMISSION-HANDOFF.md.
+last_updated: "2026-05-28T17:00:00.000Z"
+last_activity: 2026-05-28 -- Post-swarm audit-cleanup session completed across 9 atomic commits (2cdb558 → 34eb34e). Removed Lambert W from Pipeline B description (regression the swarm's provenance gate couldn't catch — caught by post-swarm read-through). Added Table 2 (cross-model 9×5 with bolded row-leaders), supp Table A.X (per-seed LR-DTW dominance), supp Tables A.X+1/+2 (40 per-pair Welch t-tests on OD/LR EMD), Figure A8 (preprocessing ablation A/B/C). Reordered §4.2 contributions (QWGAN-GP lead, decision-tree closer). Removed 5 stale single-model figures (pre-revision Oct-2025 assets with retrofitted captions, caught by 4-parallel-audit-agent pre-tag sweep). Fixed 4 table column overflows + 8 hyperref duplicate-destination warnings + 14 caption \texttt-path overfulls. Bundled 7 legacy figures into repo (now compiles without TEXINPUTS). Cleared 10 audit FLAGs. Tagged v1.2 + pushed.
 progress:
   total_phases: 2
   completed_phases: 1
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** The qGAN must generate synthetic OD time series that capture real data's volatility structure
-**Current focus:** Phase 14 — paper-revision-release-freeze
+**Current focus:** Phase 14 — paper-revision-release-freeze (tagged v1.2; AIChE upload pending)
 
 ## Current Position
 
-Phase: 14 (paper-revision-release-freeze) — PARTIAL (19/20; 14-07 deferred)
-Plan: 19 of 20 complete (14-20 closed the R1-M2 utility-coverage gap surfaced during rebuttal drafting)
-Status: 14-20 closed the R1-M2 regime mismatch (utility battery re-run on matched2000 artefacts at 2000 epochs, Pipeline B only). R1-M1 and R1-M2 now share a single matched-budget evidence base. 14-07 (tag + Zenodo deposit) remains deferred to acceptance — first-round revision resubmits with the ZENODO-DOI-PLACEHOLDER + the new freeze-candidate SHA `3c8502c` in Data Availability; real DOI minted at acceptance.
-Last activity: 2026-05-24 -- 14-20 landed (matched-budget utility battery + figure + R1-M2 rewrite + methods + manifest); freeze candidate refreshed at commit 3c8502c (hardened verify_freeze_ready.py passes every gate except release.md, which is 14-07's deliverable); legacy 1000-epoch utility JSONs preserved on disk for provenance, not cited in rebuttal
+Phase: 14 (paper-revision-release-freeze) — PARTIAL (19/20; 14-07 deferred to journal acceptance)
+Plan: 19 of 20 complete. **v1.2 tagged + pushed** at commit `34eb34e` (2026-05-28).
+Status: Paper submission-ready. AIChE rebuttal letter + revised manuscript + supp + bib + 11 figures + ama.bst — all assembled and verified. The only remaining external items are (i) AIChE-portal upload (15 files; instructions in PAPER-SUBMISSION-HANDOFF.md §2.4), (ii) GitHub release notes at https://github.com/shawngibford/qGAN/releases/new?tag=v1.2, and (iii) plan 14-07 Zenodo DOI mint, which is intentionally deferred to journal acceptance (rebuttal cites ZENODO-DOI-PLACEHOLDER).
+Last activity: 2026-05-28 -- Post-swarm audit-cleanup session: 4-parallel-audit-agent pre-tag sweep + 8 cleanup commits + handoff doc update + tag v1.2 + push. Caught and fixed a Lambert W misdescription regression the swarm missed (Methods §3.2 prose described Pipeline B as containing inverse Lambert W when actually D-10-05 dropped that path; the provenance gate validates literals not prose, so the regression slipped past). Added 4 new tables/figures, removed 5 stale single-model figures, bundled 7 legacy figs into repo, cleared 10 audit FLAGs. See .planning/PAPER-SUBMISSION-HANDOFF.md §1A for the full audit-cleanup change log.
 
 Progress: [██████████] 96%
 
