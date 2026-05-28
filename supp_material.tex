@@ -578,7 +578,10 @@ the standardization and rescaling steps. A 5-seed ablation at 1000 epochs
 (Figure~\ref{fig:preprocessing_ablation}) compared three preprocessing
 chains: \emph{Pipeline~A} (raw min-max-normalized OD; control),
 \emph{Pipeline~B} (log-returns standardized $+$ rescaled, as above), and
-\emph{Pipeline~C} (Pipeline~B followed by inverse Lambert~$W$). The three
+\emph{Pipeline~C} (log-return $\to$ standardize $\to$ inverse
+Lambert~$W$ $\to$ rescale to $[-1, 1]$; i.e., Pipeline~B with an
+inverse Lambert~$W$ step inserted between standardization and
+rescaling). The three
 pipelines were trained under identical 5-qubit, 3-layer, 55-parameter
 IQP:SEL generators. Pipeline~A trains successfully but produces clearly
 worse OD-scale fidelity (EMD $1.0516 \pm 0.0007$ vs $0.0276$ for B and
@@ -601,7 +604,8 @@ metrics and the ablation summary are in
   \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_ablation_comparison.pdf}
   \caption{Preprocessing ablation across three pipelines (A: raw min-max OD;
   B: log-returns standardized $+$ rescaled to $[-1, 1]$, selected;
-  C: Pipeline~B followed by inverse Lambert~$W$, dropped). Bars are
+  C: log-return $\to$ standardize $\to$ inverse Lambert~$W$ $\to$
+  rescale to $[-1, 1]$, dropped). Bars are
   5-seed mean $\pm$ sample standard deviation under identical 5-qubit,
   3-layer, 55-parameter IQP:SEL generators trained at 1000 epochs.
   Pipelines~B and~C are within sampling noise of each other on every
