@@ -592,7 +592,7 @@ artifact set at \texttt{revision/results/predictive\_discriminative\_matched2000
 Under the matched parameter budget and matched 2000-epoch training contract,
 the OD-scale DTW distance between original and synthetic sequences for the
 55-parameter IQP:SEL quantum generator was approximately 0.30 (mean over 5
-seeds; Figure~\ref{fig:DTWD}). This single-model OD-scale value is consistent
+seeds). This single-model OD-scale value is consistent
 with the cross-model picture in
 Figure~\ref{fig:cross_model_dtw_dualscale}: at the OD scale, the iqp\_sel\_55
 generator sits inside the cross-model OD-DTW cluster rather than separating
@@ -610,14 +610,6 @@ matched-budget DTW of approximately 0.30 is roughly 6.5 times lower than the
 Orlandi et al.\ reference, consistent with effective capture of temporal
 dynamics in this bioprocess setting (the DTW algorithm is detailed in
 Supplementary Algorithm~\ref{alg:dtw}).
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\columnwidth]{dtwd.png}
-  \caption{DTW alignment path between historical and synthetic data.
-  A fully diagonal path indicates perfect temporal alignment.}
-  \label{fig:DTWD}
-\end{figure}
 
 \textbf{Per-model single-seed diagnostics (deferred to cross-model summary).}
 The per-model probability-density, cumulative-density, quantile--quantile,
