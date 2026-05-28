@@ -324,7 +324,7 @@ the scale of each metric family and the headline 55-parameter IQP:SEL quantum
 generator value on each scale (5-seed mean $\pm$ sample standard deviation under
 the matched 2000-epoch budget).
 
-\begin{table}[h]
+\begin{table*}[!htbp]
 \centering
 \caption{Evaluation metrics and the scale on which each is computed. Values
 are mean $\pm$ sample standard deviation over 5 seeds \{42, 43, 44, 45, 46\},
@@ -347,7 +347,7 @@ Moment: kurtosis    & $0.2039 \pm 0.0555$  & $0.7862 \pm 0.0634$ & both scales \
 ACF (lag~1, mean)   & $-0.0949 \pm 0.0092$ & $0.6951 \pm 0.0013$ & both scales \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 % source: revision/results/matched2000_dualscale.json#rows aggregated by (model_kind, metric_name, scale) over seeds 42-46
 \begin{table*}[!htbp]
@@ -614,65 +614,23 @@ Supplementary Algorithm~\ref{alg:dtw}).
 \begin{figure}[h]
   \centering
   \includegraphics[width=\columnwidth]{dtwd.png}
-  \caption{DTW alignment path between historical and synthetic data. 
+  \caption{DTW alignment path between historical and synthetic data.
   A fully diagonal path indicates perfect temporal alignment.}
   \label{fig:DTWD}
 \end{figure}
 
-\textbf{Distributional Fidelity.}
-The probability density functions of the original and generated log 
-returns show strong agreement in both central tendency and spread 
-(Figure~\ref{fig:pdf}). The corresponding CDFs confirm this overlap 
-across the full range of values, with only minor deviations in the 
-tails (Figure~\ref{fig:cdf}).
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\columnwidth]{pdf.png}
-  \caption{PDF comparison of original and generated log returns.}
-  \label{fig:pdf}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=\columnwidth]{cdf.png}
-  \caption{CDF comparison of original and generated log returns.}
-  \label{fig:cdf}
-\end{figure}
-
-\textbf{Normality Assessment.}
-Q--Q plots for both original and generated distributions 
-(Figure~\ref{fig:qq}) reveal comparable deviation from normality in 
-the tails, indicating that the QWGAN-GP reproduces the heavy-tailed 
-characteristics of the real bioprocess data rather than 
-over-smoothing toward a Gaussian distribution.
-
-\begin{figure*}
-  \centering
-  \includegraphics[width=0.5\linewidth]{qq.png}
-  \caption{Q--Q plots of original (left) and generated (right) log 
-  returns against a theoretical normal distribution.}
-  \label{fig:qq}
-\end{figure*}
-
-\textbf{Temporal Structure.}
-The autocorrelation functions for both original and generated
-sequences fall within the 95\% confidence bounds across all lags
-(Figure~\ref{fig:acf}), confirming that the synthetic data do not
-introduce spurious temporal correlations absent in the original data.
-The matched-pipeline lag-1 ACF for this single-model diagnostic
-($-0.0949$ for iqp\_sel\_55\_repro against the real-data reference
-$-0.064$) is the per-model entry of the cross-model lag-1 ACF
-comparison shown in Figure~\ref{fig:cross_model_acf_overlay}, where
-the quantum cluster as a whole is closest to the real-data reference.
-
-\begin{figure*}
-  \centering
-  \includegraphics[width=1\linewidth]{acf.png}
-  \caption{ACF comparison of original (left) and generated (right)
-  log returns $r_t$, where $r_t = \ln(\mathrm{OD}_t) - \ln(\mathrm{OD}_{t-1})$ is the per-step log return (Supp.\ Eq.~A8). Shaded regions indicate 95\% confidence intervals.}
-  \label{fig:acf}
-\end{figure*}
+\textbf{Per-model single-seed diagnostics (deferred to cross-model summary).}
+The per-model probability-density, cumulative-density, quantile--quantile,
+and lag-resolved autocorrelation diagnostics for the 55-parameter IQP:SEL
+quantum generator on its single-model representative-seed run are
+subsumed by the cross-model evidence above: Table~\ref{tbl:cross_model_comparison}
+reports the per-model 5-seed mean for EMD, DTW, and lag-1 ACF across all
+nine generators on both scales; Figure~\ref{fig:cross_model_acf_overlay}
+shows the lag-0--9 ACF for every generator against the real-data reference;
+and Figure~\ref{fig:cross_model_dtw_dualscale} shows the cross-model DTW
+distances. The matched-pipeline lag-1 ACF for iqp\_sel\_55\_repro is
+$-0.0949$, with the cross-model quantum cluster ($-0.0997$ to $-0.0895$)
+closest to the real-data reference of $-0.064$ as discussed above.
 
 Taken together, the Section~4.1 results constitute a bifurcated empirical
 finding.

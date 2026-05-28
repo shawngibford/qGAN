@@ -323,7 +323,7 @@ quantum cell and any classical adversarial cell in the cross-grid; all
 60 cells satisfy quantum $<$ classical.
 
 % source: revision/results/matched2000_dualscale.json#rows filtered to metric_name=dtw_mean, scale=log_return, model_kind in {V3, wgan_lstm}, seed in {42,43,44,45,46}
-\begin{table}[h]
+\begin{table*}[!htbp]
 \centering
 \caption{Per-seed LR-DTW dominance margin between the worst-case quantum
 variant (V3, 75 parameters) and the best-case classical adversarial
@@ -347,7 +347,7 @@ makes the ``no quantum--classical seed overlap on LR-DTW'' claim in
 46 & $1.1018$ & $1.3070$ & $0.2052$ \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \subsubsection{Pairwise Welch t-tests on EMD}
 
@@ -365,7 +365,7 @@ has \emph{higher} (worse) EMD than the comparator. Significance markers:
 $^{*}\,p<0.05$, $^{**}\,p<0.01$, $^{***}\,p<0.001$.
 
 % source: revision/results/welch_pairwise.json#pairs filtered to scale=='OD', metric_name=='emd', pipeline=='B'
-\begin{table}[h]
+\begin{table*}[!htbp]
 \centering
 \caption{Pairwise Welch $t$-tests on \textbf{OD-scale EMD} ($n=5$ seeds
 per group, Pipeline~B, matched 2000-epoch budget). All 20 pairs have
@@ -403,10 +403,10 @@ V3 & VAE & $0.0275$ & $0.0257$ & $0.661$ & $+0.29$ & $0.548$ \\
 V3 & AR(2) & $0.0275$ & $0.0291$ & $0.628$ & $-0.32$ & $0.421$ \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 % source: revision/results/welch_pairwise.json#pairs filtered to scale=='log_return', metric_name=='emd', pipeline=='B'
-\begin{table}[h]
+\begin{table*}[!htbp]
 \centering
 \caption{Pairwise Welch $t$-tests on \textbf{log-return EMD (LR-EMD)}
 ($n=5$ seeds per group, Pipeline~B, matched 2000-epoch budget). All
@@ -452,7 +452,7 @@ V3 & VAE & $0.0143$ & $0.0158$ & $7.5\!\times\!10^{-5}\,^{***}$ & $-10.19$ & $0.
 V3 & AR(2) & $0.0143$ & $0.0029$ & $2.9\!\times\!10^{-11}\,^{***}$ & $+68.07$ & $0.008$ \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 
 \subsection{Code and Data Availability}
