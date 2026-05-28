@@ -349,6 +349,51 @@ ACF (lag~1, mean)   & $-0.0949 \pm 0.0092$ & $0.6951 \pm 0.0013$ & both scales \
 \end{tabular}
 \end{table}
 
+% source: revision/results/matched2000_dualscale.json#rows aggregated by (model_kind, metric_name, scale) over seeds 42-46
+\begin{table*}[!htbp]
+\centering
+\caption{Cross-model comparison on the five headline matched-budget metrics
+(5-seed mean; n=5 seeds \{42,~43,~44,~45,~46\}; Pipeline~B; 2000 epochs).
+Models are grouped by family. Bold marks the row leader: lowest mean for
+EMD/DTW (lower-is-better), or the mean closest to the real-data lag-1 ACF
+reference (\,$-0.064$\,) for ACF lag-1. The VAE LR-DTW value (marked
+$\dagger$) is excluded from the LR-DTW row leader because the VAE operates
+in a degenerate generation regime in which the synthetic log-return
+standard deviation collapses toward zero, making DTW vacuously small (see
+``VAE characterization'' paragraph below). For OD-EMD the
+9-model differences are within the achievable n=5 statistical resolution
+(Welch~$p > 0.36$, max~$|d| \leq 0.65$, TOST not satisfied); bolding the
+lowest sample mean is an arithmetic convention, not a significance claim.
+Per-seed sample standard deviations and additional decimals are in
+Figures~\ref{fig:cross_model_dtw_dualscale} and
+\ref{fig:cross_model_acf_overlay} and the source JSON. Source:
+\texttt{revision/results/matched2000\_dualscale.json}, rows aggregated by
+\texttt{(model\_kind, metric\_name, scale)} over seeds 42--46.}
+\label{tbl:cross_model_comparison}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}lccccccccc@{}}
+\toprule
+ & \multicolumn{4}{c}{\textbf{Quantum}} & \multicolumn{3}{c}{\textbf{Classical adversarial}} & \multicolumn{2}{c}{\textbf{Non-adversarial}} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-8} \cmidrule(lr){9-10}
+\textbf{Metric} & IQP:SEL & V1 & V2 & V3 & WGAN-MLP & WGAN-CNN & WGAN-LSTM & VAE & AR(2) \\
+ & (55p) & (75p) & (135p) & (75p) & (74p) & (73p) & (78p) & (562p) & (3p) \\
+\midrule
+LR-EMD     & $0.0150$ & $0.0150$ & $0.0150$ & $0.0143$ & $0.0103$ & $0.0071$ & $0.0127$ & $0.0158$ & $\mathbf{0.0029}$ \\
+OD-EMD     & $0.0275$ & $0.0276$ & $0.0276$ & $0.0275$ & $0.0260$ & $0.0543$ & $0.0282$ & $\mathbf{0.0257}$ & $0.0291$ \\
+LR-DTW     & $0.99$   & $\mathbf{0.94}$ & $0.95$ & $1.12$ & $2.62$ & $6.86$ & $1.58$ & $0.0876^{\dagger}$ & $7.70$ \\
+OD-DTW     & $0.3019$ & $0.3005$ & $\mathbf{0.2984}$ & $0.2991$ & $0.3024$ & $0.4377$ & $0.3010$ & $0.3069$ & $0.3707$ \\
+lag-1 ACF  & $-0.0949$ & $-0.0997$ & $-0.0968$ & $\mathbf{-0.0895}$ & $-0.1418$ & $-0.1112$ & $-0.2422$ & $-0.6482$ & $-0.1356$ \\
+\bottomrule
+\end{tabular}
+\\[2pt]
+{\scriptsize $^{\dagger}$VAE LR-DTW excluded from row leader: the small
+value reflects a degenerate generation regime (collapsed synthetic
+log-return variance), not faithful temporal alignment; see the ``VAE
+characterization'' paragraph below.}
+\end{table*}
+
 PDF/CDF, Q--Q, and ACF diagnostic plots in the main text are shown on the
 transformed log-return scale (the training space); the corresponding
 original-OD-scale versions are provided as regenerated figures
@@ -357,7 +402,8 @@ EMD, and the distributional moments are reported on both scales as above.
 
 \subsubsection*{Cross-Model Comparison}
 
-The headline empirical finding of this study is bifurcated. On the
+The headline empirical finding of this study, summarised across all
+nine generators in Table~\ref{tbl:cross_model_comparison}, is bifurcated. On the
 log-return temporal-alignment axis (Dynamic Time Warping on the
 log-return scale, and the lag-1 autocorrelation of the log-return
 series), the four quantum WGAN-GP variants \emph{uniformly} outperformed
