@@ -330,7 +330,7 @@ the matched 2000-epoch budget).
 are mean $\pm$ sample standard deviation over 5 seeds \{42, 43, 44, 45, 46\},
 for the 55-parameter IQP:SEL quantum generator (\texttt{iqp\_sel\_55\_repro}),
 matched 2000-epoch budget, Pipeline~B preprocessing. Source:
-\path{revision/results/matched2000_dualscale.json}, filtered to
+\protect\path{revision/results/matched2000_dualscale.json}, filtered to
 \texttt{model\_kind=iqp\_sel\_55\_repro}.}
 \label{tbl:eval_scale}
 \small
@@ -367,7 +367,7 @@ lowest sample mean is an arithmetic convention, not a significance claim.
 Per-seed sample standard deviations and additional decimals are in
 Figures~\ref{fig:cross_model_dtw_dualscale} and
 \ref{fig:cross_model_acf_overlay} and the source JSON. Source:
-\path{revision/results/matched2000_dualscale.json}, rows aggregated by
+\protect\path{revision/results/matched2000_dualscale.json}, rows aggregated by
 \texttt{(model\_kind, metric\_name, scale)} over seeds 42--46.}
 \label{tbl:cross_model_comparison}
 \scriptsize
@@ -447,7 +447,7 @@ not correspond to faithful temporal alignment.
   wgan\_mlp$=2.62$, wgan\_cnn$=6.86$) and AR(2)$=7.70$. VAE
   LR-DTW$=0.0876$ reflects a degenerate generation regime (see text)
   and is excluded from the dominance comparison. Source:
-  \path{revision/results/matched2000_dualscale.json}, filtered to
+  \protect\path{revision/results/matched2000_dualscale.json}, filtered to
   \texttt{metric\_name=dtw\_mean}.}
   \label{fig:cross_model_dtw_dualscale}
 \end{figure}
@@ -511,9 +511,9 @@ than as two independent metric outcomes.
   baselines and AR(2) overshoot the negative lag-1 magnitude on the
   per-model mean; VAE (lag-1 ACF $= -0.648$) is anomalous, consistent
   with the degenerate regime discussed in the text. Source:
-  \path{revision/results/figures/cross_model_acf_overlay.json};
+  \protect\path{revision/results/figures/cross_model_acf_overlay.json};
   real-data ACF computed via
-  \path{revision.core.data.load_and_preprocess}.}
+  \protect\path{revision.core.data.load_and_preprocess}.}
   \label{fig:cross_model_acf_overlay}
 \end{figure}
 
@@ -804,7 +804,7 @@ protocol does not undertake.
 
 % --- end of main text ---
 \bibliographystyle{ama}
-\bibliography{bib}\\
+\bibliography{bib}
 
 
 

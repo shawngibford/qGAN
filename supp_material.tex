@@ -340,7 +340,7 @@ LR-DTW; the gap column gives the absolute margin. The tightest margin
 is at seed~46 (0.205, $\approx 16\%$ of the classical value). This table
 makes the ``no quantum--classical seed overlap on LR-DTW'' claim in
 \S4.1 and \S4.2 of the main text directly verifiable. Source:
-\path{revision/results/matched2000_dualscale.json}, filtered to
+\protect\path{revision/results/matched2000_dualscale.json}, filtered to
 \texttt{metric\_name=dtw\_mean} and \texttt{scale=log\_return}.}
 \label{tbl:per_seed_dtw_dominance}
 \begin{tabular}{@{}cccc@{}}
@@ -381,7 +381,7 @@ pair is statistically resolved on the OD marginal under the $n=5$ seed
 budget; at $n=5$ the Welch test has $\approx 15\%$ power against
 $|d|=0.65$ and a two one-sided test (TOST) for equivalence is not
 satisfied at any defensible margin. Source:
-\path{revision/results/welch_pairwise.json}, filtered to
+\protect\path{revision/results/welch_pairwise.json}, filtered to
 \texttt{scale=='OD'}.}
 \label{tbl:welch_od_emd}
 \scriptsize
@@ -430,7 +430,7 @@ in the main text). The pattern shows that the LR-EMD reversal
 reported in \S4.1 is highly statistically significant in the
 classical-leads direction, with effect sizes from $d \approx 2$ (vs.\
 WGAN-CNN) to $d \approx 150$ (vs.\ AR(2)). Source:
-\path{revision/results/welch_pairwise.json}, filtered to
+\protect\path{revision/results/welch_pairwise.json}, filtered to
 \texttt{scale=='log\_return'}.}
 \label{tbl:welch_lr_emd}
 \scriptsize
@@ -535,7 +535,7 @@ This schematic depicts the photobioreactor experimental setup described in Secti
   generators operate on the final-stage rescaled log-return windows; all
   matched-budget evaluation results in Section~4 of the main text are reported
   under this pipeline. Source:
-  \path{revision/results/figures/preprocessing_pipeline_4panel.json}.}
+  \protect\path{revision/results/figures/preprocessing_pipeline_4panel.json}.}
   \label{fig:preprocessing_pipeline}
 \end{figure}
 
@@ -606,7 +606,7 @@ metrics and the ablation summary are in
   3-layer, 55-parameter IQP:SEL generators trained at 1000 epochs.
   Pipelines~B and~C are within sampling noise of each other on every
   OD-scale metric; Pipeline~B was selected per decision D-10-05.
-  Source: \path{revision/results/transform_ablation/metrics.csv}.}
+  Source: \protect\path{revision/results/transform_ablation/metrics.csv}.}
   \label{fig:preprocessing_ablation}
 \end{figure}
 
