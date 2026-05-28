@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: 2026-05-28 -- Paper rewrite + post-swarm audit-cleanup complete; tagged v1.2 at HEAD 34eb34e; pushed to origin/main + tag. Manuscript submission-ready. All gates PASS (143 main + 156 supp literals; 52-page compile, 0 undefined refs/cites, 0 hyperref duplicate-destination warnings, all 11 figures in repo). Only AIChE-portal upload + GitHub release notes + plan 14-07 (Zenodo DOI at acceptance) remain. See .planning/PAPER-SUBMISSION-HANDOFF.md.
-last_updated: "2026-05-28T17:00:00.000Z"
-last_activity: 2026-05-28 -- Post-swarm audit-cleanup session completed across 9 atomic commits (2cdb558 → 34eb34e). Removed Lambert W from Pipeline B description (regression the swarm's provenance gate couldn't catch — caught by post-swarm read-through). Added Table 2 (cross-model 9×5 with bolded row-leaders), supp Table A.X (per-seed LR-DTW dominance), supp Tables A.X+1/+2 (40 per-pair Welch t-tests on OD/LR EMD), Figure A8 (preprocessing ablation A/B/C). Reordered §4.2 contributions (QWGAN-GP lead, decision-tree closer). Removed 5 stale single-model figures (pre-revision Oct-2025 assets with retrofitted captions, caught by 4-parallel-audit-agent pre-tag sweep). Fixed 4 table column overflows + 8 hyperref duplicate-destination warnings + 14 caption \texttt-path overfulls. Bundled 7 legacy figures into repo (now compiles without TEXINPUTS). Cleared 10 audit FLAGs. Tagged v1.2 + pushed.
+stopped_at: 2026-05-28 -- Clean-compile patch v1.2.1 tagged locally at HEAD 3f4c2ef (1 ahead of origin/main). v1.2 (34eb34e) stays at origin/main as the previously-pushed reference. Manuscript submission-ready with 0 LaTeX errors (was: PDF generated but with 11 silent \Url-in-moving-arg errors in captions). All gates PASS (143 main + 156 supp literals; 52-page compile clean; 4 minor overfull \hbox <14pt; freeze-ready gates a/b/c PASS; gate d release.md expected-deferred to 14-07). Only AIChE-portal upload + GitHub release notes + plan 14-07 (Zenodo DOI at acceptance) remain. See .planning/PAPER-SUBMISSION-HANDOFF.md.
+last_updated: "2026-05-28T21:00:00.000Z"
+last_activity: 2026-05-28 -- LaTeX clean-compile patch session. Fresh session noticed v1.2's compile gate only counted undefined refs/cites and missed 11 \Url-in-moving-arg fatal errors in captions (plus 1 stray \\ after \bibliography). pdflatex exited non-zero but still produced 52-page PDF with garbled caption paths. Fixed by wrapping all 10 caption \path{} calls with \protect (5 main + 5 supp) and dropping the stray \\. Single commit 3f4c2ef. Tagged v1.2.1 locally (not pushed yet — user decision pending). Compile now: 0 errors, 0 bibtex warnings, 0 undefined refs/cites, 52 pages.
 progress:
   total_phases: 2
   completed_phases: 1
@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** The qGAN must generate synthetic OD time series that capture real data's volatility structure
-**Current focus:** Phase 14 — paper-revision-release-freeze (tagged v1.2; AIChE upload pending)
+**Current focus:** Phase 14 — paper-revision-release-freeze (tagged v1.2.1 local + v1.2 on origin; AIChE upload pending)
 
 ## Current Position
 
 Phase: 14 (paper-revision-release-freeze) — PARTIAL (19/20; 14-07 deferred to journal acceptance)
-Plan: 19 of 20 complete. **v1.2 tagged + pushed** at commit `34eb34e` (2026-05-28).
-Status: Paper submission-ready. AIChE rebuttal letter + revised manuscript + supp + bib + 11 figures + ama.bst — all assembled and verified. The only remaining external items are (i) AIChE-portal upload (15 files; instructions in PAPER-SUBMISSION-HANDOFF.md §2.4), (ii) GitHub release notes at https://github.com/shawngibford/qGAN/releases/new?tag=v1.2, and (iii) plan 14-07 Zenodo DOI mint, which is intentionally deferred to journal acceptance (rebuttal cites ZENODO-DOI-PLACEHOLDER).
+Plan: 19 of 20 complete. **v1.2.1 clean-compile patch tagged locally** at commit `3f4c2ef` (2026-05-28); `v1.2` (34eb34e) stays on origin as the previously-pushed reference; main is 1 commit ahead of origin pending push decision.
+Status: Paper submission-ready and now compiles with **0 LaTeX errors** (v1.2 had silent `\Url`-in-moving-arg errors in 10 captions; v1.2.1 fixed via `\protect\path{}` + dropping stray `\\` after `\bibliography`). AIChE rebuttal letter + revised manuscript + supp + bib + 11 figures + ama.bst — all assembled and verified. The only remaining external items are (i) AIChE-portal upload (15 files; instructions in PAPER-SUBMISSION-HANDOFF.md §2.4), (ii) GitHub release notes at https://github.com/shawngibford/qGAN/releases/new?tag=v1.2.1, and (iii) plan 14-07 Zenodo DOI mint, which is intentionally deferred to journal acceptance (rebuttal cites ZENODO-DOI-PLACEHOLDER).
 Last activity: 2026-05-28 -- Post-swarm audit-cleanup session: 4-parallel-audit-agent pre-tag sweep + 8 cleanup commits + handoff doc update + tag v1.2 + push. Caught and fixed a Lambert W misdescription regression the swarm missed (Methods §3.2 prose described Pipeline B as containing inverse Lambert W when actually D-10-05 dropped that path; the provenance gate validates literals not prose, so the regression slipped past). Added 4 new tables/figures, removed 5 stale single-model figures, bundled 7 legacy figs into repo, cleared 10 audit FLAGs. See .planning/PAPER-SUBMISSION-HANDOFF.md §1A for the full audit-cleanup change log.
 
 Progress: [██████████] 96%
