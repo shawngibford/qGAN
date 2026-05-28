@@ -1,10 +1,10 @@
 # Paper Submission Handoff — Wave 8 (Human ACT)
 
-**Status as of 2026-05-27**: Paper-rewrite swarm complete. Manuscript is submission-ready at commit `a50cb0f`. All gates green. Only human read-through, tag, push, and AIChE-portal upload remain.
+**Status as of 2026-05-28**: Paper-rewrite swarm complete + post-swarm audit-cleanup session complete + read-through complete. Manuscript is submission-ready and tagged `v1.2` at commit `a4cfc1a`. All gates green except the expected `(d) release.md` block (deferred to journal acceptance per plan 14-07). Only `git push` of main + tag, AIChE-portal upload, and GitHub release-notes update remain.
 
-**Deadline**: ≈ 2026-06-17 (three-week extension granted 2026-05-27; ~21 days remaining at swarm completion).
+**Deadline**: ≈ 2026-06-17 (three-week extension granted 2026-05-27; ~20 days remaining as of 2026-05-28).
 
-> If you're a fresh session resuming this work: **read this doc end-to-end first**, then `git log a0f932b..HEAD --oneline` to see the swarm trail, then run the verification gates in §3 below. **Do NOT re-execute the swarm** — it's already done. Don't re-introduce the corrections it made (catalogued in §5).
+> If you're a fresh session resuming this work: **read this doc end-to-end first**, then `git log a0f932b..HEAD --oneline` to see the full trail (swarm + audit cleanup), then run the verification gates in §2.3. **Do NOT re-execute the swarm OR the audit cleanup** — both are already done. Don't re-introduce the corrections they made (catalogued in §5).
 
 ---
 
@@ -13,17 +13,18 @@
 | Field | Value |
 |---|---|
 | Repo | `/Users/shawngibford/dev/phd/qGAN/` |
-| Branch | `main`, 10 commits ahead of `origin/main` |
+| Branch | `main`, 18 commits ahead of `origin/main` |
 | Manuscript | `main (4) copy.tex` (filename has literal space + paren — quote in shell) |
 | Supplement | `supp_material.tex` |
-| Bibliography | `bib.bib` (frozen at 59 entries) |
-| Last commit | `a50cb0f refactor(paper-rewrite): A6 style polish + structural cleanup` |
-| Provenance gate | v2.2, PASS — 122 main + 26 supp literals all resolve to `revision/results/*.json` |
-| pdflatex compile | PASS — 53 pages, 0 undefined cites, 0 undefined refs, all 3 new figures render |
-| A5 (Reviewer 2 sim) final verdict | All 6 prior major issues + 2 swarm-discovered critical issues resolved |
+| Bibliography | `bib.bib` (59 entries; `yoon2019TimeGAN` re-typed as @inproceedings with pages added) |
+| Last commit | `a4cfc1a chore(paper-rewrite): bundle 7 legacy figures into repo + clear 10 audit FLAGs` |
+| Tag | `v1.2` (local, not yet pushed) |
+| Provenance gate | v2.2, PASS — **143 main + 156 supp** literals all resolve to `revision/results/*.json` |
+| pdflatex compile (no TEXINPUTS needed) | PASS — **52 pages**, 0 undefined cites, 0 undefined refs, **0 hyperref duplicate-destination warnings**, all 11 figures in PDF render from repo-local files |
+| Audit verdicts (all 4 sub-audits) | LaTeX/bib: SUBMISSION-READY • Cleanliness/framing: SUBMISSION-READY • Figure verification: SUBMISSION-READY • Prohibition sentinel: SENTINEL-CLEAN |
 | Working tree | Clean |
 
-**Next action**: human read-through → tag → push → AIChE portal upload. See §3.
+**Next action**: `git push origin main` + `git push origin v1.2` → AIChE portal upload (instructions in §2.4) → GitHub release-notes update.
 
 ---
 
@@ -53,7 +54,7 @@ The paper now leads with **Finding 2** (uniform quantum dominance on log-return 
 | **Supp DTW subsection** (around line 307) | (no reconciliation note) | Adds reconciliation note explaining 0.6843 pre-v1.0 vs 0.302 matched-budget gap (Pipeline A vs B, single-seed best-case vs 5-seed mean, different epoch budget) |
 | **Supp label typos** | `appraoch`, `schemcatic` | `approach`, `schematic` |
 
-### Commit trail (10 atomic commits)
+### Commit trail (swarm-era, 10 atomic commits)
 
 ```
 a50cb0f  refactor(paper-rewrite): A6 style polish + structural cleanup
@@ -70,89 +71,161 @@ d81306f  docs(14): pin §7 framing decisions for paper-rewrite swarm
 
 ---
 
+## §1A — What the post-swarm audit-cleanup session (2026-05-28) added
+
+The post-swarm read-through surfaced a regression the swarm's provenance gate
+couldn't catch (the gate checks numeric literals, not prose descriptions of
+preprocessing), prompted addition of two reviewer-ergonomics artefacts (Table 2 +
+per-seed dominance table), and prompted a four-agent parallel audit that
+surfaced 4 BLOCK + 10 FLAG findings. All addressed.
+
+### What changed, by category
+
+| Category | Before audit | After audit |
+|---|---|---|
+| **Lambert W preprocessing** | Methods §3.2 + supp §A.7 described "Pipeline B" using a chain that included inverse Lambert W heavy-tail correction. **This was wrong** — D-10-05 dropped Pipeline C (the Lambert path); matched-budget runs use Pipeline B = log-returns → standardize → rescale to [−1,1], NO Lambert. The preprocessing figure was Pipeline C. | All Lambert W mentions moved into the explicit "Pipeline C dropped per D-10-05" rationale paragraph. New supp §A.7 ablation paragraph + new ablation figure (`preprocessing_ablation_comparison`) show the 5-seed A/B/C comparison that motivated D-10-05. Preprocessing figure regenerated as Pipeline B (panel 4 now shows rescale-to-[−1,1], not Lambert correction). |
+| **Cross-model summary table** | §4.1 prose + Figs 1+2 contained the cross-model evidence but no consolidated table. Table 1 was single-model-only (IQP:SEL on both scales). Readers scanning tables first would find no cross-model summary. | New **Table 2** (`tbl:cross_model_comparison`) — full-page `table*`, 5 metrics × 9 generators, 5-seed means with bolded per-row leaders. Bifurcated finding visually obvious: quantum (V1/V2/V3) wins 3 temporal-structure rows; AR(2) wins LR-EMD; VAE wins OD-EMD. Cited 3 places in main text. |
+| **Per-seed LR-DTW dominance** | §4.1 + §4.2 claim "no quantum-classical seed overlap on LR-DTW" was assertion-only; reviewers had to trust the prose or load `matched2000_dualscale.json`. | New supp Table A.X (`tbl:per_seed_dtw_dominance`) — 5 rows × 4 cols (Seed, Worst Q (V3), Best C (wgan_lstm), Gap). Verified 60/60 cells satisfy quantum < classical; tightest margin is seed 46 at 0.205 (≈16% relative). |
+| **Pairwise statistical evidence** | §4.1 OD-EMD null and LR-EMD reversal stated in aggregate ("Welch p > 0.36"; "every classical adversarial baseline outperforms every quantum variant"). The 40 per-pair Welch tests lived only in `welch_pairwise.json`. | New supp Tables A.X+1 (OD-EMD) and A.X+2 (LR-EMD) — 20 pairs each, 7 cols (Quantum, Classical, Mean_q, Mean_c, Welch p, Cohen's d, MWU p). OD: all 20 pairs p > 0.36, \|d\| < 0.65. LR: 17 of 20 pairs p < 0.001, d ranges from +2.15 to +151.5 (positive d = quantum loses), with negative d only for quantum-vs-VAE pairs. |
+| **§4.2 contribution order** | Led with "First, we outline a decision-tree triage workflow… not evaluated empirically here" — a future-work disclaimer in slot 1. | Reordered: QWGAN-GP architecture (1), bifurcated finding (2, cites Table 2 + Figs 1+2), open science (3), decision-tree as future-work organising concept (4). Matches §1.4's correct structure. |
+| **Stale single-model figures** | Main carried 5 single-model diagnostic figures (Figs 4–8: `dtwd.png`, `pdf.png`, `cdf.png`, `qq.png`, `acf.png`) from `~/Documents/main_qgan/`, dated Oct 20 2025. Embedded chart titles ("Lucy Log Returns", "Log δ" notation) were from the pre-revision single-best-seed Pipeline-A era; captions had been retrofitted to claim matched-budget multi-seed framing. | All 5 figures removed. Replaced with one bridging paragraph deferring per-model diagnostics to Table 2 + Figs 1+2 (which now carry the cross-model evidence). PDF dropped from 54→52 pages. |
+| **Table column overflow** | 4 tables declared `\begin{table}[h]` in twocolumn layout overflowed column width by 78–182pt (visible text spillover): Table 1, per-seed dominance, both Welch tables. | All 4 changed to `\begin{table*}[!htbp]` (full-page width spanning both columns). Overflows resolved. |
+| **Legacy-figure packaging** | All 12 legacy figures resolved via local `TEXINPUTS=…~/Documents/main_qgan/…` — paths AIChE compile won't have. | After Figs 4–8 removal, 7 legacy figures remain; all 7 copied into repo root. Compile works without `TEXINPUTS`. |
+| **Hyperref duplicate-destination warnings** | 8 `pdfTeX warning (dest): name{equation.N} has been referenced but does not exist` warnings from supp re-using main-text equation anchors. | Added `\theHfigure / \theHtable / \theHequation` disambiguators after supp counter reset. All 8 warnings gone. |
+| **`\texttt{revision/.../*.json}` caption overfulls** | Long-path `\texttt{}` cites in 14 figure/table captions didn't break at `/`, causing 6 caption-line overfulls including 95pt on Table 2. | All 14 instances converted to `\path{revision/...}` (breaks at slashes; verbatim, no `\_` escaping needed). Overfulls resolved. |
+| **OD-EMD comparator-set scope** | Abstract / §1.4 / §4.2 / §5 wrote "Welch p > 0.36 between quantum and parameter-matched classical *adversarial* baselines" but the 20-pair test in §4.1 includes VAE + AR(2) — scope drift. | Each section's OD-EMD claim updated to "full set of parameter-matched classical comparators (adversarial baselines plus VAE and AR(2))". Matches `welch_pairwise.json` scope. |
+| **Minor cleanliness drift** | §4.3 "demonstrated here … are prerequisites for downstream applications"; supp §A.3 "deployed QWGAN-GP"; §1.4 bullet 3 carried AR(2) reference parenthetical that abstract/§4.2/§5 omitted. | §4.3: "demonstrated here" → "reported here", "are prerequisites for" → "may be relevant to". §A.3: "deployed" → "evaluated in this study". §1.4: AR(2) parenthetical removed for symmetry. |
+| **Bib entry quality** | `yoon2019TimeGAN` was `@inbook` with no `chapter` or `pages` (had only `articleno` + `numpages`) → BibTeX warning. | Re-typed as `@inproceedings` with `pages = {5508--5518}` (NeurIPS 2019). Warning gone. |
+
+### Commit trail (audit-cleanup era, 8 atomic commits)
+
+```
+a4cfc1a  chore(paper-rewrite): bundle 7 legacy figures into repo + clear 10 audit FLAGs
+b2ceb43  refactor(paper-rewrite): remove Fig 4 (dtwd.png) — last stale single-model figure
+efb05c7  refactor(paper-rewrite): remove stale single-model diagnostic figures + fix table column overflow
+c3a1733  feat(paper-rewrite): add pairwise Welch + Cohen's d tables for OD-EMD and LR-EMD to supplement
+f7e5dff  feat(paper-rewrite): add per-seed LR-DTW dominance table to supplement
+80ad0a6  refactor(paper-rewrite): reorder §4.2 contributions — lead with QWGAN-GP, end with decision-tree future-work
+e28fb49  feat(paper-rewrite): add Table 2 cross-model comparison with bolded row-leaders
+2cdb558  fix(paper-rewrite): remove Lambert W (Pipeline C, dropped per D-10-05) from manuscript + figures
+```
+
+(plus `69c077e docs(14): post-swarm handoff update — Wave 8 submission readiness` between the two eras, and this commit when the present handoff update is committed.)
+
+---
+
 ## §2 — Wave 8: human ACT checklist
 
-### 2.1 — End-to-end manuscript read-through
+### 2.1 — End-to-end manuscript read-through ✓ COMPLETE (2026-05-28)
 
-Read these sections in order. The narrative should flow with Finding 2 leading and Finding 1 + LR-EMD asymmetry hedging consistently throughout.
+The full main + supp read-through was completed in the audit-cleanup session, covering all 14 sections below. Each was verified clean against the prohibition list (§5), the JSON data sources, and cross-section consistency. The 14 cleanup-driven changes catalogued in §1A above were applied during the read-through.
+
+If you need to re-do the read-through later, use this section list as the index:
 
 ```
 main (4) copy.tex:
-  Abstract (line 47–50)        — leads Finding 2, Finding 1 + LR-EMD scope-hedged
+  Abstract (lines 47–50)       — leads Finding 2, Finding 1 + LR-EMD scope-hedged
   Plain Language Summary (58–59)
   §1.4 Principal Contributions (95–111)
-  §3 Methods (155–315)         — full training protocol + Pipeline B definition
-  §4.1 Cross-Model Comparison  — bifurcated finding centralized
-  Table 1 (line 332+)          — LR-EMD cell = 0.01497 ± 0.00020
-  §4.2 Key Contributions
+  §3 Methods                    — full training protocol + Pipeline B definition (NO Lambert W)
+  §4.1 Cross-Model Comparison   — bifurcated finding centralized + Table 2 cross-model summary
+  Table 1                       — single-model dual-scale (IQP:SEL only); LR-EMD = 0.0150 ± 0.0002
+  Table 2 (NEW)                 — cross-model 9-generator × 5-metric, bolded row-leaders
+  §4.2 Key Contributions        — QWGAN-GP first, decision-tree last (reordered)
   §4.3 Implications
-  §4.4 Limitations             — "Scope of the matched-budget finding" itemize
-  §4.5 Outlook                  — "Decision-tree triage workflow" header
+  §4.4 Limitations              — "Scope of the matched-budget finding" itemize
+  §4.5 Outlook                  — "Decision-tree triage workflow" + "Conditions to extend" itemize
   §5 Concluding Remarks         — opens with §1.4 falsifiable-question answer
-  
+
 supp_material.tex:
-  §A.3 Hybrid-GAN (lines 142+) — verify still flagged "proposed, not implemented"
-  §A.5 Figure A5 caption (~line 359) — "decision-tree triage schematic"
-  §A.7 Data Transformation     — preprocessing_pipeline_4panel figure inserted
-  Reconciliation note (~line 307) — 0.6843 pre-v1.0 vs 0.302 matched-budget
+  §A.3 Hybrid-GAN               — 11 mentions, all qualified as "proposed/not implemented"
+  §A.4 Validation Metrics       — DTW reconciliation note (0.6843 pre-v1.0 vs 0.302 matched)
+                                  + Table A.X per-seed LR-DTW dominance (NEW)
+                                  + Tables A.X+1/A.X+2 pairwise Welch on OD/LR-EMD (NEW)
+  §A.5/A.6 Figure A5 caption    — "decision-tree triage schematic"
+  §A.7 Data Transformation      — preprocessing_pipeline_4panel (Pipeline B, no Lambert)
+                                  + preprocessing_ablation_comparison (NEW; A/B/C 5-seed)
+                                  + "why no Lambert W" ablation rationale paragraph
 ```
 
-### 2.2 — Eyeball checks
+### 2.2 — Eyeball checks ✓ ALL PASSING at HEAD (a4cfc1a)
 
-- **Table 1 LR-EMD cell** reads `0.01497 ± 0.00020`. The legacy value `0.1209` should NOT appear.
-- **Table 1 ACF lag-1 mean cell** reads `-0.09490 ± 0.00923`. The legacy `-0.0814` should NOT appear.
+- **Table 1 LR-EMD cell** reads `0.0150 ± 0.0002` (4-decimal rendering of 0.01497 ± 0.00020 from JSON). The legacy value `0.1209` is absent.
+- **Table 1 ACF lag-1 mean cell** reads `-0.0949 ± 0.0092` (4-decimal rendering of -0.09490 ± 0.00923). The legacy `-0.0814` is absent.
+- **Table 2** (`tbl:cross_model_comparison`) is in §4.1 immediately after Table 1, full-page-width, 9 generators × 5 metrics with bolded row-winners. Row-winner pattern: V3 (lag-1 ACF), V1 (LR-DTW), V2 (OD-DTW), VAE (OD-EMD), AR(2) (LR-EMD); VAE LR-DTW dagger-marked as degenerate-regime exclusion.
 - **Abstract "1.58 – 6.86"** (not "1.58 – 7.70" — that conflates AR(2) with adversarial baselines).
 - **§4.5 Outlook header** reads "Decision-tree triage workflow" (NOT "Closed-loop decision-driven pipeline").
 - **§5 first sentence** answers the §1.4 falsifiable question with the exceed/match/fall-short trifurcation.
-- **`grep -in lambert "main (4) copy.tex"`** returns hits ONLY inside the §3.2 Pipeline C dropped-pipeline rationale (lines ~291, 297). Any hit outside that block is a regression and must be removed before submission. Pipeline B description must NOT mention Lambert W.
+- **`grep -in lambert "main (4) copy.tex"`** returns hits ONLY inside the §3.2 Pipeline C dropped-pipeline rationale (currently lines ~291, 297). Any hit outside that block is a regression. Pipeline B description must NOT mention Lambert W.
 - **`grep -in lambert supp_material.tex`** returns hits ONLY inside the §A.7 "Preprocessing ablation: why no Lambert W transform" subsection. Any hit elsewhere (e.g., the preprocessing figure caption) is a regression.
+- **Preprocessing figure caption** (supp Figure A7) reads "linearly rescaled to [−1, 1] using the global min and max of the standardized log-return series" — NO Lambert W mention.
+- **§4.2 first bullet** (now post-reorder) leads with QWGAN-GP architecture + matched-budget outperforms statement. The decision-tree workflow is now the LAST bullet (#4), explicitly framed as "organising concept for future work — not as an empirical contribution".
+- **Per-seed dominance table** (supp Table A.X) shows 5 rows (seeds 42–46), all gap values positive (range 0.205 to 0.640), confirming "no quantum-classical seed overlap on LR-DTW" claim.
+- **Welch OD-EMD table** (supp Table A.X+1): every p-value > 0.36, every \|d\| < 0.65 (matches §4.1 aggregate claim).
+- **Welch LR-EMD table** (supp Table A.X+2): 17 of 20 pairs marked `***` (p < 0.001), 16 of 20 with positive d (quantum loses), 4 with negative d (the 4 quantum-vs-VAE rows where quantum beats VAE).
 
-### 2.3 — Run the verification gates
+### 2.3 — Verification gates ✓ ALL PASSING at HEAD (a4cfc1a)
 
 ```bash
 cd /Users/shawngibford/dev/phd/qGAN
 
 ./qgan_env/bin/python revision/verify_number_provenance.py --target "main (4) copy.tex"
-# Expect: PASS — 122 distinct numeric literal(s)
+# Expect: PASS — 143 distinct numeric literal(s) (was 122 pre-audit; +21 from Table 2 cells)
 
 ./qgan_env/bin/python revision/verify_number_provenance.py --target "supp_material.tex"
-# Expect: PASS — 26 distinct numeric literal(s)
+# Expect: PASS — 156 distinct numeric literal(s) (was 26 pre-audit;
+# +25 from per-seed dominance table, +93 from Welch tables, +11 from ablation prose, +1 from Welch caption scope tag)
 
 ./qgan_env/bin/python revision/verify_number_provenance.py --differential-test
 # Expect: v2.1 differential test PASSED
 
 ./qgan_env/bin/python revision/verify_freeze_ready.py
-# Expect: all gates PASS except release.md (which is plan 14-07's deliverable, deferred to acceptance)
+# Expect: all gates PASS except (d) release.md (plan 14-07's deliverable, deferred to acceptance)
+
+# Compile (no TEXINPUTS needed — all 11 figures are in the repo)
+pdflatex -interaction=nonstopmode "main (4) copy.tex" && \
+  bibtex "main (4) copy" && \
+  pdflatex -interaction=nonstopmode "main (4) copy.tex" && \
+  pdflatex -interaction=nonstopmode "main (4) copy.tex"
+# Expect: 52 pages, 0 undefined refs, 0 undefined cites, 0 hyperref duplicate-destination warnings
 ```
 
-If any gate fails, **stop**. Inspect the failure before tagging. The gate failures from before the swarm are documented in §5; any new failure indicates regression.
+If any gate fails, **stop**. The gate failures from before the swarm + audit cleanup are documented in §5; any new failure indicates regression.
 
 ### 2.4 — Pre-submission tasks
 
-1. **Upload the 12 legacy figures to AIChE** (they live at `/Users/shawngibford/Documents/main_qgan/` and `/Users/shawngibford/Documents/dtu/arxiv_submission/...`, NOT in this repo):
-   - `concept_diagram.png`
-   - `dtwd.png`, `pdf.png`, `cdf.png`, `qq.png`, `acf.png` (single-model diagnostics)
-   - `classicalgan.png`, `hybridgan.png`, `mech_rep.png` (supp diagrams)
-   - `quantum_circuit.png`, `bpm_qgan.drawio.png`, `lucy_diagram.jpg` (supp figures)
+**All 11 figures are now in the repo** (7 legacy + 4 fresh revision-era). No external `TEXINPUTS` needed for AIChE compile.
 
-2. **The 3 new figures ARE in the repo** at:
-   - `revision/results/figures/cross_model_dtw_dualscale.{pdf,png}`
-   - `revision/results/figures/cross_model_acf_overlay.{pdf,png}`
-   - `revision/results/figures/preprocessing_pipeline_4panel.{pdf,png}`
-   - The .tex references them via `\includegraphics{revision/results/figures/...}` — make sure Overleaf/AIChE portal can resolve those paths, or flatten the references if the upload requires it.
+**Figure inventory:**
 
-3. **Tag and push**. The plan deferred the tag name to you:
-   - `v1.2` — feels right if this is a "version bump" of the matched-budget release.
-   - `v1.0-revision.final` — feels right if this is "the final pre-acceptance state of the v1.0 manuscript".
-   ```bash
-   git tag v1.2  # or whichever you pick
-   git push origin main
-   git push origin v1.2
-   ```
+| Where | File | Role |
+|---|---|---|
+| Repo root | `concept_diagram.png` | Fig 1 main conceptual diagram |
+| Repo root | `classicalgan.png` | Supp Fig A1 — classical GAN architecture |
+| Repo root | `hybridgan.png` | Supp Fig A2 — hybrid GAN (proposed) |
+| Repo root | `mech_rep.png` | Supp Fig A3 — mechanistic representation |
+| Repo root | `quantum_circuit.png` | Supp Fig A4 — quantum circuit |
+| Repo root | `bpm_qgan.drawio.png` | Supp Fig A5 — decision-tree triage schematic (future work) |
+| Repo root | `lucy_diagram.jpg` | Supp Fig A6 — LUCY photobioreactor |
+| `revision/results/figures/` | `cross_model_dtw_dualscale.{pdf,png}` | Main Fig 2 — 9-model DTW dual-scale |
+| `revision/results/figures/` | `cross_model_acf_overlay.{pdf,png}` | Main Fig 3 — 9-model log-return ACF overlay |
+| `revision/results/figures/` | `preprocessing_pipeline_4panel.{pdf,png}` | Supp Fig A7 — Pipeline B preprocessing chain |
+| `revision/results/figures/` | `preprocessing_ablation_comparison.{pdf,png}` | Supp Fig A8 — A/B/C ablation comparison |
 
-4. **Update GitHub release page** at `https://github.com/shawngibford/qgan/releases` — note the swarm work + the new figures.
+**Tag** — chosen: `v1.2` (matched-budget release version bump).
 
-5. **AIChE submission portal**: upload `main (4) copy.tex`, `supp_material.tex`, `bib.bib`, and all figure files (12 legacy + 3 new = 15 files). The .tex compiles cleanly with `pdflatex + bibtex + pdflatex × 2`.
+```bash
+git tag v1.2     # already done locally
+git push origin main
+git push origin v1.2
+```
+
+**GitHub release notes**: at `https://github.com/shawngibford/qgan/releases`. Suggested release-notes headlines: matched-budget cross-model evaluation; bifurcated finding (exceed on LR-DTW + lag-1 ACF, match on OD-EMD, fall short on LR-EMD); Pipeline B preprocessing finalized (Lambert W dropped per D-10-05 / R1-M3); statistical evidence — Table 2 + per-seed dominance + 40-pair Welch tests.
+
+**AIChE submission portal**:
+- Upload `main (4) copy.tex`, `supp_material.tex`, `bib.bib`, `ama.bst` (bibliography style file lives at `~/Documents/main_qgan/ama.bst` — copy alongside the .tex), and all **11 figure files** listed above.
+- Compile is `pdflatex + bibtex + pdflatex × 2` (no special env needed — all paths repo-relative).
+- Total upload: 4 source files + 11 figures = 15 files.
 
 ---
 
@@ -172,9 +245,9 @@ W1 proposed 3 candidates:
 
 The A2 prohibition sentinel classifies the current title's "Industrial Bioprocess Monitoring" as **ALLOWED** (sanctioned title exception). Rescoping is optional. If you keep the current title, no action needed.
 
-### §3.2 — Tag name
+### §3.2 — Tag name ✓ DECIDED
 
-`v1.2` vs `v1.0-revision.final` — pick at submission time.
+`v1.2` chosen (matched-budget release version bump). Tagged locally; push pending user `git push origin v1.2`.
 
 ### §3.3 — Word counts to verify on Overleaf
 
@@ -224,26 +297,45 @@ Additional prohibitions enforced by the A2 sentinel regex sweep:
 
 ---
 
-## §6 — Outstanding (out of swarm scope)
+## §6 — Outstanding
 
 | Item | Status | Action |
 |---|---|---|
-| 12 legacy figures (concept_diagram.png, etc.) | Never git-tracked; live at `~/Documents/main_qgan/` and `~/Documents/dtu/arxiv_submission/...` | Upload to AIChE portal alongside the .tex |
-| Phase 13 verification debt | 6 `human_needed` items in `.planning/phases/13-architecture-introspection/13-VERIFICATION.md` | Orthogonal to submission; address before/after at your discretion |
+| Origin/main is 18 commits behind local | Local main has swarm + audit-cleanup work; tag v1.2 also local | `git push origin main && git push origin v1.2` when ready |
+| AIChE portal upload | Compile verified clean without TEXINPUTS | Upload 15 files per §2.4 |
+| GitHub release notes | n/a | Update at `https://github.com/shawngibford/qgan/releases` after push (suggested copy in §2.4) |
+| `ama.bst` bibliography style | Lives at `~/Documents/main_qgan/ama.bst`, not git-tracked | Copy alongside the .tex for AIChE submission (or upload to portal as a 16th file) |
 | Plan 14-07 (Zenodo DOI mint) | Deferred to journal acceptance per `project_phase14_zenodo_blocker` memory | Mint Zenodo DOI at acceptance; rebuttal currently cites `ZENODO-DOI-PLACEHOLDER` |
-| Origin/main is 10 commits behind local | Local main has the swarm work | `git push origin main` when comfortable |
+| Phase 13 verification debt | 6 `human_needed` items in `.planning/phases/13-architecture-introspection/13-VERIFICATION.md` | Orthogonal to submission; address before/after at your discretion |
 | Word-document rebuttal sync (if AIChE requires it) | Rebuttal letter is in `.planning/REBUTTAL-HANDOFF.md` | If portal wants it, convert to .docx at upload |
 
 ---
 
-## §7 — Lessons from the swarm (for future paper-rewrite efforts)
+## §7 — Lessons from the swarm + audit cleanup (for future paper-rewrite efforts)
 
+### From the swarm
 - **Sequential writers, parallel auditors** worked. Voice drift was minimal; 4 writers in sequence each took ~3–5 minutes of agent time.
 - **A5 (peer-review simulator) earned its slot twice**: at end-of-W2 it surfaced 3 substantive issues that none of the deterministic auditors caught (LR-EMD asymmetry, lag-1 ACF mean-only, OD-pipeline invariance); at end-of-W4 it surfaced 2 critical issues (Table 1 sourcing, AR(2) attribution). Without A5 these would have shipped.
 - **The provenance gate v2.1 had a tokenizer bug** for LaTeX `--` ranges. v2.2 patch is upstreamable to any future paper-rewrite work.
 - **The auto-memory and `.planning/DECISIONS.md` artifacts** were load-bearing for keeping 5 writer agents and 6 audit agents in sync. The "every numeric literal must trace to a JSON cell" discipline plus the explicit prohibition regex set kept the manuscript drift-free across 10 commits.
 - **A5's prior critique was preserved verbatim in the next-wave A5 prompt**, which let A5 explicitly say "M1 RESOLVED — [verbatim quote of new content]". That continuity made the audit chain auditable end-to-end.
 
+### From the post-swarm audit cleanup (2026-05-28)
+- **The provenance gate validates literals, not prose.** It caught zero issues with the swarm's Lambert W misdescription because the affected numbers (778, 384, 5 seeds, etc.) were all correct in isolation — the prose chaining them as "Pipeline B = log-returns → standardize → Lambert W → rescale" was wrong, but no individual number triggered the gate. **Lesson:** add a "pipeline-name prose check" gate that verifies every "Pipeline B" mention's described chain matches the actual `revision/run_ablation.py::build_dataset_for_pipeline('B', ...)` code path. The next swarm iteration should include a prose-vs-code consistency auditor as a deterministic gate.
+- **Four parallel audit agents was the right number for a 14-section paper.** Each had a tight, distinct scope (structural / cleanliness / figures / prohibitions). Together they surfaced 4 BLOCK + 10 FLAG findings in ~12 min wall time; the same audit by a single agent would have taken 4× longer and missed cross-cutting issues from the narrow scope per agent.
+- **Stale-figure-in-cap detection** was the agent's most valuable single contribution. The 5 single-model figures (`pdf.png`, `cdf.png`, etc.) had retrofitted captions but Oct-2025 file timestamps and embedded "Lucy Log Returns" / "Log δ" titles that no human reader scanning the manuscript would have spotted without opening the underlying image files. The agent's `stat` + Read-the-PDF combination caught this where prose-reading alone would not have.
+- **Adding artefacts (Table 2, per-seed dominance, Welch pairwise tables) addressed a "make the strong claim auditable" reviewer-ergonomics gap.** The original §4.1 prose was scope-honest but the strong "no quantum-classical seed overlap on LR-DTW" claim was assertion-only. Adding the per-seed table converted it into a cell-counting test the reviewer can verify in one glance. Same logic applied to the 40-pair Welch table for the OD-EMD null and the LR-EMD reversal. **Lesson:** for any strong claim of the form "every X is Y", produce the artefact that lists all X cells so the reviewer can re-verify by inspection.
+
 ---
 
 **End of submission handoff.** When in doubt, prefer the JSON sources in `revision/results/` over any prose summary. Every quantitative claim in the manuscript is supposed to trace back to one of them.
+
+**Cumulative session state at HEAD (a4cfc1a, tag v1.2):**
+- Manuscript: submission-ready
+- Numerical traceability: every literal traces to `revision/results/*.json`
+- Statistical artefacts: Table 2 + per-seed dominance + 40-pair pairwise Welch tests
+- Reviewer ergonomics: Table 2 bolded row-leaders; full-page-width supp stat tables; per-claim auditable artefacts
+- Scope hedging: all 4 hard prohibitions + 14 sentinel-phrase prohibitions hold
+- Pipeline B (no Lambert W): enforced across main + supp + figures
+- Figures: 0 stale assets; all 11 in PDF reflect current matched-budget narrative; all repo-local
+- AIChE packaging: ✓ compile clean without TEXINPUTS
