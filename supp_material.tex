@@ -5,6 +5,13 @@
 \renewcommand{\thefigure}{A\arabic{figure}}
 \renewcommand{\thetable}{A\arabic{table}}
 \renewcommand{\theequation}{A\arabic{equation}}
+% Disambiguate hyperref destinations in the appendix from the main text
+% (avoids duplicate-destination warnings on equation.1, equation.2, etc.).
+\makeatletter
+\renewcommand{\theHfigure}{appendix.\thefigure}
+\renewcommand{\theHtable}{appendix.\thetable}
+\renewcommand{\theHequation}{appendix.\theequation}
+\makeatother
 
 \section{Supplementary Information}
 
@@ -174,9 +181,9 @@ retained here only because it most transparently exposes where a mechanistic
 residual term would attach; any future implementation of this proposed
 extension would substitute the Wasserstein--gradient-penalty critic used
 throughout the present work (Section~3) for the $\log D$ discriminator, so that
-the Hybrid-GAN inherits the training stability documented for the deployed
-QWGAN-GP rather than the mode-collapse and vanishing-gradient pathologies of
-the original GAN objective.
+the Hybrid-GAN inherits the training stability documented for the
+QWGAN-GP evaluated in this study rather than the mode-collapse and
+vanishing-gradient pathologies of the original GAN objective.
 
 \textbf{Components:}
 \begin{itemize}[nosep, leftmargin=*]
@@ -333,7 +340,7 @@ LR-DTW; the gap column gives the absolute margin. The tightest margin
 is at seed~46 (0.205, $\approx 16\%$ of the classical value). This table
 makes the ``no quantum--classical seed overlap on LR-DTW'' claim in
 \S4.1 and \S4.2 of the main text directly verifiable. Source:
-\texttt{revision/results/matched2000\_dualscale.json}, filtered to
+\path{revision/results/matched2000_dualscale.json}, filtered to
 \texttt{metric\_name=dtw\_mean} and \texttt{scale=log\_return}.}
 \label{tbl:per_seed_dtw_dominance}
 \begin{tabular}{@{}cccc@{}}
@@ -371,8 +378,10 @@ $^{*}\,p<0.05$, $^{**}\,p<0.01$, $^{***}\,p<0.001$.
 per group, Pipeline~B, matched 2000-epoch budget). All 20 pairs have
 $p > 0.36$ and $|\mathrm{Cohen's}\,d| < 0.65$: no quantum-vs-classical
 pair is statistically resolved on the OD marginal under the $n=5$ seed
-budget. Source:
-\texttt{revision/results/welch\_pairwise.json}, filtered to
+budget; at $n=5$ the Welch test has $\approx 15\%$ power against
+$|d|=0.65$ and a two one-sided test (TOST) for equivalence is not
+satisfied at any defensible margin. Source:
+\path{revision/results/welch_pairwise.json}, filtered to
 \texttt{scale=='OD'}.}
 \label{tbl:welch_od_emd}
 \scriptsize
@@ -421,7 +430,7 @@ in the main text). The pattern shows that the LR-EMD reversal
 reported in \S4.1 is highly statistically significant in the
 classical-leads direction, with effect sizes from $d \approx 2$ (vs.\
 WGAN-CNN) to $d \approx 150$ (vs.\ AR(2)). Source:
-\texttt{revision/results/welch\_pairwise.json}, filtered to
+\path{revision/results/welch_pairwise.json}, filtered to
 \texttt{scale=='log\_return'}.}
 \label{tbl:welch_lr_emd}
 \scriptsize
@@ -526,7 +535,7 @@ This schematic depicts the photobioreactor experimental setup described in Secti
   generators operate on the final-stage rescaled log-return windows; all
   matched-budget evaluation results in Section~4 of the main text are reported
   under this pipeline. Source:
-  \texttt{revision/results/figures/preprocessing\_pipeline\_4panel.json}.}
+  \path{revision/results/figures/preprocessing_pipeline_4panel.json}.}
   \label{fig:preprocessing_pipeline}
 \end{figure}
 
@@ -584,7 +593,7 @@ Pipeline~B; (ii) it directly addresses reviewer concern R1-M3, which
 flagged that the Lambert~$W$ step over-Gaussianizes the input
 distribution and could trivialise the generative task. Full per-seed
 metrics and the ablation summary are in
-\texttt{revision/results/transform\_ablation/metrics.csv} and
+\path{revision/results/transform_ablation/metrics.csv} and
 \texttt{summary.md}.
 
 \begin{figure}[h]
@@ -597,7 +606,7 @@ metrics and the ablation summary are in
   3-layer, 55-parameter IQP:SEL generators trained at 1000 epochs.
   Pipelines~B and~C are within sampling noise of each other on every
   OD-scale metric; Pipeline~B was selected per decision D-10-05.
-  Source: \texttt{revision/results/transform\_ablation/metrics.csv}.}
+  Source: \path{revision/results/transform_ablation/metrics.csv}.}
   \label{fig:preprocessing_ablation}
 \end{figure}
 
