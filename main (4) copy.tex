@@ -46,7 +46,7 @@ Kongens Lyngby, Denmark\\
 % Abstract section (max 150 words)
 \begin{abstract}
 \noindent
-Data scarcity in biomanufacturing constrains model development for process monitoring and optimization. We evaluate a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP), whose generator is a Parameterized Quantum Circuit (PQC), against parameter-matched classical adversarial baselines on a single laboratory-scale photobioreactor cultivation. Under a matched parameter budget and 2000 training epochs (n=5 seeds), quantum WGAN-GPs with 55--135 parameters uniformly outperform parameter-matched classical adversarial baselines (73--78 parameters) on log-return temporal alignment (LR-DTW 0.94--1.12 vs 1.58--6.86); the mean lag-1 ACF of the quantum cluster ($-0.0997$ to $-0.0895$) is closer to the real reference ($-0.064$) than any classical-baseline mean, though per-seed overlap is observed. On the optical-density marginal, no parametric-efficiency advantage is observed: Welch p > 0.36, max |Cohen's d| <= 0.65 at n=5 power approx 15\%, TOST equivalence not satisfied. We present a proof-of-concept for quantum-enhanced synthetic time-series generation, with potential relevance to soft-sensor and control applications.
+Data scarcity in biomanufacturing constrains model development for process monitoring and optimization. We evaluate a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP), whose generator is a Parameterized Quantum Circuit (PQC), against parameter-matched classical adversarial baselines on a single laboratory-scale photobioreactor cultivation. Under a matched parameter budget and 2000 training epochs (n=5 seeds), quantum WGAN-GPs with 55--135 parameters uniformly outperform parameter-matched classical adversarial baselines (73--78 parameters) on log-return temporal alignment (LR-DTW 0.94--1.12 vs 1.58--6.86); the mean lag-1 ACF of the quantum cluster ($-0.0997$ to $-0.0895$) is closer to the real reference ($-0.064$) than any classical-baseline mean, though per-seed overlap is observed. On the optical-density marginal, no advantage over any parameter-matched comparator is observed: Welch p > 0.36, max |Cohen's d| <= 0.65 at n=5 power approx 15\%, TOST equivalence not satisfied. We present a proof-of-concept for quantum-enhanced synthetic time-series generation, with potential relevance to soft-sensor and control applications.
 \end{abstract}
 
 % Topical Heading and Keywords
@@ -56,7 +56,7 @@ Data scarcity in biomanufacturing constrains model development for process monit
 
 % Plain Language Summary (max 250 characters)
 \section*{Plain Language Summary}
-On a small bioprocess dataset, a quantum generator reproduced short-term temporal structure more faithfully than parameter-matched classical adversarial baselines, while overall single-point distributions were statistically indistinguishable.
+On a small bioprocess dataset, a quantum generator reproduced short-term temporal structure more faithfully than parameter-matched classical adversarial baselines, while single-point distributions were indistinguishable across the comparator set.
 
 \section{Introduction}
 
@@ -100,7 +100,7 @@ The principal contributions of this work are:
 
 - QWGAN-GP for Process Data Synthesis: A hybrid QWGAN-GP architecture, with a Parameterized Quantum Circuit generator and a classical critic, applied to laboratory-scale bioprocess time series.
 
-- Bifurcated Empirical Finding: Under the matched protocol, quantum generators (55--135 parameters) uniformly outperform parameter-matched classical adversarial baselines (73--78 parameters) on log-return temporal alignment, with concordant evidence from log-return dynamic time warping (LR-DTW 0.94--1.12 vs 1.58--6.86) and the lag-1 autocorrelation of the real series (quantum cluster mean $-0.0997$ to $-0.0895$ vs real $-0.064$; closer to real than any classical-baseline mean, with per-seed overlap noted). On the optical-density marginal, no advantage is observed.
+- Bifurcated Empirical Finding: Under the matched protocol, quantum generators (55--135 parameters) uniformly outperform parameter-matched classical adversarial baselines (73--78 parameters) on log-return temporal alignment, with concordant evidence from log-return dynamic time warping (LR-DTW 0.94--1.12 vs 1.58--6.86) and the lag-1 autocorrelation of the real series (quantum cluster mean $-0.0997$ to $-0.0895$ vs real $-0.064$; closer to real than any classical-baseline mean, with per-seed overlap noted). On the optical-density marginal, no advantage is observed against the full set of parameter-matched comparators (see bullet 4). On the log-return single-step marginal (LR-EMD), the direction reverses and every classical adversarial baseline outperforms every quantum variant (Section~4.1).
 
 - Empirical Evaluation on a Photobioreactor Campaign: A quantitative evaluation on a single real-world cultivation dataset, in which optical-density-marginal differences between the quantum generator and the full set of parameter-matched classical comparators (adversarial baselines plus VAE and AR(2)) are not statistically significant under the achievable power (Welch p > 0.36, max |Cohen's d| <= 0.65, n=5 power approx 15\%, TOST equivalence not demonstrated). Reported as a non-significant difference under low power rather than as demonstrated equivalence.
 
@@ -786,8 +786,8 @@ and on lag-1 autocorrelation closeness to the real series ($-0.064$;
 mean-level dominance, per-seed overlap observed); they \emph{match} the full set of
 parameter-matched classical comparators (adversarial baselines plus VAE
 and AR(2); statistically indistinguishable under the achievable $n=5$
-power, Welch $p > 0.36$ and $|\text{Cohen's } d| \leq 0.65$) on the
-optical-density single-step marginal; and they \emph{fall short} on the
+power, Welch $p > 0.36$ and $|\text{Cohen's } d| \leq 0.65$, TOST
+equivalence not satisfied) on the optical-density single-step marginal; and they \emph{fall short} on the
 log-return single-step marginal (LR-EMD), where every classical adversarial
 baseline outperforms every quantum variant. We treat this as a positive
 but scope-limited answer.
