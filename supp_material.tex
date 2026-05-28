@@ -376,10 +376,11 @@ This schematic depicts the photobioreactor experimental setup described in Secti
   \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_pipeline_4panel.pdf}
   \caption{Four-stage preprocessing pipeline (Pipeline~B, native): raw OD ($n=778$),
   log-returns $r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$ ($n=777$),
-  standardized ($\mu=0$, $\sigma=1$), and inverse Lambert~$W$ heavy-tail correction
-  $+$ rescale to $[-1, 1]$. The trained generators operate on the final-stage
-  rescaled log-return windows; all matched-budget evaluation results in
-  Section~4 of the main text are reported under this pipeline. Source:
+  standardized ($\mu=0$, $\sigma=1$), and linearly rescaled to $[-1, 1]$ using
+  the global min and max of the standardized log-return series. The trained
+  generators operate on the final-stage rescaled log-return windows; all
+  matched-budget evaluation results in Section~4 of the main text are reported
+  under this pipeline. Source:
   \texttt{revision/results/figures/preprocessing\_pipeline\_4panel.json}.}
   \label{fig:preprocessing_pipeline}
 \end{figure}
@@ -405,23 +406,55 @@ The finance literature uses the same transform for unrelated reasons; here the j
 
 This brings all values to a consistent scale with mean zero and standard deviation one, which is essential for quantum circuit encoding.
 
-\textbf{Lambert $W$ Transformation:}
-
-The inverse Lambert $W$ transform was applied to the normalized log values to adjust for heavy tails within the distribution of the data, pushing them towards more Gaussian traits. As shown by Goerg~\cite{goerg2015lambert}, this function allows the reshaping of a distribution to align more closely with a Gaussian distribution:
+\textbf{Rescale to $[-1, 1]$:} The standardized log-returns are linearly
+rescaled to the closed interval $[-1, 1]$ using the global minimum and maximum
+of the standardized series,
 \begin{equation}
-  W_\delta(\nu) = \text{sgn}(\nu)\sqrt{\frac{W(\delta\nu^2)}{\delta}}
-  \label{eq:lambert_w_s9}
+  r_t^{\,[-1,1]} = -1 + 2\,
+    \frac{r_t^{\,\text{NORM}} - r_\text{min}^{\,\text{NORM}}}
+         {r_\text{max}^{\,\text{NORM}} - r_\text{min}^{\,\text{NORM}}},
+  \label{eq:rescale_pm1_s9}
 \end{equation}
+to match the bounded output range of the quantum circuit observables.
 
-\noindent where:
-\begin{itemize}[nosep, leftmargin=*]
-  \item $\nu$ is a value of the dataset
-  \item $\text{sgn}(\nu)$ is the sign of $\nu$
-  \item $\delta$ is a programmable parameter
-  \item $W$ is the Lambert $W$ function (inverse of $z = ue^u$)
-\end{itemize}
+\paragraph{Preprocessing ablation: why no Lambert~$W$ transform.}
+An earlier version of this pipeline (Pipeline~C in our terminology) applied
+an inverse Lambert~$W$ heavy-tail correction~\cite{goerg2015lambert} between
+the standardization and rescaling steps. A 5-seed ablation at 1000 epochs
+(Figure~\ref{fig:preprocessing_ablation}) compared three preprocessing
+chains: \emph{Pipeline~A} (raw min-max-normalized OD; control),
+\emph{Pipeline~B} (log-returns standardized $+$ rescaled, as above), and
+\emph{Pipeline~C} (Pipeline~B followed by inverse Lambert~$W$). The three
+pipelines were trained under identical 5-qubit, 3-layer, 55-parameter
+IQP:SEL generators. Pipeline~A trains successfully but produces clearly
+worse OD-scale fidelity (EMD $1.0516 \pm 0.0007$ vs $0.0276$ for B and
+$0.0261$ for C; OD-ACF lag-1 $-0.094$ vs real-data reference $0.456$).
+Pipelines~B and~C are within sampling noise of each other on every
+OD-scale metric (EMD $0.0276$ vs $0.0261$; OD-ACF lag-1 $0.696$ vs
+$0.697$; OD-DTW mean $0.30$ vs $0.41$; TSTR-lite $R^2$ $0.994$ vs
+$0.994$). Per decision D-10-05 we therefore select Pipeline~B for the
+matched-budget runs reported in the main text, dropping the Lambert~$W$
+step on two grounds: (i) it does not improve OD-scale fidelity over
+Pipeline~B; (ii) it directly addresses reviewer concern R1-M3, which
+flagged that the Lambert~$W$ step over-Gaussianizes the input
+distribution and could trivialise the generative task. Full per-seed
+metrics and the ablation summary are in
+\texttt{revision/results/transform\_ablation/metrics.csv} and
+\texttt{summary.md}.
 
-This transformation is particularly important for bioprocess data, which often exhibits non-normal distributional properties due to the inherent variability and complex underlying mechanisms~\cite{boskabadi2025virtual}.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_ablation_comparison.pdf}
+  \caption{Preprocessing ablation across three pipelines (A: raw min-max OD;
+  B: log-returns standardized $+$ rescaled to $[-1, 1]$, selected;
+  C: Pipeline~B followed by inverse Lambert~$W$, dropped). Bars are
+  5-seed mean $\pm$ sample standard deviation under identical 5-qubit,
+  3-layer, 55-parameter IQP:SEL generators trained at 1000 epochs.
+  Pipelines~B and~C are within sampling noise of each other on every
+  OD-scale metric; Pipeline~B was selected per decision D-10-05.
+  Source: \texttt{revision/results/transform\_ablation/metrics.csv}.}
+  \label{fig:preprocessing_ablation}
+\end{figure}
 
 \subsubsection{Rolling Window Implementation}
 

@@ -859,14 +859,23 @@ def _render_dataset_stats(mi: dict) -> str:
     L.append("## Preprocessing Pipeline")
     L.append("")
     L.append(
-        "`revision/core/data.py::load_and_preprocess` applies (in order): "
-        "log-return differencing → zero-mean/unit-variance standardization → "
-        "Lambert-W heavy-tail correction → min-max rescaling to [−1, 1] → "
-        f"rolling windows of length {_fmt(ds['window_length'])} and stride "
-        f"{_fmt(ds['window_stride'])} (yielding {_fmt(ds['rolling_windows'])} "
-        "windows). The bioprocess justification of the log-return choice "
-        "(specific growth rate, μ = d ln(OD)/dt) is the subject of Phase "
-        "09.1 (R1-M3 preprocessing ablation)."
+        "The matched-budget runs use Pipeline B (decision D-10-05; see "
+        "`revision/run_ablation.py::build_dataset_for_pipeline`, "
+        "pipeline=='B' branch). Pipeline B applies (in order): log-return "
+        "differencing → zero-mean/unit-variance standardization → linear "
+        "rescaling to [−1, 1] using the global min/max of the standardized "
+        f"series → rolling windows of length {_fmt(ds['window_length'])} "
+        f"and stride {_fmt(ds['window_stride'])} (yielding "
+        f"{_fmt(ds['rolling_windows'])} windows). Pipeline C (the v1.1 "
+        "published pipeline with an inverse Lambert-W heavy-tail correction "
+        "between the standardization and rescaling steps) was dropped per "
+        "D-10-05 because the 09.1 ablation showed it tied with B on every "
+        "OD-scale metric while introducing an over-Gaussianization concern "
+        "(R1-M3). `load_and_preprocess` retains the Pipeline C path for "
+        "reproducibility of the ablation only; the matched-budget pathway "
+        "is `build_dataset_for_pipeline('B', ...)`. The bioprocess "
+        "justification of the log-return choice (specific growth rate, "
+        "μ = d ln(OD)/dt) is the subject of Phase 09.1."
     )
     L.append("")
     return "\n".join(L) + "\n"

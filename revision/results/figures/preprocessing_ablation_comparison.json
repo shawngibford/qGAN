@@ -1,0 +1,87 @@
+{
+ "figure": "preprocessing_ablation_comparison",
+ "source": "revision/results/transform_ablation/metrics.csv (long-form, Phase 09.1 sweep, 3 pipelines \u00d7 5 seeds \u00d7 1000 epochs); revision/results/transform_ablation/seed_spread.json; TSTR-lite values from tstr_lite.json or summary.md fallback. Real-data reference for OD-ACF lag-1: 0.456 (matched-pipeline).",
+ "decision": "D-10-05: Pipeline B selected (log-returns standardized + rescaled to [-1, 1]); Pipeline C (Lambert W) dropped because (i) tied with B on OD-scale EMD, ACF, DTW, and TSTR; (ii) Pipeline C reproduction drifts 87.18%% from v1.1 baseline on transformed-space log-return EMD (D-09.1-12 gate 2%%); (iii) addresses reviewer R1-M3 concern that Lambert W over-Gaussianizes the input distribution.",
+ "per_pipeline_emd_OD_summary_from_seed_spread": {
+  "A": {
+   "emd_OD_mean": 1.0516055388421166,
+   "emd_OD_std": 0.0007291456677429265,
+   "rel_std": 0.0006933642328907486,
+   "exceeds_30pct_gate": false,
+   "n_seeds": 5
+  },
+  "B": {
+   "emd_OD_mean": 0.02758597806884494,
+   "emd_OD_std": 0.004576289824053756,
+   "rel_std": 0.16589188219583656,
+   "exceeds_30pct_gate": false,
+   "n_seeds": 5
+  },
+  "C": {
+   "emd_OD_mean": 0.026082535359880376,
+   "emd_OD_std": 0.006513126213397446,
+   "rel_std": 0.24971215886534573,
+   "exceeds_30pct_gate": false,
+   "n_seeds": 5
+  }
+ },
+ "per_metric_aggregate": {
+  "OD-scale EMD": {
+   "A": {
+    "mean": 1.0516055388421166,
+    "std": 0.0008152096392863297
+   },
+   "B": {
+    "mean": 0.02758597806884494,
+    "std": 0.005116447565662374
+   },
+   "C": {
+    "mean": 0.026082535359880376,
+    "std": 0.007281896479596245
+   }
+  },
+  "OD-scale ACF lag-1": {
+   "A": {
+    "mean": -0.09432539773921203,
+    "std": 0.019898284471142686
+   },
+   "B": {
+    "mean": 0.6959302151158658,
+    "std": 0.000436888832384895
+   },
+   "C": {
+    "mean": 0.6972917188753593,
+    "std": 0.00032725597925903187
+   }
+  },
+  "OD-scale DTW (mean)": {
+   "A": {
+    "mean": 1.7914340931413535,
+    "std": 0.7215741383878594
+   },
+   "B": {
+    "mean": 0.30077164448578064,
+    "std": 0.03259617538680839
+   },
+   "C": {
+    "mean": 0.40534379508157975,
+    "std": 0.12276880842233387
+   }
+  },
+  "TSTR-lite R\u00b2 (LSTM)": {
+   "A": {
+    "mean": -4.572351556755396,
+    "std": 0.0
+   },
+   "B": {
+    "mean": 0.9940998520466501,
+    "std": 0.0
+   },
+   "C": {
+    "mean": 0.9935198121383305,
+    "std": 0.0
+   }
+  }
+ },
+ "render_only": true
+}

@@ -6,6 +6,19 @@ functions are NotImplementedError stubs reserved for Phase 09.1.
 Contract: each ``forward_X`` / ``inverse_X`` pair must satisfy
     max_abs(inverse_X(forward_X(x), *args), x) <= 1e-8
 on a real OD trajectory (Phase 09.1 ABL-01).
+
+D-10-05 (matched-budget pipeline selection)
+--------------------------------------------
+The matched-budget runs reported in the paper use **Pipeline B** exclusively
+(log-returns standardized + linear rescale to [-1, 1]). Pipeline C
+(log-returns + Lambert W, the v1.1 published pipeline) was dropped because
+the Phase 09.1 ablation (revision/results/transform_ablation/) showed it
+tied with Pipeline B on every OD-scale metric while introducing an
+over-Gaussianization concern flagged by reviewer R1-M3.
+
+The Lambert W forward/inverse pair is **retained for reproducibility of
+the ablation only** — it is not on the matched-budget training path. Do
+not re-introduce it into Pipeline B or the matched-budget evaluation.
 """
 from __future__ import annotations
 from typing import Tuple

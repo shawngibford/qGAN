@@ -90,3 +90,12 @@ Final Results from 2000 epochs - IQP:SEL circuit/
 revision/results/baselines/runs/**/*.npy
 revision/results/baselines/runs/**/*.npz
 revision/results/baselines/runs/**/*.pt
+
+# LaTeX build artifacts at repo root (regenerable from .tex + bib.bib)
+*.aux
+*.bbl
+*.blg
+*.out
+*.synctex.gz
+/main (4) copy.pdf
+/supp_material.pdf

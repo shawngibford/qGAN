@@ -169,9 +169,10 @@ expectation values, matching the rolling window subsequence length. The generato
 contains 55 trainable parameters. Full circuit specifications and the critic architecture
 are detailed in Supplementary Sections A.5 and A.8, respectively (see also Figure A4).%~\ref{fig:quantum_circuit}).
 
-The raw optical density time series was transformed to log returns, normalized to zero
-mean and unit variance, and passed through an inverse Lambert W transform to reduce
-heavy-tailed characteristics prior to training (details in Supplementary Section A.7).
+The raw optical density time series was transformed to log returns, standardized to zero
+mean and unit variance, and linearly rescaled to $[-1, 1]$ using the global min and
+max of the standardized log-return series, prior to training (Pipeline B; details and
+the ablation that motivated its selection are in Supplementary Section A.7).
 Overlapping subsequences of length 10 with stride 2 were extracted using a rolling
 window approach \cite{dimoudis2023utilizing}.  % [41] removed: it was adaptive rolling-median anomaly detection, not subsequence extraction (R1-m1)
 
@@ -274,19 +275,28 @@ comprising 778 raw optical-density time points logged at 10-minute intervals.
 % source: revision/results/model_info.json#dataset.log_return_rows (=777)
 First differencing into log-returns yields 777 log-return observations
 ($r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$), which are standardized to
-zero mean and unit variance, passed through an inverse Lambert~$W$ heavy-tail
-correction, and rescaled to $[-1, 1]$.
+zero mean and unit variance, then linearly rescaled to $[-1, 1]$ using the
+global min and max of the standardized log-return series.
 % source: revision/results/model_info.json#dataset.window_length (=10)
 % source: revision/results/model_info.json#dataset.window_stride (=2)
 % source: revision/results/model_info.json#dataset.rolling_windows (=384)
 Overlapping subsequences of length 10 with stride 2 are then extracted with a
 rolling window, producing 384 training windows. We refer to this preprocessing
-chain (log-return $\to$ standardization $\to$ inverse Lambert~$W$ $\to$
-rescale to $[-1, 1]$) as \textbf{Pipeline~B} (native preprocessing); it is
-the only preprocessing under which the matched-budget evaluation results
-reported in Section~4 are computed. A pre-v1.0 legacy normalization
-(\emph{Pipeline~A}) is retained solely for the historical reconciliation note
-and is not used for any matched-budget result in this paper.
+chain (log-return $\to$ standardization $\to$ rescale to $[-1, 1]$) as
+\textbf{Pipeline~B} (native preprocessing); it is the only preprocessing
+under which the matched-budget evaluation results reported in Section~4 are
+computed. Two alternative pipelines were evaluated and discarded prior to
+the matched-budget runs: \emph{Pipeline~A} (raw min-max-normalized OD; pre-v1.0
+legacy normalization, retained solely for the historical reconciliation note)
+and \emph{Pipeline~C} (Pipeline~B followed by an inverse Lambert~$W$
+heavy-tail correction, the v1.1 published pipeline). Pipeline~C was dropped
+per decision D-10-05: a 5-seed ablation at 1000 epochs showed Pipelines~B
+and~C tied on OD-scale EMD (0.0276 vs 0.0261), OD-scale ACF lag-1 (0.696 vs
+0.697), OD-scale DTW (0.30 vs 0.41), and TSTR-lite~$R^2$ (0.994 vs 0.994),
+so Pipeline~B was selected for simplicity and because it directly addresses
+reviewer concern R1-M3 that the Lambert~$W$ step over-Gaussianizes the input
+distribution. Supplementary Section~A.7 reports the full ablation
+(Figure~\ref{fig:preprocessing_ablation}).
 % source: revision/results/model_info.json#dataset.train_windows (=384)
 % source: revision/results/model_info.json#dataset.val_windows (=0)
 % source: revision/results/model_info.json#dataset.test_windows (=0)
@@ -492,11 +502,11 @@ near-identical OD-EMD on a per-seed basis: across all five seeds the
 within-seed range over the four quantum configurations is at most
 $0.0002$ (e.g.\ seed-42: $0.0229$, $0.0229$, $0.0230$, $0.0229$;
 seed-43: $0.0343$, $0.0343$, $0.0343$, $0.0342$). This near-identity
-reflects the deterministic component of the inverse-preprocessing
-pipeline (Lambert-$W$ reversal followed by denormalization and the
-cumulative product back to optical density), which projects four
-LR-trained quantum generators onto a near-identical OD support given
-the same noise seed. OD-EMD therefore has limited power to
+reflects the deterministic component of the Pipeline~B inverse-preprocessing
+pipeline (un-rescaling from $[-1, 1]$, un-standardization, and the
+cumulative-integration step from a real per-window OD$_0$ anchor back to
+optical density), which projects four LR-trained quantum generators onto
+a near-identical OD support given the same noise seed. OD-EMD therefore has limited power to
 discriminate among the four quantum ansatze on this dataset, and the
 matched-budget null result on quantum-versus-classical OD-EMD is
 consistent with this methodological feature of the OD-side pipeline

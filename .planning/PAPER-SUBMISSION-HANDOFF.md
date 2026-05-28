@@ -104,6 +104,8 @@ supp_material.tex:
 - **Abstract "1.58 – 6.86"** (not "1.58 – 7.70" — that conflates AR(2) with adversarial baselines).
 - **§4.5 Outlook header** reads "Decision-tree triage workflow" (NOT "Closed-loop decision-driven pipeline").
 - **§5 first sentence** answers the §1.4 falsifiable question with the exceed/match/fall-short trifurcation.
+- **`grep -in lambert "main (4) copy.tex"`** returns hits ONLY inside the §3.2 Pipeline C dropped-pipeline rationale (lines ~291, 297). Any hit outside that block is a regression and must be removed before submission. Pipeline B description must NOT mention Lambert W.
+- **`grep -in lambert supp_material.tex`** returns hits ONLY inside the §A.7 "Preprocessing ablation: why no Lambert W transform" subsection. Any hit elsewhere (e.g., the preprocessing figure caption) is a regression.
 
 ### 2.3 — Run the verification gates
 
@@ -208,6 +210,8 @@ These three corrections are **load-bearing** and were the foundation of the swar
 2. **LR-DTW (not LR-EMD) is the surviving quantum-distinguishing signal**. The LR-EMD quantum-advantage claim was withdrawn during Plan 14-16 forensic remediation (broken `density=True` column). On the corrected scale, **every classical adversarial baseline outperforms every quantum variant on LR-EMD** (AR=0.003, classical adversarial 0.007–0.013, quantum 0.014–0.015, VAE 0.016). The current §4.1 discloses this asymmetry honestly; **never re-claim quantum advantage on LR-EMD**.
 
 3. **Real-data lag-1 ACF reference is −0.0641** (matched-pipeline, with dither), **NOT −0.029** (legacy unmatched).
+
+4. **Pipeline B = log-returns + standardize + linear rescale to [-1, 1] — NO Lambert W.** The matched-budget runs use Pipeline B exclusively per decision D-10-05 (5-seed ablation showed Pipeline C tied with B on every OD-scale metric while introducing an over-Gaussianization concern flagged by reviewer R1-M3). The inverse Lambert W transform belongs to dropped Pipeline C and may only appear in the manuscript inside the explicit "Pipeline C dropped" rationale (Methods §3.2, Supp §A.7). **Never re-introduce Lambert W into the matched-budget Pipeline B description or the preprocessing figure.** The `lambert_w_transform` / `inverse_lambert_w_transform` functions in `revision/core/data.py` are retained for ablation reproducibility only; do not delete them.
 
 Additional prohibitions enforced by the A2 sentinel regex sweep:
 
