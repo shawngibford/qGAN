@@ -627,6 +627,33 @@ Using the rolling window technique~\cite{dimoudis2023utilizing}, we generated ov
 
 The window length ($m$) is set longer than ($s$) to guarantee enough overlap. According to Orlandi et al.~\cite{orlandi2024enhancing}, these values optimize for balanced overlap and computational efficiency. This approach is essential for capturing the temporal dependencies that characterize bioprocess dynamics, where events at one time point influence future states.
 
+\subsection{Quantum Circuit Introspection}
+\label{sec:quantum_introspection}
+
+This section addresses reviewer comment R2-6 (``what is the quantum
+circuit actually learning?'') with three introspection diagnostics
+produced under Phase~13 of the revision. The three diagnostics are
+reported on a single representative trajectory (seed~42, Pipeline~B,
+snapshot epochs $\{0, 250, 500, 750, 1000\}$); the matched-budget
+quantitative evaluation in main \S4.1 is over the full 5-seed
+2000-epoch protocol.
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/training_progression.pdf}
+  \caption{Generated log-return distribution snapshots across training:
+  4 generators (quantum IQP:SEL 55p; wgan\_mlp 74p; wgan\_cnn 73p;
+  wgan\_lstm 78p) at snapshot epochs $\{0, 250, 500, 750, 1000\}$. Each
+  cell overlays the synthetic distribution against the real reference.
+  The quantum row qualitatively tracks the real reference more closely
+  than the classical rows by epoch 1000, anticipating the LR-DTW +
+  lag-1 ACF dominance observed at the matched-budget 2000-epoch
+  evaluation reported in main \S4.1. Single seed 42, Pipeline~B. Phase
+  13 INTRO-01 deliverable. Source:
+  \protect\path{revision/results/figures/training_progression.json}.}
+  \label{fig:training_progression}
+\end{figure*}
+
 \subsection{Critic Network Architecture Details}
 
 The Critic model is a convolutional neural network that processes sequential data to distinguish between real and generated data from the quantum generator. The network follows the WGAN-GP architecture~\cite{gulrajani2017improved} with specific adaptations for time series data.
