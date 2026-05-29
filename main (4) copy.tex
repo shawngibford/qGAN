@@ -703,7 +703,33 @@ quantum circuit: three parameter-matched classical WGAN-GP baselines
 (\texttt{wgan\_mlp}: 74, \texttt{wgan\_cnn}: 73, \texttt{wgan\_lstm}: 78 parameters)
 are trained against the 55--135-parameter quantum entrants under a shared
 250881-parameter critic, with all other adversarial hyperparameters held fixed.
-The per-model evaluation is reported in Section~4.1.
+The per-model evaluation is reported in Section~4.1;
+Figure~\ref{fig:param_efficiency_pareto} visualizes the parameter-efficiency
+frontier on both the OD and log-return scales.
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/param_efficiency_pareto.pdf}
+  \caption{Parameter-efficiency frontier: cross-model EMD vs.\
+  generator parameter count, on the OD scale (left) and log-return
+  scale (right). Markers: circle $=$ adversarial-quantum (4 variants,
+  55--135 parameters), square $=$ adversarial-classical (3 variants,
+  73--78 parameters), triangle $=$ non-adversarial (VAE 562p, AR(2)
+  3p). The frozen-headline reference (epoch-1969 checkpoint) is
+  plotted as a distinct diamond marker at the same 55-parameter
+  $x$ as the \texttt{iqp\_sel\_55\_repro} circle, with a distinct
+  color and lower $y$ reflecting the early-stopped best-of-checkpoint
+  value per D-14-10 (\emph{not} merged with the 5-seed 2000-epoch
+  reproduction). Lower-left is better parameter efficiency. The shared
+  250881-parameter critic applies to all adversarial models alike and
+  is excluded from the $x$-axis (generator-only parameter count).
+  Source:
+  \protect\path{revision/results/figures/param_efficiency_pareto.json};
+  per-model means from
+  \protect\path{revision/results/matched2000_dualscale.json}, parameter
+  counts from \protect\path{revision/results/model_info.json}.}
+  \label{fig:param_efficiency_pareto}
+\end{figure}
 
 Third, we have contributed to open science practices by making our code and datasets publicly available at \url{https://github.com/shawngibford/qgan}, facilitating independent verification and accelerating future advances in quantum-enhanced bioprocess engineering.
 
