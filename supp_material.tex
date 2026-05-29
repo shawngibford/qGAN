@@ -654,6 +654,24 @@ quantitative evaluation in main \S4.1 is over the full 5-seed
   \label{fig:training_progression}
 \end{figure*}
 
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/entanglement_trajectory.pdf}
+  \caption{Entanglement entropy trajectory of the quantum generator
+  during training (variant V1, 4 layers, range topology, seed~42).
+  Bipartition $\{0,1\}\,|\,\{2,3,4\}$. Top: Von Neumann entanglement
+  entropy across snapshot epochs $\{0, 250, 500, 750, 1000\}$, values
+  in $[1.17, 1.25]$ against the reference bound $\ln 4 \approx 1.386$
+  for maximal entanglement on this bipartition. Bottom: state purity
+  $\mathrm{Tr}(\rho^2) \in [0.32, 0.35]$ against the reference bound
+  $0.25$ for the maximally mixed state. The trajectory shows the
+  generator maintains a highly entangled state throughout training
+  without collapsing to a product state, providing the quantum-resource
+  signal R2-6 requested. Phase 13 INTRO-03 deliverable. Source:
+  \protect\path{revision/results/figures/entanglement_trajectory.json}.}
+  \label{fig:entanglement_trajectory}
+\end{figure}
+
 \subsection{Critic Network Architecture Details}
 
 The Critic model is a convolutional neural network that processes sequential data to distinguish between real and generated data from the quantum generator. The network follows the WGAN-GP architecture~\cite{gulrajani2017improved} with specific adaptations for time series data.
