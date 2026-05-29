@@ -765,5 +765,56 @@ To improve generalization and reduce overfitting, a dropout layer randomly deact
 
 The final output layer contains a single neuron that produces an unbounded scalar value, where higher values indicate the input resembles real data and lower values suggest generated data. This unbounded output design aligns with the use of Wasserstein distance as the cost function~\cite{arjovsky17a}, providing more meaningful gradients during training compared to the original GAN formulation~\cite{goodfellow2014generativeadversarialnetworks}.
 
+\subsection{Quantum Hardware Robustness Sensitivity}
+\label{sec:robustness_sensitivity}
+
+Reviewer R1-M5 requested an assessment of how the matched-budget
+finding would degrade under realistic quantum-hardware conditions
+(shot noise from finite-shot measurement; gate noise from
+depolarizing and amplitude-damping channels). Phase~12 of the
+revision provides two sensitivity studies addressed here:
+shot-noise sensitivity (1024 and 8192 shots vs.\ statevector
+analytic baseline) and noise-model sensitivity (depolarizing
+$p \in \{0, 0.001, 0.01, 0.05\}$ and amplitude-damping
+$\gamma \in \{0, 0.001, 0.01, 0.05\}$, per-layer channel insertion).
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/shot_noise_robustness.pdf}
+  \caption{Shot-noise sensitivity of the quantum generator
+  (IQP:SEL 55p) under finite-shot measurement: analytic statevector
+  baseline vs.\ 8192 shots vs.\ 1024 shots. OD-EMD reported as
+  3-seed mean $\pm$ sample-std (seeds $\{42, 43, 44\}$) on Pipelines~A
+  and~B. The 1024-shot and 8192-shot curves remain within sampling
+  noise of the analytic baseline, indicating the matched-budget
+  finding is robust to the shot-noise levels accessible on
+  near-term hardware. Phase~12 SENS-01 deliverable.
+  Source:
+  \protect\path{revision/results/figures/shot_noise_robustness.json};
+  underlying data
+  \protect\path{revision/results/shot_noise_sensitivity.json}.}
+  \label{fig:shot_noise_robustness}
+\end{figure}
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/noise_robustness_quantum.pdf}
+  \caption{Noise-model sensitivity of the quantum generator
+  (IQP:SEL 55p) under per-layer depolarizing and amplitude-damping
+  channels (inserted after each entangling block). OD-EMD as 3-seed
+  mean $\pm$ sample-std (seeds $\{42, 43, 44\}$) at noise levels
+  $\{0, 0.001, 0.01, 0.05\}$ per channel type. Pipelines~A and~B
+  shown as separate curves. Both channels show graceful degradation:
+  the matched-budget finding is preserved at the 0.001 level, begins
+  to degrade at 0.01, and is degraded at 0.05 — consistent with the
+  noise tolerance reported for similar PQC variational circuits
+  in the literature. Phase~12 SENS-02 deliverable.
+  Source:
+  \protect\path{revision/results/figures/noise_robustness_quantum.json};
+  underlying data
+  \protect\path{revision/results/noise_model_sensitivity.json}.}
+  \label{fig:noise_robustness_quantum}
+\end{figure}
+
 
 
