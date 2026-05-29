@@ -463,6 +463,42 @@ V3 & AR(2) & $0.0143$ & $0.0029$ & $2.9\!\times\!10^{-11}\,^{***}$ & $+68.07$ & 
 \end{tabular}
 \end{table*}
 
+\subsubsection{TSTR Cross-Model Utility}
+
+Reviewer R1-M2 requested a Train-on-Synthetic, Test-on-Real (TSTR)
+evaluation as the downstream-utility complement to the distributional
+metrics. Figure~\ref{fig:tstr_crossmodel_matched2000} reports TSTR
+$R^2$ for a 1-step-ahead OD soft sensor (1-layer LSTM,
+hidden$=32$) trained on synthetic windows from each of the 9
+matched-budget generators (Pipeline~B, 2000 epochs, 3 init seeds
+$\{40, 41, 42\}$).
+
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/tstr_crossmodel_matched2000.pdf}
+  \caption{TSTR cross-model utility evaluation: 1-step-ahead OD soft
+  sensor (1-layer LSTM, hidden$=32$) trained on 19200 synthetic
+  windows from each generator (Pipeline~B, 2000 epochs, 3 init seeds
+  $\{40, 41, 42\}$), evaluated on $n=320$ held-out real windows. All
+  9 matched-budget generators converge to $R^2 \approx 0.99$,
+  dramatically above the real-only baseline of $R^2 = -13.35$
+  ($n=65$ real training windows; the small real set fails to support
+  soft-sensor training). The cross-generator convergence is
+  \emph{structural} (caveat): the cumulative-sum back-transform from
+  log-returns to OD mathematically encodes near-perfect lag-1
+  autocorrelation, so a soft sensor trained on Pipeline-B-derived
+  synthetic OD essentially learns the persistence forecast, which is
+  near-optimal on real OD regardless of which generator produced
+  the underlying log-returns. The Pipeline-B TSTR therefore does
+  \emph{not} discriminate among generators (R1-M2 disclosure);
+  meaningful TSTR discrimination would require multivariate process
+  data where soft-sensor utility depends on cross-channel
+  conditional structure. Source:
+  \protect\path{revision/results/figures/tstr_crossmodel_matched2000.json};
+  underlying data
+  \protect\path{revision/results/tstr_matched2000.json}.}
+  \label{fig:tstr_crossmodel_matched2000}
+\end{figure}
 
 \subsection{Code and Data Availability}
 Complete code repository: \url{https://github.com/shawngibford/qgan}
