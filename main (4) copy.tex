@@ -190,8 +190,10 @@ The WGAN-GP loss formulation (Eq.~\ref{eq:wgangp}) was chosen for the quantum ge
 % source: revision/results/model_info.json#models[*].batch_size (=12)
 % source: revision/results/total_adversarial_param_budget.json#shared_critic_n_params (=250881)
 All adversarial models in this study are trained under a single matched-budget
-contract so that the only component that differs between the quantum and
-classical entrants is the generator. The contract is: 2000 training epochs
+contract so that, within the WGAN-GP adversarial cohort, the only component
+that differs between the quantum and classical entrants is the generator
+(the VAE and AR(2) non-adversarial baselines have their own native
+training procedures, detailed below). The contract is: 2000 training epochs
 (no early stopping during matched-budget reproduction), 5 independent random
 seeds $\{42, 43, 44, 45, 46\}$, a shared 250881-parameter classical critic
 used identically across all WGAN-GP runs, Adam with $\beta_1 = 0.0$ and
@@ -257,9 +259,9 @@ the discriminator on the quantum device would add measurement-shot noise to
 the critic gradient and substantially increase circuit evaluations per step
 without benefiting the quantity of interest (the generated distribution). A
 classical critic also makes the comparison against the matched classical
-WGAN-GP baselines clean: the only component that differs between the quantum
-and classical entrants is the generator, isolating the effect of the quantum
-circuit.
+WGAN-GP baselines clean: within the adversarial cohort, the only component
+that differs between the quantum and classical entrants is the generator,
+isolating the effect of the quantum circuit.
 
 \subsection{Photobioreactor Experimental Setup}
 
