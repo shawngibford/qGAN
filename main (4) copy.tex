@@ -414,13 +414,17 @@ log-return temporal-alignment axis (Dynamic Time Warping on the
 log-return scale, and the lag-1 autocorrelation of the log-return
 series), the four quantum WGAN-GP variants \emph{uniformly} outperformed
 the three parameter-matched classical adversarial baselines and the
-AR(2) reference. On the optical-density marginal-distribution axis
+AR(2) reference (per-seed dominance on LR-DTW with no overlap; mean-level
+dominance on lag-1 ACF closeness, with per-seed overlap observed).
+On the optical-density marginal-distribution axis
 (OD-EMD), under the n=5-seed budget the present study cannot resolve a
 parametric-efficiency difference between quantum and classical
 adversarial generators. On the log-return single-step marginal
-axis (LR-EMD) the direction reverses: every classical adversarial
-baseline outperforms every quantum variant, and the AR(2) reference
-leads (full per-model values below). We report the structural-alignment
+axis (LR-EMD) the direction reverses: on per-model means every
+classical adversarial baseline outperforms every quantum variant
+(with isolated per-seed counter-examples; see supp
+Table~\ref{tbl:welch_lr_emd} for full per-pair statistics), and the
+AR(2) reference leads (full per-model values below). We report the structural-alignment
 finding here as the principal result, the OD-marginal finding as a
 scope-honest caveat, and the LR-marginal direction as a parallel
 scope-honest disclosure: the LR-DTW + lag-1 ACF advantage does not
@@ -681,7 +685,7 @@ Fourth, as an organising concept for future work --- not as an empirical contrib
 
 \subsection{Theoretical and Practical Implications}
 
-The contribution of this work is methodological: it provides a parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against classical baselines on a data-scarce bioprocess task, together with a reproducible bifurcated result. On the log-return temporal-structure axis (LR-DTW + lag-1 ACF closeness to real), the quantum generators uniformly outperform the parameter-matched classical adversarial baselines on the evaluated photobioreactor dataset (Section~4.1). On the log-return single-step marginal axis (LR-EMD) the direction reverses, and on the OD single-step marginal axis no parametric-efficiency difference is resolved at $n=5$. Whether the structural-alignment finding generalizes beyond a single cultivation, holds at higher qubit counts past the simulable boundary, and survives extension to multivariate process variables is a substantive empirical question for future work.
+The contribution of this work is methodological: it provides a parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against classical baselines on a data-scarce bioprocess task, together with a reproducible bifurcated result. On the log-return temporal-structure axis (LR-DTW + lag-1 ACF closeness to real), the quantum generators uniformly outperform the parameter-matched classical adversarial baselines on the evaluated photobioreactor dataset (per-seed on LR-DTW; mean-level on lag-1 ACF closeness, with per-seed overlap noted; Section~4.1). On the log-return single-step marginal axis (LR-EMD) the direction reverses, and on the OD single-step marginal axis no parametric-efficiency difference is resolved at $n=5$. Whether the structural-alignment finding generalizes beyond a single cultivation, holds at higher qubit counts past the simulable boundary, and survives extension to multivariate process variables is a substantive empirical question for future work.
 
 From a practical perspective, this research addresses a fundamental bottleneck in bioprocess development where experimental data generation is constrained by high operational costs, regulatory requirements, and time limitations. The log-return temporal-structure properties reported here (LR-DTW alignment and lag-1 ACF closeness to real) may be relevant to downstream applications such as soft-sensor training and process-monitoring augmentation; demonstrating downstream utility (e.g., train-on-synthetic / test-on-real accuracy uplift for soft sensors of biomass concentration, product quality, or metabolic activity) requires multivariate process data and is identified as future work, not as a contribution of the present study.
 
@@ -699,9 +703,10 @@ each of which the present protocol does \emph{not} establish:
     structural-alignment finding is reported on log-return DTW alignment
     cost and on the lag-1 autocorrelation of the log-return series. It is
     not a claim about bulk distributional fidelity; on the log-return
-    single-step marginal (LR-EMD) the cross-model ordering reverses, with
-    every classical adversarial baseline outperforming every quantum
-    variant (Section~4.1).
+    single-step marginal (LR-EMD) the cross-model ordering reverses on
+    per-model means, with every classical adversarial baseline
+    outperforming every quantum variant (Section~4.1; isolated per-seed
+    counter-examples exist).
   \item \textbf{Per-step autocorrelation only.} The autocorrelation result
     is reported at lag 1. Higher-lag temporal structure, multi-step
     autocorrelation, and Fourier-spectral fidelity are not evaluated under
@@ -790,8 +795,8 @@ parameter-matched classical comparators (adversarial baselines plus VAE
 and AR(2); statistically indistinguishable under the achievable $n=5$
 power, Welch $p > 0.36$ and $|\text{Cohen's } d| \leq 0.65$, TOST
 equivalence not satisfied) on the optical-density single-step marginal; and they \emph{fall short} on the
-log-return single-step marginal (LR-EMD), where every classical adversarial
-baseline outperforms every quantum variant. We treat this as a positive
+log-return single-step marginal (LR-EMD), where on per-model means every
+classical adversarial baseline outperforms every quantum variant. We treat this as a positive
 but scope-limited answer.
 
 The empirical envelope is narrow: a single 778-point optical-density
