@@ -672,6 +672,23 @@ quantitative evaluation in main \S4.1 is over the full 5-seed
   \label{fig:entanglement_trajectory}
 \end{figure}
 
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/param_trajectory.pdf}
+  \caption{PQC parameter trajectory during training (variant V1,
+  4 layers, range topology, 75 parameters, seed~42). Top: $L_2$-norm
+  of the parameter vector across snapshot epochs
+  $\{0, 250, 500, 750, 1000\}$; values stably bounded between
+  $\approx 4.40$ and $4.41$ (no divergence, no collapse to zero).
+  Bottom: distribution of all 75 individual rotation angles at each
+  snapshot epoch, with the angle diversity maintained throughout
+  training rather than collapsing into a narrow band. Together the
+  panels show the optimizer explores the parameter space without
+  pathological behavior. Phase 13 INTRO-02 deliverable. Source:
+  \protect\path{revision/results/figures/param_trajectory.json}.}
+  \label{fig:param_trajectory}
+\end{figure}
+
 \subsection{Critic Network Architecture Details}
 
 The Critic model is a convolutional neural network that processes sequential data to distinguish between real and generated data from the quantum generator. The network follows the WGAN-GP architecture~\cite{gulrajani2017improved} with specific adaptations for time series data.
