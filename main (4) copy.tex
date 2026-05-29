@@ -215,6 +215,32 @@ that all 2000-epoch comparison runs share identical optimizer machinery.
 Full per-model dtype and backend pinning details are given in
 Supplementary Section~A.8 and Appendix.
 
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/training_convergence_all_models.pdf}
+  \caption{Matched-budget training convergence: OD-scale in-loop EMD
+  versus training epoch (log-$y$) for the 7 WGAN-GP generators
+  (4 quantum + 3 classical adversarial). Curves are 5-seed mean
+  $\pm$ sample standard deviation over seeds $\{42, 43, 44, 45, 46\}$,
+  with EMD evaluated every 10 training epochs across the
+  2000-epoch budget. The frozen-headline reference (epoch-1969 checkpoint) is
+  shown as a distinct diamond marker $+$ horizontal line per D-14-10.
+  All 7 models converge to a tight cluster of mean OD-EMD $\approx 0.026$
+  by $\sim$epoch 250 and remain in that band for the remainder of
+  training, demonstrating that the matched-budget contract is held without
+  divergence or collapse. The visible deep dip is the wgan\_cnn
+  seed-42 outlier (single seed where OD-EMD transiently fell to
+  $\sim 10^{-4}$ before recovering --- the outlier reported in
+  Section~4.1 and disclosed at face value rather than excluded). VAE
+  and AR(2) are not plotted: VAE trains with a single-Adam ELBO loop
+  (no per-epoch EMD eval was captured) and AR(2) is fit in closed form
+  via \texttt{lstsq} (no epoch trajectory exists). Source:
+  \protect\path{revision/results/figures/training_convergence_all_models.json};
+  per-seed trajectories from
+  \protect\path{revision/results/matched2000/runs/<model>/<seed>/metrics.json}.}
+  \label{fig:training_convergence_all_models}
+\end{figure}
+
 \subsection{Circuit Design Rationale}
 
 The generator circuit was fixed by three deliberate design choices, each
