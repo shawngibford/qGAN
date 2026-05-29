@@ -531,6 +531,29 @@ than as two independent metric outcomes.
   \label{fig:cross_model_acf_overlay}
 \end{figure}
 
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_emd.pdf}
+  \caption{Cross-model OD-EMD (final-eval mean $\pm$ sample standard
+  deviation, n=5 seeds). The horizontal reference line marks the
+  frozen-headline OD-EMD reference ($0.0231$, from the
+  \texttt{frozen\_checkpoint\_epoch\_1969} aggregate; distinct from
+  the iqp\_sel\_55\_repro 2000-epoch matched-budget reproduction per
+  D-14-10). Eight of nine models lie within $\pm 0.005$ of the cluster
+  mean; the wgan\_cnn marker is inflated by a single seed-42 outlier
+  (OD-EMD $=0.1587$, with the other four wgan\_cnn seeds between
+  $0.020$ and $0.034$). Visualises the ``no parametric-efficiency
+  advantage'' claim on the OD-marginal axis: across all 20
+  quantum-vs-classical pairs, Welch $p > 0.36$ and
+  $|\text{Cohen's }d| \leq 0.65$ (see supp
+  Table~\ref{tbl:welch_od_emd}). Source:
+  \protect\path{revision/results/figures/cross_model_emd.json}; rows
+  aggregated from
+  \protect\path{revision/results/matched2000_dualscale.json}
+  filtered to \texttt{metric\_name=emd}, \texttt{scale=OD}.}
+  \label{fig:cross_model_emd}
+\end{figure}
+
 \paragraph{VAE characterization.}
 The VAE baseline did not fit cleanly into either side of the
 bifurcated finding and we characterize it separately. On the
@@ -553,7 +576,8 @@ structure) and exclude the VAE from the LR-DTW dominance comparison
 above.
 
 \paragraph{OD marginal: non-significant difference under low power.}
-On the optical-density single-step marginal, per-model OD-EMD means
+On the optical-density single-step marginal
+(Figure~\ref{fig:cross_model_emd}), per-model OD-EMD means
 were tightly clustered for three of the four matched-budget
 configurations: iqp\_sel\_55\_repro$=0.0275$, wgan\_mlp$=0.0260$,
 wgan\_lstm$=0.0282$, with wgan\_cnn$=0.0543$ (the
