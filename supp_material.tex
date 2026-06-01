@@ -725,6 +725,120 @@ quantitative evaluation in main \S4.1 is over the full 5-seed
   \label{fig:param_trajectory}
 \end{figure}
 
+\subsection{Per-Model Training Loss Diagnostics}
+\label{sec:per_model_loss}
+
+Complementing the in-loop OD-EMD convergence figure in main \S3.1
+(Figure~\ref{fig:training_convergence_all_models}),
+Figure~\ref{fig:per_model_loss_grid} reports the raw per-model training
+losses (single representative seed~42, 2000 epochs, Pipeline~B). The
+panels surface three qualitatively distinct training regimes.
+
+\textbf{WGAN-GP critic stability across the cohort.} For all 7 WGAN-GP
+generators (4 quantum + 3 classical adversarial), the critic loss
+descends from its initialization value of $\sim\!+2$ to a stable
+small-magnitude negative band within $\sim\!100$ eval steps. The
+generator loss correspondingly rises from $\sim\!0$ and oscillates within
+a bounded range, with no NaN, no divergence, and no critic saturation
+across any of the 35 individual runs (7 models $\times$ 5 seeds).
+The IQP:SEL panel (Figure~\ref{fig:per_model_loss_grid}a) is
+representative: critic loss settles around $-0.65$, generator loss
+oscillates between $0.1$ and $1.2$ --- the dynamic
+equilibrium characteristic of healthy WGAN-GP training.
+
+\textbf{WGAN-CNN training instability (quantum--classical contrast).}
+The WGAN-CNN panel (Figure~\ref{fig:per_model_loss_grid}f) shows a
+qualitatively different signature: the critic loss bottoms out near
+$-3.0$ by eval step $\sim\!50$ but then drifts monotonically back
+toward $-1.2$ over the remainder of training, indicating the
+critic progressively loses discriminative power against the WGAN-CNN
+generator. The 4 quantum and the other 2 classical adversarial
+generators do not exhibit this drift. This training-side instability
+is consistent with the seed-42 OD-EMD outlier reported in main \S4.1
+(Section~4.1, paragraph beginning ``On the optical-density single-step
+marginal'') and with the dip visible in
+Figure~\ref{fig:training_convergence_all_models}: WGAN-CNN at the
+matched-budget contract is intermittently fragile on this dataset
+while the quantum-cluster training is stable across all 5 seeds.
+
+\textbf{VAE convergence pattern (regularization collapse).} The VAE
+panel (Figure~\ref{fig:per_model_loss_grid}h) shows ELBO and
+reconstruction terms collapsing to $\sim\!0.058$ within the first
+$\sim\!50$ eval steps and remaining flat thereafter, while the KL
+divergence term collapses essentially to zero in the same window
+and never recovers. This regularization-term collapse is the
+training-side signature of the degenerate generation regime
+characterized in main \S4.1: the encoder finds a near-zero-KL
+solution (posterior matched to the prior) and the decoder learns a
+representation that produces real-matching one-step marginals while
+losing the temporal structure that the lag-1 ACF $-0.648$ exposes
+at evaluation time.
+
+\textbf{AR(2): closed-form fit.} AR(2) is not included in the loss
+grid because it is fit in closed form via \texttt{numpy.linalg.lstsq}
+on the training log-return windows (residual variance
+$\hat{\sigma}^2 = 0.057$, sample mean $-0.003$, sample standard
+deviation $0.242$) and therefore has no epoch-wise loss trajectory.
+The fit-summary statistics are recorded in
+\protect\path{revision/results/figures/loss_ar.json#fit_summary}.
+
+\textbf{No training pathology detected at the matched-budget contract.}
+Across all 9 generators (or 35 individual WGAN-GP runs), no run
+diverged, NaN-ed, or required intervention; the WGAN-CNN critic-drift
+is the only training-side anomaly and is consistent with that model's
+known fragility at the matched-budget parameter count of 73.
+
+\begin{figure*}[!htbp]
+  \centering
+  \begin{subfigure}{0.24\linewidth}
+    \includegraphics[width=\linewidth]{revision/results/figures/loss_iqp_sel_55_repro.pdf}
+    \caption{IQP:SEL (55p, Q)}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.24\linewidth}
+    \includegraphics[width=\linewidth]{revision/results/figures/loss_V1.pdf}
+    \caption{V1 (75p, Q)}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.24\linewidth}
+    \includegraphics[width=\linewidth]{revision/results/figures/loss_V2.pdf}
+    \caption{V2 (135p, Q)}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.24\linewidth}
+    \includegraphics[width=\linewidth]{revision/results/figures/loss_V3.pdf}
+    \caption{V3 (75p, Q)}
+  \end{subfigure}
+
+  \vspace{4pt}
+
+  \begin{subfigure}{0.24\linewidth}
+    \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_mlp.pdf}
+    \caption{WGAN-MLP (74p, C)}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.24\linewidth}
+    \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_cnn.pdf}
+    \caption{WGAN-CNN (73p, C)}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.24\linewidth}
+    \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_lstm.pdf}
+    \caption{WGAN-LSTM (78p, C)}
+  \end{subfigure}\hfill
+  \begin{subfigure}{0.24\linewidth}
+    \includegraphics[width=\linewidth]{revision/results/figures/loss_vae.pdf}
+    \caption{VAE (562p, ELBO+recon+KLD)}
+  \end{subfigure}
+  \caption{Per-model training loss trajectories at the matched-budget
+  contract (single representative seed 42, 2000 epochs, Pipeline~B).
+  (a)--(d): 4 quantum WGAN-GP variants. (e)--(g): 3 classical
+  adversarial WGAN-GP baselines. (h): VAE (single-Adam ELBO loop;
+  the only non-adversarial model with a per-epoch trajectory). Q $=$
+  quantum, C $=$ classical. AR(2) is fit in closed form via
+  \texttt{lstsq} and has no epoch-wise loss trajectory ($\hat\sigma^2 =
+  0.057$ reported in text). Source: per-model trajectories from
+  \protect\path{revision/results/matched2000/runs/<model>/42/metrics.json}
+  via
+  \protect\path{revision/results/figures/loss_<model>.json}.}
+  \label{fig:per_model_loss_grid}
+\end{figure*}
+
 \subsection{Critic Network Architecture Details}
 
 The Critic model is a convolutional neural network that processes sequential data to distinguish between real and generated data from the quantum generator. The network follows the WGAN-GP architecture~\cite{gulrajani2017improved} with specific adaptations for time series data.
