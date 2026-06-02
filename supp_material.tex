@@ -522,26 +522,99 @@ The quantum circuit employs a dual-stage encoding strategy as described in Secti
 
 \subsection{Additional Figures}
 
-\textbf{Detailed Quantum Circuit Decomposition}
+\textbf{Quantum Circuit Family: Headline Generator and Ablation Variants}
 
+The headline quantum generator (\texttt{iqp\_sel\_55}) was selected from a
+four-member ansatz family that varies layer depth, parameter count, and
+entangler topology while holding the qubit count (5) and the IQP-encoding
+plus strongly-entangling-layer (SEL) backbone fixed. The three additional
+variants (V1, V2, V3) are the ablation comparators reported in the
+main-text expressibility-versus-trainability analysis (§3.2 of the main
+text). Figure~\ref{fig:quantum_circuit} shows the rendered gate sequence
+for each of the four circuits; per-circuit specifications follow below
+the figure.
 
-\begin{figure*}
+\begin{figure*}[!htbp]
+  \centering
+  \begin{subfigure}{\linewidth}
     \centering
-    \includegraphics[height = 5cm, width=1\linewidth]{quantum_circuit.png}
-    \caption{Quantum circuit used as generator.}
-    \label{fig:quantum_circuit}
+    \includegraphics[width=\linewidth]{revision/results/figures/circuits/iqp_sel_55.pdf}
+    \caption{IQP:SEL --- 55 parameters, depth 3, range entangler (headline circuit).}
+  \end{subfigure}
+
+  \vspace{6pt}
+
+  \begin{subfigure}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{revision/results/figures/circuits/V1.pdf}
+    \caption{V1 --- 75 parameters, depth 4, range entangler.}
+  \end{subfigure}
+
+  \vspace{6pt}
+
+  \begin{subfigure}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{revision/results/figures/circuits/V2.pdf}
+    \caption{V2 --- 135 parameters, depth 8, range entangler.}
+  \end{subfigure}
+
+  \vspace{6pt}
+
+  \begin{subfigure}{\linewidth}
+    \centering
+    \includegraphics[width=\linewidth]{revision/results/figures/circuits/V3.pdf}
+    \caption{V3 --- 75 parameters, depth 4, linear entangler.}
+  \end{subfigure}
+
+  \caption{Rendered gate sequences for the four 5-qubit PQC generators
+  evaluated in this study. All variants share an IQP encoding stage
+  followed by strongly-entangling layers (SEL) with
+  $\text{Rot}(\phi, \theta, \omega)$ rotations and CNOT entanglers; they
+  differ in layer depth, total trainable-parameter count, and entangler
+  connectivity (range versus linear). The headline circuit (a, IQP:SEL,
+  55 parameters, depth 3, range topology) is the smallest in the family.
+  Variants V1--V3 span the expressibility-versus-trainability trade-off
+  explored in the main-text §3.2 ablation. Rendered with PennyLane's
+  \texttt{qml.draw\_mpl} from the locked configurations at
+  \protect\path{revision/results/figures/circuits/<name>.json}.}
+  \label{fig:quantum_circuit}
 \end{figure*}
 
+\paragraph{IQP:SEL (55 parameters, depth 3, range entangler) --- headline.}
+The reported generator. Hadamard gates create uniform superposition; two
+IQP layers (the first with $R_z$ rotations parameterised by the latent
+noise vector as the input encoding, the second with trainable $R_z$
+rotations) embed the latent vector through quadratic phase encoding;
+three strongly-entangling layers with $\text{Rot}(\phi, \theta, \omega)$
+gates and range-based CNOTs implement the trainable transformation; final
+$R_x$ and $R_y$ rotations prepare the measurement bases. The 10-dimensional
+output vector is read out as Pauli-X and Pauli-Z expectation values, one
+of each per qubit.
 
-This figure shows the individual gate operations, including:
-Hadamard gates applied to all qubits for superposition creation, 
-First IQP encoding layer with Rz gates using random noise, 
-Second IQP encoding layer with parameterized Rz rotations, 
-Two strongly entangling layers with Rot gates and range-based CNOT gates, 
-Final rotation gates (Rx and Ry) for measurement preparation, 
-and Pauli-X and Pauli-Z measurements.
+\paragraph{V1 (75 parameters, depth 4, range entangler).}
+Same IQP encoding and SEL stack as IQP:SEL, with one additional entangling
+layer (depth 4 versus 3) and the corresponding +20 trainable parameters.
+Tests whether a modest depth increase at fixed entangler topology yields
+a fidelity improvement.
 
-The circuit implements the architecture described in Section 3, leveraging quantum superposition and entanglement to explore multiple solution paths simultaneously during training, potentially affecting training dynamics (not evaluated in this study). \cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}
+\paragraph{V2 (135 parameters, depth 8, range entangler).}
+The deepest range-entangled variant; doubles V1's depth and roughly
+triples IQP:SEL's parameter count. Tests whether the additional
+expressibility is recoverable under the matched-budget training contract
+(2000 epochs, $n = 5$ seeds, fixed hyperparameters).
+
+\paragraph{V3 (75 parameters, depth 4, linear entangler).}
+Parameter- and depth-matched to V1 (both 75 parameters, depth 4) but with
+linear CNOT connectivity ($q_i \to q_{i+1}$) in place of the range-based
+pattern $r = (\text{layer} \bmod (n_{\text{qubits}} - 1)) + 1$ used by the
+other three variants. Isolates the contribution of entangler topology
+from depth or parameter count.
+
+The main-text §3.2 result is that, under the matched-budget contract, the
+smaller 55-parameter IQP:SEL circuit was not outperformed in fidelity by
+any of V1--V3, motivating its selection as the reported configuration
+(see the headline LR-DTW dominance reported in main-text §4.2).
+\cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}
 
 
 \begin{figure*}
