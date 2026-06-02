@@ -25,7 +25,11 @@ A.4 Additional Validation Metrics Discussion\\
 A.5 Code and Data Availability\\
 A.6 Additional Figures\\
 A.7 Data Transformation Details\\
-A.8 Critic Network Architecture Details
+A.8 Quantum Circuit Introspection\\
+A.9 Per-Model Training Loss Diagnostics\\
+A.10 Per-Model Reconstruction Overlays\\
+A.11 Critic Network Architecture Details\\
+A.12 Quantum Hardware Robustness Sensitivity
 
 \subsection{Comparison of Synthetic Data Generation Approaches}
 
@@ -910,6 +914,154 @@ known fragility at the matched-budget parameter count of 73.
   via
   \protect\path{revision/results/figures/loss_<model>.json}.}
   \label{fig:per_model_loss_grid}
+\end{figure*}
+
+\subsection{Per-Model Reconstruction Overlays}
+
+Figures~\ref{fig:reconstruction_iqp_sel_55_repro}--\ref{fig:reconstruction_ar}
+provide a per-model time-series view of generation fidelity, complementing
+the per-model loss diagnostics of \S A.9 and the cross-model distributional
+metrics of main-text \S4. For each of the nine matched-budget generators
+(seed 42), three vertically stacked panels overlay the generated trajectory
+on the corresponding real series across the full data extent (777
+log-deltas + 778 OD points):
+\begin{itemize}[nosep, leftmargin=*]
+  \item \textbf{Top:} Log-delta comparison (generated vs. real log-returns,
+    777 points).
+  \item \textbf{Middle:} OD reconstruction on linear scale (778 points).
+  \item \textbf{Bottom:} OD reconstruction on log scale (778 points).
+\end{itemize}
+
+\textbf{Visualization protocol (differs from the fidelity-metric protocol
+of main-text \S4.2).} The generated 777-point log-delta sequence is built
+by concatenating the first 78 rows of each model's $(3840, 10)$
+\texttt{samples.npy} bundle (each row an independent 10-step draw in
+$[-1, 1]$ rescaled space), un-rescaling to standardized log-returns via
+the saved $r_{\min}, r_{\max}$ bounds, and un-standardizing to raw
+log-deltas via the saved $\mu, \sigma$. The reconstructed OD trajectory is
+then anchored at $\text{OD}_{\text{real}}[0]$ (rather than the canonical
+matched-budget evaluation protocol's random per-window $od_{\text{start}}$
+draw seeded from the run seed) and integrated via
+$\texttt{inverse\_logreturns}$ to produce a length-778 OD series directly
+overlayable on real OD. A small generator mean-bias in standardized space
+is subtracted from the generated log-delta sequence prior to OD
+reconstruction; without this drift-correction the cumulative integration
+over 777 contiguous steps compounds even a $\sim\!0.005$ mean offset into
+order-of-magnitude OD overshoot, which would obscure the structural
+fidelity question (oscillation amplitude, autocorrelation) the figures
+are designed to convey. The raw (un-corrected) generated log-delta
+sequence is preserved in each figure's JSON companion under
+\texttt{gen\_log\_delta\_raw}. The matched-budget fidelity metrics
+reported in main-text \S4.2 are computed under the canonical
+per-window-anchor protocol and are unaffected by this
+visualization-only correction.
+
+\textbf{What the figures show.} Each model's log-delta amplitude relative
+to real (top panel) is the primary visual signal: a generator that
+captures real log-delta variance produces an overlay with matched
+oscillation amplitude (cf.\ AR(2),
+Figure~\ref{fig:reconstruction_ar}); a generator with attenuated outputs
+produces a near-flat orange trace (cf.\ the four quantum variants).
+Reconstructed OD smoothness in the middle/bottom panels follows directly:
+attenuated log-delta amplitude integrates to a smoother OD trajectory,
+consistent with the main-text \S4.1/\S4.2 finding that the
+matched-budget quantum entrants exceed classical adversarials on
+temporal alignment (LR-DTW) while falling short on single-step
+log-return marginals (LR-EMD). AR(2) and the WGAN-LSTM/MLP entrants
+exhibit the closest amplitude match to real, also consistent with the
+main-text finding that classical adversarials lead on LR-EMD.
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_iqp_sel_55_repro.pdf}
+  \caption{Reconstruction overlay --- IQP:SEL 55p (2000ep repro), seed 42.
+  Top: log-delta comparison (777 points). Middle: OD linear scale (778
+  points). Bottom: OD log scale (778 points). Real series in blue;
+  generated/reconstructed in orange. Source:
+  \protect\path{revision/results/figures/reconstruction_iqp_sel_55_repro.json}.}
+  \label{fig:reconstruction_iqp_sel_55_repro}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V1.pdf}
+  \caption{Reconstruction overlay --- Quantum V1 (75p, depth 4, range
+  entangler), seed 42. Panels as in
+  Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/reconstruction_V1.json}.}
+  \label{fig:reconstruction_V1}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V2.pdf}
+  \caption{Reconstruction overlay --- Quantum V2 (135p, depth 8, range
+  entangler), seed 42. Panels as in
+  Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/reconstruction_V2.json}.}
+  \label{fig:reconstruction_V2}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V3.pdf}
+  \caption{Reconstruction overlay --- Quantum V3 (75p, depth 4, linear
+  entangler), seed 42. Panels as in
+  Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/reconstruction_V3.json}.}
+  \label{fig:reconstruction_V3}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_mlp.pdf}
+  \caption{Reconstruction overlay --- WGAN-GP (MLP), 74p, seed 42.
+  Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/reconstruction_wgan_mlp.json}.}
+  \label{fig:reconstruction_wgan_mlp}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_cnn.pdf}
+  \caption{Reconstruction overlay --- WGAN-GP (CNN), 73p, seed 42.
+  The seed-42 LR-EMD outlier
+  (OD-EMD~$=\!0.1587$ vs.\ the other four seeds in 0.020--0.034,
+  disclosed at face value in main-text \S4.1) is the run plotted here.
+  Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/reconstruction_wgan_cnn.json}.}
+  \label{fig:reconstruction_wgan_cnn}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_lstm.pdf}
+  \caption{Reconstruction overlay --- WGAN-GP (LSTM), 78p, seed 42.
+  Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/reconstruction_wgan_lstm.json}.}
+  \label{fig:reconstruction_wgan_lstm}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_vae.pdf}
+  \caption{Reconstruction overlay --- VAE (562p, degenerate generation
+  regime; see main-text \S4.1), seed 42. Panels as in
+  Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/reconstruction_vae.json}.}
+  \label{fig:reconstruction_vae}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_ar.pdf}
+  \caption{Reconstruction overlay --- AR(2) closed-form baseline, seed
+  42. Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.
+  Note the visibly tighter amplitude match in the top panel, consistent
+  with AR(2)'s leading LR-EMD ranking under the matched-budget contract
+  (main-text \S4.2). Source:
+  \protect\path{revision/results/figures/reconstruction_ar.json}.}
+  \label{fig:reconstruction_ar}
 \end{figure*}
 
 \subsection{Critic Network Architecture Details}

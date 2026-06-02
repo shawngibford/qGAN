@@ -798,6 +798,163 @@ def render_od_reconstruction(model: str, od: np.ndarray,
     return _save(fig, figures_dir, f"odrecon_{model}", companion)
 
 
+def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
+                                  real_od: np.ndarray, figures_dir: Path,
+                                  repo: Path) -> list[Path]:
+    """Per-model 3-panel reconstruction-vs-real time-series overlay.
+
+    Replicates the historical IQP:SEL ``Final Results from 2000 epochs - IQP:SEL
+    circuit/Figure_19.png`` 3-panel style for every model in MODEL_ORDER.
+    Panels: (a) log-delta overlay over 777 points; (b) OD linear scale over
+    778 points; (c) OD log scale over 778 points.
+
+    Reconstruction protocol (visualization only — diverges from the
+    matched-budget evaluation's per-window random-anchor protocol; see
+    ``reconstruct_od`` for the canonical evaluation logic):
+      1. Take the first 78 rows of ``samples.npy`` (each row a 10-step draw
+         in [-1, 1] rescaled space) and concatenate to 780 values; truncate
+         to 777 to match real log-delta length.
+      2. Un-rescale: ``r_norm = ((s + 1)/2) * (r_max - r_min) + r_min``.
+      3. Compute raw log-delta: ``r_raw = r_norm * sigma + mu``.
+      4. **Mean-match** the generated log-delta sequence to the real
+         log-delta mean (subtract the generated mean, add the real mean).
+         This removes a small generator mean-bias artifact that would
+         otherwise compound to massive exponential OD drift over 777
+         contiguous steps; without this correction the reconstructed OD
+         can overshoot real OD by 10-50x even when per-window distribution
+         metrics (EMD, DTW) are reasonable. The correction isolates the
+         **structural** fidelity question (variance, autocorrelation,
+         oscillation amplitude) from the trivial mean-bias-drift artifact.
+      5. Reconstruct OD trajectory anchored at ``real_od[0]`` via
+         ``inverse_logreturns(r_norm_tensor, od_start=real_od[0], mu, sigma)``
+         giving a length-778 OD series directly comparable to the real OD.
+
+    Anchoring at real_od[0] (rather than the matched-budget protocol's
+    random per-window od_start draw with seed*7919+1) and mean-matching
+    the generated log-deltas are visualization choices made transparently
+    here to produce a coherent overlayable trajectory. This visualization
+    is NOT the fidelity-metric reconstruction reported in the main-text
+    §4.2 results (those use the canonical ``reconstruct_od`` per-window
+    protocol with random per-window anchors).
+    """
+    seed = PRIMARY_SEED
+    base = _run_dir(repo, model, seed)
+    samples_pm1 = np.load(_require(base / "samples.npy",
+                                   f"{model}/{seed} samples")).astype(np.float64)
+    inv = np.load(
+        _require(base / "inverse_kwargs.npz", f"{model}/{seed} inverse_kwargs"),
+        allow_pickle=True,
+    )
+    r_min = float(inv["r_min"]); r_max = float(inv["r_max"])
+    mu = float(inv["mu"]); sigma = float(inv["sigma"])
+
+    n_target = real_log_delta.shape[0]  # 777
+    n_od = real_od.shape[0]              # 778
+    n_rows_needed = int(np.ceil(n_target / WINDOW_LENGTH))  # 78
+    flat = samples_pm1[:n_rows_needed].reshape(-1)[:n_target]
+    r_norm_raw = ((flat + 1.0) / 2.0) * (r_max - r_min) + r_min
+    gen_log_delta_raw = r_norm_raw * sigma + mu
+
+    # Mean-match to real log-delta mean (drift-correction).
+    real_mean = float(np.mean(real_log_delta))
+    gen_mean_raw = float(np.mean(gen_log_delta_raw))
+    drift_bias = gen_mean_raw - real_mean
+    gen_log_delta = gen_log_delta_raw - drift_bias
+
+    # Recompute r_norm in standardized space for the inverse_logreturns
+    # call, so the OD reconstruction uses the mean-matched sequence.
+    r_norm = (gen_log_delta - mu) / sigma
+
+    od_anchor = float(real_od[0])
+    od_full = inverse_logreturns(
+        torch.tensor(r_norm).reshape(1, -1),
+        torch.tensor([od_anchor]),
+        torch.tensor(mu),
+        torch.tensor(sigma),
+    )
+    gen_od = od_full.cpu().numpy().squeeze()  # length n_target + 1 = 778
+
+    fig, axes = plt.subplots(3, 1, figsize=(14, 9))
+    t_ld = np.arange(n_target)
+    axes[0].plot(t_ld, gen_log_delta, color="#FFA500", linewidth=0.8,
+                 label="Generated Log Delta")
+    axes[0].plot(t_ld, real_log_delta, color="#1F4FCC", linewidth=0.8,
+                 label="Original Log Delta", alpha=0.85)
+    axes[0].set_title(
+        f"Log Delta Comparison (all {n_target} points) — "
+        f"{MODEL_LABELS.get(model, model)}"
+    )
+    axes[0].set_xlabel("Time Index"); axes[0].set_ylabel("Log Delta Value")
+    axes[0].legend(loc="lower left", fontsize=9, frameon=False)
+    axes[0].grid(True, alpha=0.3)
+
+    t_od = np.arange(n_od)
+    axes[1].plot(t_od, gen_od, color="#FFA500", linewidth=1.1,
+                 label="Reconstructed OD")
+    axes[1].plot(t_od, real_od, color="#1F4FCC", linewidth=1.1,
+                 label="Original OD", alpha=0.85)
+    axes[1].set_title(
+        f"Optical Density Comparison — Linear Scale (all {n_od} points) — "
+        f"{MODEL_LABELS.get(model, model)}"
+    )
+    axes[1].set_xlabel("Time Index"); axes[1].set_ylabel("Optical Density")
+    axes[1].legend(loc="upper left", fontsize=9, frameon=False)
+    axes[1].grid(True, alpha=0.3)
+
+    axes[2].plot(t_od, gen_od, color="#FFA500", linewidth=1.1,
+                 label="Reconstructed OD")
+    axes[2].plot(t_od, real_od, color="#1F4FCC", linewidth=1.1,
+                 label="Original OD", alpha=0.85)
+    axes[2].set_yscale("log")
+    axes[2].set_title(
+        f"Optical Density Comparison — Log Scale (all {n_od} points) — "
+        f"{MODEL_LABELS.get(model, model)}"
+    )
+    axes[2].set_xlabel("Time Index"); axes[2].set_ylabel("Optical Density (log scale)")
+    axes[2].legend(loc="upper left", fontsize=9, frameon=False)
+    axes[2].grid(True, alpha=0.3, which="both")
+
+    fig.tight_layout()
+    companion = {
+        "figure": "reconstruction_overlay",
+        "model": model,
+        "source": f"matched2000/runs/{model}/{seed}",
+        "seed": seed,
+        "render_only": True,
+        "n_log_delta": int(n_target),
+        "n_od": int(n_od),
+        "stitch_method": (
+            f"concat_first_{n_rows_needed}_rows_of_samples_npy_reshape_"
+            f"truncate_{n_target}_then_mean_match_to_real"
+        ),
+        "drift_correction": {
+            "applied": True,
+            "real_log_delta_mean": real_mean,
+            "gen_log_delta_mean_raw": gen_mean_raw,
+            "drift_bias_subtracted": drift_bias,
+            "rationale": (
+                "Generator outputs a small mean-bias in standardized space "
+                "that compounds to large exponential OD drift over 777 "
+                "contiguous steps; subtracting the bias isolates structural "
+                "fidelity (variance / autocorrelation / oscillation "
+                "amplitude) from the mean-bias-drift artifact. The fidelity "
+                "metrics reported in main-text §4.2 are computed under the "
+                "canonical reconstruct_od per-window random-anchor protocol "
+                "and are NOT affected by this visualization-only correction."
+            ),
+        },
+        "anchor": "real_od[0]",
+        "anchor_value": od_anchor,
+        "r_min": r_min, "r_max": r_max, "mu": mu, "sigma": sigma,
+        "real_log_delta": real_log_delta.tolist(),
+        "gen_log_delta_raw": gen_log_delta_raw.tolist(),
+        "gen_log_delta_drift_corrected": gen_log_delta.tolist(),
+        "real_od": real_od.tolist(),
+        "gen_od": gen_od.tolist(),
+    }
+    return _save(fig, figures_dir, f"reconstruction_{model}", companion)
+
+
 def render_stylized_facts(model: str, od: np.ndarray, real_flat: np.ndarray,
                           figures_dir: Path) -> list[Path]:
     """Per-model stylized-facts panel: moments bar + log-return tail."""
