@@ -77,6 +77,7 @@ from revision.core.eval import (  # noqa: E402
     compute_acf,
     compute_dtw,
     compute_emd,
+    compute_jsd,
     compute_moments,
 )
 from revision.core.preprocessing import inverse_logreturns  # noqa: E402
@@ -953,6 +954,226 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
         "gen_od": gen_od.tolist(),
     }
     return _save(fig, figures_dir, f"reconstruction_{model}", companion)
+
+
+def render_logreturn_stat_grid(model: str, real_log_delta: np.ndarray,
+                               gen_log_delta: np.ndarray,
+                               figures_dir: Path) -> list[Path]:
+    """Per-model 3x2 statistical-comparison grid on log-return scale.
+
+    Replicates the historical ``qgan_pennylane.ipynb`` Cell 60 figure
+    (the same 6-panel layout produced as
+    ``Final Results from 2000 epochs - IQP:SEL circuit/Figure_4.png``)
+    for every model in MODEL_ORDER.
+
+    Panels (3 columns x 2 rows):
+      (0,0) Probability density histograms (50 bins, alpha 0.7)
+      (0,1) Cumulative density histograms (100 bins)
+      (0,2) Q-Q plot vs normal distribution via ``scipy.stats.probplot``
+      (1,0) Statistical moments bar chart (mean / std / skewness / kurtosis)
+      (1,1) Distance metrics bar chart (EMD / Jensen-Shannon / Entropy Diff)
+      (1,2) Shannon-entropy comparison bar chart
+
+    Inputs are 1D arrays of length 777 (real_log_delta from
+    ``load_and_preprocess`` and gen_log_delta the raw, un-drift-corrected
+    synthetic log-delta as stored in
+    ``revision/results/figures/reconstruction_<model>.json[gen_log_delta_raw]``).
+    """
+    from scipy.stats import probplot, entropy as _entropy
+
+    real = np.asarray(real_log_delta, dtype=np.float64).ravel()
+    gen = np.asarray(gen_log_delta, dtype=np.float64).ravel()
+    bins_pdf = 50
+    bins_cdf = 100
+    bins_entropy = 50
+
+    moments_real = compute_moments(real)
+    moments_gen = compute_moments(gen)
+    emd_val = compute_emd(real, gen)
+    jsd_val = compute_jsd(real, gen)
+
+    # Shannon entropy via shared-bin histograms (nats).
+    lo_e = float(min(real.min(), gen.min()))
+    hi_e = float(max(real.max(), gen.max()))
+    edges_e = np.linspace(lo_e, hi_e, bins_entropy + 1)
+    p_real, _ = np.histogram(real, bins=edges_e, density=False)
+    p_gen, _ = np.histogram(gen, bins=edges_e, density=False)
+    p_real = p_real.astype(float) + 1e-12
+    p_gen = p_gen.astype(float) + 1e-12
+    p_real /= p_real.sum()
+    p_gen /= p_gen.sum()
+    entropy_real = float(_entropy(p_real))
+    entropy_gen = float(_entropy(p_gen))
+    entropy_diff = abs(entropy_real - entropy_gen)
+
+    fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+    real_color = "#1F4FCC"
+    gen_color = "#FFA500"
+
+    axes[0, 0].hist(real, bins=bins_pdf, density=True, alpha=0.7,
+                    label="Original", color=real_color)
+    axes[0, 0].hist(gen, bins=bins_pdf, density=True, alpha=0.7,
+                    label="Generated", color=gen_color)
+    axes[0, 0].set_title("Probability Distributions")
+    axes[0, 0].set_xlabel("Log Returns")
+    axes[0, 0].set_ylabel("Density")
+    axes[0, 0].legend()
+    axes[0, 0].grid(True, alpha=0.3)
+
+    axes[0, 1].hist(real, bins=bins_cdf, density=True, cumulative=True,
+                    alpha=0.7, label="Original", color=real_color)
+    axes[0, 1].hist(gen, bins=bins_cdf, density=True, cumulative=True,
+                    alpha=0.7, label="Generated", color=gen_color)
+    axes[0, 1].set_title("Cumulative Distributions")
+    axes[0, 1].set_xlabel("Log Returns")
+    axes[0, 1].set_ylabel("Cumulative Density")
+    axes[0, 1].legend()
+    axes[0, 1].grid(True, alpha=0.3)
+
+    probplot(real, dist="norm", plot=axes[0, 2])
+    lines = axes[0, 2].get_lines()
+    lines[0].set_markerfacecolor(real_color)
+    lines[0].set_markeredgecolor(real_color)
+    lines[0].set_label("Original")
+    probplot(gen, dist="norm", plot=axes[0, 2])
+    lines = axes[0, 2].get_lines()
+    lines[2].set_markerfacecolor(gen_color)
+    lines[2].set_markeredgecolor(gen_color)
+    lines[2].set_label("Generated")
+    axes[0, 2].set_title("Q-Q Plot vs Normal Distribution")
+    axes[0, 2].set_xlabel("Theoretical Quantiles")
+    axes[0, 2].set_ylabel("Ordered Values")
+    axes[0, 2].legend()
+    axes[0, 2].grid(True, alpha=0.3)
+
+    metric_names = ["Mean", "Std", "Skewness", "Kurtosis"]
+    metric_keys = ["mean", "std", "skewness", "kurtosis"]
+    real_vals = [moments_real[k] for k in metric_keys]
+    gen_vals = [moments_gen[k] for k in metric_keys]
+    x = np.arange(len(metric_names))
+    width = 0.35
+    axes[1, 0].bar(x - width / 2, real_vals, width, label="Original",
+                   color=real_color, alpha=0.7)
+    axes[1, 0].bar(x + width / 2, gen_vals, width, label="Generated",
+                   color=gen_color, alpha=0.7)
+    axes[1, 0].set_title("Statistical Moments Comparison")
+    axes[1, 0].set_xlabel("Metrics")
+    axes[1, 0].set_ylabel("Values")
+    axes[1, 0].set_xticks(x)
+    axes[1, 0].set_xticklabels(metric_names)
+    axes[1, 0].legend()
+    axes[1, 0].grid(True, alpha=0.3)
+
+    dist_names = ["EMD", "Jensen-Shannon", "Entropy Diff"]
+    dist_vals = [emd_val, jsd_val, entropy_diff]
+    dist_colors = ["#D62728", "#9467BD", "#2CA02C"]
+    bars = axes[1, 1].bar(dist_names, dist_vals, color=dist_colors, alpha=0.7)
+    axes[1, 1].set_title("Distance Metrics (Lower = More Similar)")
+    axes[1, 1].set_ylabel("Distance Value")
+    axes[1, 1].grid(True, alpha=0.3)
+    for bar, v in zip(bars, dist_vals):
+        axes[1, 1].text(bar.get_x() + bar.get_width() / 2,
+                        bar.get_height() + max(dist_vals) * 0.01,
+                        f"{v:.4f}", ha="center", va="bottom", fontsize=9)
+
+    ent_names = ["Original", "Generated"]
+    ent_vals = [entropy_real, entropy_gen]
+    ent_colors = [real_color, gen_color]
+    bars = axes[1, 2].bar(ent_names, ent_vals, color=ent_colors, alpha=0.7)
+    axes[1, 2].set_title("Entropy Comparison")
+    axes[1, 2].set_ylabel("Entropy Value")
+    axes[1, 2].grid(True, alpha=0.3)
+    for bar, v in zip(bars, ent_vals):
+        axes[1, 2].text(bar.get_x() + bar.get_width() / 2,
+                        bar.get_height() + max(ent_vals) * 0.01,
+                        f"{v:.4f}", ha="center", va="bottom", fontsize=9)
+
+    fig.suptitle(
+        f"Log-return distribution diagnostics — "
+        f"{MODEL_LABELS.get(model, model)} (seed 42)",
+        fontsize=14, y=1.00,
+    )
+    fig.tight_layout()
+    companion = {
+        "figure": "logreturn_stat_grid",
+        "model": model,
+        "source": f"matched2000/runs/{model}/{PRIMARY_SEED}",
+        "seed": PRIMARY_SEED,
+        "render_only": True,
+        "n_real": int(real.size),
+        "n_gen": int(gen.size),
+        "bins_pdf": bins_pdf,
+        "bins_cdf": bins_cdf,
+        "bins_entropy": bins_entropy,
+        "moments_real": moments_real,
+        "moments_gen": moments_gen,
+        "emd": emd_val,
+        "jsd": jsd_val,
+        "entropy_real": entropy_real,
+        "entropy_gen": entropy_gen,
+        "entropy_diff": entropy_diff,
+        "real_log_delta": real.tolist(),
+        "gen_log_delta": gen.tolist(),
+    }
+    return _save(fig, figures_dir, f"stat_grid_{model}", companion)
+
+
+def render_dtw_alignment(model: str, real_log_delta: np.ndarray,
+                         gen_log_delta: np.ndarray,
+                         figures_dir: Path) -> list[Path]:
+    """Per-model DTW alignment plot (cost-matrix heatmap + warping path).
+
+    Replicates the historical ``qgan_pennylane.ipynb`` Cell 64
+    visualization (same layout as
+    ``Final Results from 2000 epochs - IQP:SEL circuit/Figure_15.png``).
+    Uses ``dtaidistance.dtw.warping_paths`` to compute the accumulated
+    cost matrix and ``dtw.best_path`` for the optimal warping path, then
+    renders via ``dtaidistance.dtw_visualisation.plot_warpingpaths``
+    (time series on top + left margins, cost-matrix heatmap centre,
+    optimal path in red, distance label in the upper-left corner).
+
+    Visualization protocol: ``window=500`` (Sakoe-Chiba band) and
+    ``psi=2`` match the historical Cell 64 call. The displayed DTW
+    distance is a VISUALIZATION-PROTOCOL value computed under
+    dtaidistance; it differs in implementation and band/protocol from
+    the canonical fastdtw-based LR-DTW reported in main-text §4.2 and
+    should not be substituted for it.
+    """
+    from dtaidistance import dtw as _dtw
+    from dtaidistance import dtw_visualisation as _dtwvis
+
+    real = np.asarray(real_log_delta, dtype=np.float64).ravel()
+    gen = np.asarray(gen_log_delta, dtype=np.float64).ravel()
+    window = 500
+    psi = 2
+    d, paths = _dtw.warping_paths(real, gen, window=window, psi=psi)
+    best_path = _dtw.best_path(paths)
+
+    fig, ax = _dtwvis.plot_warpingpaths(real, gen, paths, best_path)
+    try:
+        fig.suptitle(
+            f"DTW alignment — {MODEL_LABELS.get(model, model)} (seed 42, "
+            f"window={window}, psi={psi})",
+            fontsize=12, y=1.00,
+        )
+    except Exception:
+        pass
+    companion = {
+        "figure": "dtw_alignment",
+        "model": model,
+        "source": f"matched2000/runs/{model}/{PRIMARY_SEED}",
+        "seed": PRIMARY_SEED,
+        "render_only": True,
+        "dtw_distance": float(d),
+        "window": window,
+        "psi": psi,
+        "n_real": int(real.size),
+        "n_gen": int(gen.size),
+        "best_path_length": int(len(best_path)),
+        "real_log_delta": real.tolist(),
+        "gen_log_delta": gen.tolist(),
+    }
+    return _save(fig, figures_dir, f"dtw_alignment_{model}", companion)
 
 
 def render_stylized_facts(model: str, od: np.ndarray, real_flat: np.ndarray,

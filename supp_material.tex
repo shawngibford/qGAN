@@ -28,8 +28,10 @@ A.7 Data Transformation Details\\
 A.8 Quantum Circuit Introspection\\
 A.9 Per-Model Training Loss Diagnostics\\
 A.10 Per-Model Reconstruction Overlays\\
-A.11 Critic Network Architecture Details\\
-A.12 Quantum Hardware Robustness Sensitivity
+A.11 Per-Model Log-Return Distribution Diagnostics\\
+A.12 Per-Model DTW Alignment\\
+A.13 Critic Network Architecture Details\\
+A.14 Quantum Hardware Robustness Sensitivity
 
 \subsection{Comparison of Synthetic Data Generation Approaches}
 
@@ -1062,6 +1064,258 @@ main-text finding that classical adversarials lead on LR-EMD.
   (main-text \S4.2). Source:
   \protect\path{revision/results/figures/reconstruction_ar.json}.}
   \label{fig:reconstruction_ar}
+\end{figure*}
+
+\subsection{Per-Model Log-Return Distribution Diagnostics}
+
+Figures~\ref{fig:stat_grid_iqp_sel_55_repro}--\ref{fig:stat_grid_ar}
+present, for each of the nine matched-budget generators (seed~42), a
+six-panel statistical-comparison grid on the log-return scale. Inputs
+are the full real log-delta series (777 points from
+\protect\path{data.csv} via \protect\path{revision/core/data.py::compute_log_delta})
+and the raw, un-drift-corrected synthetic log-delta series (777 points
+extracted from each model's \protect\path{samples.npy} via the saved
+inverse transform; the same construction as \S A.10, but BEFORE the
+visualization-only drift correction applied there, so the panels
+reflect the true generator output distribution including any mean
+bias).
+
+The panel layout is identical across all nine figures:
+\begin{itemize}[nosep, leftmargin=*]
+  \item Top-left: probability density histograms (50 bins, overlaid).
+  \item Top-middle: cumulative density histograms (100 bins, overlaid).
+  \item Top-right: Q-Q plot vs.\ the standard normal distribution
+    (\texttt{scipy.stats.probplot(dist="norm")} called for each series;
+    deviation from the red reference line indicates non-Gaussianity).
+  \item Bottom-left: statistical moments bar chart (mean, std,
+    skewness, Fisher excess kurtosis; std computed with
+    \texttt{ddof=0} and kurtosis as \texttt{scipy.stats.kurtosis}'s
+    default to match \protect\path{revision/core/eval.py::compute_moments}).
+  \item Bottom-middle: distance metrics bar chart with numerical
+    labels --- EMD via \texttt{scipy.stats.wasserstein\_distance} on
+    raw samples (\protect\path{revision/core/eval.py::compute_emd});
+    Jensen-Shannon divergence on a shared-bin histogram
+    (\protect\path{revision/core/eval.py::compute_jsd}, default 100
+    bins); and the absolute difference of the two Shannon entropies.
+  \item Bottom-right: Shannon entropy comparison (in nats), computed
+    on shared 50-bin histograms with a small floor
+    ($+10^{-12}$ per bin) to avoid $\log 0$.
+\end{itemize}
+
+\textbf{Scope.} These are diagnostic visualizations for distributional
+fidelity at the log-return scale; they are not a restatement of the
+canonical fidelity metrics reported in main-text \S 4.2 (which are
+computed under the matched-budget per-window evaluation protocol with
+different sample-construction details and aggregation across the five
+seeds). Each panel grid is single-seed (seed~42) and uses the
+777-point contiguous reconstruction sequence.
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_iqp_sel_55_repro.pdf}
+  \caption{Log-return distribution diagnostics --- IQP:SEL 55p (2000ep
+  repro), seed~42. Six-panel layout per \S A.11 intro. Real (blue) vs.\
+  generated (orange). Source:
+  \protect\path{revision/results/figures/stat_grid_iqp_sel_55_repro.json}.}
+  \label{fig:stat_grid_iqp_sel_55_repro}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V1.pdf}
+  \caption{Log-return distribution diagnostics --- Quantum V1 (75p),
+  seed~42. Panels as in
+  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/stat_grid_V1.json}.}
+  \label{fig:stat_grid_V1}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V2.pdf}
+  \caption{Log-return distribution diagnostics --- Quantum V2 (135p),
+  seed~42. Panels as in
+  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/stat_grid_V2.json}.}
+  \label{fig:stat_grid_V2}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V3.pdf}
+  \caption{Log-return distribution diagnostics --- Quantum V3 (75p,
+  linear entangler), seed~42. Panels as in
+  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/stat_grid_V3.json}.}
+  \label{fig:stat_grid_V3}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_mlp.pdf}
+  \caption{Log-return distribution diagnostics --- WGAN-GP (MLP, 74p),
+  seed~42. Panels as in
+  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/stat_grid_wgan_mlp.json}.}
+  \label{fig:stat_grid_wgan_mlp}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_cnn.pdf}
+  \caption{Log-return distribution diagnostics --- WGAN-GP (CNN, 73p),
+  seed~42 (the LR-EMD outlier seed disclosed in main-text \S 4.1).
+  Panels as in Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/stat_grid_wgan_cnn.json}.}
+  \label{fig:stat_grid_wgan_cnn}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_lstm.pdf}
+  \caption{Log-return distribution diagnostics --- WGAN-GP (LSTM, 78p),
+  seed~42. Panels as in
+  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/stat_grid_wgan_lstm.json}.}
+  \label{fig:stat_grid_wgan_lstm}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_vae.pdf}
+  \caption{Log-return distribution diagnostics --- VAE (562p,
+  degenerate generation regime; see main-text \S 4.1), seed~42.
+  Panels as in Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/stat_grid_vae.json}.}
+  \label{fig:stat_grid_vae}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_ar.pdf}
+  \caption{Log-return distribution diagnostics --- AR(2) closed-form
+  baseline, seed~42. Panels as in
+  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. The visibly tightest
+  amplitude/moment match in this collection is consistent with AR(2)'s
+  leading LR-EMD ranking under the matched-budget contract reported
+  in main-text \S 4.2. Source:
+  \protect\path{revision/results/figures/stat_grid_ar.json}.}
+  \label{fig:stat_grid_ar}
+\end{figure*}
+
+\subsection{Per-Model DTW Alignment}
+
+Figures~\ref{fig:dtw_alignment_iqp_sel_55_repro}--\ref{fig:dtw_alignment_ar}
+provide per-model DTW alignment visualizations: each plot shows the
+real log-delta sequence on the top axis (777 points), the generated
+log-delta sequence on the left axis (777 points, rotated), and the
+accumulated DTW warping-cost matrix as a heatmap in the centre with the
+optimal warping path drawn in red. The Sakoe-Chiba band is visible as
+the diagonal corridor; cells outside the band are excluded from the
+search.
+
+\textbf{Visualization protocol (differs from main-text \S 4.2).} The
+cost matrix and warping path are computed via
+\texttt{dtaidistance.dtw.warping\_paths(real, gen, window=500, psi=2)}
+followed by \texttt{dtaidistance.dtw.best\_path}, then rendered via
+\texttt{dtaidistance.dtw\_visualisation.plot\_warpingpaths}. The
+displayed numerical DTW distance is therefore a
+visualization-protocol value: it uses a different DTW implementation
+and band/skip-edge protocol than the canonical fastdtw-based LR-DTW
+reported in main-text \S 4.2 (which is computed under the matched-budget
+windowed-evaluation protocol per
+\protect\path{revision/core/eval.py::compute_dtw}). Numerical DTW
+distances in these figures are NOT directly comparable to the headline
+LR-DTW values; the figures are intended to illustrate alignment
+quality (warping-path shape, band utilization, anchor cost) rather
+than to re-derive the headline metric.
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_iqp_sel_55_repro.pdf}
+  \caption{DTW alignment --- IQP:SEL 55p (2000ep repro), seed~42.
+  Top: real log-delta series. Left: generated log-delta series.
+  Centre: accumulated DTW cost matrix (\texttt{dtaidistance},
+  \texttt{window=500}, \texttt{psi=2}). Optimal warping path in red.
+  Distance value at top-left is a visualization-protocol value; see
+  \S A.12 intro. Source:
+  \protect\path{revision/results/figures/dtw_alignment_iqp_sel_55_repro.json}.}
+  \label{fig:dtw_alignment_iqp_sel_55_repro}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V1.pdf}
+  \caption{DTW alignment --- Quantum V1 (75p), seed~42. Panels as in
+  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/dtw_alignment_V1.json}.}
+  \label{fig:dtw_alignment_V1}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V2.pdf}
+  \caption{DTW alignment --- Quantum V2 (135p), seed~42. Panels as in
+  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/dtw_alignment_V2.json}.}
+  \label{fig:dtw_alignment_V2}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V3.pdf}
+  \caption{DTW alignment --- Quantum V3 (75p, linear entangler),
+  seed~42. Panels as in
+  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/dtw_alignment_V3.json}.}
+  \label{fig:dtw_alignment_V3}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_mlp.pdf}
+  \caption{DTW alignment --- WGAN-GP (MLP, 74p), seed~42. Panels as in
+  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/dtw_alignment_wgan_mlp.json}.}
+  \label{fig:dtw_alignment_wgan_mlp}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_cnn.pdf}
+  \caption{DTW alignment --- WGAN-GP (CNN, 73p), seed~42 (the LR-EMD
+  outlier seed disclosed in main-text \S 4.1). Panels as in
+  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/dtw_alignment_wgan_cnn.json}.}
+  \label{fig:dtw_alignment_wgan_cnn}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_lstm.pdf}
+  \caption{DTW alignment --- WGAN-GP (LSTM, 78p), seed~42. Panels as in
+  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/dtw_alignment_wgan_lstm.json}.}
+  \label{fig:dtw_alignment_wgan_lstm}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_vae.pdf}
+  \caption{DTW alignment --- VAE (562p, degenerate generation regime;
+  see main-text \S 4.1), seed~42. Panels as in
+  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/dtw_alignment_vae.json}.}
+  \label{fig:dtw_alignment_vae}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_ar.pdf}
+  \caption{DTW alignment --- AR(2) closed-form baseline, seed~42.
+  Panels as in Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
+  \protect\path{revision/results/figures/dtw_alignment_ar.json}.}
+  \label{fig:dtw_alignment_ar}
 \end{figure*}
 
 \subsection{Critic Network Architecture Details}
