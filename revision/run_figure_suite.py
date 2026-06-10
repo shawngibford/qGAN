@@ -81,6 +81,7 @@ from revision.core.eval import (  # noqa: E402
     compute_moments,
 )
 from revision.core.preprocessing import inverse_logreturns  # noqa: E402
+from revision._wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
 
 # ---------------------------------------------------------------------------
 # Constants (verbatim with the canonical peer drivers)
@@ -271,6 +272,7 @@ def reconstruct_od(repo: Path, model: str, seed: int) -> np.ndarray:
     base = _run_dir(repo, model, seed)
     samples_pm1 = np.load(_require(base / "samples.npy",
                                    f"{model}/{seed} samples")).astype(np.float64)
+    samples_pm1 = _unscale_wgan_samples(samples_pm1, model)  # Plan 14-21 T01
     inv = np.load(
         _require(base / "inverse_kwargs.npz", f"{model}/{seed} inverse_kwargs"),
         allow_pickle=True,
@@ -842,6 +844,7 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
     base = _run_dir(repo, model, seed)
     samples_pm1 = np.load(_require(base / "samples.npy",
                                    f"{model}/{seed} samples")).astype(np.float64)
+    samples_pm1 = _unscale_wgan_samples(samples_pm1, model)  # Plan 14-21 T01
     inv = np.load(
         _require(base / "inverse_kwargs.npz", f"{model}/{seed} inverse_kwargs"),
         allow_pickle=True,
@@ -856,14 +859,18 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
     r_norm_raw = ((flat + 1.0) / 2.0) * (r_max - r_min) + r_min
     gen_log_delta_raw = r_norm_raw * sigma + mu
 
-    # Mean-match to real log-delta mean (drift-correction).
-    real_mean = float(np.mean(real_log_delta))
-    gen_mean_raw = float(np.mean(gen_log_delta_raw))
-    drift_bias = gen_mean_raw - real_mean
-    gen_log_delta = gen_log_delta_raw - drift_bias
+    # Plan 14-21 T01 — mean-match drift-correction band-aid REMOVED.
+    # The x0.1 inverse-pipeline bug was the true source of the OD overshoot
+    # that motivated this band-aid; with _unscale_wgan_samples applied
+    # above, generated log-deltas have real-matching amplitude and the
+    # mean-match no longer masks an upstream attenuation. A small residual
+    # mean offset remains (training-side artifact disclosed in supp
+    # methodology) but is left visible here.
+    gen_log_delta = gen_log_delta_raw
 
     # Recompute r_norm in standardized space for the inverse_logreturns
-    # call, so the OD reconstruction uses the mean-matched sequence.
+    # call (kept symmetric with the previous code path for downstream
+    # tensor shapes).
     r_norm = (gen_log_delta - mu) / sigma
 
     od_anchor = float(real_od[0])
@@ -926,22 +933,18 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
         "n_od": int(n_od),
         "stitch_method": (
             f"concat_first_{n_rows_needed}_rows_of_samples_npy_reshape_"
-            f"truncate_{n_target}_then_mean_match_to_real"
+            f"truncate_{n_target}"
         ),
         "drift_correction": {
-            "applied": True,
-            "real_log_delta_mean": real_mean,
-            "gen_log_delta_mean_raw": gen_mean_raw,
-            "drift_bias_subtracted": drift_bias,
+            "applied": False,
             "rationale": (
-                "Generator outputs a small mean-bias in standardized space "
-                "that compounds to large exponential OD drift over 777 "
-                "contiguous steps; subtracting the bias isolates structural "
-                "fidelity (variance / autocorrelation / oscillation "
-                "amplitude) from the mean-bias-drift artifact. The fidelity "
-                "metrics reported in main-text §4.2 are computed under the "
-                "canonical reconstruct_od per-window random-anchor protocol "
-                "and are NOT affected by this visualization-only correction."
+                "Plan 14-21 T01 — the mean-match drift-correction band-aid "
+                "previously applied here was masking the x0.1 WGAN "
+                "inverse-pipeline bug. With _unscale_wgan_samples now applied "
+                "above (revision/_wgan_unscale), generated log-deltas have "
+                "real-matching amplitude; a small residual mean offset "
+                "remains (training-side artifact disclosed in supp "
+                "methodology) but is left visible."
             ),
         },
         "anchor": "real_od[0]",
@@ -949,7 +952,7 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
         "r_min": r_min, "r_max": r_max, "mu": mu, "sigma": sigma,
         "real_log_delta": real_log_delta.tolist(),
         "gen_log_delta_raw": gen_log_delta_raw.tolist(),
-        "gen_log_delta_drift_corrected": gen_log_delta.tolist(),
+        "gen_log_delta": gen_log_delta.tolist(),
         "real_od": real_od.tolist(),
         "gen_od": gen_od.tolist(),
     }
@@ -3116,6 +3119,7 @@ def main() -> None:
         # transformed (log-return space) windows for the dual-scale ACF
         inv = np.load(run / "inverse_kwargs.npz", allow_pickle=True)
         samples_pm1 = np.load(run / "samples.npy").astype(np.float64)
+        samples_pm1 = _unscale_wgan_samples(samples_pm1, model)  # Plan 14-21 T01
         r_norm = ((samples_pm1 + 1.0) / 2.0) * (
             float(inv["r_max"]) - float(inv["r_min"])
         ) + float(inv["r_min"])

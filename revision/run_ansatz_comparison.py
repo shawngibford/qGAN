@@ -66,6 +66,7 @@ from revision.core.data import load_and_preprocess, rolling_window
 # revision.core.eval — REUSE UNCHANGED (D-10-20). Import only; never edited.
 from revision.core.eval import full_metric_suite
 from revision.core.preprocessing import inverse_logreturns
+from revision._wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
 
 # ── ARCH-02 ansatz variant registry ─────────────────────────────────────────
 # V1 is REUSED from the 09.1/10 transform_ablation Pipeline-B runs (D-13-01, no
@@ -157,6 +158,7 @@ def reconstruct_dualscale(variant: str, seed: int, ansatz_root: Path) -> dict:
             f"contract (D-13-01) broken; aborting before partial re-score"
         )
     samples_pm1 = np.load(spath).astype(np.float64)
+    samples_pm1 = _unscale_wgan_samples(samples_pm1, variant)  # Plan 14-21 T01
     inv = np.load(ipath, allow_pickle=True)
 
     # CR-02: validate the on-disk schema BEFORE scoring so a key/name drift in

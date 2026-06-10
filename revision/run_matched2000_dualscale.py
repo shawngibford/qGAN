@@ -96,6 +96,7 @@ from revision.core.eval import (
     compute_moments,
 )
 from revision.core.preprocessing import inverse_logreturns
+from revision._wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
 
 # ── Constants ────────────────────────────────────────────────────────────────
 # The 9 matched-2000ep models (verified on disk). ALL are Pipeline-B (no
@@ -187,6 +188,7 @@ def reconstruct_od(model_kind: str, pipeline: str, seed: int,
     """
     base = _run_base(model_kind, pipeline, seed)
     samples_pm1 = np.load(base / "samples.npy").astype(np.float64)
+    samples_pm1 = _unscale_wgan_samples(samples_pm1, model_kind)  # Plan 14-21 T01
     inv = np.load(base / "inverse_kwargs.npz", allow_pickle=True)
 
     if n_synth_subsample is not None and samples_pm1.shape[0] > n_synth_subsample:

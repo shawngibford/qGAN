@@ -228,8 +228,16 @@ def _reconstruct_od_from_samples(samples_pm1, mu: float, sigma: float,
     import torch
 
     from revision.core.preprocessing import inverse_logreturns
+    from revision._wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
 
     samples_pm1 = np.asarray(samples_pm1, dtype=np.float64)
+    # Plan 14-21 T01 — Option B: keep the documented `* 0.1` at
+    # _generate_headline_samples:210 (VERBATIM contract preserved) and undo
+    # it here at the inverse boundary. The frozen-checkpoint headline row
+    # is labelled `frozen_checkpoint_headline` in _WGAN_KINDS so the helper
+    # applies the x10 correction. See revision/_wgan_unscale.py for the
+    # full Pitfall 3 rationale.
+    samples_pm1 = _unscale_wgan_samples(samples_pm1, "frozen_checkpoint_headline")
     r_norm = ((samples_pm1 + 1.0) / 2.0) * (r_max - r_min) + r_min
     rng = np.random.default_rng(seed * 7919 + 1)
     od_start_per_window = rng.choice(

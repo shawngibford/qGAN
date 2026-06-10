@@ -59,6 +59,7 @@ if str(REPO) not in sys.path:
 from revision.core.preprocessing import inverse_logreturns  # noqa: E402
 from revision.core.data import load_and_preprocess, rolling_window  # noqa: E402
 from revision.core import WINDOW_LENGTH  # noqa: E402  (== 10)
+from revision._wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -168,6 +169,7 @@ def reconstruct_od(model_kind: str, pipeline: str, seed: int,
         )
     base = _run_base(model_kind, pipeline, seed)
     samples_pm1 = np.load(base / "samples.npy").astype(np.float64)
+    samples_pm1 = _unscale_wgan_samples(samples_pm1, model_kind)  # Plan 14-21 T01
     inv = np.load(base / "inverse_kwargs.npz", allow_pickle=True)
 
     if n_synth_subsample is not None and samples_pm1.shape[0] > n_synth_subsample:

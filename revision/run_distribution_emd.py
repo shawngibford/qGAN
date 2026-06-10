@@ -97,6 +97,7 @@ from revision.run_figure_suite import (  # noqa: E402
 )
 from revision.core.data import load_and_preprocess, rolling_window  # noqa: E402
 import torch  # noqa: E402
+from revision._wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
 
 WINDOW_LENGTH = 10
 DATA_CSV = "data.csv"
@@ -215,6 +216,7 @@ def _fake_log_return_flat(repo: Path, model: str, seed: int) -> np.ndarray:
     """
     base = repo / "revision" / "results" / "matched2000" / "runs" / model / str(seed)
     samples_pm1 = np.load(base / "samples.npy").astype(np.float64)
+    samples_pm1 = _unscale_wgan_samples(samples_pm1, model)  # Plan 14-21 T01
     inv = np.load(base / "inverse_kwargs.npz", allow_pickle=True)
     r_min = float(inv["r_min"])
     r_max = float(inv["r_max"])
