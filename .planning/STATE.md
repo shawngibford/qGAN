@@ -101,8 +101,10 @@ None.
 
 ## Session Continuity
 
-**Last Session:** 2026-05-22T06:36:21.678Z
-**Stopped At:** Completed 14-18-PLAN.md
-**Resume File:** None
+**Last Session:** 2026-06-10T19:00:00.000Z
+**Stopped At:** Phase 14 sub-plan 14-21 PLAN.md complete + verified (gsd-plan-checker iteration 2 PASS). Planning surfaced a scope expansion vs. cached-tumbling-starfish.md: source plan said "2 call sites"; reality is **9 sites across 7 files** + new shared helper module `revision/_wgan_unscale.py`. Major discovery: `run_canonical_headline.py:210` applies the same ×0.1 to fresh samples, so `headline_canonical.json` (frozen-checkpoint DTW=0.6843 figure cited throughout paper) is ALSO bugged. Open Question Q1 collapsed from "verify" to "regenerate unconditionally." HANDOFF.json retired (one-shot artifact consumed by resume-work). `.continue-here.md` remains as load-bearing reference until 14-21-SUMMARY.md lands.
+**Resume File:** .planning/phases/14-paper-revision-release-freeze/14-21-PLAN.md + .continue-here.md (constraints)
 
-**Planned Phase:** 8 (Core Module Extraction) — 5 plans — 2026-04-23T16:46:36.017Z
+**Active Plan Artifact:** /Users/shawngibford/.claude/plans/cached-tumbling-starfish.md (7-step user-approved fix; 14-21-PLAN.md is the structured GSD restatement with the scope expansion baked in)
+
+**Planned Phase:** 14 sub-plan 14-21 (Fix ×0.1 WGAN inverse-pipeline bug). Ready for execution via `/gsd:execute-phase 14`. T05 has a structurally enforced human-checkpoint gate for bifurcated-finding re-assessment (Branch A: finding survives → literals refresh only; Branch B: finding inverts → §4/§5/abstract rewrite after explicit user sign-off).
