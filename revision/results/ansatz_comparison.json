@@ -1,6 +1,5 @@
 {
   "schema": "long-form rows[] + models[] (D-10-16) + ansatz/depth/topology (Phase 13)",
-  "data_hash": "91e447d4624e25b3",
   "model_kinds": [
     "quantum"
   ],
@@ -55,7 +54,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.022937980562900886
+      "value": 0.02274767421246993
     },
     {
       "model_kind": "quantum",
@@ -77,7 +76,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4070339987298917
+      "value": 1.4068266301097436
     },
     {
       "model_kind": "quantum",
@@ -99,7 +98,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8839933147241738
+      "value": 0.8855719407826881
     },
     {
       "model_kind": "quantum",
@@ -121,7 +120,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3655798412279025
+      "value": 1.3737598380189757
     },
     {
       "model_kind": "quantum",
@@ -143,7 +142,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.7768219209344931
+      "value": 0.8258320210539352
     },
     {
       "model_kind": "quantum",
@@ -154,7 +153,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.2126895459699307
+      "value": 0.16925533321029704
     },
     {
       "model_kind": "quantum",
@@ -165,7 +164,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.1209437521974767
+      "value": 0.5684435772359046
     },
     {
       "model_kind": "quantum",
@@ -187,7 +186,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.1232816505352802
+      "value": 0.11943798057252873
     },
     {
       "model_kind": "quantum",
@@ -209,7 +208,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07206523080095577
+      "value": 0.7206523080095576
     },
     {
       "model_kind": "quantum",
@@ -231,7 +230,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.03262545792264619
+      "value": -0.03262545792264676
     },
     {
       "model_kind": "quantum",
@@ -264,7 +263,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6861909152453346
+      "value": 0.7470454940626402
     },
     {
       "model_kind": "quantum",
@@ -275,7 +274,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.03430417431908385
+      "value": 0.034634978636631605
     },
     {
       "model_kind": "quantum",
@@ -297,7 +296,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3946251855573053
+      "value": 1.3962929885976243
     },
     {
       "model_kind": "quantum",
@@ -319,7 +318,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8584156372841492
+      "value": 0.8627047438300437
     },
     {
       "model_kind": "quantum",
@@ -341,7 +340,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3696820018786526
+      "value": 1.3837745354051965
     },
     {
       "model_kind": "quantum",
@@ -363,7 +362,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8381073781133299
+      "value": 0.9060709012493722
     },
     {
       "model_kind": "quantum",
@@ -374,7 +373,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.20262708712848998
+      "value": 0.1797162878930094
     },
     {
       "model_kind": "quantum",
@@ -385,7 +384,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12175977586360176
+      "value": 0.5928835802314409
     },
     {
       "model_kind": "quantum",
@@ -407,7 +406,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12410164768057344
+      "value": 0.1276379520254611
     },
     {
       "model_kind": "quantum",
@@ -429,7 +428,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07487632482324516
+      "value": 0.7487632482324517
     },
     {
       "model_kind": "quantum",
@@ -451,7 +450,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.010494900718658249
+      "value": 0.010494900718657704
     },
     {
       "model_kind": "quantum",
@@ -473,7 +472,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.13306605371867475
+      "value": -0.13306605371867608
     },
     {
       "model_kind": "quantum",
@@ -484,7 +483,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6812601501963786
+      "value": 0.7459446914127356
     },
     {
       "model_kind": "quantum",
@@ -495,7 +494,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.031785851513069965
+      "value": 0.03259810188959758
     },
     {
       "model_kind": "quantum",
@@ -517,7 +516,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3940951459786532
+      "value": 1.3957413390317315
     },
     {
       "model_kind": "quantum",
@@ -539,7 +538,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8693678275352255
+      "value": 0.8731669300285605
     },
     {
       "model_kind": "quantum",
@@ -561,7 +560,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3846514209039285
+      "value": 1.3953731286529858
     },
     {
       "model_kind": "quantum",
@@ -583,7 +582,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8499492848820367
+      "value": 0.9035699500246523
     },
     {
       "model_kind": "quantum",
@@ -594,7 +593,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.20315114176710333
+      "value": 0.17991433753219815
     },
     {
       "model_kind": "quantum",
@@ -605,7 +604,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12212814630668228
+      "value": 0.6400293189926106
     },
     {
       "model_kind": "quantum",
@@ -627,7 +626,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12412373660393392
+      "value": 0.12785884125906583
     },
     {
       "model_kind": "quantum",
@@ -649,7 +648,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.08114478713874247
+      "value": 0.8114478713874248
     },
     {
       "model_kind": "quantum",
@@ -671,7 +670,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.015155076468226976
+      "value": 0.015155076468226867
     },
     {
       "model_kind": "quantum",
@@ -693,7 +692,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.10047362628437151
+      "value": -0.10047362628437195
     },
     {
       "model_kind": "quantum",
@@ -704,7 +703,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6698928649776886
+      "value": 0.753735276072725
     },
     {
       "model_kind": "quantum",
@@ -715,7 +714,7 @@
       "seed": 45,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.025033291321873093
+      "value": 0.026006182281124876
     },
     {
       "model_kind": "quantum",
@@ -737,7 +736,7 @@
       "seed": 45,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.413069309061189
+      "value": 1.4135374896953081
     },
     {
       "model_kind": "quantum",
@@ -759,7 +758,7 @@
       "seed": 45,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8864738266801485
+      "value": 0.8892816379389263
     },
     {
       "model_kind": "quantum",
@@ -781,7 +780,7 @@
       "seed": 45,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3582356244122737
+      "value": 1.3680502305858295
     },
     {
       "model_kind": "quantum",
@@ -803,7 +802,7 @@
       "seed": 45,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.7773249926834813
+      "value": 0.8259433194521688
     },
     {
       "model_kind": "quantum",
@@ -814,7 +813,7 @@
       "seed": 45,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.21811982716471764
+      "value": 0.17712254452513995
     },
     {
       "model_kind": "quantum",
@@ -825,7 +824,7 @@
       "seed": 45,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12121418917617625
+      "value": 0.5875217564022066
     },
     {
       "model_kind": "quantum",
@@ -847,7 +846,7 @@
       "seed": 45,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.1235459368991068
+      "value": 0.12208084421079449
     },
     {
       "model_kind": "quantum",
@@ -869,7 +868,7 @@
       "seed": 45,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07413789551399169
+      "value": 0.7413789551399169
     },
     {
       "model_kind": "quantum",
@@ -891,7 +890,7 @@
       "seed": 45,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.014818445711290063
+      "value": -0.014818445711290052
     },
     {
       "model_kind": "quantum",
@@ -924,7 +923,7 @@
       "seed": 45,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6823161611942
+      "value": 0.7475734339451595
     },
     {
       "model_kind": "quantum",
@@ -935,7 +934,7 @@
       "seed": 46,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.02386859262729723
+      "value": 0.024133200539686667
     },
     {
       "model_kind": "quantum",
@@ -957,7 +956,7 @@
       "seed": 46,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4039002505123028
+      "value": 1.4046820418292976
     },
     {
       "model_kind": "quantum",
@@ -979,7 +978,7 @@
       "seed": 46,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8772902792435048
+      "value": 0.8789700647311403
     },
     {
       "model_kind": "quantum",
@@ -1001,7 +1000,7 @@
       "seed": 46,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3281279695934165
+      "value": 1.3320651059039839
     },
     {
       "model_kind": "quantum",
@@ -1023,7 +1022,7 @@
       "seed": 46,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.6884089418587074
+      "value": 0.7163522761422514
     },
     {
       "model_kind": "quantum",
@@ -1034,7 +1033,7 @@
       "seed": 46,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.21389262724886837
+      "value": 0.17811484768671854
     },
     {
       "model_kind": "quantum",
@@ -1045,7 +1044,7 @@
       "seed": 46,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12127324758272923
+      "value": 0.5766014461629991
     },
     {
       "model_kind": "quantum",
@@ -1067,7 +1066,7 @@
       "seed": 46,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12358189344783052
+      "value": 0.12244040969803192
     },
     {
       "model_kind": "quantum",
@@ -1089,7 +1088,7 @@
       "seed": 46,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07299719328689008
+      "value": 0.7299719328689009
     },
     {
       "model_kind": "quantum",
@@ -1111,7 +1110,7 @@
       "seed": 46,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.017156491369094515
+      "value": -0.017156491369095122
     },
     {
       "model_kind": "quantum",
@@ -1133,7 +1132,7 @@
       "seed": 46,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.1123530357659166
+      "value": -0.11235303576591882
     },
     {
       "model_kind": "quantum",
@@ -1144,7 +1143,7 @@
       "seed": 46,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.686493502068845
+      "value": 0.7481212510788572
     },
     {
       "model_kind": "quantum",
@@ -1155,7 +1154,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.023028841579526158
+      "value": 0.023797988647308047
     },
     {
       "model_kind": "quantum",
@@ -1177,7 +1176,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4072276599709754
+      "value": 1.408971064651025
     },
     {
       "model_kind": "quantum",
@@ -1199,7 +1198,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8840996765915323
+      "value": 0.8869560106878182
     },
     {
       "model_kind": "quantum",
@@ -1221,7 +1220,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3658847043311928
+      "value": 1.3782294202320675
     },
     {
       "model_kind": "quantum",
@@ -1243,7 +1242,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.7778832166115563
+      "value": 0.843172060232606
     },
     {
       "model_kind": "quantum",
@@ -1254,7 +1253,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.21738826893951313
+      "value": 0.16818317200959906
     },
     {
       "model_kind": "quantum",
@@ -1265,7 +1264,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12182505522733018
+      "value": 0.6140392889953701
     },
     {
       "model_kind": "quantum",
@@ -1287,7 +1286,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12417026514273978
+      "value": 0.12924035309471818
     },
     {
       "model_kind": "quantum",
@@ -1309,7 +1308,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07418148854678272
+      "value": 0.7718124066667873
     },
     {
       "model_kind": "quantum",
@@ -1331,7 +1330,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.003104237188036308
+      "value": 0.000550601541510967
     },
     {
       "model_kind": "quantum",
@@ -1353,7 +1352,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.1940409412196753
+      "value": -0.24089000446464226
     },
     {
       "model_kind": "quantum",
@@ -1364,7 +1363,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6834674782764872
+      "value": 0.7534624183462674
     },
     {
       "model_kind": "quantum",
@@ -1375,7 +1374,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.03429750960840885
+      "value": 0.03392840524326343
     },
     {
       "model_kind": "quantum",
@@ -1397,7 +1396,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3944831423954112
+      "value": 1.3947590216964503
     },
     {
       "model_kind": "quantum",
@@ -1419,7 +1418,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8581118134973238
+      "value": 0.859247048343464
     },
     {
       "model_kind": "quantum",
@@ -1441,7 +1440,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.369124761303027
+      "value": 1.3765051231306067
     },
     {
       "model_kind": "quantum",
@@ -1463,7 +1462,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8367699377956197
+      "value": 0.8835448864627522
     },
     {
       "model_kind": "quantum",
@@ -1474,7 +1473,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.21151621424185366
+      "value": 0.17168036981170814
     },
     {
       "model_kind": "quantum",
@@ -1485,7 +1484,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12147276110886512
+      "value": 0.6084431849420371
     },
     {
       "model_kind": "quantum",
@@ -1507,7 +1506,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12384950983474335
+      "value": 0.12543835365052172
     },
     {
       "model_kind": "quantum",
@@ -1529,7 +1528,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07419335739659164
+      "value": 0.7645342686473724
     },
     {
       "model_kind": "quantum",
@@ -1551,7 +1550,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.007912717776300876
+      "value": 0.004845507697520439
     },
     {
       "model_kind": "quantum",
@@ -1573,7 +1572,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.21466486881231894
+      "value": -0.2301343943945171
     },
     {
       "model_kind": "quantum",
@@ -1584,7 +1583,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6785379311747838
+      "value": 0.7513029715811609
     },
     {
       "model_kind": "quantum",
@@ -1595,7 +1594,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.03176050537172383
+      "value": 0.03246933037057774
     },
     {
       "model_kind": "quantum",
@@ -1617,7 +1616,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3940444408178845
+      "value": 1.394894026653192
     },
     {
       "model_kind": "quantum",
@@ -1639,7 +1638,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8693101427629778
+      "value": 0.8716100477598984
     },
     {
       "model_kind": "quantum",
@@ -1661,7 +1660,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3851577540120505
+      "value": 1.397685670871927
     },
     {
       "model_kind": "quantum",
@@ -1683,7 +1682,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8540425555333231
+      "value": 0.9321913519557468
     },
     {
       "model_kind": "quantum",
@@ -1694,7 +1693,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.204617257341215
+      "value": 0.18133440968766348
     },
     {
       "model_kind": "quantum",
@@ -1705,7 +1704,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12163410808028066
+      "value": 0.6292217563896508
     },
     {
       "model_kind": "quantum",
@@ -1727,7 +1726,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12395910191639378
+      "value": 0.12602768756934643
     },
     {
       "model_kind": "quantum",
@@ -1749,7 +1748,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07614627107953692
+      "value": 0.7866163630125041
     },
     {
       "model_kind": "quantum",
@@ -1771,7 +1770,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.03478644512811611
+      "value": -0.04042395730615516
     },
     {
       "model_kind": "quantum",
@@ -1793,7 +1792,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.22881397755948507
+      "value": -0.2620684281380079
     },
     {
       "model_kind": "quantum",
@@ -1804,7 +1803,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6751048674558785
+      "value": 0.7523208450305474
     },
     {
       "model_kind": "quantum",
@@ -1815,7 +1814,7 @@
       "seed": 45,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.025089944973084293
+      "value": 0.026637119786770212
     },
     {
       "model_kind": "quantum",
@@ -1837,7 +1836,7 @@
       "seed": 45,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4131930757230666
+      "value": 1.4149355817810438
     },
     {
       "model_kind": "quantum",
@@ -1859,7 +1858,7 @@
       "seed": 45,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8866649780680472
+      "value": 0.8917728001904889
     },
     {
       "model_kind": "quantum",
@@ -1881,7 +1880,7 @@
       "seed": 45,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3586121893157148
+      "value": 1.3736973444201859
     },
     {
       "model_kind": "quantum",
@@ -1903,7 +1902,7 @@
       "seed": 45,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.7790490400255266
+      "value": 0.8550807567420038
     },
     {
       "model_kind": "quantum",
@@ -1914,7 +1913,7 @@
       "seed": 45,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.21052417199020615
+      "value": 0.16781296217074487
     },
     {
       "model_kind": "quantum",
@@ -1925,7 +1924,7 @@
       "seed": 45,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12165466690228799
+      "value": 0.6224313114339548
     },
     {
       "model_kind": "quantum",
@@ -1947,7 +1946,7 @@
       "seed": 45,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12402971313332829
+      "value": 0.12750555443610972
     },
     {
       "model_kind": "quantum",
@@ -1969,7 +1968,7 @@
       "seed": 45,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07535436961722171
+      "value": 0.7817124376989839
     },
     {
       "model_kind": "quantum",
@@ -1991,7 +1990,7 @@
       "seed": 45,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.018913745138950215
+      "value": 0.01444379958848566
     },
     {
       "model_kind": "quantum",
@@ -2013,7 +2012,7 @@
       "seed": 45,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.20693447445940283
+      "value": -0.24898406350564262
     },
     {
       "model_kind": "quantum",
@@ -2024,7 +2023,7 @@
       "seed": 45,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6783378744741425
+      "value": 0.7531121891106768
     },
     {
       "model_kind": "quantum",
@@ -2035,7 +2034,7 @@
       "seed": 46,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.02371072761078861
+      "value": 0.022715794356099304
     },
     {
       "model_kind": "quantum",
@@ -2057,7 +2056,7 @@
       "seed": 46,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4040261347733312
+      "value": 1.4061919702764043
     },
     {
       "model_kind": "quantum",
@@ -2079,7 +2078,7 @@
       "seed": 46,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8775129323918097
+      "value": 0.8816016261567172
     },
     {
       "model_kind": "quantum",
@@ -2101,7 +2100,7 @@
       "seed": 46,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3284012342805986
+      "value": 1.3351446903476651
     },
     {
       "model_kind": "quantum",
@@ -2123,7 +2122,7 @@
       "seed": 46,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.6887641969326177
+      "value": 0.7197704313236177
     },
     {
       "model_kind": "quantum",
@@ -2134,7 +2133,7 @@
       "seed": 46,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.2093500503286677
+      "value": 0.17518595504440973
     },
     {
       "model_kind": "quantum",
@@ -2145,7 +2144,7 @@
       "seed": 46,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12191558288444253
+      "value": 0.6166559573598078
     },
     {
       "model_kind": "quantum",
@@ -2167,7 +2166,7 @@
       "seed": 46,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.1242330222102934
+      "value": 0.12989695049267097
     },
     {
       "model_kind": "quantum",
@@ -2189,7 +2188,7 @@
       "seed": 46,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.07473476695514181
+      "value": 0.7755205403812013
     },
     {
       "model_kind": "quantum",
@@ -2211,7 +2210,7 @@
       "seed": 46,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.005383468387303891
+      "value": 0.002591044387114664
     },
     {
       "model_kind": "quantum",
@@ -2233,7 +2232,7 @@
       "seed": 46,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.1709116815005558
+      "value": -0.21053456910728308
     },
     {
       "model_kind": "quantum",
@@ -2244,7 +2243,7 @@
       "seed": 46,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6818281354958203
+      "value": 0.7503269409465904
     },
     {
       "model_kind": "quantum",
@@ -2255,7 +2254,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.02294368103346625
+      "value": 0.026226688868435658
     },
     {
       "model_kind": "quantum",
@@ -2277,7 +2276,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.407002622155967
+      "value": 1.4074410062812808
     },
     {
       "model_kind": "quantum",
@@ -2299,7 +2298,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8837907505863558
+      "value": 0.886346186304767
     },
     {
       "model_kind": "quantum",
@@ -2321,7 +2320,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3654583245274927
+      "value": 1.3866191856064234
     },
     {
       "model_kind": "quantum",
@@ -2343,7 +2342,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.7765643923490071
+      "value": 0.9093671390572893
     },
     {
       "model_kind": "quantum",
@@ -2354,7 +2353,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.19765586383312583
+      "value": 0.18271427729160844
     },
     {
       "model_kind": "quantum",
@@ -2365,7 +2364,7 @@
       "seed": 42,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12544187836864873
+      "value": 0.9678585584166268
     },
     {
       "model_kind": "quantum",
@@ -2387,7 +2386,7 @@
       "seed": 42,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12338628186810766
+      "value": 0.12092613863053046
     },
     {
       "model_kind": "quantum",
@@ -2409,7 +2408,7 @@
       "seed": 42,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.1053426457601357
+      "value": 1.1966652955971866
     },
     {
       "model_kind": "quantum",
@@ -2431,7 +2430,7 @@
       "seed": 42,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.00792993195693159
+      "value": -0.0003769993046102446
     },
     {
       "model_kind": "quantum",
@@ -2453,7 +2452,7 @@
       "seed": 42,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.28329071969817754
+      "value": -0.47511014251980255
     },
     {
       "model_kind": "quantum",
@@ -2464,7 +2463,7 @@
       "seed": 42,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6398763837664421
+      "value": 0.7729783818613111
     },
     {
       "model_kind": "quantum",
@@ -2475,7 +2474,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.03423728137848939
+      "value": 0.03843374210682716
     },
     {
       "model_kind": "quantum",
@@ -2497,7 +2496,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3944858231851909
+      "value": 1.3959118805960853
     },
     {
       "model_kind": "quantum",
@@ -2519,7 +2518,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8578909595557034
+      "value": 0.8602421048743167
     },
     {
       "model_kind": "quantum",
@@ -2541,7 +2540,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3690194524262849
+      "value": 1.3883139309211157
     },
     {
       "model_kind": "quantum",
@@ -2563,7 +2562,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8361438353165633
+      "value": 0.9533757226952502
     },
     {
       "model_kind": "quantum",
@@ -2574,7 +2573,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.2033809290397597
+      "value": 0.19145460397538483
     },
     {
       "model_kind": "quantum",
@@ -2585,7 +2584,7 @@
       "seed": 43,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12437791899351716
+      "value": 0.8240678454396544
     },
     {
       "model_kind": "quantum",
@@ -2607,7 +2606,7 @@
       "seed": 43,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.1243391606340462
+      "value": 0.13068055272766688
     },
     {
       "model_kind": "quantum",
@@ -2629,7 +2628,7 @@
       "seed": 43,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.09388581613059857
+      "value": 1.043746292122389
     },
     {
       "model_kind": "quantum",
@@ -2651,7 +2650,7 @@
       "seed": 43,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.03314615609837067
+      "value": 0.021914227591254547
     },
     {
       "model_kind": "quantum",
@@ -2673,7 +2672,7 @@
       "seed": 43,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": 0.17569060585777363
+      "value": -0.06161140810361099
     },
     {
       "model_kind": "quantum",
@@ -2684,7 +2683,7 @@
       "seed": 43,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6598947802604657
+      "value": 0.7627902635274393
     },
     {
       "model_kind": "quantum",
@@ -2695,7 +2694,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.031730460036551944
+      "value": 0.03435399434958218
     },
     {
       "model_kind": "quantum",
@@ -2717,7 +2716,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.3940840476926408
+      "value": 1.3973156429686624
     },
     {
       "model_kind": "quantum",
@@ -2739,7 +2738,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8692804673938686
+      "value": 0.8768580507328871
     },
     {
       "model_kind": "quantum",
@@ -2761,7 +2760,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.384350156454697
+      "value": 1.4096783676285176
     },
     {
       "model_kind": "quantum",
@@ -2783,7 +2782,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.8502970184439897
+      "value": 1.0120434272525163
     },
     {
       "model_kind": "quantum",
@@ -2794,7 +2793,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.208995072494818
+      "value": 0.18012441513949373
     },
     {
       "model_kind": "quantum",
@@ -2805,7 +2804,7 @@
       "seed": 44,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.13145377095908328
+      "value": 1.1012025554773814
     },
     {
       "model_kind": "quantum",
@@ -2827,7 +2826,7 @@
       "seed": 44,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.12391539297781942
+      "value": 0.1267652236985282
     },
     {
       "model_kind": "quantum",
@@ -2849,7 +2848,7 @@
       "seed": 44,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.12082520478919319
+      "value": 1.3580264150399441
     },
     {
       "model_kind": "quantum",
@@ -2871,7 +2870,7 @@
       "seed": 44,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.015272479914821563
+      "value": -0.013451078744320522
     },
     {
       "model_kind": "quantum",
@@ -2893,7 +2892,7 @@
       "seed": 44,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.5138641373902759
+      "value": -0.5650052067523426
     },
     {
       "model_kind": "quantum",
@@ -2904,7 +2903,7 @@
       "seed": 44,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6404457963692419
+      "value": 0.7783749652951356
     },
     {
       "model_kind": "quantum",
@@ -2915,7 +2914,7 @@
       "seed": 45,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.025020458499653578
+      "value": 0.028927461754849948
     },
     {
       "model_kind": "quantum",
@@ -2937,7 +2936,7 @@
       "seed": 45,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4132020389654094
+      "value": 1.4162840783871744
     },
     {
       "model_kind": "quantum",
@@ -2959,7 +2958,7 @@
       "seed": 45,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8867660734048207
+      "value": 0.8957847600259464
     },
     {
       "model_kind": "quantum",
@@ -2981,7 +2980,7 @@
       "seed": 45,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.358958020506231
+      "value": 1.3864625649959448
     },
     {
       "model_kind": "quantum",
@@ -3003,7 +3002,7 @@
       "seed": 45,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.7811377163404809
+      "value": 0.9341933343475834
     },
     {
       "model_kind": "quantum",
@@ -3014,7 +3013,7 @@
       "seed": 45,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.20555873760999574
+      "value": 0.18640240930127763
     },
     {
       "model_kind": "quantum",
@@ -3025,7 +3024,7 @@
       "seed": 45,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12470518692927976
+      "value": 0.918473767792285
     },
     {
       "model_kind": "quantum",
@@ -3047,7 +3046,7 @@
       "seed": 45,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.1235223545412141
+      "value": 0.12283807631176756
     },
     {
       "model_kind": "quantum",
@@ -3069,7 +3068,7 @@
       "seed": 45,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.10329329610419234
+      "value": 1.1557210531233084
     },
     {
       "model_kind": "quantum",
@@ -3091,7 +3090,7 @@
       "seed": 45,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": 0.07102434365795691
+      "value": 0.08547837504158695
     },
     {
       "model_kind": "quantum",
@@ -3113,7 +3112,7 @@
       "seed": 45,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.2570036284193482
+      "value": -0.30305692876179346
     },
     {
       "model_kind": "quantum",
@@ -3124,7 +3123,7 @@
       "seed": 45,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6448024125098435
+      "value": 0.7674443585400959
     },
     {
       "model_kind": "quantum",
@@ -3135,7 +3134,7 @@
       "seed": 46,
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.023839291760440064
+      "value": 0.026193792662996533
     },
     {
       "model_kind": "quantum",
@@ -3157,7 +3156,7 @@
       "seed": 46,
       "metric_name": "mean_fake",
       "scale": "OD",
-      "value": 1.4039652495868036
+      "value": 1.406139050251649
     },
     {
       "model_kind": "quantum",
@@ -3179,7 +3178,7 @@
       "seed": 46,
       "metric_name": "std_fake",
       "scale": "OD",
-      "value": 0.8775378093439916
+      "value": 0.8838969398693445
     },
     {
       "model_kind": "quantum",
@@ -3201,7 +3200,7 @@
       "seed": 46,
       "metric_name": "skew_fake",
       "scale": "OD",
-      "value": 1.3288597304594147
+      "value": 1.3478467360616933
     },
     {
       "model_kind": "quantum",
@@ -3223,7 +3222,7 @@
       "seed": 46,
       "metric_name": "kurt_fake",
       "scale": "OD",
-      "value": 0.690964095997642
+      "value": 0.7905656044267264
     },
     {
       "model_kind": "quantum",
@@ -3234,7 +3233,7 @@
       "seed": 46,
       "metric_name": "jsd",
       "scale": "OD",
-      "value": 0.21018836429017942
+      "value": 0.1865762211911545
     },
     {
       "model_kind": "quantum",
@@ -3245,7 +3244,7 @@
       "seed": 46,
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12391333109564634
+      "value": 0.934155269527952
     },
     {
       "model_kind": "quantum",
@@ -3267,7 +3266,7 @@
       "seed": 46,
       "metric_name": "mean_fake",
       "scale": "log_return",
-      "value": 0.1241008692189196
+      "value": 0.12802026687173693
     },
     {
       "model_kind": "quantum",
@@ -3289,7 +3288,7 @@
       "seed": 46,
       "metric_name": "std_fake",
       "scale": "log_return",
-      "value": 0.09890529826769598
+      "value": 1.1408320122181543
     },
     {
       "model_kind": "quantum",
@@ -3311,7 +3310,7 @@
       "seed": 46,
       "metric_name": "skew_fake",
       "scale": "log_return",
-      "value": -0.004934920099373713
+      "value": 0.0016899459190636771
     },
     {
       "model_kind": "quantum",
@@ -3333,7 +3332,7 @@
       "seed": 46,
       "metric_name": "kurt_fake",
       "scale": "log_return",
-      "value": -0.4878521197122727
+      "value": -0.6919657969003978
     },
     {
       "model_kind": "quantum",
@@ -3344,7 +3343,7 @@
       "seed": 46,
       "metric_name": "jsd",
       "scale": "log_return",
-      "value": 0.6383329148823077
+      "value": 0.7730538728726567
     }
   ]
 }

@@ -35,7 +35,7 @@
       "seed": 42,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.018863940611481667
+      "value": 0.02014407515525818
     },
     {
       "model_kind": "iqp_sel_55_repro",
@@ -51,7 +51,7 @@
       "seed": 43,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.0192951038479805
+      "value": 0.019037196412682533
     },
     {
       "model_kind": "iqp_sel_55_repro",
@@ -67,7 +67,7 @@
       "seed": 44,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019313381984829903
+      "value": 0.018911879509687424
     },
     {
       "model_kind": "iqp_sel_55_repro",
@@ -83,7 +83,7 @@
       "seed": 45,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019923757761716843
+      "value": 0.019005421549081802
     },
     {
       "model_kind": "iqp_sel_55_repro",
@@ -99,7 +99,7 @@
       "seed": 46,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019787508994340897
+      "value": 0.018906034529209137
     },
     {
       "model_kind": "iqp_sel_55_repro",
@@ -115,7 +115,7 @@
       "seed": 42,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019042694941163063
+      "value": 0.01841389760375023
     },
     {
       "model_kind": "V1",
@@ -131,7 +131,7 @@
       "seed": 43,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.0192894097417593
+      "value": 0.019029943272471428
     },
     {
       "model_kind": "V1",
@@ -147,7 +147,7 @@
       "seed": 44,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019186383113265038
+      "value": 0.018621457740664482
     },
     {
       "model_kind": "V1",
@@ -163,7 +163,7 @@
       "seed": 45,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.020036054775118828
+      "value": 0.018662679940462112
     },
     {
       "model_kind": "V1",
@@ -179,7 +179,7 @@
       "seed": 46,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019818194210529327
+      "value": 0.018995197489857674
     },
     {
       "model_kind": "V1",
@@ -195,7 +195,7 @@
       "seed": 42,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.018949542194604874
+      "value": 0.018531162291765213
     },
     {
       "model_kind": "V2",
@@ -211,7 +211,7 @@
       "seed": 43,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.01943441852927208
+      "value": 0.01864657737314701
     },
     {
       "model_kind": "V2",
@@ -227,7 +227,7 @@
       "seed": 44,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019238892942667007
+      "value": 0.018961144611239433
     },
     {
       "model_kind": "V2",
@@ -243,7 +243,7 @@
       "seed": 45,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019916869699954987
+      "value": 0.01848970167338848
     },
     {
       "model_kind": "V2",
@@ -259,7 +259,7 @@
       "seed": 46,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.020105095580220222
+      "value": 0.01899561658501625
     },
     {
       "model_kind": "V2",
@@ -275,7 +275,7 @@
       "seed": 42,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.018683020025491714
+      "value": 0.018584199249744415
     },
     {
       "model_kind": "V3",
@@ -291,7 +291,7 @@
       "seed": 43,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.01938433013856411
+      "value": 0.019046012312173843
     },
     {
       "model_kind": "V3",
@@ -307,7 +307,7 @@
       "seed": 44,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.01908988133072853
+      "value": 0.01891941949725151
     },
     {
       "model_kind": "V3",
@@ -323,7 +323,7 @@
       "seed": 45,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019429851323366165
+      "value": 0.019961345940828323
     },
     {
       "model_kind": "V3",
@@ -339,7 +339,7 @@
       "seed": 46,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019654223695397377
+      "value": 0.0215299054980278
     },
     {
       "model_kind": "V3",
@@ -355,7 +355,7 @@
       "seed": 42,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.018749361857771873
+      "value": 0.05116593837738037
     },
     {
       "model_kind": "wgan_mlp",
@@ -371,7 +371,7 @@
       "seed": 43,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019747678190469742
+      "value": 0.08195749670267105
     },
     {
       "model_kind": "wgan_mlp",
@@ -387,7 +387,7 @@
       "seed": 44,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019959496334195137
+      "value": 0.06337285786867142
     },
     {
       "model_kind": "wgan_mlp",
@@ -403,7 +403,7 @@
       "seed": 45,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.01983124017715454
+      "value": 0.14397352933883667
     },
     {
       "model_kind": "wgan_mlp",
@@ -419,7 +419,7 @@
       "seed": 46,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019856400787830353
+      "value": 0.05564136430621147
     },
     {
       "model_kind": "wgan_mlp",
@@ -435,7 +435,7 @@
       "seed": 42,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.04048695042729378
+      "value": 0.3024492561817169
     },
     {
       "model_kind": "wgan_cnn",
@@ -443,7 +443,7 @@
       "seed": 42,
       "metric_name": "discriminative_score",
       "scale": "OD",
-      "value": 0.4088757634162903
+      "value": 0.49408286809921265
     },
     {
       "model_kind": "wgan_cnn",
@@ -451,7 +451,7 @@
       "seed": 43,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.02476010099053383
+      "value": 0.09611663222312927
     },
     {
       "model_kind": "wgan_cnn",
@@ -467,7 +467,7 @@
       "seed": 44,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019795233383774757
+      "value": 0.06432414054870605
     },
     {
       "model_kind": "wgan_cnn",
@@ -483,7 +483,7 @@
       "seed": 45,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.021446511149406433
+      "value": 0.11223693192005157
     },
     {
       "model_kind": "wgan_cnn",
@@ -499,7 +499,7 @@
       "seed": 46,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.020423874258995056
+      "value": 0.09404892474412918
     },
     {
       "model_kind": "wgan_cnn",
@@ -515,7 +515,7 @@
       "seed": 42,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019916851073503494
+      "value": 0.05999714508652687
     },
     {
       "model_kind": "wgan_lstm",
@@ -531,7 +531,7 @@
       "seed": 43,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019343744963407516
+      "value": 0.0434073768556118
     },
     {
       "model_kind": "wgan_lstm",
@@ -547,7 +547,7 @@
       "seed": 44,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.020086070522665977
+      "value": 0.04031386971473694
     },
     {
       "model_kind": "wgan_lstm",
@@ -563,7 +563,7 @@
       "seed": 45,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.020094584673643112
+      "value": 0.03508474677801132
     },
     {
       "model_kind": "wgan_lstm",
@@ -579,7 +579,7 @@
       "seed": 46,
       "metric_name": "predictive_score",
       "scale": "OD",
-      "value": 0.019625386223196983
+      "value": 0.05830230936408043
     },
     {
       "model_kind": "wgan_lstm",
@@ -755,8 +755,8 @@
       "model_kind": "iqp_sel_55_repro",
       "pipeline": "B",
       "n_seeds": 5,
-      "predictive_mean": 0.01943673864006996,
-      "predictive_std": 0.0003804214311949142,
+      "predictive_mean": 0.019200921431183814,
+      "predictive_std": 0.00047435610044755115,
       "discriminative_mean": 0.4088757634162903,
       "discriminative_std": 0.0
     },
@@ -764,8 +764,8 @@
       "model_kind": "V1",
       "pipeline": "B",
       "n_seeds": 5,
-      "predictive_mean": 0.01947454735636711,
-      "predictive_std": 0.0003839778164299688,
+      "predictive_mean": 0.018744635209441186,
+      "predictive_std": 0.00023471636753470527,
       "discriminative_mean": 0.4088757634162903,
       "discriminative_std": 0.0
     },
@@ -773,8 +773,8 @@
       "model_kind": "V2",
       "pipeline": "B",
       "n_seeds": 5,
-      "predictive_mean": 0.019528963789343833,
-      "predictive_std": 0.0004268976745519209,
+      "predictive_mean": 0.018724840506911276,
+      "predictive_std": 0.00021358181306256979,
       "discriminative_mean": 0.4088757634162903,
       "discriminative_std": 0.0
     },
@@ -782,8 +782,8 @@
       "model_kind": "V3",
       "pipeline": "B",
       "n_seeds": 5,
-      "predictive_mean": 0.01924826130270958,
-      "predictive_std": 0.0003349259753931513,
+      "predictive_mean": 0.019608176499605178,
+      "predictive_std": 0.0010636461054078319,
       "discriminative_mean": 0.4088757634162903,
       "discriminative_std": 0.0
     },
@@ -791,8 +791,8 @@
       "model_kind": "wgan_mlp",
       "pipeline": "B",
       "n_seeds": 5,
-      "predictive_mean": 0.01962883546948433,
-      "predictive_std": 0.00044490171347884424,
+      "predictive_mean": 0.07922223731875419,
+      "predictive_std": 0.0340429956773531,
       "discriminative_mean": 0.4088757634162903,
       "discriminative_std": 0.0
     },
@@ -800,17 +800,17 @@
       "model_kind": "wgan_cnn",
       "pipeline": "B",
       "n_seeds": 5,
-      "predictive_mean": 0.02538253404200077,
-      "predictive_std": 0.007743763025091924,
-      "discriminative_mean": 0.4088757634162903,
-      "discriminative_std": 0.0
+      "predictive_mean": 0.1338351771235466,
+      "predictive_std": 0.08571418851744152,
+      "discriminative_mean": 0.42591718435287473,
+      "discriminative_std": 0.03408284187316894
     },
     "wgan_lstm|B": {
       "model_kind": "wgan_lstm",
       "pipeline": "B",
       "n_seeds": 5,
-      "predictive_mean": 0.019813327491283415,
-      "predictive_std": 0.00028984173840515033,
+      "predictive_mean": 0.047421089559793475,
+      "predictive_std": 0.009953551465361414,
       "discriminative_mean": 0.4088757634162903,
       "discriminative_std": 0.0
     },

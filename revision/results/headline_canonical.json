@@ -50,35 +50,35 @@
       "pipeline": "B",
       "metric_name": "emd",
       "scale": "OD",
-      "value": 0.023071979442389253
+      "value": 0.02238151476844307
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "moment_mean",
       "scale": "OD",
-      "value": 1.4073796823002893
+      "value": 1.407791362467706
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "moment_std",
       "scale": "OD",
-      "value": 0.8843061247467316
+      "value": 0.8865642035406427
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "moment_skewness",
       "scale": "OD",
-      "value": 1.3657245885713432
+      "value": 1.3734095288211041
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "moment_kurtosis",
       "scale": "OD",
-      "value": 0.7771527793674218
+      "value": 0.8181082073734136
     },
     {
       "model_kind": "quantum",
@@ -99,182 +99,182 @@
       "pipeline": "B",
       "metric_name": "acf_lag1_mean",
       "scale": "OD",
-      "value": 0.696940391820786
+      "value": 0.49180488115934834
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag1_std",
       "scale": "OD",
-      "value": 0.01756099808319843
+      "value": 0.2310923155963443
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag2_mean",
       "scale": "OD",
-      "value": 0.40881186524549545
+      "value": 0.20226804111468985
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag2_std",
       "scale": "OD",
-      "value": 0.0157788276491525
+      "value": 0.22052089117691176
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag3_mean",
       "scale": "OD",
-      "value": 0.1466861998467356
+      "value": -0.00591743790227132
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag3_std",
       "scale": "OD",
-      "value": 0.011121186127882697
+      "value": 0.17179539210049308
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag4_mean",
       "scale": "OD",
-      "value": -0.0794986207101951
+      "value": -0.14121316576932372
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag4_std",
       "scale": "OD",
-      "value": 0.01087520353214061
+      "value": 0.1413400771806706
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag5_mean",
       "scale": "OD",
-      "value": -0.2563414689173316
+      "value": -0.22054685507757774
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag5_std",
       "scale": "OD",
-      "value": 0.025925679978282108
+      "value": 0.17708789987182516
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag6_mean",
       "scale": "OD",
-      "value": -0.3737769469035456
+      "value": -0.2540341841581882
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag6_std",
       "scale": "OD",
-      "value": 0.01809882082221994
+      "value": 0.1718921360653648
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag7_mean",
       "scale": "OD",
-      "value": -0.4182183057916536
+      "value": -0.24340283919191463
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag7_std",
       "scale": "OD",
-      "value": 0.010818444809697172
+      "value": 0.16881541281159182
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag8_mean",
       "scale": "OD",
-      "value": -0.3800332883139668
+      "value": -0.2072396835561788
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag8_std",
       "scale": "OD",
-      "value": 0.008705749379820774
+      "value": 0.14581016658028095
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag9_mean",
       "scale": "OD",
-      "value": -0.24456982627632448
+      "value": -0.12171875661858378
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag9_std",
       "scale": "OD",
-      "value": 0.014142276627884096
+      "value": 0.12991980427786629
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "dtw_mean",
       "scale": "OD",
-      "value": 0.2607954947649143
+      "value": 0.2818416086851477
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "dtw_median",
       "scale": "OD",
-      "value": 0.2013607832008073
+      "value": 0.1945041211901392
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "dtw_std",
       "scale": "OD",
-      "value": 0.2478459500313048
+      "value": 0.26258380924692704
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "emd",
       "scale": "log_return",
-      "value": 0.12124099500150183
+      "value": 0.4493815741821947
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "moment_mean",
       "scale": "log_return",
-      "value": 0.12363445057363963
+      "value": 0.12296598095612293
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "moment_std",
       "scale": "log_return",
-      "value": 0.06202632484653514
+      "value": 0.6202632484653514
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "moment_skewness",
       "scale": "log_return",
-      "value": 0.017679789030595746
+      "value": 0.01767978903059561
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "moment_kurtosis",
       "scale": "log_return",
-      "value": 0.9885420347566662
+      "value": 0.9885420347566671
     },
     {
       "model_kind": "quantum",
@@ -295,7 +295,7 @@
       "pipeline": "B",
       "metric_name": "acf_lag1_mean",
       "scale": "log_return",
-      "value": -0.10498126112349922
+      "value": -0.1049812611234992
     },
     {
       "model_kind": "quantum",
@@ -309,7 +309,7 @@
       "pipeline": "B",
       "metric_name": "acf_lag2_mean",
       "scale": "log_return",
-      "value": -0.05864438693142451
+      "value": -0.058644386931424514
     },
     {
       "model_kind": "quantum",
@@ -330,42 +330,42 @@
       "pipeline": "B",
       "metric_name": "acf_lag3_std",
       "scale": "log_return",
-      "value": 0.2229933941363469
+      "value": 0.22299339413634697
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag4_mean",
       "scale": "log_return",
-      "value": -0.08509381970675414
+      "value": -0.08509381970675417
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag4_std",
       "scale": "log_return",
-      "value": 0.2369124747006975
+      "value": 0.23691247470069748
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag5_mean",
       "scale": "log_return",
-      "value": -0.05640706412370042
+      "value": -0.056407064123700376
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag5_std",
       "scale": "log_return",
-      "value": 0.20194955748700671
+      "value": 0.2019495574870067
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag6_mean",
       "scale": "log_return",
-      "value": -0.037558657735464115
+      "value": -0.03755865773546408
     },
     {
       "model_kind": "quantum",
@@ -379,21 +379,21 @@
       "pipeline": "B",
       "metric_name": "acf_lag7_mean",
       "scale": "log_return",
-      "value": -0.03308979286831066
+      "value": -0.0330897928683107
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag7_std",
       "scale": "log_return",
-      "value": 0.15513244646179436
+      "value": 0.15513244646179433
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag8_mean",
       "scale": "log_return",
-      "value": -0.024744506063135642
+      "value": -0.024744506063135652
     },
     {
       "model_kind": "quantum",
@@ -407,35 +407,35 @@
       "pipeline": "B",
       "metric_name": "acf_lag9_mean",
       "scale": "log_return",
-      "value": -0.01967300453394185
+      "value": -0.019673004533941836
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "acf_lag9_std",
       "scale": "log_return",
-      "value": 0.1220175371888776
+      "value": 0.12201753718887762
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "dtw_mean",
       "scale": "log_return",
-      "value": 0.9742301112068421
+      "value": 4.23527705684984
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "dtw_median",
       "scale": "log_return",
-      "value": 0.9644351983332191
+      "value": 3.9477561605942464
     },
     {
       "model_kind": "quantum",
       "pipeline": "B",
       "metric_name": "dtw_std",
       "scale": "log_return",
-      "value": 0.2092224980362849
+      "value": 1.2017843174007543
     }
   ]
 }
