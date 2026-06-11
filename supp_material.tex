@@ -284,7 +284,7 @@ In principle, the physics term $M(G(z))$ would impose mechanistic constraints th
 
 \subsubsection{Dynamic Time Warping (DTW) Implementation}
 
-Dynamic Time Warping (DTW) represents a powerful technique for measuring similarity between temporal sequences that may exhibit varying lengths or temporal misalignments. \cite{dimoudis2023utilizing} The DTW algorithm operates by identifying an optimal warping path that minimizes the cumulative distance between corresponding elements of two time series while respecting monotonicity and boundary constraints.
+Dynamic Time Warping (DTW) is a classical technique for measuring similarity between temporal sequences that may exhibit varying lengths or temporal misalignments \cite{sakoeChiba1978}. The DTW algorithm operates by identifying an optimal warping path that minimizes the cumulative distance between corresponding elements of two time series while respecting monotonicity and boundary constraints.
 
 \begin{algorithm}[ht]
   \caption{Dynamic Time Warping}
@@ -830,7 +830,7 @@ block of the aggregator script.
 
 \subsubsection{Rolling Window Implementation}
 
-Using the rolling window technique~\cite{dimoudis2023utilizing}, we generated overlapping subsequences of the original data to capture temporal patterns and dependencies. This depends on two parameters:
+Using the rolling window technique~\cite{bergmeir2012rolling}, we generated overlapping subsequences of the original data to capture temporal patterns and dependencies. This depends on two parameters:
 \begin{itemize}[nosep, leftmargin=*]
   \item \textbf{Stride ($s$):} The gap between the starts of subsequences (set to 2)
   \item \textbf{Subsequence length ($m$):} The length of each window (set to 10)
@@ -1439,7 +1439,7 @@ distribution.
   \item Layer 3: 128 filters, kernel size 3, stride 1
 \end{itemize}
 
-The increasing filter count allows extraction of more complex features and produces detailed feature maps. The first convolutional layer is designed to handle input data shaped as $(10, 1)$, where the dimension of 10 represents the length of subsequences created through the rolling window approach~\cite{dimoudis2023utilizing}, ensuring the network properly processes the temporal structure of the input data.
+The increasing filter count allows extraction of more complex features and produces detailed feature maps. The first convolutional layer is designed to handle input data shaped as $(10, 1)$, where the dimension of 10 represents the length of subsequences created through the rolling window approach~\cite{bergmeir2012rolling}, ensuring the network properly processes the temporal structure of the input data.
 
 \textbf{Activation Functions:}
 
