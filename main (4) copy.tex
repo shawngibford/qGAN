@@ -177,16 +177,6 @@ window approach \cite{bergmeir2012rolling}.
 The WGAN-GP loss formulation (Eq.~\ref{eq:wgangp}) was chosen for the quantum generator because it provides stable gradients and meaningful convergence metrics, and mitigates mode collapse issues that can be exacerbated by the discrete nature of quantum measurements; we do not attribute reduced mode collapse to the quantum generator.
 
 \paragraph{Training protocol (matched-budget contract).}
-% source: revision/results/model_info.json#models[*].epochs (=2000)
-% source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
-% source: revision/results/model_info.json#models[*].optimizer ("Adam")
-% source: revision/results/model_info.json#models[*].optimizer_betas ([0.0, 0.9])
-% source: revision/results/model_info.json#models[*].lr_generator (6.9173e-05)
-% source: revision/results/model_info.json#models[*].lr_critic (1.8046e-05)
-% source: revision/results/model_info.json#models[*].n_critic (=9)
-% source: revision/results/model_info.json#models[*].lambda_gp (=2.16)
-% source: revision/results/model_info.json#models[*].batch_size (=12)
-% source: revision/results/total_adversarial_param_budget.json#shared_critic_n_params (=250881)
 All adversarial models in this study are trained under a single matched-budget
 contract so that, within the WGAN-GP adversarial cohort, the only component
 that differs between the quantum and classical entrants is the generator
@@ -213,31 +203,29 @@ that all 2000-epoch comparison runs share identical optimizer machinery.
 Full per-model dtype and backend pinning details are given in
 Supplementary Section~A.8 and Appendix.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/training_convergence_all_models.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/training_convergence_all_models.pdf}
   \caption{Matched-budget training convergence: OD-scale in-loop EMD
   versus training epoch (log-$y$) for the 7 WGAN-GP generators
   (4 quantum + 3 classical adversarial). Curves are 5-seed mean
   $\pm$ sample standard deviation over seeds $\{42, 43, 44, 45, 46\}$,
   with EMD evaluated every 10 training epochs across the
-  2000-epoch budget. The frozen-headline reference (epoch-1969 checkpoint) is
-  shown as a distinct diamond marker $+$ horizontal line per D-14-10.
-  All 7 models converge to a tight cluster of mean OD-EMD $\approx 0.026$
-  by $\sim$epoch 250 and remain in that band for the remainder of
-  training, demonstrating that the matched-budget contract is held without
-  divergence or collapse. The visible deep dip is the wgan\_cnn
+  2000-epoch budget. The frozen-headline reference (epoch-1969 checkpoint)
+  is shown as a distinct diamond marker plus horizontal line. All 7
+  models converge to a tight cluster of mean OD-EMD $\approx 0.026$ by
+  $\sim$epoch 250 and remain in that band for the remainder of
+  training, demonstrating that the matched-budget contract is held
+  without divergence or collapse. The visible deep dip is the wgan\_cnn
   seed-42 outlier (single seed where OD-EMD transiently fell to
-  $\sim 10^{-4}$ before recovering --- the outlier reported in
-  Section~4.1 and disclosed at face value rather than excluded). VAE
-  and AR(2) are not plotted: VAE trains with a single-Adam ELBO loop
-  (no per-epoch EMD eval was captured) and AR(2) is fit in closed form
-  via \texttt{lstsq} (no epoch trajectory exists). Source:
-  \protect\path{revision/results/figures/training_convergence_all_models.json};
-  per-seed trajectories from
-  \protect\path{revision/results/matched2000/runs/<model>/<seed>/metrics.json}.}
+  $\sim 10^{-4}$ before recovering, disclosed at face value rather than
+  excluded). VAE and AR(2) are not plotted: VAE trains with a
+  single-Adam ELBO loop (no per-epoch EMD eval was captured) and AR(2)
+  is fit in closed form via \texttt{lstsq} (no epoch trajectory
+  exists). Per-figure data provenance is summarised in the Data
+  Availability section.}
   \label{fig:training_convergence_all_models}
-\end{figure}
+\end{figure*}
 
 \subsection{Circuit Design Rationale}
 
@@ -266,9 +254,9 @@ range-entangled circuit (135 parameters), and a depth-4 linear-entangled
 circuit (75 parameters), each over 5 seeds. Increasing parameter count and
 circuit depth, or changing the entangler topology, did \emph{not} yield a
 fidelity improvement over the compact 55-parameter circuit at the matched
-budget on this dataset (per-model values reported in Section~4, with full
-per-model numbers tabulated in
-\path{revision/results/matched2000_dualscale.json}). Consistent with the
+budget on this dataset (per-model values reported in Section~4; full
+per-model numbers are released in the artifact set, see Data
+Availability). Consistent with the
 expressibility--trainability
 tradeoff for variational circuits \cite{mcclean2018barren, holmes2022barrenexpressibility},
 the deeper/larger ansatz is harder to
@@ -299,10 +287,7 @@ The system continuously monitors pH, temperature, optical density, dissolved oxy
 
 \paragraph{Dataset and preprocessing.}
 The study uses a single LUCY photobioreactor cultivation campaign
-% source: revision/results/model_info.json#dataset.independent_campaigns (=1)
-% source: revision/results/model_info.json#dataset.raw_csv_rows (=778)
 comprising 778 raw optical-density time points logged at 10-minute intervals.
-% source: revision/results/model_info.json#dataset.log_return_rows (=777)
 First differencing into log-returns yields 777 log-return observations
 ($r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$); log-returns are the
 natural rate variable for this signal, because for an exponentially growing
@@ -312,9 +297,6 @@ quantity of physiological interest in cultivation monitoring (supp \S A.7).
 These are then standardized to zero mean and unit variance, then linearly
 rescaled to $[-1, 1]$ using the global min and max of the standardized
 log-return series.
-% source: revision/results/model_info.json#dataset.window_length (=10)
-% source: revision/results/model_info.json#dataset.window_stride (=2)
-% source: revision/results/model_info.json#dataset.rolling_windows (=384)
 Overlapping subsequences of length 10 with stride 2 are then extracted with a
 rolling window, producing 384 training windows. We refer to this preprocessing
 chain (log-return $\to$ standardization $\to$ rescale to $[-1, 1]$) as
@@ -334,15 +316,11 @@ so Pipeline~B was selected for simplicity and because it directly addresses
 reviewer concern R1-M3 that the Lambert~$W$ step over-Gaussianizes the input
 distribution. Supplementary Section~A.7 reports the full ablation
 (Figure~\ref{fig:preprocessing_ablation}).
-% source: revision/results/model_info.json#dataset.train_windows (=384)
-% source: revision/results/model_info.json#dataset.val_windows (=0)
-% source: revision/results/model_info.json#dataset.test_windows (=0)
 Because only one independent campaign is available, all 384 windows are used for
 training; no held-out validation or test split is carved out, as a 384-window
 single campaign is too small to support a held-out split without severely
 under-powering training (stated openly per the calibration-honesty standard,
 R1-M5). Multi-campaign generalization is identified as future work.
-% source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
 All reported quantitative results are aggregated over 5 independent random
 seeds (42, 43, 44, 45, 46) and reported as mean $\pm$ standard deviation.
 
@@ -366,9 +344,8 @@ the matched 2000-epoch budget).
 \caption{Evaluation metrics and the scale on which each is computed. Values
 are mean $\pm$ sample standard deviation over 5 seeds \{42, 43, 44, 45, 46\},
 for the 55-parameter IQP:SEL quantum generator (\texttt{iqp\_sel\_55\_repro}),
-matched 2000-epoch budget, Pipeline~B preprocessing. Source:
-\protect\path{revision/results/matched2000_dualscale.json}, filtered to
-\texttt{model\_kind=iqp\_sel\_55\_repro}.}
+matched 2000-epoch budget, Pipeline~B preprocessing. Per-figure data
+provenance is summarised in the Data Availability section.}
 \label{tbl:eval_scale}
 \small
 \begin{tabular}{@{}lccc@{}}
@@ -386,7 +363,6 @@ ACF (lag~1, mean)   & $-0.0949 \pm 0.0092$ & $0.4667 \pm 0.0286$ & both scales \
 \end{tabular}
 \end{table*}
 
-% source: revision/results/matched2000_dualscale.json#rows aggregated by (model_kind, metric_name, scale) over seeds 42-46
 \begin{table*}[!htbp]
 \centering
 \caption{Cross-model comparison on the five headline matched-budget metrics
@@ -408,9 +384,8 @@ non-adversarial column block and does not displace the quantum/WGAN
 cluster-level conclusion.
 Per-seed sample standard deviations and additional decimals are in
 Figures~\ref{fig:cross_model_dtw_dualscale} and
-\ref{fig:cross_model_acf_overlay} and the source JSON. Source:
-\protect\path{revision/results/matched2000_dualscale.json}, rows aggregated by
-\texttt{(model\_kind, metric\_name, scale)} over seeds 42--46.}
+\ref{fig:cross_model_acf_overlay}. Per-figure data provenance is summarised
+in the Data Availability section.}
 \label{tbl:cross_model_comparison}
 \scriptsize
 \setlength{\tabcolsep}{3pt}
@@ -439,8 +414,7 @@ temporal alignment; see the ``VAE characterization'' paragraph below.}
 
 PDF/CDF, Q--Q, and ACF diagnostic plots in the main text are shown on the
 transformed log-return scale (the training space); the corresponding
-original-OD-scale versions are provided as regenerated figures
-(\path{revision/results/figures/acf_iqp_sel_55_repro}, dual-scale). DTW,
+original-OD-scale plots are provided in the supplement. DTW,
 EMD, and the distributional moments are reported on both scales as above.
 
 \subsubsection*{Cross-Model Comparison}
@@ -487,9 +461,9 @@ real $\approx -0.064$; see VAE characterization below), producing a
 high-frequency oscillation that is warped-aligned to the real series
 at low DTW cost without carrying real temporal information.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_dtw_dualscale.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/cross_model_dtw_dualscale.pdf}
   \caption{DTW distance under matched 2000-epoch training (n=5 seeds;
   mean $\pm$ sample standard deviation). Left: optical-density (OD)
   scale, on which the quantum cluster (V2$=0.33$, V1$=0.35$,
@@ -500,12 +474,11 @@ at low DTW cost without carrying real temporal information.
   outperforms the classical adversarial baselines (wgan\_lstm$=18.23$,
   wgan\_mlp$=28.51$, wgan\_cnn$=69.02$) and falls below AR(2)$=7.70$ for
   every quantum variant except V3 (V3$=9.48 > 7.70$). VAE LR-DTW$=0.0876$
-  reflects a degenerate generation regime (see text) and is excluded from
-  the dominance comparison. Source:
-  \protect\path{revision/results/matched2000_dualscale.json}, filtered to
-  \texttt{metric\_name=dtw\_mean}.}
+  reflects a degenerate generation regime (see text) and is excluded
+  from the dominance comparison. Per-figure data provenance is summarised
+  in the Data Availability section.}
   \label{fig:cross_model_dtw_dualscale}
-\end{figure}
+\end{figure*}
 
 On the log-return single-step marginal-distribution axis (LR-EMD,
 earth-mover's distance between the synthetic and real log-return
@@ -557,9 +530,9 @@ cluster trails on both, and the VAE is anomalous on both. We treat
 the two observations as a single structural-alignment finding rather
 than as two independent metric outcomes.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_acf_overlay.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/cross_model_acf_overlay.pdf}
   \caption{Log-return autocorrelation function (lags 0--9) across all
   nine generators (n=5 seeds; per-model mean), with the real-data ACF
   shown as a dashed reference (lag-1 $= -0.064$, matched-pipeline).
@@ -568,36 +541,30 @@ than as two independent metric outcomes.
   (e.g.\ wgan\_lstm seed-46 lag-1 $= -0.076$). Classical adversarial
   baselines and AR(2) overshoot the negative lag-1 magnitude on the
   per-model mean; VAE (lag-1 ACF $= -0.648$) is anomalous, consistent
-  with the degenerate regime discussed in the text. Source:
-  \protect\path{revision/results/figures/cross_model_acf_overlay.json};
-  real-data ACF computed via
-  \protect\path{revision.core.data.load_and_preprocess}.}
+  with the degenerate regime discussed in the text. The real-data ACF
+  is computed under the matched preprocessing pipeline. Per-figure data
+  provenance is summarised in the Data Availability section.}
   \label{fig:cross_model_acf_overlay}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_emd.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/cross_model_emd.pdf}
   \caption{Cross-model OD-EMD (final-eval mean $\pm$ sample standard
   deviation, n=5 seeds). The horizontal reference line marks the
   frozen-headline OD-EMD reference ($0.0231$, from the
-  \texttt{frozen\_checkpoint\_epoch\_1969} aggregate; distinct from
-  the iqp\_sel\_55\_repro 2000-epoch matched-budget reproduction per
-  D-14-10). Eight of nine models lie within $\pm 0.005$ of the cluster
-  mean; the wgan\_cnn marker is inflated by a single seed-42 outlier
+  \texttt{frozen\_checkpoint\_epoch\_1969} aggregate; distinct from the
+  \texttt{iqp\_sel\_55\_repro} 2000-epoch matched-budget reproduction).
+  The wgan\_cnn marker is inflated by a single seed-42 outlier
   (OD-EMD $=0.1587$, with the other four wgan\_cnn seeds between
   $0.020$ and $0.034$). Visualises the quantum-vs-WGAN OD-EMD cluster
   separation: at the matched 2000-epoch budget the quantum cluster mean
-  is $\approx 0.0288$ and the WGAN cluster mean is $\approx 0.3312$, with
-  the cluster-floor Welch $p = 0.019$ over the 12
-  quantum-vs-WGAN OD-EMD pairs (see supp
-  Table~\ref{tbl:welch_od_emd}). Source:
-  \protect\path{revision/results/figures/cross_model_emd.json}; rows
-  aggregated from
-  \protect\path{revision/results/matched2000_dualscale.json}
-  filtered to \texttt{metric\_name=emd}, \texttt{scale=OD}.}
+  is $\approx 0.0288$ and the WGAN cluster mean is $\approx 0.3312$,
+  with the cluster-floor Welch $p = 0.019$ over the 12 quantum-vs-WGAN
+  OD-EMD pairs (see supp Table~\ref{tbl:welch_od_emd}). Per-figure data
+  provenance is summarised in the Data Availability section.}
   \label{fig:cross_model_emd}
-\end{figure}
+\end{figure*}
 
 \paragraph{VAE characterization.}
 The VAE baseline does not fit cleanly into the cluster-level
@@ -649,8 +616,6 @@ test but not a TOST-grade equivalence statement, and we do not extend
 the per-model finding to a per-seed claim.
 
 \paragraph{Discriminative-score uniformity (evaluation-protocol observation).}
-% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_mean (=0.4088757634162903)
-% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_std (=0.0)
 As a property of the evaluation protocol rather than a generator-quality
 result, we note that under Pipeline~B the TimeGAN discriminative score
 collapses to a near-fixed value of approximately 0.4089 (more precisely,
@@ -660,7 +625,7 @@ zero. We therefore treat this metric as a property of the discriminative
 post-hoc network under the matched preprocessing, not as a discriminator of
 generator quality. Predictive-score values, by contrast, do vary across
 models and are reported alongside the per-model TimeGAN scores in the
-artifact set at \path{revision/results/predictive_discriminative_matched2000.json}.
+released artifact set (see Data Availability).
 
 \textbf{Dynamic Time Warping.}
 Under the matched parameter budget and matched 2000-epoch training contract,
@@ -743,29 +708,26 @@ The per-model evaluation is reported in Section~4.1;
 Figure~\ref{fig:param_efficiency_pareto} visualizes the parameter-efficiency
 frontier on both the OD and log-return scales.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/param_efficiency_pareto.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/param_efficiency_pareto.pdf}
   \caption{Parameter-efficiency frontier: cross-model EMD vs.\
   generator parameter count, on the OD scale (left) and log-return
   scale (right). Markers: circle $=$ adversarial-quantum (4 variants,
   55--135 parameters), square $=$ adversarial-classical (3 variants,
   73--78 parameters), triangle $=$ non-adversarial (VAE 562p, AR(2)
   3p). The frozen-headline reference (epoch-1969 checkpoint) is
-  plotted as a distinct diamond marker at the same 55-parameter
-  $x$ as the \texttt{iqp\_sel\_55\_repro} circle, with a distinct
-  color and lower $y$ reflecting the early-stopped best-of-checkpoint
-  value per D-14-10 (\emph{not} merged with the 5-seed 2000-epoch
-  reproduction). Lower-left is better parameter efficiency. The shared
+  plotted as a distinct diamond marker at the same 55-parameter $x$ as
+  the \texttt{iqp\_sel\_55\_repro} circle, with a distinct color and
+  lower $y$ reflecting the early-stopped best-of-checkpoint value
+  (\emph{not} merged with the 5-seed 2000-epoch reproduction).
+  Lower-left is better parameter efficiency. The shared
   250881-parameter critic applies to all adversarial models alike and
   is excluded from the $x$-axis (generator-only parameter count).
-  Source:
-  \protect\path{revision/results/figures/param_efficiency_pareto.json};
-  per-model means from
-  \protect\path{revision/results/matched2000_dualscale.json}, parameter
-  counts from \protect\path{revision/results/model_info.json}.}
+  Per-figure data provenance is summarised in the Data Availability
+  section.}
   \label{fig:param_efficiency_pareto}
-\end{figure}
+\end{figure*}
 
 Third, we have contributed to open science practices by making our code and datasets publicly available at \url{https://github.com/shawngibford/qgan}, facilitating independent verification and accelerating future advances in quantum-enhanced bioprocess engineering.
 
@@ -877,7 +839,44 @@ contributions of the present paper.
 Additionally, extending the framework to multivariate, multimodal bioprocess datasets and exploring alternative quantum generative models such as quantum diffusion models or quantum variational autoencoders could further enhance the versatility and performance of synthetic data generation for bioprocess applications.
 
 \subsection*{Data Availability and Reproducibility Statement}
-The complete source code and datasets used in this study are publicly available at \url{https://github.com/shawngibford/qgan}, with an archived snapshot of the tagged release deposited at Zenodo, DOI: \texttt{ZENODO-DOI-PLACEHOLDER} (to be assigned; the Zenodo DOI is minted at release-freeze time). All experiments were conducted using PennyLane for quantum circuit simulation and PyTorch for classical components. Detailed hyperparameters, circuit specifications, and data preprocessing steps are provided in the Supplementary Information to enable independent reproduction of the reported results.
+The complete source code and datasets used in this study are publicly
+available at \url{https://github.com/shawngibford/qgan}, with an archived
+snapshot of the tagged release deposited at Zenodo, DOI:
+\texttt{ZENODO-DOI-PLACEHOLDER} (to be assigned; the Zenodo DOI is minted
+at release-freeze time). All experiments were conducted using PennyLane
+for quantum circuit simulation and PyTorch for classical components.
+Detailed hyperparameters, circuit specifications, and data preprocessing
+steps are provided in the Supplementary Information to enable independent
+reproduction of the reported results.
+
+\paragraph{Per-figure and per-table data provenance.}
+Every figure and table in the main paper is regenerable from the released
+artifact set. Figure scripts and the JSON/CSV data files they consume are
+organised under the \texttt{revision/results/} tree of the released
+repository (Zenodo archive at the DOI above). The mapping is:
+\begin{itemize}[nosep, leftmargin=*]
+  \item Figure~\ref{fig:training_convergence_all_models} (training
+    convergence): \texttt{revision/results/figures/training\_convergence\_all\_models.json};
+    per-seed trajectories under
+    \texttt{revision/results/matched2000/runs/<model>/<seed>/metrics.json}.
+  \item Figures~\ref{fig:cross_model_dtw_dualscale},
+    \ref{fig:cross_model_emd}; Tables~\ref{tbl:eval_scale},
+    \ref{tbl:cross_model_comparison}:
+    \texttt{revision/results/matched2000\_dualscale.json}, filtered by
+    \texttt{model\_kind}, \texttt{metric\_name}, and \texttt{scale} as
+    appropriate.
+  \item Figure~\ref{fig:cross_model_acf_overlay} (cross-model ACF):
+    \texttt{revision/results/figures/cross\_model\_acf\_overlay.json};
+    real-data ACF computed under the matched preprocessing pipeline.
+  \item Figure~\ref{fig:param_efficiency_pareto}
+    (parameter-efficiency frontier):
+    \texttt{revision/results/figures/param\_efficiency\_pareto.json};
+    parameter counts from \texttt{revision/results/model\_info.json}.
+\end{itemize}
+The WGAN sample-space convention and the $\times 10$ inverse correction
+are applied at the \texttt{samples.npy} load boundary via the shared
+helper \texttt{revision/\_wgan\_unscale.py} (see supp \S A.7). All
+script entry points are documented in \texttt{revision/README.md}.
 
 \section{Concluding Remarks}
 
