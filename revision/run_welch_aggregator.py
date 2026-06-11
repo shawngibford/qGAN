@@ -135,9 +135,24 @@ def build_payload(repo: Path) -> dict:
             max(p["cohen_d"] for p in lr_wgan_pairs) if lr_wgan_pairs else None
         ),
     }
+    # R3 deviation 2026-06-10 (user-authorized 14-21 Rule 4):
+    # OD-EMD parametric-equivalence (H2) strong claim from v1.2.4 was DROPPED
+    # because post-x0.1-fix data shows quantum is SIGNIFICANTLY better than
+    # WGAN on OD-EMD (Welch p=0.019), not statistically-equivalent. The prior
+    # thresholds {floor_welch_p_OD: 0.36, ceiling_abs_cohen_d_OD: 0.65} were
+    # the H2 acceptance gate; they no longer correspond to the post-fix paper
+    # narrative. We preserve the threshold dict for historical traceability
+    # but convert the hard-abort gates to soft-fail warnings that record the
+    # actual computed value in the output JSON for transparency. See
+    # .planning/CONTEXT-HANDOFF-2026-06-02.md §6 #2 (post-14-21 amendment).
     strong_claim_thresholds = {
-        "floor_welch_p_OD": 0.36,
-        "ceiling_abs_cohen_d_OD": 0.65,
+        "floor_welch_p_OD": 0.36,            # historical: H2 acceptance gate (dropped post-14-21)
+        "ceiling_abs_cohen_d_OD": 0.65,      # historical: H2 acceptance gate (dropped post-14-21)
+        "_status": "H2_DROPPED_PER_14-21_R3",
+        "_note": (
+            "Post-x0.1-fix data inverts the H2 parametric-equivalence claim. "
+            "Thresholds preserved for traceability but no longer gate writes."
+        ),
     }
 
     payload = {
@@ -164,21 +179,29 @@ def main() -> None:
     s = payload["summaries"]
     thr = payload["strong_claim_thresholds"]
 
-    # Path A: assert ONLY the OD-EMD threshold directions before writing.
-    if not s["OD_floor_welch_p_quantum_vs_classical"] > thr["floor_welch_p_OD"]:
-        sys.exit(
-            f"ABORT: OD floor Welch p computed="
-            f"{s['OD_floor_welch_p_quantum_vs_classical']} does NOT clear "
-            f"threshold {thr['floor_welch_p_OD']}"
+    # R3 deviation 2026-06-10 (user-authorized 14-21 Rule 4):
+    # Prior hard-abort gates on H2 parametric-equivalence thresholds dropped.
+    # Post-fix data: quantum significantly BEATS WGAN on OD-EMD (p~0.019, not
+    # equivalence). Print the computed values + emit soft-fail warnings rather
+    # than aborting; the threshold dict is preserved in the output JSON for
+    # historical traceability.
+    od_p = s["OD_floor_welch_p_quantum_vs_classical"]
+    od_d = s["OD_ceiling_abs_cohen_d_quantum_vs_classical"]
+    if not od_p > thr["floor_welch_p_OD"]:
+        print(
+            f"[run_welch_aggregator] SOFT-FAIL (H2 dropped per 14-21 R3): "
+            f"OD floor Welch p={od_p:.4f} does NOT clear historical threshold "
+            f"{thr['floor_welch_p_OD']}. Post-fix interpretation: quantum is "
+            f"significantly BETTER than WGAN on OD-EMD (not equivalent).",
+            file=sys.stderr,
         )
-    if not (
-        s["OD_ceiling_abs_cohen_d_quantum_vs_classical"]
-        <= thr["ceiling_abs_cohen_d_OD"]
-    ):
-        sys.exit(
-            f"ABORT: OD ceiling |Cohen d| computed="
-            f"{s['OD_ceiling_abs_cohen_d_quantum_vs_classical']} does NOT "
-            f"clear threshold {thr['ceiling_abs_cohen_d_OD']}"
+    if not od_d <= thr["ceiling_abs_cohen_d_OD"]:
+        print(
+            f"[run_welch_aggregator] SOFT-FAIL (H2 dropped per 14-21 R3): "
+            f"OD ceiling |Cohen d|={od_d:.4f} exceeds historical threshold "
+            f"{thr['ceiling_abs_cohen_d_OD']}. Post-fix interpretation: large "
+            f"effect size confirms quantum advantage on OD-EMD.",
+            file=sys.stderr,
         )
 
     out_path = repo / OUT_REL
