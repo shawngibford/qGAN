@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-06-11T19:27:45.462Z",
+  "phase": "14",
+  "phase_name": "paper-revision-release-freeze",
+  "phase_dir": ".planning/phases/14-paper-revision-release-freeze",
+  "plan": "14-21",
+  "task": 7,
+  "total_tasks": 7,
+  "status": "paused_post_completion",
+  "context_summary": "Phase 14 sub-plan 14-21 (x0.1 WGAN inverse-pipeline fix) is COMPLETE end-to-end including SUMMARY.md + STATE.md + ROADMAP.md + narrative-pass cleanup. All gates PASS. The bifurcated finding has been reframed per R3 to lead with quantum cluster dominance over the WGAN cluster on all four matched-budget metrics (LR-DTW per-seed, LR-EMD ~15x, OD-DTW Welch p=0.002, OD-EMD Welch p=0.019). Phase 14 is now 20/21 plans complete; only 14-07 (Zenodo + tag) remains, intentionally deferred to AIChE journal acceptance. AIChE resubmission deadline 2026-06-17 (6 days from today, 2026-06-11). Two optional process-doc cleanups remain (peer_review_remediation.md + reconciliation_note.md) — provenance-gate-clean, but still carry the 14-16-era 'pre-fix/post-fix' framing in the historical 14-16 r3 retraction sections. NOT gate-blocking; can be deferred or cleaned up in next session.",
+  "completed_tasks": [
+    {"id": 1, "name": "T01 — Patch x0.1 inverse pipeline at 9 samples.npy load sites across 7 producers", "status": "done", "commit": "b367e52"},
+    {"id": 2, "name": "T05 (pulled forward) — Directional shift report + R3 user decision (relax §6 #2)", "status": "done", "commit": "9391b1a"},
+    {"id": 3, "name": "§6 #2 amendment + welch aggregator threshold patch", "status": "done", "commit": "ede7aa4 + 30a6cb4"},
+    {"id": 4, "name": "T02 — Re-emit 8 matched-budget JSONs post-fix; differential test confirms WGAN-only changes", "status": "done", "commit": "e05553e"},
+    {"id": 5, "name": "T03 — Regenerate ~200 figure triples + §A.10/§A.11/§A.12 + cross_model_*.json", "status": "done", "commit": "a70a5d8"},
+    {"id": 6, "name": "T04 — Update paper literals + bifurcated-finding rewrite per R3; new lr_dtw_dominance_gap.json", "status": "done", "commit": "99fef8e"},
+    {"id": 7, "name": "T06 + T07 — Abstract/contributions/§4/§5 narrative rewrite + supp §A.7 x0.1 disclosure paragraph + drift-correction language cleanup", "status": "done", "commit": "6c3da1d"},
+    {"id": 8, "name": "T07-ext — Update reviewer_response.md (utility table + Welch table + DTW addendum + R1-M2 narrative)", "status": "done", "commit": "f67766a"},
+    {"id": 9, "name": "SUMMARY + STATE/ROADMAP — close 14-21 cleanly", "status": "done", "commit": "b59f918"},
+    {"id": 10, "name": "Narrative pass — drop pre/post-fix framing across main/supp/reviewer_response/methods_full per user direction", "status": "done", "commit": "4a5954f"}
+  ],
+  "remaining_tasks": [
+    {"id": "opt-1", "name": "Narrative cleanup of peer_review_remediation.md + reconciliation_note.md", "status": "deferred_optional", "blocking": false, "notes": "Process docs that still carry the 14-16 r3 'pre-fix/post-fix' historical framing. Provenance gates pass. Not in the freeze-gate hard-block set (only paper_blocks_framing/refs_methods + reviewer_response are). Can be done in next session OR deferred to post-acceptance corrigendum if needed."},
+    {"id": "opt-2", "name": "AIChE-portal bundle prep + upload", "status": "external_action", "blocking": true, "notes": "External action — user must rebuild the bundle from HEAD 4a5954f (main + supp + bib + figures + cover letter + ama.bst + revised reviewer_response.md) and upload to the AIChE portal. The paper PDF at HEAD is 96 pages, 3.8MB, clean compile."},
+    {"id": "opt-3", "name": "GitHub release notes draft at releases/new?tag=v1.2.5", "status": "deferred_to_acceptance", "blocking": false, "notes": "Held until journal acceptance — tag v1.2.5 (or higher) will cap this fix work; tags v1.2 through v1.2.4 remain on origin as historical reference."},
+    {"id": "14-07", "name": "Plan 14-07 — Zenodo DOI mint + tag v1.2.5+ + release.md authoring", "status": "deferred_to_acceptance", "blocking": false, "notes": "Long-standing user deferral per Phase 14 plan. Freeze gate (d) is expected-deferred until 14-07 lands; all other freeze gates pass at HEAD 4a5954f."}
+  ],
+  "blockers": [],
+  "human_actions_pending": [
+    {"action": "Rebuild AIChE submission bundle from HEAD 4a5954f and upload to portal", "context": "Deadline 2026-06-17. Bundle should include: main (4) copy.pdf (96pp), supp_material content (included in main via \\input), bibliography, figures, revised reviewer_response.md, cover letter referencing the corrected matched-budget findings.", "blocking": true},
+    {"action": "Decide whether to clean up peer_review_remediation.md + reconciliation_note.md before submission", "context": "These process docs still carry 14-16-era 'pre-fix/post-fix' framing. Provenance-gate-clean but narratively reference the older Path A r3-process retraction. Not in the freeze-gate hard-block set. User can either: (a) clean them up next session for a consistent narrative across all docs in the AIChE bundle; (b) defer to post-acceptance; (c) skip — they're internal process docs not strictly required for AIChE.", "blocking": false}
+  ],
+  "decisions": [
+    {"decision": "R3 — relax CONTEXT-HANDOFF §6 #2 prohibition (was: 'LR-DTW NOT LR-EMD is the surviving quantum-distinguishing signal; never re-claim quantum advantage on LR-EMD')", "rationale": "The empirical premise of the prohibition was authored from the x0.1-bugged LR-EMD column; the corrected data shows quantum dominates LR-EMD by ~15x on per-model means. The prohibition was a derived statement from buggy data, not an a priori scientific principle. User-authorized at T05 checkpoint.", "phase": "14"},
+    {"decision": "Drop the OD-EMD H2 parametric-equivalence claim from 14-18 entirely", "rationale": "Post-fix data inverts the 'no statistically detectable difference, underpowered null' framing — Welch cluster-floor p drops from 0.37 to 0.019; quantum cluster mean ~11x below WGAN cluster mean. The H2 framing was correct for the bugged data but no longer describes the corrected matched-budget result.", "phase": "14"},
+    {"decision": "Relax run_welch_aggregator.py strong-claim acceptance thresholds (floor_welch_p_OD: 0.36, ceiling_abs_cohen_d_OD: 0.65) — hard-abort → soft-fail with R3 rationale", "rationale": "The thresholds encoded the H2 strong-claim acceptance gate; with H2 dropped they no longer correspond to a paper claim. Thresholds preserved in strong_claim_thresholds dict for historical traceability + a _status: 'H2_DROPPED_PER_14-21_R3' field. Rule 4 deviation, user-authorized.", "phase": "14"},
+    {"decision": "Inference-only x10 correction via shared helper module at revision/_wgan_unscale.py (NOT inside revision/core/)", "rationale": "Preserves the D-14-22 revision/core/ byte-freeze. Helper imported by 7 producer files. _WGAN_KINDS gating set is single source of truth for the model_kind asymmetry (Pitfall 3: VAE+AR(2) excluded).", "phase": "14"},
+    {"decision": "Frozen-checkpoint headline (run_canonical_headline.py:210) also patched unconditionally", "rationale": "The bug applied x0.1 to fresh samples generated from best_checkpoint.pt — so headline_canonical.json is also affected. Q1 from the source plan ('verify') collapsed to 'regenerate unconditionally'. Patched at line 232 via Option B (preserve historical * 0.1 at line 210, undo at inverse boundary via helper with model_kind='frozen_checkpoint_headline').", "phase": "14"},
+    {"decision": "Drop 'pre-fix/post-fix' historical framing across reviewer-facing docs per user direction (narrative pass commit 4a5954f)", "rationale": "User direction: 'no need to mention the pre-post fix thing, these are just the results.' Methodology disclosure of the x0.1/x10 convention preserved in supp §A.7 (reviewer reproducibility), but framed as a forward-looking convention rather than a 'the prior version was wrong' disclosure.", "phase": "14"},
+    {"decision": "Tag direction caps at v1.2.5+", "rationale": "Tags v1.2 through v1.2.4 stay on origin as historical reference. New work caps at v1.2.5 or higher once 14-07 mints the Zenodo DOI at acceptance.", "phase": "14"}
+  ],
+  "uncommitted_files": [],
+  "files_already_committed_this_branch": [
+    {"sha": "b367e52", "subject": "T01 patch x0.1 WGAN inverse-pipeline at 9 samples.npy load sites across 7 producers"},
+    {"sha": "9391b1a", "subject": "T05 pulled forward — bifurcated-finding shift surfaced at T02 aggregator abort"},
+    {"sha": "ede7aa4", "subject": "R3 — amend CONTEXT-HANDOFF §6 #2"},
+    {"sha": "30a6cb4", "subject": "T02-prep — patch welch aggregator OD floor threshold per R3"},
+    {"sha": "e05553e", "subject": "T02 — re-emit 8 matched-budget JSONs post-x10 fix"},
+    {"sha": "a70a5d8", "subject": "T03 — regenerate figure suite post-x10 inverse fix"},
+    {"sha": "99fef8e", "subject": "T04 — update paper literals + bifurcated-finding rewrite per R3"},
+    {"sha": "6c3da1d", "subject": "T06 + T07 — narrative rewrite per R3 + supp x0.1 disclosure paragraph"},
+    {"sha": "f67766a", "subject": "T07-ext — update reviewer_response.md per R3"},
+    {"sha": "b59f918", "subject": "SUMMARY + STATE/ROADMAP — close 14-21"},
+    {"sha": "4a5954f", "subject": "narrative pass — report results directly without pre/post-fix framing"}
+  ],
+  "next_action": "On resume: read .planning/STATE.md + .planning/phases/14-paper-revision-release-freeze/14-21-SUMMARY.md + .planning/phases/14-paper-revision-release-freeze/.continue-here.md. Phase 14 sub-plan 14-21 is COMPLETE. Decide between: (a) clean up peer_review_remediation.md + reconciliation_note.md narrative for consistency across the AIChE bundle (~1-2h, optional but useful for reviewer-trail consistency); (b) prep AIChE submission bundle (rebuild from HEAD 4a5954f) and upload to portal before 2026-06-17; (c) wait for AIChE acceptance to trigger 14-07 Zenodo + tag work. Recommended sequence: (a) → (b) → wait for acceptance → (c).",
+  "context_notes": "This was a major-finding session. The x0.1 fix triggered a substantial reframing of the AIChE submission's headline result: from a bifurcated finding (LR-DTW dominance + OD-marginal null) to a four-metric quantum cluster dominance over the parameter-matched WGAN cluster. The user explicitly authorized this reframing via R3 at the T05 checkpoint with full understanding of the implications (including amending the §6 #2 hard prohibition which was authored from buggy data). Hard prohibitions §6 #1 (VAE = degenerate generation regime, NEVER posterior collapse), §6 #3 (lag-1 ACF reference -0.0641), and §6 #4 (Pipeline B = no Lambert W) remain unchanged. The user values realistic quantum synthetic data generation and reviewer-honest disclosure (the §A.7 methodology note describes the WGAN sample-space convention transparently — reviewers can reproduce the corrected pipeline directly from revision/_wgan_unscale.py). The matched-budget figures + JSONs + paper literals are all internally consistent at HEAD 4a5954f. Phase 14 is technically resubmission-ready; only the human external actions (bundle prep + portal upload) and Zenodo deferral remain.",
+  "load_bearing_invariants": [
+    "Hard prohibitions §6 #1, #3, #4 remain in force (VAE = degenerate generation NOT posterior collapse; lag-1 ACF reference = -0.0641; Pipeline B has NO Lambert W). §6 #2 is the only prohibition amended (per R3 at T05 checkpoint).",
+    "Training-time x0.1 sites are byte-frozen at run_matched2000.py:281, core/training.py:347,381,416, run_baselines.py:205. The correction is INFERENCE-ONLY at the samples.npy load boundary via the shared helper.",
+    "_WGAN_KINDS set in revision/_wgan_unscale.py is the single source of truth for the model_kind gating; VAE + AR(2) are deliberately excluded per Pitfall 3 (their samples.npy is in the canonical [-1, +1] space).",
+    "revision/core/ is byte-frozen (D-14-22). The helper module lives at revision/_wgan_unscale.py (top-level revision/, not inside revision/core/).",
+    "Tags v1.2 through v1.2.4 on origin must NOT be rewritten — they're historical reference. New work caps at v1.2.5+ (14-07 cuts the tag).",
+    "Plan 14-07 (Zenodo DOI mint + tag + release.md) remains intentionally deferred to AIChE journal acceptance per long-standing user decision.",
+    "Phase 14 progress: 20/21 plans complete; 14-07 is the only remaining plan."
+  ],
+  "summary_artifact_path": ".planning/phases/14-paper-revision-release-freeze/14-21-SUMMARY.md",
+  "state_artifact_path": ".planning/STATE.md",
+  "roadmap_artifact_path": ".planning/ROADMAP.md"
+}
