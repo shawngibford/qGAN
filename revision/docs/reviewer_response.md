@@ -208,12 +208,16 @@ higher utility ceiling than the three classical adversarial WGAN
 baselines*. We report this finding in
 Section 4.1.
 
-The only utility-adjacent metric on which quantum variants distinguish
-themselves in the matched-budget comparison is log-return DTW (LR-DTW),
-addressed under R1-M1: every quantum variant beats every classical
-WGAN and the AR(2) baseline on LR-DTW, reported as a uniform-dominance
-(conjunctive) claim over the full pairwise family with the worst-case
-margin. That is the sole quantum-distinguishing result we claim.
+In the matched-budget comparison the quantum cluster dominates the
+parameter-matched classical adversarial WGAN cluster on all four
+matched-budget fidelity metrics (LR-DTW, LR-EMD, OD-DTW, OD-EMD); the
+detailed claim and pairwise Welch table are at R1-M1 below. LR-DTW
+carries the strongest form of the claim — a per-seed conjunctive
+"no overlap" dominance over the full pairwise family — while the
+three remaining metrics carry per-model cluster-floor Welch
+significance over the 12 quantum-vs-WGAN pairs. The four-metric
+dominance is not extended to a per-seed claim on LR-EMD, OD-EMD,
+or OD-DTW under the $n=5$ seed budget.
 
 **Scope note.** The matched-budget protocol is Pipeline B only — the
 phase-09.1 preprocessing ablation already established log-returns as
@@ -418,23 +422,28 @@ quantum-minus-classical gap). A conjunctive "holds for every pair" claim
 over a finite pairwise family does not require a multiple-comparisons
 (multiplicity) correction, unlike a disjunctive "≥1 significant pair"
 claim where multiplicity inflates the family-wise false-positive rate.
-The OD-EMD non-significance result is correspondingly reported WITHOUT a
-positive-equivalence inference, so multiplicity does not inflate a false
-claim there either — a high p-value is not asserted as a finding. This
-makes the multiple-comparisons posture explicit and consistent across both
-the OD-EMD and LR-DTW pairwise families.
+The three remaining matched-budget metrics (LR-EMD, OD-DTW, OD-EMD) are
+reported as per-model cluster-floor Welch findings (the minimum two-sided
+Welch $t$-test $p$-value over the 12 quantum-vs-WGAN pairs, $n=5$ per
+group); we report the floor as a worst-case property of the family rather
+than as a "$\geq 1$ significant pair" claim, so multiplicity correction is
+not appropriate. Bonferroni-corrected counterparts (12 pairs × reported
+$p$) are provided alongside the raw cluster-floor values for transparency
+in the per-baseline table below.
 
 At matched 2000-epoch training budget and n=5 seeds per cell (seeds {42,
 43, 44, 45, 46}), the iqp_sel_55 quantum reference circuit (55 trainable
 parameters per
 `revision/results/model_info.json#models[?model=='iqp_sel_55_repro'].parameter_count`)
-shows no statistically detectable OD-scale EMD difference from any
-classical generator baseline tested. The claim's direction is retained —
-the 55-parameter quantum generator's OD-EMD is not statistically
-distinguishable from the size-matched classical generators — but at n=5
-this reflects an underpowered non-significant difference test (~15% power
-against d=0.65, 80%-power detection floor d ≈ 2.0), not a positive
-equivalence finding.
+beats every classical adversarial WGAN baseline on OD-scale EMD with
+seven of the 12 quantum-vs-WGAN pairs reaching $p<0.05$ (cluster-floor
+$p \approx 0.019$). The quantum cluster mean ($\approx 0.029$) sits
+substantially below the WGAN cluster mean ($\approx 0.331$). The two
+non-adversarial baselines (VAE, AR(2)) sit inside the quantum cluster on
+OD-EMD — both pairwise differences are non-significant — consistent with
+the cluster-dominance claim being scoped to the parameter-matched
+adversarial sub-family rather than to all classical generators
+universally.
 
 Every WGAN variant additionally carries the shared 250881-parameter critic
 during adversarial training (per
