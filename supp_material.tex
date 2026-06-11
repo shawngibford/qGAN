@@ -511,6 +511,69 @@ Archived snapshot of the tagged release: Zenodo, DOI: \texttt{ZENODO-DOI-PLACEHO
 
 The complete code, trained models, and datasets have been released for transparency, independent verification, and acceleration of subsequent advances in quantum-enhanced chemical and biochemical engineering.
 
+\paragraph{Per-figure and per-table data provenance.}
+Every paper-cited numeric literal (main text, this supplement, and the
+authors' point-by-point response to reviewers) resolves to a JSON file
+under \texttt{revision/results/} in the release repository. The
+mapping below is exhaustive for the figures and tables whose captions
+in this manuscript intentionally omit source-trace clauses (the
+preferred reader-facing convention; reproducibility-critical traces
+live here).
+
+\begin{itemize}[nosep, leftmargin=*]
+ \item Main text Figures 2--6 (cross-model EMD, DTW dualscale, ACF
+ overlay, training convergence, Pareto): aggregates under
+ \texttt{matched2000\_dualscale.json}, \texttt{distribution\_emd.json},
+ \texttt{welch\_pairwise.json}, \texttt{cross\_model\_emd.json},
+ \texttt{cross\_model\_dtw\_dualscale.json},
+ \texttt{cross\_model\_acf\_overlay.json},
+ \texttt{param\_efficiency\_pareto.json}.
+ \item Main text Table 2 (matched-budget headline metrics):
+ \texttt{matched2000\_dualscale.json\#aggregates}, filtered per
+ (\texttt{model\_kind}, \texttt{scale}, \texttt{metric\_name}).
+ \item Per-model loss diagnostics
+ (Fig.~\ref{fig:per_model_loss_grid}): per-seed training-loop
+ trajectories at \texttt{matched2000/runs/<model>/<seed>/metrics.json};
+ fit-summary statistics at \texttt{figures/loss\_<model>.json}.
+ \item Per-model reconstruction overlays
+ (Figs.~\ref{fig:reconstruction_iqp_sel_55_repro} and following): per-model JSON at
+ \texttt{figures/reconstruction\_<model>.json}; the $\times 10$ WGAN
+ inverse-pipeline correction documented in §A.7 is applied at the
+ \texttt{samples.npy} load boundary by the shared helper
+ \texttt{revision/\_wgan\_unscale.py}.
+ \item Welch-pairwise tables (\S A.6, this section):
+ \texttt{welch\_pairwise.json}, filtered to the requested
+ (\texttt{scale}, \texttt{metric\_name}) pair.
+ \item Preprocessing pipeline visualisations
+ (Figs.~\ref{fig:preprocessing_pipeline},
+ \ref{fig:preprocessing_ablation}):
+ \texttt{transform\_ablation/metrics.csv} and
+ \texttt{transform\_ablation/tstr\_lite.json}.
+ \item Hardware-noise sensitivity sweeps
+ (Figs.~\ref{fig:shot_noise_robustness},
+ \ref{fig:noise_robustness_quantum}):
+ \texttt{shot\_noise\_sensitivity.json},
+ \texttt{noise\_model\_sensitivity.json}.
+ \item Quantum circuit introspection diagnostics
+ (Figs.~\ref{fig:training_progression}, \ref{fig:entanglement_trajectory},
+ \ref{fig:param_trajectory}): per-trajectory JSON at
+ \texttt{figures/training\_progression.json},
+ \texttt{figures/entanglement\_trajectory.json},
+ \texttt{figures/param\_trajectory.json}.
+ \item TSTR cross-model utility
+ (Fig.~\ref{fig:tstr_crossmodel_matched2000}, this section):
+ \texttt{tstr\_matched2000.json}.
+ \item Circuit-architecture diagrams (Fig.~\ref{fig:quantum_circuit}):
+ rendered via PennyLane's \texttt{qml.draw\_mpl} from the locked
+ circuit configurations at \texttt{figures/circuits/<name>.json}.
+\end{itemize}
+
+The number-provenance gate
+(\texttt{revision/verify\_number\_provenance.py}) audits every literal
+in the manuscript, supplementary, and rebuttal against the
+\texttt{revision/results/} corpus at submission time; the gate
+schema, the corpus snapshot, and the per-literal resolution manifest
+are part of the tagged release.
 
 \textbf{Quantum Circuit Specifications:}
 
