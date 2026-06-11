@@ -313,6 +313,9 @@ def _real_references(repo: Path) -> dict:
         "real_windowed_OD": real_windowed_OD,
         "real_OD_flat": real_windowed_OD.reshape(-1),
         "real_log_delta": d_real["log_delta"].cpu().numpy(),
+        # Plan 14-21 T03 — full 778-point OD series for §A.10 reconstruction
+        # overlay (anchored at real_od[0]; un-windowed).
+        "real_OD_full": d_real["OD"].cpu().numpy(),
     }
 
 
@@ -3143,6 +3146,28 @@ def main() -> None:
             model, od, real_windowed, figures_dir
         )
         written += render_stylized_facts(model, od, real_flat, figures_dir)
+
+        # --- Plan 14-21 T03: §A.10 / §A.11 / §A.12 per-model triples.
+        # §A.10 reconstruction overlay loads samples internally (via the
+        # T01-patched _unscale_wgan_samples path). §A.11 + §A.12 take the
+        # gen_log_delta sequence emitted by §A.10's JSON sidecar; we derive
+        # it here from r_norm to avoid a round-trip read.
+        real_od_arr = refs["real_OD_full"]
+        _mu = float(inv["mu"])
+        _sigma = float(inv["sigma"])
+        gen_log_delta_local = r_norm * _sigma + _mu  # raw log-delta from r_norm
+        # Truncate to match real_logret length (777)
+        n_target = real_logret.shape[0]
+        gen_log_delta_trunc = gen_log_delta_local.reshape(-1)[:n_target]
+        written += render_reconstruction_overlay(
+            model, real_logret, real_od_arr, figures_dir, repo
+        )
+        written += render_logreturn_stat_grid(
+            model, real_logret, gen_log_delta_trunc, figures_dir
+        )
+        written += render_dtw_alignment(
+            model, real_logret, gen_log_delta_trunc, figures_dir
+        )
 
     # --- Plan 14-15 T3: 9-model QQ overlay + delta-QQ panel (single
     # discriminating figure for OD-marginal convergence across
