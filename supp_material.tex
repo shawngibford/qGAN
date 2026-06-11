@@ -732,6 +732,70 @@ metrics and the ablation summary are in
   \label{fig:preprocessing_ablation}
 \end{figure}
 
+\paragraph{WGAN sample-space correction (post-revision $\times 10$ inverse fix).}
+A historical $\times 0.1$ post-scaling was applied at quantum-generator
+sample-export time in the original Pipeline~A reference notebook
+(\protect\path{archive/qgan_pennylane_SEL.py}; the relevant scaling
+block carries the explicit code comment ``Real data is roughly in
+$[-0.08, 0.09]$, so scale by $\sim 0.1$''). The intent was to magnitude-match the quantum
+generator's $[-1, +1]$ output to unstandardized log-returns under
+Pipeline~A. When the revision pipeline switched to Pipeline~B
+(log-returns standardized $+$ rescaled, with real-sample range
+$[-1, +1]$), the $\times 0.1$ should have been removed but was preserved
+verbatim at the training/export sites for all WGAN-trained generators
+(quantum IQP:SEL $+$ V1/V2/V3, classical wgan\_mlp/cnn/lstm). The
+on-disk
+\texttt{samples.npy} bundles under
+\protect\path{revision/results/matched2000/runs/} therefore store
+WGAN-trained samples in $[-0.1, +0.1]$ space rather than the canonical
+$[-1, +1]$. The downstream inverse formula
+$r_{\text{norm}} = ((s + 1)/2)\,(r_{\max} - r_{\min}) + r_{\min}$
+assumes $s \in [-1, +1]$, so consuming the raw samples directly
+produces $\sim 10\times$ attenuated log-deltas and correspondingly
+under-reported single-step EMD and DTW.
+
+The correction is applied INSIDE every paper-cited consumer at the
+\texttt{samples.npy} load boundary, by a shared helper module
+\protect\path{revision/_wgan_unscale.py} that multiplies WGAN-trained
+samples by 10 before un-rescaling. The on-disk bundles and all training
+code are byte-frozen (their modification would invalidate every
+checkpoint); the correction is inference-only. The
+$\times 10$ correction is gated by \texttt{model\_kind in \_WGAN\_KINDS}
+where \texttt{\_WGAN\_KINDS} contains the seven WGAN-trained
+generators plus the headline-row labels emitted by the canonical
+headline path. \emph{VAE and AR(2) are NOT in this set} — per the
+``Pitfall~3'' design note at \protect\path{revision/run_baselines.py:28},
+the VAE and AR(2) generators were trained WITHOUT the $\times 0.1$
+post-scaling, so their on-disk samples are already in the canonical
+$[-1, +1]$ window space and their published metrics are bit-identical
+pre- and post-correction. Every matched-budget JSON regenerated under
+this correction (matched2000\_dualscale, welch\_pairwise,
+distribution\_emd, tstr\_matched2000,
+predictive\_discriminative\_matched2000, ansatz\_comparison,
+headline\_canonical, cross\_model\_emd, cross\_model\_dtw\_dualscale,
+cross\_model\_acf\_overlay) was verified against its pre-fix snapshot:
+every WGAN-kind row shifted; every VAE and AR(2) row is bit-identical.
+
+The correction restores the WGAN-trained generators' log-delta
+amplitude to its real-matching scale and is what allows the
+reconstruction overlays in \S A.10 to display the orange synthetic
+trace at real-matching amplitude (the pre-correction overlays showed a
+near-flat orange line that was masked by an earlier visualization-only
+mean-shift band-aid; that band-aid was removed in this revision in
+favor of the principled $\times 10$ helper). A residual
+generator mean-bias in standardized space persists after the $\times 10$
+correction (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
+$\approx -0.03$) and contributes a $\sim 2\times$ OD drift over 777
+contiguous integration steps; this is a training-side issue not
+addressable at the inference boundary and is disclosed for
+completeness. All matched-budget headline metrics reported in main \S4
+and supp \S A.10--A.13 are post-correction. The amended
+LR-EMD framing in this revision (quantum cluster dominates the WGAN
+cluster by $\sim 15\times$ on per-model means) is a direct consequence
+of removing the historical attenuation; the pre-correction LR-EMD
+finding (which had favored every classical adversarial baseline over
+every quantum variant) was an artifact of the bug.
+
 \subsubsection{Rolling Window Implementation}
 
 Using the rolling window technique~\cite{dimoudis2023utilizing}, we generated overlapping subsequences of the original data to capture temporal patterns and dependencies. This depends on two parameters:
@@ -945,18 +1009,23 @@ then anchored at $\text{OD}_{\text{real}}[0]$ (rather than the canonical
 matched-budget evaluation protocol's random per-window $od_{\text{start}}$
 draw seeded from the run seed) and integrated via
 $\texttt{inverse\_logreturns}$ to produce a length-778 OD series directly
-overlayable on real OD. A small generator mean-bias in standardized space
-is subtracted from the generated log-delta sequence prior to OD
-reconstruction; without this drift-correction the cumulative integration
-over 777 contiguous steps compounds even a $\sim\!0.005$ mean offset into
-order-of-magnitude OD overshoot, which would obscure the structural
-fidelity question (oscillation amplitude, autocorrelation) the figures
-are designed to convey. The raw (un-corrected) generated log-delta
-sequence is preserved in each figure's JSON companion under
-\texttt{gen\_log\_delta\_raw}. The matched-budget fidelity metrics
-reported in main-text \S4.2 are computed under the canonical
-per-window-anchor protocol and are unaffected by this
-visualization-only correction.
+overlayable on real OD. The synthetic log-delta sequence used in these figures is the same
+sequence consumed by the matched-budget evaluation in main \S4 after
+the $\times 10$ WGAN inverse correction described in \S A.7 (no
+additional figure-side post-processing is applied; the earlier
+mean-shift visualization band-aid was removed in this revision in
+favor of the principled $\times 10$ helper). A residual generator
+mean-bias in standardized space persists after the $\times 10$
+correction (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
+$\approx -0.03$) and, under the long-horizon overlay protocol used
+here (777 contiguous integration steps anchored at
+$\text{OD}_{\text{real}}[0]$), compounds into a $\sim 2\times$ OD
+drift visible in the bottom panel of each figure as a slow
+positive trend on the synthetic line relative to real. This residual
+drift is a training-side artifact not addressable at inference; it does
+not affect the matched-budget fidelity metrics in main \S4, which are
+computed under the canonical per-window-anchor protocol over short
+windows.
 
 \textbf{What the figures show.} Each model's log-delta amplitude relative
 to real (top panel) is the primary visual signal: a generator that
@@ -1073,12 +1142,12 @@ present, for each of the nine matched-budget generators (seed~42), a
 six-panel statistical-comparison grid on the log-return scale. Inputs
 are the full real log-delta series (777 points from
 \protect\path{data.csv} via \protect\path{revision/core/data.py::compute_log_delta})
-and the raw, un-drift-corrected synthetic log-delta series (777 points
-extracted from each model's \protect\path{samples.npy} via the saved
-inverse transform; the same construction as \S A.10, but BEFORE the
-visualization-only drift correction applied there, so the panels
-reflect the true generator output distribution including any mean
-bias).
+and the synthetic log-delta series (777 points extracted from each
+model's \protect\path{samples.npy} via the saved inverse transform with
+the $\times 10$ WGAN sample-space correction from \S A.7 applied at the
+load boundary; the same construction as \S A.10). The
+panels reflect the post-correction generator output distribution
+including any residual mean bias.
 
 The panel layout is identical across all nine figures:
 \begin{itemize}[nosep, leftmargin=*]
