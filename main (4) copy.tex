@@ -272,10 +272,14 @@ budget on this dataset (per-model values reported in Section~4, with full
 per-model numbers tabulated in
 \path{revision/results/matched2000_dualscale.json}). Consistent with the
 expressibility--trainability
-tradeoff for variational circuits, the deeper/larger ansatz is harder to
+tradeoff for variational circuits \cite{mcclean2018barren, holmes2022barrenexpressibility},
+the deeper/larger ansatz is harder to
 optimise in the low-data, fixed-epoch regime without a corresponding accuracy
 gain, motivating the choice of the smaller circuit as the reported
-configuration.
+configuration. The 55-parameter design also sits well inside the regime where
+gradient-magnitude attenuation (``barren plateaus'') is not a dominant concern,
+which is relevant context for the matched-budget dominance reported in
+Section~4 against parameter-comparable classical baselines.
 
 \textbf{Classical critic with a quantum generator.} The critic is a classical
 convolutional network and only the generator is quantum. This is deliberate:
