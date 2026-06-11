@@ -9,9 +9,9 @@ last_activity: 2026-06-01 -- Loss-diagnostics expansion: 1 main convergence figu
 progress:
   total_phases: 2
   completed_phases: 1
-  total_plans: 24
-  completed_plans: 23
-  percent: 51
+  total_plans: 25
+  completed_plans: 24
+  percent: 53
 ---
 
 # Project State
@@ -101,10 +101,10 @@ None.
 
 ## Session Continuity
 
-**Last Session:** 2026-06-10T19:00:00.000Z
-**Stopped At:** Phase 14 sub-plan 14-21 PLAN.md complete + verified (gsd-plan-checker iteration 2 PASS). Planning surfaced a scope expansion vs. cached-tumbling-starfish.md: source plan said "2 call sites"; reality is **9 sites across 7 files** + new shared helper module `revision/_wgan_unscale.py`. Major discovery: `run_canonical_headline.py:210` applies the same ×0.1 to fresh samples, so `headline_canonical.json` (frozen-checkpoint DTW=0.6843 figure cited throughout paper) is ALSO bugged. Open Question Q1 collapsed from "verify" to "regenerate unconditionally." HANDOFF.json retired (one-shot artifact consumed by resume-work). `.continue-here.md` remains as load-bearing reference until 14-21-SUMMARY.md lands.
-**Resume File:** .planning/phases/14-paper-revision-release-freeze/14-21-PLAN.md + .continue-here.md (constraints)
+**Last Session:** 2026-06-11T00:00:00.000Z
+**Stopped At:** Phase 14 sub-plan 14-21 COMPLETE. ×0.1 WGAN inverse-pipeline bug fixed (inference-only x10 correction at 9 samples.npy load sites across 7 producer files via new shared helper `revision/_wgan_unscale.py`); 8 matched-budget JSONs regenerated; ~200 figure triples regenerated; main.tex + supp_material.tex + reviewer_response.md updated per user R3 decision (Branch B narrative rewrite — quantum cluster dominates 4 of 4 matched-budget metrics). T05 human checkpoint resolved at `.continue-here-t05.md`. CONTEXT-HANDOFF §6 #2 amended (prior LR-EMD prohibition was an artifact of the buggy data). All freeze gates a/b/c PASS; gate d expected-deferred to 14-07 (Zenodo). 14-21-SUMMARY.md committed. Phase 14 progress: 20/21 plans complete (14-07 remains deferred to journal acceptance).
+**Resume File:** None — 14-21 closed cleanly. Next session can route freely.
 
-**Active Plan Artifact:** /Users/shawngibford/.claude/plans/cached-tumbling-starfish.md (7-step user-approved fix; 14-21-PLAN.md is the structured GSD restatement with the scope expansion baked in)
+**Phase 14 status:** PARTIAL (20/21 complete; 14-07 deferred). The only remaining intra-phase work is 14-07 Zenodo DOI mint + tag v1.2.5 (or higher) + release.md authoring, which is gated on AIChE acceptance per long-standing user deferral.
 
-**Planned Phase:** 14 sub-plan 14-21 (Fix ×0.1 WGAN inverse-pipeline bug). Ready for execution via `/gsd:execute-phase 14`. T05 has a structurally enforced human-checkpoint gate for bifurcated-finding re-assessment (Branch A: finding survives → literals refresh only; Branch B: finding inverts → §4/§5/abstract rewrite after explicit user sign-off).
+**AIChE resubmission state:** Camera-ready post-14-21 bundle is technically clean (provenance + freeze gates a/b/c PASS, LaTeX compile 0 errors/0 undefined refs, 97 pages). The bifurcated-finding narrative shifted dramatically vs. v1.2.4 — three of four matched-budget metrics now favor quantum cluster + OD-EMD H2 parametric-equivalence claim from 14-18 has been DROPPED in favor of significant cluster-dominance reading. The bug-disclosure paragraph in supp §A.7 makes the fix reproducible and the prior framing artifact transparent. Resubmission deadline 2026-06-17 (6 days from today).
