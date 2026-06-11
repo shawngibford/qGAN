@@ -37,33 +37,33 @@ A.14 Quantum Hardware Robustness Sensitivity
 
 \begin{table*}
 \footnotesize
-  \caption{Approaches for Bioprocess Synthetic Data Generation}
-  \label{tbl:bioprocess_methods}
-  \begin{tabularx}{\textwidth}{@{}lXXX@{}}
-    \toprule
-    \textbf{Approach} & \textbf{Description} & \textbf{Advantages} & \textbf{Limitations}\\
-    \midrule
-    Mechanistic Model-Based & 
-    First-principles models simulate bioprocess dynamics under various conditions \cite{vidossich2021role, banga2025mechanistic} & 
-    Ensures physical consistency & 
-    Limited by model accuracy, understanding of pathways/interactions, and ability to capture process variability \\
-    \midrule
-    Statistical & 
-    Gaussian Process regression and multivariate statistical models generate data based on estimated probability distributions \cite{kim2023, miletic2025utility} & 
-    Excel at reproducing statistical properties & 
-    Struggle with complex temporal dependencies and rare events \\
-    \midrule
-    Data-Driven & 
-    Machine learning models (VAEs, GANs) learn directly from available data \cite{goodfellow2014generativeadversarialnetworks, akkem2024comprehensive} & 
-    Flexible generation without requiring mechanistic understanding & 
-    Performance depends heavily on training data quality and quantity \\
-    \midrule
-    Hybrid & 
-    Combine mechanistic knowledge with data-driven techniques \cite{albino2024hybridmodel} & 
-    Incorporates physical constraints and biological relationships & 
-    Complexity in implementation and model integration \\
-    \bottomrule
-  \end{tabularx}
+ \caption{Approaches for Bioprocess Synthetic Data Generation}
+ \label{tbl:bioprocess_methods}
+ \begin{tabularx}{\textwidth}{@{}lXXX@{}}
+ \toprule
+ \textbf{Approach} & \textbf{Description} & \textbf{Advantages} & \textbf{Limitations}\\
+ \midrule
+ Mechanistic Model-Based & 
+ First-principles models simulate bioprocess dynamics under various conditions \cite{vidossich2021role, banga2025mechanistic} & 
+ Ensures physical consistency & 
+ Limited by model accuracy, understanding of pathways/interactions, and ability to capture process variability \\
+ \midrule
+ Statistical & 
+ Gaussian Process regression and multivariate statistical models generate data based on estimated probability distributions \cite{kim2023, miletic2025utility} & 
+ Excel at reproducing statistical properties & 
+ Struggle with complex temporal dependencies and rare events \\
+ \midrule
+ Data-Driven & 
+ Machine learning models (VAEs, GANs) learn directly from available data \cite{goodfellow2014generativeadversarialnetworks, akkem2024comprehensive} & 
+ Flexible generation without requiring mechanistic understanding & 
+ Performance depends heavily on training data quality and quantity \\
+ \midrule
+ Hybrid & 
+ Combine mechanistic knowledge with data-driven techniques \cite{albino2024hybridmodel} & 
+ Incorporates physical constraints and biological relationships & 
+ Complexity in implementation and model integration \\
+ \bottomrule
+ \end{tabularx}
 \end{table*}
 
 Table~\ref{tbl:bioprocess_methods} summarizes the principal approaches to synthetic bioprocess data generation
@@ -76,10 +76,10 @@ data-driven, and hybrid approaches.
  \subsubsection{Classical GAN Architecture}
 
 \begin{figure*}
-    \centering
-    \includegraphics[width=1\linewidth]{classicalgan.png}
-    \caption{Illustration of classical GAN architecture.}
-    \label{fig:classical_gan}
+ \centering
+ \includegraphics[width=1\linewidth]{classicalgan.png}
+ \caption{Illustration of classical GAN architecture.}
+ \label{fig:classical_gan}
 \end{figure*}
 
 The original GAN formulation by Goodfellow et al. (2014) introduced several key innovations \cite{goodfellow2014generativeadversarialnetworks}: Adversarial training paradigm, Non-cooperative game theory framework, Gradient-based optimization for both networks
@@ -93,16 +93,16 @@ approach developed in this work.
 
 Specific challenges include:
 \begin{itemize}[nosep, leftmargin=*]
-  \item \textbf{Mode collapse:} Generator produces limited diversity~\cite{Arjovsky2017}
-  \item \textbf{Vanishing gradients:} Discriminator becomes too strong~\cite{goodfellow2014generativeadversarialnetworks}
-  \item \textbf{Hyperparameter sensitivity:} Learning rates, batch sizes critically affect convergence~\cite{gulrajani2017improved}
+ \item \textbf{Mode collapse:} Generator produces limited diversity~\cite{Arjovsky2017}
+ \item \textbf{Vanishing gradients:} Discriminator becomes too strong~\cite{goodfellow2014generativeadversarialnetworks}
+ \item \textbf{Hyperparameter sensitivity:} Learning rates, batch sizes critically affect convergence~\cite{gulrajani2017improved}
 \end{itemize}
 
 \subsubsection{Wasserstein Distance Mathematical Derivation}
 
 The Wasserstein distance, also known as the Earth Mover's Distance (EMD), provides a principled way to measure the dissimilarity between two probability distributions. \cite{villani2008optimal} For two probability measures $\mu $ and $\nu$ on a metric space M with distance function d:
 \begin{equation}
-    W_p(\mu, \nu) = \left(\inf_{\gamma \in \Gamma(\mu,\nu)} \int_{M \times M} d(x,y)^p d\gamma(x,y)\right)^{1/p}
+ W_p(\mu, \nu) = \left(\inf_{\gamma \in \Gamma(\mu,\nu)} \int_{M \times M} d(x,y)^p d\gamma(x,y)\right)^{1/p}
 \end{equation}
 
 
@@ -116,7 +116,7 @@ W_1(\mu, \nu) = \sup_{\|f\|_L \leq 1} \left|\int f d\mu - \int f d\nu\right|
 \end{equation}
 where the supremum is over all 1-Lipschitz functions.
 
-This formulation allows WGAN to use a neural network (the critic) to approximate the supremum, leading to the practical WGAN objective. \cite{arjovsky17a} The Wasserstein GAN (WGAN) was introduced to address training instabilities by using the Earth Mover's distance to provide a more meaningful and stable loss metric. \cite{arjovsky17a}  The WGAN-GP further refined this approach by replacing weight clipping with a soft gradient constraint. \cite{gulrajani2017improved}
+This formulation allows WGAN to use a neural network (the critic) to approximate the supremum, leading to the practical WGAN objective. \cite{arjovsky17a} The Wasserstein GAN (WGAN) was introduced to address training instabilities by using the Earth Mover's distance to provide a more meaningful and stable loss metric. \cite{arjovsky17a} The WGAN-GP further refined this approach by replacing weight clipping with a soft gradient constraint. \cite{gulrajani2017improved}
 
 \subsubsection{Quantum Computing Fundamentals for QGANs}
 
@@ -132,9 +132,9 @@ where $\sum_i |\alpha_i|^2 = 1$ (normalization condition).
 
 \textbf{Key Quantum Gates Used:}
 \begin{itemize}[nosep, leftmargin=*]
-  \item \textbf{Hadamard ($H$):} Creates superposition: $H\ket{0} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$
-  \item \textbf{Rotation gates ($R_x$, $R_y$, $R_z$):} Parameterized single-qubit rotations
-  \item \textbf{CNOT:} Two-qubit entangling gate
+ \item \textbf{Hadamard ($H$):} Creates superposition: $H\ket{0} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$
+ \item \textbf{Rotation gates ($R_x$, $R_y$, $R_z$):} Parameterized single-qubit rotations
+ \item \textbf{CNOT:} Two-qubit entangling gate
 \end{itemize}
 
 \textbf{Quantum Advantage for Generative Models:}
@@ -143,25 +143,25 @@ QGANs leverage the inherent properties of quantum systems to provide potential a
 
 Specific advantages include:
 \begin{itemize}[nosep, leftmargin=*]
-  \item \textbf{Exponential state space:} $n$ qubits represent $2^n$ amplitudes, enabling more efficient representation of complex probability distributions \cite{zoufal2021generativequantummachinelearning}
-  \item \textbf{Quantum interference:} Constructive/destructive interference explores solution space more efficiently
-  \item \textbf{Entanglement:} Creates correlations impossible in classical probability, potentially affecting convergence behaviour; we do not claim a mode-collapse advantage and did not measure one  \cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}
+ \item \textbf{Exponential state space:} $n$ qubits represent $2^n$ amplitudes, enabling more efficient representation of complex probability distributions \cite{zoufal2021generativequantummachinelearning}
+ \item \textbf{Quantum interference:} Constructive/destructive interference explores solution space more efficiently
+ \item \textbf{Entanglement:} Creates correlations impossible in classical probability, potentially affecting convergence behaviour; we do not claim a mode-collapse advantage and did not measure one \cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}
 \end{itemize}
 
 Quantum interference effects can enhance the model's ability to capture subtle correlations and nonlinear relationships present in real-world data, making them particularly suited for complex temporal dependencies found in bioprocess systems. Practical scalability nonetheless remains constrained by current NISQ-device noise and limited circuit depth \cite{Cerezo_2021}.
 
-Recent experimental implementations have demonstrated proof-of-concept QGANs on noisy intermediate-scale quantum (NISQ) devices.  \cite{rudolph2022generationhighresolutionhandwrittendigits, Huang_2021} Rudolph et al. demonstrated that QGANs can generate high-resolution images using an ion trap quantum computer, highlighting the potential of quantum models to exceed classical limitations in certain generative tasks. \cite{rudolph2022generationhighresolutionhandwrittendigits}
+Recent experimental implementations have demonstrated proof-of-concept QGANs on noisy intermediate-scale quantum (NISQ) devices. \cite{rudolph2022generationhighresolutionhandwrittendigits, Huang_2021} Rudolph et al. demonstrated that QGANs can generate high-resolution images using an ion trap quantum computer, highlighting the potential of quantum models to exceed classical limitations in certain generative tasks. \cite{rudolph2022generationhighresolutionhandwrittendigits}
 
 \subsection{Proposed Extension (Outlook): Hybrid-GAN-Mechanistic Framework}
 
 \subsubsection{Proposed Mathematical Formulation (not implemented in this study)}
 
-\emph{The following Hybrid-GAN-mechanistic structure is a proposed extension and was not implemented, trained, or evaluated in this work; it is included to motivate future research and is presented as a formulation only.} The proposed Hybrid-GAN-mechanistic structure would integrate generative adversarial networks with physics-informed mechanistic components to enhance predictive modeling in data-scarce environments. This approach complements hybrid machine learning approaches prevalent in chemical and biological process modeling applications, particularly when data availability is limited.  \cite{mansouri2025models, nielsen2020hybrid,nazemzadeh2021integration, ehtesham2025dynamics}
+\emph{The following Hybrid-GAN-mechanistic structure is a proposed extension and was not implemented, trained, or evaluated in this work; it is included to motivate future research and is presented as a formulation only.} The proposed Hybrid-GAN-mechanistic structure would integrate generative adversarial networks with physics-informed mechanistic components to enhance predictive modeling in data-scarce environments. This approach complements hybrid machine learning approaches prevalent in chemical and biological process modeling applications, particularly when data availability is limited. \cite{mansouri2025models, nielsen2020hybrid,nazemzadeh2021integration, ehtesham2025dynamics}
 
 \begin{figure*}
-    \centering
-    \includegraphics[width=1\linewidth]{hybridgan.png}
-    \caption{QGAN and synthetic data implementation within a hybrid-model approach to process monitoring.}\label{fig:qgan_hybrid_approach}
+ \centering
+ \includegraphics[width=1\linewidth]{hybridgan.png}
+ \caption{QGAN and synthetic data implementation within a hybrid-model approach to process monitoring.}\label{fig:qgan_hybrid_approach}
 \end{figure*}
 
 Hybrid modeling typically combines parametric models derived from first-principles knowledge such as reaction kinetics or mass balances with nonparametric, data-driven techniques like neural networks to mitigate the challenges of sparse datasets. \cite{sharma2022hybrid} For example, hybrid models augment mechanistic simulations with machine learning to improve accuracy in bioprocessing, where experimental data are often costly and scarce due to lack of process analytical technology (PAT) or regulatory restrictions (especially in biopharmaceutical production processes), enabling reliable predictions for process optimization and control.\cite{O'Brien2021A}
@@ -193,12 +193,12 @@ vanishing-gradient pathologies of the original GAN objective.
 
 \textbf{Components:}
 \begin{itemize}[nosep, leftmargin=*]
-  \item $G$: Generator mapping latent variables $z$ to generated process variables
-  \item $D$: Discriminator assessing authenticity
-  \item $M$: Mechanistic operator projecting generated data onto physical states
-  \item $f$: Governing dynamics (e.g., ODEs describing bioprocess kinetics)
-  \item $\lambda$: Weighting hyperparameter balancing data fidelity and physical consistency
-  \item $\theta$: Model parameters from constitutive equations (reaction kinetics, particle size distribution, growth rates, etc.)
+ \item $G$: Generator mapping latent variables $z$ to generated process variables
+ \item $D$: Discriminator assessing authenticity
+ \item $M$: Mechanistic operator projecting generated data onto physical states
+ \item $f$: Governing dynamics (e.g., ODEs describing bioprocess kinetics)
+ \item $\lambda$: Weighting hyperparameter balancing data fidelity and physical consistency
+ \item $\theta$: Model parameters from constitutive equations (reaction kinetics, particle size distribution, growth rates, etc.)
 \end{itemize}
 
 This optimization balances statistical fidelity from empirical data distributions ($p_{data}$) with physical consistency, minimizing residuals from time derivatives.
@@ -207,41 +207,41 @@ This optimization balances statistical fidelity from empirical data distribution
 
 
 \begin{figure}[ht]
-  \centering
-  \includegraphics[width=\columnwidth]{mech_rep.png}
-  \caption{Mechanistic representation of (bio)chemical processes. Reprinted with permission from Elsevier. \cite{mansouri2025models}}
-  \label{fig:mech_rep}
+ \centering
+ \includegraphics[width=\columnwidth]{mech_rep.png}
+ \caption{Mechanistic representation of (bio)chemical processes. Reprinted with permission from Elsevier. \cite{mansouri2025models}}
+ \label{fig:mech_rep}
 \end{figure}
 
 The mechanistic representation involves several key equation types:
 
 \textbf{Balance Equations:}
 \begin{equation}
-  D = f(x, u, d, \theta, t)
-  \label{eq:balance}
+ D = f(x, u, d, \theta, t)
+ \label{eq:balance}
 \end{equation}
 
 \textbf{Constraint Equations:}
 \begin{align}
-  0 &= g_1(x, y) \label{eq:constraint1} \\
-  0 &= g_2(x, y, d) - u \label{eq:constraint2}
+ 0 &= g_1(x, y) \label{eq:constraint1} \\
+ 0 &= g_2(x, y, d) - u \label{eq:constraint2}
 \end{align}
 
 \textbf{Constitutive Equations:}
 \begin{equation}
-  0 = g_3(x, y, c) - \theta
-  \label{eq:constitutive}
+ 0 = g_3(x, y, c) - \theta
+ \label{eq:constitutive}
 \end{equation}
 
 \noindent where:
 \begin{itemize}[nosep, leftmargin=*]
-  \item $c$: vector of model parameters
-  \item $d$: vector of specified variables
-  \item $t$: independent variable (time)
-  \item $u$: vector of design variables
-  \item $x$: vector of process variables
-  \item $y$: vector of measured variables
-  \item $\theta$: vector of physico-chemical properties
+ \item $c$: vector of model parameters
+ \item $d$: vector of specified variables
+ \item $t$: independent variable (time)
+ \item $u$: vector of design variables
+ \item $x$: vector of process variables
+ \item $y$: vector of measured variables
+ \item $\theta$: vector of physico-chemical properties
 \end{itemize}
 
 This structure extends physics-informed neural networks (PINNs) paradigm by incorporating adversarial training for synthetic data augmentation in data-limited scenarios. This connection underscores the Hybrid-GAN's utility in addressing small data challenges, where pure data-driven models fail due to insufficient training samples, by infusing prior scientific knowledge to produce robust, generalizable predictive models.
@@ -287,31 +287,31 @@ In principle, the physics term $M(G(z))$ would impose mechanistic constraints th
 Dynamic Time Warping (DTW) is a classical technique for measuring similarity between temporal sequences that may exhibit varying lengths or temporal misalignments \cite{sakoeChiba1978}. The DTW algorithm operates by identifying an optimal warping path that minimizes the cumulative distance between corresponding elements of two time series while respecting monotonicity and boundary constraints.
 
 \begin{algorithm}[ht]
-  \caption{Dynamic Time Warping}
-  \label{alg:dtw}
-  \begin{algorithmic}[1]
-    \Require Time series $S$ of length $n$, time series $T$ of length $m$
-    \Ensure DTW distance between $S$ and $T$
-    \State $\mathbf{DTW} \gets (n+1) \times (m+1)$ matrix
-    \State $\mathbf{DTW}[0,\,0] \gets 0$
-    \For{$i = 1$ to $n$}
-      \State $\mathbf{DTW}[i,\,0] \gets \infty$
-    \EndFor
-    \For{$j = 1$ to $m$}
-      \State $\mathbf{DTW}[0,\,j] \gets \infty$
-    \EndFor
-    \For{$i = 1$ to $n$}
-      \For{$j = 1$ to $m$}
-        \State $\text{cost} \gets |S[i] - T[j]|$
-        \State $\mathbf{DTW}[i,\,j] \gets \text{cost} + \min\begin{cases}
-          \mathbf{DTW}[i-1,\,j]   & \text{insertion} \\
-          \mathbf{DTW}[i,\,j-1]   & \text{deletion} \\
-          \mathbf{DTW}[i-1,\,j-1] & \text{match}
-        \end{cases}$
-      \EndFor
-    \EndFor
-    \State \Return $\mathbf{DTW}[n,\,m]$
-  \end{algorithmic}
+ \caption{Dynamic Time Warping}
+ \label{alg:dtw}
+ \begin{algorithmic}[1]
+ \Require Time series $S$ of length $n$, time series $T$ of length $m$
+ \Ensure DTW distance between $S$ and $T$
+ \State $\mathbf{DTW} \gets (n+1) \times (m+1)$ matrix
+ \State $\mathbf{DTW}[0,\,0] \gets 0$
+ \For{$i = 1$ to $n$}
+ \State $\mathbf{DTW}[i,\,0] \gets \infty$
+ \EndFor
+ \For{$j = 1$ to $m$}
+ \State $\mathbf{DTW}[0,\,j] \gets \infty$
+ \EndFor
+ \For{$i = 1$ to $n$}
+ \For{$j = 1$ to $m$}
+ \State $\text{cost} \gets |S[i] - T[j]|$
+ \State $\mathbf{DTW}[i,\,j] \gets \text{cost} + \min\begin{cases}
+ \mathbf{DTW}[i-1,\,j] & \text{insertion} \\
+ \mathbf{DTW}[i,\,j-1] & \text{deletion} \\
+ \mathbf{DTW}[i-1,\,j-1] & \text{match}
+ \end{cases}$
+ \EndFor
+ \EndFor
+ \State \Return $\mathbf{DTW}[n,\,m]$
+ \end{algorithmic}
 \end{algorithm}
 
 \textbf{Interpretation:}
@@ -345,8 +345,7 @@ For every seed the worst quantum LR-DTW is below the best classical WGAN
 LR-DTW; the gap column gives the absolute margin. The tightest margin
 is at seed~45 ($4.91$, $\approx 35\%$ of the classical value). This table
 makes the ``no quantum--WGAN seed overlap on LR-DTW'' claim in
-\S4.1 and \S4.2 of the main text directly verifiable. Source:
-\protect\path{revision/results/matched2000_dualscale.json}, filtered to
+\S4.1 and \S4.2 of the main text directly verifiable. , filtered to
 \texttt{metric\_name=dtw\_mean} and \texttt{scale=log\_return}.}
 \label{tbl:per_seed_dtw_dominance}
 \begin{tabular}{@{}cccc@{}}
@@ -482,30 +481,27 @@ matched-budget generators (Pipeline~B, 2000 epochs, 3 init seeds
 $\{40, 41, 42\}$).
 
 \begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/tstr_crossmodel_matched2000.pdf}
-  \caption{TSTR cross-model utility evaluation: 1-step-ahead OD soft
-  sensor (1-layer LSTM, hidden$=32$) trained on 19200 synthetic
-  windows from each generator (Pipeline~B, 2000 epochs, 3 init seeds
-  $\{40, 41, 42\}$), evaluated on $n=320$ held-out real windows. All
-  9 matched-budget generators converge to $R^2 \approx 0.99$,
-  dramatically above the real-only baseline of $R^2 = -13.35$
-  ($n=65$ real training windows; the small real set fails to support
-  soft-sensor training). The cross-generator convergence is
-  \emph{structural} (caveat): the cumulative-sum back-transform from
-  log-returns to OD mathematically encodes near-perfect lag-1
-  autocorrelation, so a soft sensor trained on Pipeline-B-derived
-  synthetic OD essentially learns the persistence forecast, which is
-  near-optimal on real OD regardless of which generator produced
-  the underlying log-returns. The Pipeline-B TSTR therefore does
-  \emph{not} discriminate among generators (R1-M2 disclosure);
-  meaningful TSTR discrimination would require multivariate process
-  data where soft-sensor utility depends on cross-channel
-  conditional structure. Source:
-  \protect\path{revision/results/figures/tstr_crossmodel_matched2000.json};
-  underlying data
-  \protect\path{revision/results/tstr_matched2000.json}.}
-  \label{fig:tstr_crossmodel_matched2000}
+ \centering
+ \includegraphics[width=\columnwidth]{revision/results/figures/tstr_crossmodel_matched2000.pdf}
+ \caption{TSTR cross-model utility evaluation: 1-step-ahead OD soft
+ sensor (1-layer LSTM, hidden$=32$) trained on 19200 synthetic
+ windows from each generator (Pipeline~B, 2000 epochs, 3 init seeds
+ $\{40, 41, 42\}$), evaluated on $n=320$ held-out real windows. All
+ 9 matched-budget generators converge to $R^2 \approx 0.99$,
+ dramatically above the real-only baseline of $R^2 = -13.35$
+ ($n=65$ real training windows; the small real set fails to support
+ soft-sensor training). The cross-generator convergence is
+ \emph{structural} (caveat): the cumulative-sum back-transform from
+ log-returns to OD mathematically encodes near-perfect lag-1
+ autocorrelation, so a soft sensor trained on Pipeline-B-derived
+ synthetic OD essentially learns the persistence forecast, which is
+ near-optimal on real OD regardless of which generator produced
+ the underlying log-returns. The Pipeline-B TSTR therefore does
+ \emph{not} discriminate among generators (R1-M2 disclosure);
+ meaningful TSTR discrimination would require multivariate process
+ data where soft-sensor utility depends on cross-channel
+ conditional structure.}
+ \label{fig:tstr_crossmodel_matched2000}
 \end{figure}
 
 \subsection{Code and Data Availability}
@@ -520,12 +516,12 @@ The complete code, trained models, and datasets have been released for transpare
 
 The quantum circuit employs a dual-stage encoding strategy as described in Section~3 of the main text:
 \begin{itemize}[nosep, leftmargin=*]
-  \item 5 qubits arranged in three layers
-  \item IQP (Instantaneous Quantum Polynomial) encoding
-  \item Strongly entangling layers with $\text{Rot}(\phi, \theta, \omega)$ gates
-  \item Range-based CNOT gates: $r = (\text{layer} \bmod (n_{\text{qubits}} - 1)) + 1$
-  \item Enhanced Pauli measurements ($X$ and $Z$ expectation values)
-  \item Total parameters: 55 (5 for IQP encoding, 45 for the three strongly entangling layers, 5 for measurement-preparation rotations)
+ \item 5 qubits arranged in three layers
+ \item IQP (Instantaneous Quantum Polynomial) encoding
+ \item Strongly entangling layers with $\text{Rot}(\phi, \theta, \omega)$ gates
+ \item Range-based CNOT gates: $r = (\text{layer} \bmod (n_{\text{qubits}} - 1)) + 1$
+ \item Enhanced Pauli measurements ($X$ and $Z$ expectation values)
+ \item Total parameters: 55 (5 for IQP encoding, 45 for the three strongly entangling layers, 5 for measurement-preparation rotations)
 \end{itemize}
 
 \subsection{Additional Figures}
@@ -543,49 +539,48 @@ for each of the four circuits; per-circuit specifications follow below
 the figure.
 
 \begin{figure*}[!htbp]
-  \centering
-  \begin{subfigure}{\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{revision/results/figures/circuits/iqp_sel_55.pdf}
-    \caption{IQP:SEL --- 55 parameters, depth 3, range entangler (headline circuit).}
-  \end{subfigure}
+ \centering
+ \begin{subfigure}{\linewidth}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/circuits/iqp_sel_55.pdf}
+ \caption{IQP:SEL --- 55 parameters, depth 3, range entangler (headline circuit).}
+ \end{subfigure}
 
-  \vspace{6pt}
+ \vspace{6pt}
 
-  \begin{subfigure}{\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{revision/results/figures/circuits/V1.pdf}
-    \caption{V1 --- 75 parameters, depth 4, range entangler.}
-  \end{subfigure}
+ \begin{subfigure}{\linewidth}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/circuits/V1.pdf}
+ \caption{V1 --- 75 parameters, depth 4, range entangler.}
+ \end{subfigure}
 
-  \vspace{6pt}
+ \vspace{6pt}
 
-  \begin{subfigure}{\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{revision/results/figures/circuits/V2.pdf}
-    \caption{V2 --- 135 parameters, depth 8, range entangler.}
-  \end{subfigure}
+ \begin{subfigure}{\linewidth}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/circuits/V2.pdf}
+ \caption{V2 --- 135 parameters, depth 8, range entangler.}
+ \end{subfigure}
 
-  \vspace{6pt}
+ \vspace{6pt}
 
-  \begin{subfigure}{\linewidth}
-    \centering
-    \includegraphics[width=\linewidth]{revision/results/figures/circuits/V3.pdf}
-    \caption{V3 --- 75 parameters, depth 4, linear entangler.}
-  \end{subfigure}
+ \begin{subfigure}{\linewidth}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/circuits/V3.pdf}
+ \caption{V3 --- 75 parameters, depth 4, linear entangler.}
+ \end{subfigure}
 
-  \caption{Rendered gate sequences for the four 5-qubit PQC generators
-  evaluated in this study. All variants share an IQP encoding stage
-  followed by strongly-entangling layers (SEL) with
-  $\text{Rot}(\phi, \theta, \omega)$ rotations and CNOT entanglers; they
-  differ in layer depth, total trainable-parameter count, and entangler
-  connectivity (range versus linear). The headline circuit (a, IQP:SEL,
-  55 parameters, depth 3, range topology) is the smallest in the family.
-  Variants V1--V3 span the expressibility-versus-trainability trade-off
-  explored in the main-text §3.2 ablation. Rendered with PennyLane's
-  \texttt{qml.draw\_mpl} from the locked configurations at
-  \protect\path{revision/results/figures/circuits/<name>.json}.}
-  \label{fig:quantum_circuit}
+ \caption{Rendered gate sequences for the four 5-qubit PQC generators
+ evaluated in this study. All variants share an IQP encoding stage
+ followed by strongly-entangling layers (SEL) with
+ $\text{Rot}(\phi, \theta, \omega)$ rotations and CNOT entanglers; they
+ differ in layer depth, total trainable-parameter count, and entangler
+ connectivity (range versus linear). The headline circuit (a, IQP:SEL,
+ 55 parameters, depth 3, range topology) is the smallest in the family.
+ Variants V1--V3 span the expressibility-versus-trainability trade-off
+ explored in the main-text §3.2 ablation. Rendered with PennyLane's
+ \texttt{qml.draw\_mpl} from the locked circuit configurations.}
+ \label{fig:quantum_circuit}
 \end{figure*}
 
 \paragraph{IQP:SEL (55 parameters, depth 3, range entangler) --- headline.}
@@ -626,16 +621,16 @@ any of V1--V3, motivating its selection as the reported configuration
 
 
 \begin{figure*}
-    \centering
-    \includegraphics[width=0.75\linewidth]{bpm_qgan.drawio.png}
-    \caption{Decision-tree triage schematic for bioprocess monitoring, outlined as future work in §4.5 Outlook of the main text. Not an empirical contribution of the present study.}\label{fig:qgan_schematic}
+ \centering
+ \includegraphics[width=0.75\linewidth]{bpm_qgan.drawio.png}
+ \caption{Decision-tree triage schematic for bioprocess monitoring, outlined as future work in §4.5 Outlook of the main text. Not an empirical contribution of the present study.}\label{fig:qgan_schematic}
 \end{figure*}
 This figure illustrates the decision-tree triage workflow outlined as future work in Section~4.5 (Outlook) of the main text, sketching how sensor-feasibility, mechanistic, data-driven, and quantum-synthetic options could be organised under varying data-availability constraints. It is presented as an organising concept and is not evaluated empirically in this paper.
 \begin{figure*}
-    \centering
-    \includegraphics[width=1\linewidth]{lucy_diagram.jpg}
-    \caption{Schematic of the 20\,L LUCY\textregistered{} photobioreactor used in this study, with its sensors and actuators.}
-    \label{fig:lucy}
+ \centering
+ \includegraphics[width=1\linewidth]{lucy_diagram.jpg}
+ \caption{Schematic of the 20\,L LUCY\textregistered{} photobioreactor used in this study, with its sensors and actuators.}
+ \label{fig:lucy}
 \end{figure*}
 
 This schematic depicts the photobioreactor experimental setup described in Section~3.2, showing the sensor and actuator configuration used for data acquisition.
@@ -643,17 +638,16 @@ This schematic depicts the photobioreactor experimental setup described in Secti
 \subsection{Data Transformation Details}
 
 \begin{figure}[h]
-  \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_pipeline_4panel.pdf}
-  \caption{Four-stage preprocessing pipeline (Pipeline~B, native): raw OD ($n=778$),
-  log-returns $r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$ ($n=777$),
-  standardized ($\mu=0$, $\sigma=1$), and linearly rescaled to $[-1, 1]$ using
-  the global min and max of the standardized log-return series. The trained
-  generators operate on the final-stage rescaled log-return windows; all
-  matched-budget evaluation results in Section~4 of the main text are reported
-  under this pipeline. Source:
-  \protect\path{revision/results/figures/preprocessing_pipeline_4panel.json}.}
-  \label{fig:preprocessing_pipeline}
+ \centering
+ \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_pipeline_4panel.pdf}
+ \caption{Four-stage preprocessing pipeline (Pipeline~B, native): raw OD ($n=778$),
+ log-returns $r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$ ($n=777$),
+ standardized ($\mu=0$, $\sigma=1$), and linearly rescaled to $[-1, 1]$ using
+ the global min and max of the standardized log-return series. The trained
+ generators operate on the final-stage rescaled log-return windows; all
+ matched-budget evaluation results in Section~4 of the main text are reported
+ under this pipeline.}
+ \label{fig:preprocessing_pipeline}
 \end{figure}
 
 The transformation from optical density measurements to log differences is motivated by the bioprocess itself: for an exponentially growing culture the optical density follows $\mathrm{OD}_t \approx \mathrm{OD}_0\,e^{\mu t}$, so the log difference between successive samples is a direct discrete estimate of the instantaneous specific growth rate. For optical density measurements $OD_t$ at time $t$:
@@ -662,17 +656,17 @@ $$r_t = \ln(\text{OD}_t) - \ln(\text{OD}_{t-1}) \;\approx\; \mu_t\,\Delta t$$
 
 where $\mu_t$ is the local specific growth rate over the sampling interval $\Delta t$. Working in $r_t$ rather than raw OD has a direct bioprocess interpretation and three practical benefits for this growth-rate signal:
 \begin{itemize}[nosep, leftmargin=*]
-  \item \textbf{Growth-rate interpretability:} each $r_t$ is (up to the sampling interval) the specific growth rate, the quantity of physiological interest in cultivation monitoring, rather than an arbitrary attenuation reading
-  \item \textbf{Scale/stage invariance:} the log difference is invariant to the absolute OD level, so early-exponential and high-density phases are placed on a comparable scale, which stabilises learning across the growth curve
-  \item \textbf{Additivity:} growth rates over consecutive intervals sum to the net log-growth over the total span, matching how cumulative biomass increase is reported
+ \item \textbf{Growth-rate interpretability:} each $r_t$ is (up to the sampling interval) the specific growth rate, the quantity of physiological interest in cultivation monitoring, rather than an arbitrary attenuation reading
+ \item \textbf{Scale/stage invariance:} the log difference is invariant to the absolute OD level, so early-exponential and high-density phases are placed on a comparable scale, which stabilises learning across the growth curve
+ \item \textbf{Additivity:} growth rates over consecutive intervals sum to the net log-growth over the total span, matching how cumulative biomass increase is reported
 \end{itemize}
 
 The finance literature uses the same transform for unrelated reasons; here the justification is physiological (growth-rate estimation), not financial.
 
 \textbf{Normalization:}
 \begin{equation}
-  r_t^{\,\text{NORM}} = \frac{r_t - \mu}{\sigma}
-  \label{eq:normalization_s9}
+ r_t^{\,\text{NORM}} = \frac{r_t - \mu}{\sigma}
+ \label{eq:normalization_s9}
 \end{equation}
 
 This brings all values to a consistent scale with mean zero and standard deviation one, which is essential for quantum circuit encoding.
@@ -681,10 +675,10 @@ This brings all values to a consistent scale with mean zero and standard deviati
 rescaled to the closed interval $[-1, 1]$ using the global minimum and maximum
 of the standardized series,
 \begin{equation}
-  r_t^{\,[-1,1]} = -1 + 2\,
-    \frac{r_t^{\,\text{NORM}} - r_\text{min}^{\,\text{NORM}}}
-         {r_\text{max}^{\,\text{NORM}} - r_\text{min}^{\,\text{NORM}}},
-  \label{eq:rescale_pm1_s9}
+ r_t^{\,[-1,1]} = -1 + 2\,
+ \frac{r_t^{\,\text{NORM}} - r_\text{min}^{\,\text{NORM}}}
+ {r_\text{max}^{\,\text{NORM}} - r_\text{min}^{\,\text{NORM}}},
+ \label{eq:rescale_pm1_s9}
 \end{equation}
 to match the bounded output range of the quantum circuit observables.
 
@@ -717,21 +711,17 @@ metrics and the ablation summary are in
 \texttt{summary.md}.
 
 \begin{figure}[h]
-  \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_ablation_comparison.pdf}
-  \caption{Preprocessing ablation across three pipelines (A: raw min-max OD;
-  B: log-returns standardized $+$ rescaled to $[-1, 1]$, selected;
-  C: log-return $\to$ standardize $\to$ inverse Lambert~$W$ $\to$
-  rescale to $[-1, 1]$, dropped). Bars are
-  5-seed mean $\pm$ sample standard deviation under identical 5-qubit,
-  3-layer, 55-parameter IQP:SEL generators trained at 1000 epochs.
-  Pipelines~B and~C are within sampling noise of each other on every
-  OD-scale metric; Pipeline~B was selected per decision D-10-05.
-  Source: OD-scale panels from
-  \protect\path{revision/results/transform_ablation/metrics.csv}; TSTR-lite
-  $R^2$ panel from
-  \protect\path{revision/results/transform_ablation/tstr_lite.json}.}
-  \label{fig:preprocessing_ablation}
+ \centering
+ \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_ablation_comparison.pdf}
+ \caption{Preprocessing ablation across three pipelines (A: raw min-max OD;
+ B: log-returns standardized $+$ rescaled to $[-1, 1]$, selected;
+ C: log-return $\to$ standardize $\to$ inverse Lambert~$W$ $\to$
+ rescale to $[-1, 1]$, dropped). Bars are
+ 5-seed mean $\pm$ sample standard deviation under identical 5-qubit,
+ 3-layer, 55-parameter IQP:SEL generators trained at 1000 epochs.
+ Pipelines~B and~C are within sampling noise of each other on every
+ OD-scale metric; Pipeline~B was selected per decision D-10-05.}
+ \label{fig:preprocessing_ablation}
 \end{figure}
 
 \paragraph{Note for reviewers comparing to the v1.2.4 submission.}
@@ -832,8 +822,8 @@ block of the aggregator script.
 
 Using the rolling window technique~\cite{bergmeir2012rolling}, we generated overlapping subsequences of the original data to capture temporal patterns and dependencies. This depends on two parameters:
 \begin{itemize}[nosep, leftmargin=*]
-  \item \textbf{Stride ($s$):} The gap between the starts of subsequences (set to 2)
-  \item \textbf{Subsequence length ($m$):} The length of each window (set to 10)
+ \item \textbf{Stride ($s$):} The gap between the starts of subsequences (set to 2)
+ \item \textbf{Subsequence length ($m$):} The length of each window (set to 10)
 \end{itemize}
 
 The window length ($m$) is set longer than ($s$) to guarantee enough overlap. According to Orlandi et al.~\cite{orlandi2024enhancing}, these values optimize for balanced overlap and computational efficiency. This approach is essential for capturing the temporal dependencies that characterize bioprocess dynamics, where events at one time point influence future states.
@@ -850,54 +840,50 @@ quantitative evaluation in main \S4.1 is over the full 5-seed
 2000-epoch protocol.
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/training_progression.pdf}
-  \caption{Generated log-return distribution snapshots across training:
-  4 generators (quantum IQP:SEL 55p; wgan\_mlp 74p; wgan\_cnn 73p;
-  wgan\_lstm 78p) at snapshot epochs $\{0, 250, 500, 750, 1000\}$. Each
-  cell overlays the synthetic distribution against the real reference.
-  The quantum row qualitatively tracks the real reference more closely
-  than the classical rows by epoch 1000, anticipating the LR-DTW +
-  lag-1 ACF dominance observed at the matched-budget 2000-epoch
-  evaluation reported in main \S4.1. Single seed 42, Pipeline~B. Phase
-  13 INTRO-01 deliverable. Source:
-  \protect\path{revision/results/figures/training_progression.json}.}
-  \label{fig:training_progression}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/training_progression.pdf}
+ \caption{Generated log-return distribution snapshots across training:
+ 4 generators (quantum IQP:SEL 55p; wgan\_mlp 74p; wgan\_cnn 73p;
+ wgan\_lstm 78p) at snapshot epochs $\{0, 250, 500, 750, 1000\}$. Each
+ cell overlays the synthetic distribution against the real reference.
+ The quantum row qualitatively tracks the real reference more closely
+ than the classical rows by epoch 1000, anticipating the LR-DTW +
+ lag-1 ACF dominance observed at the matched-budget 2000-epoch
+ evaluation reported in main \S4.1. Single seed 42, Pipeline~B.}
+ \label{fig:training_progression}
 \end{figure*}
 
 \begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/entanglement_trajectory.pdf}
-  \caption{Entanglement entropy trajectory of the quantum generator
-  during training (variant V1, 4 layers, range topology, seed~42).
-  Bipartition $\{0,1\}\,|\,\{2,3,4\}$. Top: Von Neumann entanglement
-  entropy across snapshot epochs $\{0, 250, 500, 750, 1000\}$, values
-  in $[1.17, 1.25]$ against the reference bound $\ln 4 \approx 1.386$
-  for maximal entanglement on this bipartition. Bottom: state purity
-  $\mathrm{Tr}(\rho^2) \in [0.32, 0.35]$ against the reference bound
-  $0.25$ for the maximally mixed state. The trajectory shows the
-  generator maintains a highly entangled state throughout training
-  without collapsing to a product state, providing the quantum-resource
-  signal R2-6 requested. Phase 13 INTRO-03 deliverable. Source:
-  \protect\path{revision/results/figures/entanglement_trajectory.json}.}
-  \label{fig:entanglement_trajectory}
+ \centering
+ \includegraphics[width=\columnwidth]{revision/results/figures/entanglement_trajectory.pdf}
+ \caption{Entanglement entropy trajectory of the quantum generator
+ during training (variant V1, 4 layers, range topology, seed~42).
+ Bipartition $\{0,1\}\,|\,\{2,3,4\}$. Top: Von Neumann entanglement
+ entropy across snapshot epochs $\{0, 250, 500, 750, 1000\}$, values
+ in $[1.17, 1.25]$ against the reference bound $\ln 4 \approx 1.386$
+ for maximal entanglement on this bipartition. Bottom: state purity
+ $\mathrm{Tr}(\rho^2) \in [0.32, 0.35]$ against the reference bound
+ $0.25$ for the maximally mixed state. The trajectory shows the
+ generator maintains a highly entangled state throughout training
+ without collapsing to a product state, providing the quantum-resource
+ signal R2-6 requested.}
+ \label{fig:entanglement_trajectory}
 \end{figure}
 
 \begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/param_trajectory.pdf}
-  \caption{PQC parameter trajectory during training (variant V1,
-  4 layers, range topology, 75 parameters, seed~42). Top: $L_2$-norm
-  of the parameter vector across snapshot epochs
-  $\{0, 250, 500, 750, 1000\}$; values stably bounded between
-  $\approx 4.40$ and $4.41$ (no divergence, no collapse to zero).
-  Bottom: distribution of all 75 individual rotation angles at each
-  snapshot epoch, with the angle diversity maintained throughout
-  training rather than collapsing into a narrow band. Together the
-  panels show the optimizer explores the parameter space without
-  pathological behavior. Phase 13 INTRO-02 deliverable. Source:
-  \protect\path{revision/results/figures/param_trajectory.json}.}
-  \label{fig:param_trajectory}
+ \centering
+ \includegraphics[width=\columnwidth]{revision/results/figures/param_trajectory.pdf}
+ \caption{PQC parameter trajectory during training (variant V1,
+ 4 layers, range topology, 75 parameters, seed~42). Top: $L_2$-norm
+ of the parameter vector across snapshot epochs
+ $\{0, 250, 500, 750, 1000\}$; values stably bounded between
+ $\approx 4.40$ and $4.41$ (no divergence, no collapse to zero).
+ Bottom: distribution of all 75 individual rotation angles at each
+ snapshot epoch, with the angle diversity maintained throughout
+ training rather than collapsing into a narrow band. Together the
+ panels show the optimizer explores the parameter space without
+ pathological behavior.}
+ \label{fig:param_trajectory}
 \end{figure}
 
 \subsection{Per-Model Training Loss Diagnostics}
@@ -964,54 +950,51 @@ is the only training-side anomaly and is consistent with that model's
 known fragility at the matched-budget parameter count of 73.
 
 \begin{figure*}[!htbp]
-  \centering
-  \begin{subfigure}{0.24\linewidth}
-    \includegraphics[width=\linewidth]{revision/results/figures/loss_iqp_sel_55_repro.pdf}
-    \caption{IQP:SEL (55p, Q)}
-  \end{subfigure}\hfill
-  \begin{subfigure}{0.24\linewidth}
-    \includegraphics[width=\linewidth]{revision/results/figures/loss_V1.pdf}
-    \caption{V1 (75p, Q)}
-  \end{subfigure}\hfill
-  \begin{subfigure}{0.24\linewidth}
-    \includegraphics[width=\linewidth]{revision/results/figures/loss_V2.pdf}
-    \caption{V2 (135p, Q)}
-  \end{subfigure}\hfill
-  \begin{subfigure}{0.24\linewidth}
-    \includegraphics[width=\linewidth]{revision/results/figures/loss_V3.pdf}
-    \caption{V3 (75p, Q)}
-  \end{subfigure}
+ \centering
+ \begin{subfigure}{0.24\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_iqp_sel_55_repro.pdf}
+ \caption{IQP:SEL (55p, Q)}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.24\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_V1.pdf}
+ \caption{V1 (75p, Q)}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.24\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_V2.pdf}
+ \caption{V2 (135p, Q)}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.24\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_V3.pdf}
+ \caption{V3 (75p, Q)}
+ \end{subfigure}
 
-  \vspace{4pt}
+ \vspace{4pt}
 
-  \begin{subfigure}{0.24\linewidth}
-    \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_mlp.pdf}
-    \caption{WGAN-MLP (74p, C)}
-  \end{subfigure}\hfill
-  \begin{subfigure}{0.24\linewidth}
-    \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_cnn.pdf}
-    \caption{WGAN-CNN (73p, C)}
-  \end{subfigure}\hfill
-  \begin{subfigure}{0.24\linewidth}
-    \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_lstm.pdf}
-    \caption{WGAN-LSTM (78p, C)}
-  \end{subfigure}\hfill
-  \begin{subfigure}{0.24\linewidth}
-    \includegraphics[width=\linewidth]{revision/results/figures/loss_vae.pdf}
-    \caption{VAE (562p, ELBO+recon+KLD)}
-  \end{subfigure}
-  \caption{Per-model training loss trajectories at the matched-budget
-  contract (single representative seed 42, 2000 epochs, Pipeline~B).
-  (a)--(d): 4 quantum WGAN-GP variants. (e)--(g): 3 classical
-  adversarial WGAN-GP baselines. (h): VAE (single-Adam ELBO loop;
-  the only non-adversarial model with a per-epoch trajectory). Q $=$
-  quantum, C $=$ classical. AR(2) is fit in closed form via
-  \texttt{lstsq} and has no epoch-wise loss trajectory ($\hat\sigma^2 =
-  0.057$ reported in text). Source: per-model trajectories from
-  \protect\path{revision/results/matched2000/runs/<model>/42/metrics.json}
-  via
-  \protect\path{revision/results/figures/loss_<model>.json}.}
-  \label{fig:per_model_loss_grid}
+ \begin{subfigure}{0.24\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_mlp.pdf}
+ \caption{WGAN-MLP (74p, C)}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.24\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_cnn.pdf}
+ \caption{WGAN-CNN (73p, C)}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.24\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_lstm.pdf}
+ \caption{WGAN-LSTM (78p, C)}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.24\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_vae.pdf}
+ \caption{VAE (562p, ELBO+recon+KLD)}
+ \end{subfigure}
+ \caption{Per-model training loss trajectories at the matched-budget
+ contract (single representative seed 42, 2000 epochs, Pipeline~B).
+ (a)--(d): 4 quantum WGAN-GP variants. (e)--(g): 3 classical
+ adversarial WGAN-GP baselines. (h): VAE (single-Adam ELBO loop;
+ the only non-adversarial model with a per-epoch trajectory). Q $=$
+ quantum, C $=$ classical. AR(2) is fit in closed form via
+ \texttt{lstsq} and has no epoch-wise loss trajectory ($\hat\sigma^2 =
+ 0.057$ reported in text).}
+ \label{fig:per_model_loss_grid}
 \end{figure*}
 
 \subsection{Per-Model Reconstruction Overlays}
@@ -1024,10 +1007,10 @@ metrics of main-text \S4. For each of the nine matched-budget generators
 on the corresponding real series across the full data extent (777
 log-deltas + 778 OD points):
 \begin{itemize}[nosep, leftmargin=*]
-  \item \textbf{Top:} Log-delta comparison (generated vs. real log-returns,
-    777 points).
-  \item \textbf{Middle:} OD reconstruction on linear scale (778 points).
-  \item \textbf{Bottom:} OD reconstruction on log scale (778 points).
+ \item \textbf{Top:} Log-delta comparison (generated vs. real log-returns,
+ 777 points).
+ \item \textbf{Middle:} OD reconstruction on linear scale (778 points).
+ \item \textbf{Bottom:} OD reconstruction on log scale (778 points).
 \end{itemize}
 
 \textbf{Visualization protocol (differs from the fidelity-metric protocol
@@ -1073,96 +1056,87 @@ exhibit the closest amplitude match to real, also consistent with the
 main-text finding that classical adversarials lead on LR-EMD.
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_iqp_sel_55_repro.pdf}
-  \caption{Reconstruction overlay --- IQP:SEL 55p (2000ep repro), seed 42.
-  Top: log-delta comparison (777 points). Middle: OD linear scale (778
-  points). Bottom: OD log scale (778 points). Real series in blue;
-  generated/reconstructed in orange. Source:
-  \protect\path{revision/results/figures/reconstruction_iqp_sel_55_repro.json}.}
-  \label{fig:reconstruction_iqp_sel_55_repro}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_iqp_sel_55_repro.pdf}
+ \caption{Reconstruction overlay --- IQP:SEL 55p (2000ep repro), seed 42.
+ Top: log-delta comparison (777 points). Middle: OD linear scale (778
+ points). Bottom: OD log scale (778 points). Real series in blue;
+ generated/reconstructed in orange.}
+ \label{fig:reconstruction_iqp_sel_55_repro}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V1.pdf}
-  \caption{Reconstruction overlay --- Quantum V1 (75p, depth 4, range
-  entangler), seed 42. Panels as in
-  Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/reconstruction_V1.json}.}
-  \label{fig:reconstruction_V1}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V1.pdf}
+ \caption{Reconstruction overlay --- Quantum V1 (75p, depth 4, range
+ entangler), seed 42. Panels as in
+ Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
+ \label{fig:reconstruction_V1}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V2.pdf}
-  \caption{Reconstruction overlay --- Quantum V2 (135p, depth 8, range
-  entangler), seed 42. Panels as in
-  Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/reconstruction_V2.json}.}
-  \label{fig:reconstruction_V2}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V2.pdf}
+ \caption{Reconstruction overlay --- Quantum V2 (135p, depth 8, range
+ entangler), seed 42. Panels as in
+ Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
+ \label{fig:reconstruction_V2}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V3.pdf}
-  \caption{Reconstruction overlay --- Quantum V3 (75p, depth 4, linear
-  entangler), seed 42. Panels as in
-  Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/reconstruction_V3.json}.}
-  \label{fig:reconstruction_V3}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V3.pdf}
+ \caption{Reconstruction overlay --- Quantum V3 (75p, depth 4, linear
+ entangler), seed 42. Panels as in
+ Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
+ \label{fig:reconstruction_V3}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_mlp.pdf}
-  \caption{Reconstruction overlay --- WGAN-GP (MLP), 74p, seed 42.
-  Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/reconstruction_wgan_mlp.json}.}
-  \label{fig:reconstruction_wgan_mlp}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_mlp.pdf}
+ \caption{Reconstruction overlay --- WGAN-GP (MLP), 74p, seed 42.
+ Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
+ \label{fig:reconstruction_wgan_mlp}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_cnn.pdf}
-  \caption{Reconstruction overlay --- WGAN-GP (CNN), 73p, seed 42.
-  The seed-42 LR-EMD outlier
-  (OD-EMD~$=\!0.1587$ vs.\ the other four seeds in 0.020--0.034,
-  disclosed at face value in main-text \S4.1) is the run plotted here.
-  Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/reconstruction_wgan_cnn.json}.}
-  \label{fig:reconstruction_wgan_cnn}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_cnn.pdf}
+ \caption{Reconstruction overlay --- WGAN-GP (CNN), 73p, seed 42.
+ The seed-42 LR-EMD outlier
+ (OD-EMD~$=\!0.1587$ vs.\ the other four seeds in 0.020--0.034,
+ disclosed at face value in main-text \S4.1) is the run plotted here.
+ Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
+ \label{fig:reconstruction_wgan_cnn}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_lstm.pdf}
-  \caption{Reconstruction overlay --- WGAN-GP (LSTM), 78p, seed 42.
-  Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/reconstruction_wgan_lstm.json}.}
-  \label{fig:reconstruction_wgan_lstm}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_lstm.pdf}
+ \caption{Reconstruction overlay --- WGAN-GP (LSTM), 78p, seed 42.
+ Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
+ \label{fig:reconstruction_wgan_lstm}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_vae.pdf}
-  \caption{Reconstruction overlay --- VAE (562p, degenerate generation
-  regime; see main-text \S4.1), seed 42. Panels as in
-  Figure~\ref{fig:reconstruction_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/reconstruction_vae.json}.}
-  \label{fig:reconstruction_vae}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_vae.pdf}
+ \caption{Reconstruction overlay --- VAE (562p, degenerate generation
+ regime; see main-text \S4.1), seed 42. Panels as in
+ Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
+ \label{fig:reconstruction_vae}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_ar.pdf}
-  \caption{Reconstruction overlay --- AR(2) closed-form baseline, seed
-  42. Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.
-  Note the visibly tighter amplitude match in the top panel, consistent
-  with AR(2)'s leading LR-EMD ranking under the matched-budget contract
-  (main-text \S4.2). Source:
-  \protect\path{revision/results/figures/reconstruction_ar.json}.}
-  \label{fig:reconstruction_ar}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_ar.pdf}
+ \caption{Reconstruction overlay --- AR(2) closed-form baseline, seed
+ 42. Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.
+ Note the visibly tighter amplitude match in the top panel, consistent
+ with AR(2)'s leading LR-EMD ranking under the matched-budget contract
+ (main-text \S4.2).}
+ \label{fig:reconstruction_ar}
 \end{figure*}
 
 \subsection{Per-Model Log-Return Distribution Diagnostics}
@@ -1181,24 +1155,24 @@ residual mean bias.
 
 The panel layout is identical across all nine figures:
 \begin{itemize}[nosep, leftmargin=*]
-  \item Top-left: probability density histograms (50 bins, overlaid).
-  \item Top-middle: cumulative density histograms (100 bins, overlaid).
-  \item Top-right: Q-Q plot vs.\ the standard normal distribution
-    (\texttt{scipy.stats.probplot(dist="norm")} called for each series;
-    deviation from the red reference line indicates non-Gaussianity).
-  \item Bottom-left: statistical moments bar chart (mean, std,
-    skewness, Fisher excess kurtosis; std computed with
-    \texttt{ddof=0} and kurtosis as \texttt{scipy.stats.kurtosis}'s
-    default to match \protect\path{revision/core/eval.py::compute_moments}).
-  \item Bottom-middle: distance metrics bar chart with numerical
-    labels --- EMD via \texttt{scipy.stats.wasserstein\_distance} on
-    raw samples (\protect\path{revision/core/eval.py::compute_emd});
-    Jensen-Shannon divergence on a shared-bin histogram
-    (\protect\path{revision/core/eval.py::compute_jsd}, default 100
-    bins); and the absolute difference of the two Shannon entropies.
-  \item Bottom-right: Shannon entropy comparison (in nats), computed
-    on shared 50-bin histograms with a small floor
-    ($+10^{-12}$ per bin) to avoid $\log 0$.
+ \item Top-left: probability density histograms (50 bins, overlaid).
+ \item Top-middle: cumulative density histograms (100 bins, overlaid).
+ \item Top-right: Q-Q plot vs.\ the standard normal distribution
+ (\texttt{scipy.stats.probplot(dist="norm")} called for each series;
+ deviation from the red reference line indicates non-Gaussianity).
+ \item Bottom-left: statistical moments bar chart (mean, std,
+ skewness, Fisher excess kurtosis; std computed with
+ \texttt{ddof=0} and kurtosis as \texttt{scipy.stats.kurtosis}'s
+ default to match \protect\path{revision/core/eval.py::compute_moments}).
+ \item Bottom-middle: distance metrics bar chart with numerical
+ labels --- EMD via \texttt{scipy.stats.wasserstein\_distance} on
+ raw samples (\protect\path{revision/core/eval.py::compute_emd});
+ Jensen-Shannon divergence on a shared-bin histogram
+ (\protect\path{revision/core/eval.py::compute_jsd}, default 100
+ bins); and the absolute difference of the two Shannon entropies.
+ \item Bottom-right: Shannon entropy comparison (in nats), computed
+ on shared 50-bin histograms with a small floor
+ ($+10^{-12}$ per bin) to avoid $\log 0$.
 \end{itemize}
 
 \textbf{Scope.} These are diagnostic visualizations for distributional
@@ -1210,96 +1184,87 @@ seeds). Each panel grid is single-seed (seed~42) and uses the
 777-point contiguous reconstruction sequence.
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_iqp_sel_55_repro.pdf}
-  \caption{Log-return distribution diagnostics --- IQP:SEL 55p (2000ep
-  repro), seed~42. Six-panel layout per \S A.11 intro. Real (blue) vs.\
-  generated (orange). Source:
-  \protect\path{revision/results/figures/stat_grid_iqp_sel_55_repro.json}.}
-  \label{fig:stat_grid_iqp_sel_55_repro}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_iqp_sel_55_repro.pdf}
+ \caption{Log-return distribution diagnostics --- IQP:SEL 55p (2000ep
+ repro), seed~42. Six-panel layout per \S A.11 intro. Real (blue) vs.\
+ generated (orange).}
+ \label{fig:stat_grid_iqp_sel_55_repro}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V1.pdf}
-  \caption{Log-return distribution diagnostics --- Quantum V1 (75p),
-  seed~42. Panels as in
-  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/stat_grid_V1.json}.}
-  \label{fig:stat_grid_V1}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V1.pdf}
+ \caption{Log-return distribution diagnostics --- Quantum V1 (75p),
+ seed~42. Panels as in
+ Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
+ \label{fig:stat_grid_V1}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V2.pdf}
-  \caption{Log-return distribution diagnostics --- Quantum V2 (135p),
-  seed~42. Panels as in
-  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/stat_grid_V2.json}.}
-  \label{fig:stat_grid_V2}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V2.pdf}
+ \caption{Log-return distribution diagnostics --- Quantum V2 (135p),
+ seed~42. Panels as in
+ Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
+ \label{fig:stat_grid_V2}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V3.pdf}
-  \caption{Log-return distribution diagnostics --- Quantum V3 (75p,
-  linear entangler), seed~42. Panels as in
-  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/stat_grid_V3.json}.}
-  \label{fig:stat_grid_V3}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_V3.pdf}
+ \caption{Log-return distribution diagnostics --- Quantum V3 (75p,
+ linear entangler), seed~42. Panels as in
+ Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
+ \label{fig:stat_grid_V3}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_mlp.pdf}
-  \caption{Log-return distribution diagnostics --- WGAN-GP (MLP, 74p),
-  seed~42. Panels as in
-  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/stat_grid_wgan_mlp.json}.}
-  \label{fig:stat_grid_wgan_mlp}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_mlp.pdf}
+ \caption{Log-return distribution diagnostics --- WGAN-GP (MLP, 74p),
+ seed~42. Panels as in
+ Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
+ \label{fig:stat_grid_wgan_mlp}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_cnn.pdf}
-  \caption{Log-return distribution diagnostics --- WGAN-GP (CNN, 73p),
-  seed~42 (the LR-EMD outlier seed disclosed in main-text \S 4.1).
-  Panels as in Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/stat_grid_wgan_cnn.json}.}
-  \label{fig:stat_grid_wgan_cnn}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_cnn.pdf}
+ \caption{Log-return distribution diagnostics --- WGAN-GP (CNN, 73p),
+ seed~42 (the LR-EMD outlier seed disclosed in main-text \S 4.1).
+ Panels as in Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
+ \label{fig:stat_grid_wgan_cnn}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_lstm.pdf}
-  \caption{Log-return distribution diagnostics --- WGAN-GP (LSTM, 78p),
-  seed~42. Panels as in
-  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/stat_grid_wgan_lstm.json}.}
-  \label{fig:stat_grid_wgan_lstm}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_wgan_lstm.pdf}
+ \caption{Log-return distribution diagnostics --- WGAN-GP (LSTM, 78p),
+ seed~42. Panels as in
+ Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
+ \label{fig:stat_grid_wgan_lstm}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_vae.pdf}
-  \caption{Log-return distribution diagnostics --- VAE (562p,
-  degenerate generation regime; see main-text \S 4.1), seed~42.
-  Panels as in Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/stat_grid_vae.json}.}
-  \label{fig:stat_grid_vae}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_vae.pdf}
+ \caption{Log-return distribution diagnostics --- VAE (562p,
+ degenerate generation regime; see main-text \S 4.1), seed~42.
+ Panels as in Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
+ \label{fig:stat_grid_vae}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_ar.pdf}
-  \caption{Log-return distribution diagnostics --- AR(2) closed-form
-  baseline, seed~42. Panels as in
-  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. The visibly tightest
-  amplitude/moment match in this collection is consistent with AR(2)'s
-  leading LR-EMD ranking under the matched-budget contract reported
-  in main-text \S 4.2. Source:
-  \protect\path{revision/results/figures/stat_grid_ar.json}.}
-  \label{fig:stat_grid_ar}
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_ar.pdf}
+ \caption{Log-return distribution diagnostics --- AR(2) closed-form
+ baseline, seed~42. Panels as in
+ Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. The visibly tightest
+ amplitude/moment match in this collection is consistent with AR(2)'s
+ leading LR-EMD ranking under the matched-budget contract reported
+ in main-text \S 4.2.}
+ \label{fig:stat_grid_ar}
 \end{figure*}
 
 \subsection{Per-Model DTW Alignment}
@@ -1330,91 +1295,82 @@ quality (warping-path shape, band utilization, anchor cost) rather
 than to re-derive the headline metric.
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_iqp_sel_55_repro.pdf}
-  \caption{DTW alignment --- IQP:SEL 55p (2000ep repro), seed~42.
-  Top: real log-delta series. Left: generated log-delta series.
-  Centre: accumulated DTW cost matrix (\texttt{dtaidistance},
-  \texttt{window=500}, \texttt{psi=2}). Optimal warping path in red.
-  Distance value at top-left is a visualization-protocol value; see
-  \S A.12 intro. Source:
-  \protect\path{revision/results/figures/dtw_alignment_iqp_sel_55_repro.json}.}
-  \label{fig:dtw_alignment_iqp_sel_55_repro}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_iqp_sel_55_repro.pdf}
+ \caption{DTW alignment --- IQP:SEL 55p (2000ep repro), seed~42.
+ Top: real log-delta series. Left: generated log-delta series.
+ Centre: accumulated DTW cost matrix (\texttt{dtaidistance},
+ \texttt{window=500}, \texttt{psi=2}). Optimal warping path in red.
+ Distance value at top-left is a visualization-protocol value; see
+ \S A.12 intro.}
+ \label{fig:dtw_alignment_iqp_sel_55_repro}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V1.pdf}
-  \caption{DTW alignment --- Quantum V1 (75p), seed~42. Panels as in
-  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/dtw_alignment_V1.json}.}
-  \label{fig:dtw_alignment_V1}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V1.pdf}
+ \caption{DTW alignment --- Quantum V1 (75p), seed~42. Panels as in
+ Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
+ \label{fig:dtw_alignment_V1}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V2.pdf}
-  \caption{DTW alignment --- Quantum V2 (135p), seed~42. Panels as in
-  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/dtw_alignment_V2.json}.}
-  \label{fig:dtw_alignment_V2}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V2.pdf}
+ \caption{DTW alignment --- Quantum V2 (135p), seed~42. Panels as in
+ Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
+ \label{fig:dtw_alignment_V2}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V3.pdf}
-  \caption{DTW alignment --- Quantum V3 (75p, linear entangler),
-  seed~42. Panels as in
-  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/dtw_alignment_V3.json}.}
-  \label{fig:dtw_alignment_V3}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V3.pdf}
+ \caption{DTW alignment --- Quantum V3 (75p, linear entangler),
+ seed~42. Panels as in
+ Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
+ \label{fig:dtw_alignment_V3}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_mlp.pdf}
-  \caption{DTW alignment --- WGAN-GP (MLP, 74p), seed~42. Panels as in
-  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/dtw_alignment_wgan_mlp.json}.}
-  \label{fig:dtw_alignment_wgan_mlp}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_mlp.pdf}
+ \caption{DTW alignment --- WGAN-GP (MLP, 74p), seed~42. Panels as in
+ Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
+ \label{fig:dtw_alignment_wgan_mlp}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_cnn.pdf}
-  \caption{DTW alignment --- WGAN-GP (CNN, 73p), seed~42 (the LR-EMD
-  outlier seed disclosed in main-text \S 4.1). Panels as in
-  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/dtw_alignment_wgan_cnn.json}.}
-  \label{fig:dtw_alignment_wgan_cnn}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_cnn.pdf}
+ \caption{DTW alignment --- WGAN-GP (CNN, 73p), seed~42 (the LR-EMD
+ outlier seed disclosed in main-text \S 4.1). Panels as in
+ Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
+ \label{fig:dtw_alignment_wgan_cnn}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_lstm.pdf}
-  \caption{DTW alignment --- WGAN-GP (LSTM, 78p), seed~42. Panels as in
-  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/dtw_alignment_wgan_lstm.json}.}
-  \label{fig:dtw_alignment_wgan_lstm}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_lstm.pdf}
+ \caption{DTW alignment --- WGAN-GP (LSTM, 78p), seed~42. Panels as in
+ Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
+ \label{fig:dtw_alignment_wgan_lstm}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_vae.pdf}
-  \caption{DTW alignment --- VAE (562p, degenerate generation regime;
-  see main-text \S 4.1), seed~42. Panels as in
-  Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/dtw_alignment_vae.json}.}
-  \label{fig:dtw_alignment_vae}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_vae.pdf}
+ \caption{DTW alignment --- VAE (562p, degenerate generation regime;
+ see main-text \S 4.1), seed~42. Panels as in
+ Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
+ \label{fig:dtw_alignment_vae}
 \end{figure*}
 
 \begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_ar.pdf}
-  \caption{DTW alignment --- AR(2) closed-form baseline, seed~42.
-  Panels as in Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}. Source:
-  \protect\path{revision/results/figures/dtw_alignment_ar.json}.}
-  \label{fig:dtw_alignment_ar}
+ \centering
+ \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_ar.pdf}
+ \caption{DTW alignment --- AR(2) closed-form baseline, seed~42.
+ Panels as in Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
+ \label{fig:dtw_alignment_ar}
 \end{figure*}
 
 \subsection{Critic Network Architecture Details}
@@ -1434,9 +1390,9 @@ distribution.
 
 \textbf{Convolutional Layers:}
 \begin{itemize}[nosep, leftmargin=*]
-  \item Layer 1: 64 filters, kernel size 3, stride 1
-  \item Layer 2: 128 filters, kernel size 3, stride 1
-  \item Layer 3: 128 filters, kernel size 3, stride 1
+ \item Layer 1: 64 filters, kernel size 3, stride 1
+ \item Layer 2: 128 filters, kernel size 3, stride 1
+ \item Layer 3: 128 filters, kernel size 3, stride 1
 \end{itemize}
 
 The increasing filter count allows extraction of more complex features and produces detailed feature maps. The first convolutional layer is designed to handle input data shaped as $(10, 1)$, where the dimension of 10 represents the length of subsequences created through the rolling window approach~\cite{bergmeir2012rolling}, ensuring the network properly processes the temporal structure of the input data.
@@ -1471,41 +1427,35 @@ $p \in \{0, 0.001, 0.01, 0.05\}$ and amplitude-damping
 $\gamma \in \{0, 0.001, 0.01, 0.05\}$, per-layer channel insertion).
 
 \begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/shot_noise_robustness.pdf}
-  \caption{Shot-noise sensitivity of the quantum generator
-  (IQP:SEL 55p) under finite-shot measurement: analytic statevector
-  baseline vs.\ 8192 shots vs.\ 1024 shots. OD-EMD reported as
-  3-seed mean $\pm$ sample-std (seeds $\{42, 43, 44\}$) on Pipelines~A
-  and~B. The 1024-shot and 8192-shot curves remain within sampling
-  noise of the analytic baseline, indicating the matched-budget
-  finding is robust to the shot-noise levels accessible on
-  near-term hardware. Phase~12 SENS-01 deliverable.
-  Source:
-  \protect\path{revision/results/figures/shot_noise_robustness.json};
-  underlying data
-  \protect\path{revision/results/shot_noise_sensitivity.json}.}
-  \label{fig:shot_noise_robustness}
+ \centering
+ \includegraphics[width=\columnwidth]{revision/results/figures/shot_noise_robustness.pdf}
+ \caption{Shot-noise sensitivity of the quantum generator
+ (IQP:SEL 55p) under finite-shot measurement: analytic statevector
+ baseline vs.\ 8192 shots vs.\ 1024 shots. OD-EMD reported as
+ 3-seed mean $\pm$ sample-std (seeds $\{42, 43, 44\}$) on Pipelines~A
+ and~B. The 1024-shot and 8192-shot curves remain within sampling
+ noise of the analytic baseline, indicating the matched-budget
+ finding is robust to the shot-noise levels accessible on
+ near-term hardware. underlying data
+ \protect\path{revision/results/shot_noise_sensitivity.json}.}
+ \label{fig:shot_noise_robustness}
 \end{figure}
 
 \begin{figure}[!htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/noise_robustness_quantum.pdf}
-  \caption{Noise-model sensitivity of the quantum generator
-  (IQP:SEL 55p) under per-layer depolarizing and amplitude-damping
-  channels (inserted after each entangling block). OD-EMD as 3-seed
-  mean $\pm$ sample-std (seeds $\{42, 43, 44\}$) at noise levels
-  $\{0, 0.001, 0.01, 0.05\}$ per channel type. Pipelines~A and~B
-  shown as separate curves. Both channels show graceful degradation:
-  the matched-budget finding is preserved at the 0.001 level, begins
-  to degrade at 0.01, and is degraded at 0.05 — consistent with the
-  noise tolerance reported for similar PQC variational circuits
-  in the literature. Phase~12 SENS-02 deliverable.
-  Source:
-  \protect\path{revision/results/figures/noise_robustness_quantum.json};
-  underlying data
-  \protect\path{revision/results/noise_model_sensitivity.json}.}
-  \label{fig:noise_robustness_quantum}
+ \centering
+ \includegraphics[width=\columnwidth]{revision/results/figures/noise_robustness_quantum.pdf}
+ \caption{Noise-model sensitivity of the quantum generator
+ (IQP:SEL 55p) under per-layer depolarizing and amplitude-damping
+ channels (inserted after each entangling block). OD-EMD as 3-seed
+ mean $\pm$ sample-std (seeds $\{42, 43, 44\}$) at noise levels
+ $\{0, 0.001, 0.01, 0.05\}$ per channel type. Pipelines~A and~B
+ shown as separate curves. Both channels show graceful degradation:
+ the matched-budget finding is preserved at the 0.001 level, begins
+ to degrade at 0.01, and is degraded at 0.05 — consistent with the
+ noise tolerance reported for similar PQC variational circuits
+ in the literature. underlying data
+ \protect\path{revision/results/noise_model_sensitivity.json}.}
+ \label{fig:noise_robustness_quantum}
 \end{figure}
 
 
