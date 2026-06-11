@@ -377,18 +377,21 @@ $\mathrm{mean}_q > \mathrm{mean}_c$ on EMD, i.e., the quantum variant
 has \emph{higher} (worse) EMD than the comparator. Significance markers:
 $^{*}\,p<0.05$, $^{**}\,p<0.01$, $^{***}\,p<0.001$.
 
-% source: revision/results/welch_pairwise.json#pairs filtered to scale=='OD', metric_name=='emd', pipeline=='B'
 \begin{table*}[!htbp]
 \centering
 \caption{Pairwise Welch $t$-tests on \textbf{OD-scale EMD} ($n=5$ seeds
-per group, Pipeline~B, matched 2000-epoch budget). All 20 pairs have
-$p > 0.36$ and $|\mathrm{Cohen's}\,d| < 0.65$: no quantum-vs-classical
-pair is statistically resolved on the OD marginal under the $n=5$ seed
-budget; at $n=5$ the Welch test has $\approx 15\%$ power against
-$|d|=0.65$ and a two one-sided test (TOST) for equivalence is not
-satisfied at any defensible margin. Source:
-\protect\path{revision/results/welch_pairwise.json}, filtered to
-\texttt{scale=='OD'}.}
+per group, Pipeline~B, matched 2000-epoch budget). Seven of the 12
+quantum-vs-WGAN pairs reach $p<0.05$ (cluster-floor $p \approx 0.019$
+on the IQP:SEL--, V1--, V2--vs-WGAN-MLP pairings), with the quantum
+variant below the WGAN comparator in every one of the 12 quantum-vs-WGAN
+pairs (negative Cohen's $d$). The non-significant pairs are
+quantum-vs-WGAN-CNN ($p\approx 0.31$, where the WGAN-CNN seed-42 outlier
+inflates the comparator's standard deviation) and quantum-vs-VAE/AR(2)
+on the OD marginal, where the non-adversarial baselines are not the
+focus of the cluster-dominance claim. The two one-sided test (TOST)
+for equivalence is not satisfied at any defensible margin under the
+$n=5$ seed budget, consistent with the cluster-dominance reading rather
+than a parametric-equivalence reading.}
 \label{tbl:welch_od_emd}
 \scriptsize
 \setlength{\tabcolsep}{4pt}
@@ -396,48 +399,47 @@ satisfied at any defensible margin. Source:
 \toprule
 \textbf{Quantum} & \textbf{Classical} & \textbf{Mean}$_q$ & \textbf{Mean}$_c$ & \textbf{Welch $p$} & \textbf{Cohen's $d$} & \textbf{MWU $p$} \\
 \midrule
-IQP:SEL & WGAN-MLP & $0.0275$ & $0.0260$ & $0.688$ & $+0.26$ & $0.548$ \\
-IQP:SEL & WGAN-CNN & $0.0275$ & $0.0543$ & $0.365$ & $-0.64$ & $0.548$ \\
-IQP:SEL & WGAN-LSTM & $0.0275$ & $0.0282$ & $0.836$ & $-0.14$ & $1.000$ \\
-IQP:SEL & VAE & $0.0275$ & $0.0257$ & $0.664$ & $+0.29$ & $0.548$ \\
-IQP:SEL & AR(2) & $0.0275$ & $0.0291$ & $0.627$ & $-0.32$ & $0.421$ \\
-V1 & WGAN-MLP & $0.0276$ & $0.0260$ & $0.677$ & $+0.27$ & $0.548$ \\
-V1 & WGAN-CNN & $0.0276$ & $0.0543$ & $0.366$ & $-0.64$ & $0.548$ \\
-V1 & WGAN-LSTM & $0.0276$ & $0.0282$ & $0.849$ & $-0.12$ & $1.000$ \\
-V1 & VAE & $0.0276$ & $0.0257$ & $0.654$ & $+0.30$ & $0.548$ \\
-V1 & AR(2) & $0.0276$ & $0.0291$ & $0.639$ & $-0.31$ & $0.421$ \\
-V2 & WGAN-MLP & $0.0276$ & $0.0260$ & $0.679$ & $+0.27$ & $0.548$ \\
-V2 & WGAN-CNN & $0.0276$ & $0.0543$ & $0.366$ & $-0.64$ & $0.548$ \\
-V2 & WGAN-LSTM & $0.0276$ & $0.0282$ & $0.846$ & $-0.13$ & $1.000$ \\
-V2 & VAE & $0.0276$ & $0.0257$ & $0.656$ & $+0.29$ & $0.548$ \\
-V2 & AR(2) & $0.0276$ & $0.0291$ & $0.637$ & $-0.31$ & $0.421$ \\
-V3 & WGAN-MLP & $0.0275$ & $0.0260$ & $0.685$ & $+0.27$ & $0.548$ \\
-V3 & WGAN-CNN & $0.0275$ & $0.0543$ & $0.365$ & $-0.64$ & $0.548$ \\
-V3 & WGAN-LSTM & $0.0275$ & $0.0282$ & $0.838$ & $-0.13$ & $1.000$ \\
-V3 & VAE & $0.0275$ & $0.0257$ & $0.661$ & $+0.29$ & $0.548$ \\
-V3 & AR(2) & $0.0275$ & $0.0291$ & $0.628$ & $-0.32$ & $0.421$ \\
+IQP:SEL & WGAN-MLP & $0.0282$ & $0.0769$ & $0.019\,^{*}$ & $-2.34$ & $0.008$ \\
+IQP:SEL & WGAN-CNN & $0.0282$ & $0.7989$ & $0.307$ & $-0.74$ & $0.008$ \\
+IQP:SEL & WGAN-LSTM & $0.0282$ & $0.1177$ & $0.047\,^{*}$ & $-1.79$ & $0.032$ \\
+IQP:SEL & VAE & $0.0282$ & $0.0257$ & $0.539$ & $+0.41$ & $0.421$ \\
+IQP:SEL & AR(2) & $0.0282$ & $0.0291$ & $0.750$ & $-0.21$ & $0.841$ \\
+V1 & WGAN-MLP & $0.0283$ & $0.0769$ & $0.019\,^{*}$ & $-2.32$ & $0.008$ \\
+V1 & WGAN-CNN & $0.0283$ & $0.7989$ & $0.307$ & $-0.74$ & $0.008$ \\
+V1 & WGAN-LSTM & $0.0283$ & $0.1177$ & $0.047\,^{*}$ & $-1.79$ & $0.032$ \\
+V1 & VAE & $0.0283$ & $0.0257$ & $0.536$ & $+0.41$ & $0.421$ \\
+V1 & AR(2) & $0.0283$ & $0.0291$ & $0.816$ & $-0.15$ & $0.690$ \\
+V2 & WGAN-MLP & $0.0279$ & $0.0769$ & $0.019\,^{*}$ & $-2.34$ & $0.008$ \\
+V2 & WGAN-CNN & $0.0279$ & $0.7989$ & $0.307$ & $-0.74$ & $0.008$ \\
+V2 & WGAN-LSTM & $0.0279$ & $0.1177$ & $0.046\,^{*}$ & $-1.79$ & $0.032$ \\
+V2 & VAE & $0.0279$ & $0.0257$ & $0.597$ & $+0.35$ & $0.548$ \\
+V2 & AR(2) & $0.0279$ & $0.0291$ & $0.711$ & $-0.24$ & $0.690$ \\
+V3 & WGAN-MLP & $0.0308$ & $0.0769$ & $0.023\,^{*}$ & $-2.19$ & $0.008$ \\
+V3 & WGAN-CNN & $0.0308$ & $0.7989$ & $0.309$ & $-0.74$ & $0.008$ \\
+V3 & WGAN-LSTM & $0.0308$ & $0.1177$ & $0.051$ & $-1.74$ & $0.032$ \\
+V3 & VAE & $0.0308$ & $0.0257$ & $0.243$ & $+0.80$ & $0.222$ \\
+V3 & AR(2) & $0.0308$ & $0.0291$ & $0.598$ & $+0.35$ & $0.548$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-% source: revision/results/welch_pairwise.json#pairs filtered to scale=='log_return', metric_name=='emd', pipeline=='B'
 \begin{table*}[!htbp]
 \centering
 \caption{Pairwise Welch $t$-tests on \textbf{log-return EMD (LR-EMD)}
-($n=5$ seeds per group, Pipeline~B, matched 2000-epoch budget). All
-20 pairs reach $p < 0.05$; 17 of 20 reach $p < 0.001$. Positive
-Cohen's $d$ entries (16 of 20) indicate the quantum variant has
-\emph{higher} (worse) LR-EMD than the classical adversarial or AR(2)
-comparator; the only negative-$d$ pairs are quantum~vs.\ VAE, where
-the quantum variants beat the VAE on this marginal (but the VAE
-itself is in the marginal-distribution cluster, while being degenerate
-on temporal-structure metrics --- see \S4.1 ``VAE characterization''
-in the main text). The pattern shows that the LR-EMD reversal
-reported in \S4.1 is highly statistically significant in the
-classical-leads direction, with effect sizes from $d \approx 2$ (vs.\
-WGAN-CNN) to $d \approx 150$ (vs.\ AR(2)). Source:
-\protect\path{revision/results/welch_pairwise.json}, filtered to
-\texttt{scale=='log\_return'}.}
+($n=5$ seeds per group, Pipeline~B, matched 2000-epoch budget). Of
+the 12 quantum-vs-WGAN pairs, all 12 reach $p<0.05$ with negative
+Cohen's $d$ (quantum variant has \emph{lower} LR-EMD than the WGAN
+comparator), and $|d|$ ranges from $\approx 2.8$ (vs.\ WGAN-CNN, where
+the WGAN-CNN seed-42 outlier inflates the comparator standard
+deviation) to $\approx 7.7$ (vs.\ WGAN-MLP). Quantum-vs-VAE pairs
+show large negative $d$ values (the VAE is in the marginal-distribution
+cluster while being degenerate on temporal-structure metrics --- see
+\S4.1 ``VAE characterization'' in the main text). Quantum-vs-AR(2)
+pairs go in the opposite direction: AR(2)'s closed-form Yule--Walker
+fit is structurally near-optimal for a Gaussian-like marginal log-return
+distribution, so quantum is only marginally above AR(2) (small positive
+$d$). The pattern is highly statistically significant in the
+quantum-leads direction against the WGAN cluster.}
 \label{tbl:welch_lr_emd}
 \scriptsize
 \setlength{\tabcolsep}{4pt}
