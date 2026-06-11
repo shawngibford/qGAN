@@ -46,7 +46,7 @@ Kongens Lyngby, Denmark\\
 % Abstract section (max 150 words)
 \begin{abstract}
 \noindent
-Data scarcity in biomanufacturing constrains model development for process monitoring and optimization. We evaluate a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP), whose generator is a Parameterized Quantum Circuit (PQC), against parameter-matched classical adversarial baselines on a single laboratory-scale photobioreactor cultivation. Under a matched parameter budget and 2000 training epochs (n=5 seeds), quantum WGAN-GPs with 55--135 parameters dominate parameter-matched classical adversarial WGAN baselines (73--78 parameters) on all four matched-budget metrics: log-return temporal alignment (LR-DTW), log-return single-step marginal (LR-EMD), optical-density temporal alignment (OD-DTW, Welch $p \approx 0.002$), and optical-density single-step marginal (OD-EMD, cluster-floor Welch $p \approx 0.019$). The mean lag-1 ACF of the quantum cluster ($-0.0997$ to $-0.0895$) is closer to the real reference ($-0.064$) than any classical-baseline mean, though per-seed overlap is observed. With only 5 seeds per model these between-cluster gaps are reported with explicit power caveats and the LR-EMD per-model dominance is not extended to a per-seed claim. We present a proof-of-concept for quantum-enhanced synthetic time-series generation, with potential relevance to soft-sensor and control applications.
+Data scarcity in biomanufacturing constrains model development for process monitoring and optimization. We evaluate a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP), whose generator is a Parameterized Quantum Circuit (PQC), against parameter-matched classical adversarial baselines on a single laboratory-scale photobioreactor cultivation. Under a matched parameter budget, 2000 training epochs, and n=5 seeds, the quantum WGAN-GP cluster dominates the parameter-matched classical adversarial WGAN cluster on all four matched-budget fidelity metrics: log-return and optical-density temporal alignment (LR-DTW and OD-DTW), and log-return and optical-density single-step marginals (LR-EMD and OD-EMD). The optical-density EMD and DTW cluster separations are Welch-significant. The quantum-cluster mean lag-1 autocorrelation is also closer to the real reference than any classical-baseline mean, with per-seed overlap noted. Between-cluster gaps are reported with explicit n=5 power caveats; per-model dominance is not extended to per-seed claims on every axis. Specific values appear in Section~4 and Table~\ref{tbl:cross_model_comparison}. We present matched-budget evidence that a PQC generator can match or exceed parameter-matched classical adversarial baselines on data-scarce bioprocess time-series synthesis, with potential relevance to soft-sensor and control applications.
 \end{abstract}
 
 % Topical Heading and Keywords
@@ -56,7 +56,7 @@ Data scarcity in biomanufacturing constrains model development for process monit
 
 % Plain Language Summary (max 250 characters)
 \section*{Plain Language Summary}
-On a small bioprocess dataset, a quantum generator reproduced both single-step distributions and short-term temporal structure more faithfully than parameter-matched classical WGAN baselines on every matched-budget metric we measured, with statistical-power caveats noted from the five-seed protocol.
+On a small bioprocess dataset, a quantum generator reproduced both the per-step value distribution and the short-term temporal pattern more faithfully than equally-sized classical WGAN baselines on every fidelity metric we measured.
 
 \section{Introduction}
 
@@ -67,29 +67,29 @@ On a small bioprocess dataset, a quantum generator reproduced both single-step d
     \label{fig:concept_diagram}
 \end{figure*}
 
-Machine Learning (ML) and Artificial Intelligence (AI) have emerged as transformative tools in diverse scientific disciplines, from cancer research to financial analysis (Figure~\ref{fig:concept_diagram}). \cite{clinical_iqbal_2021} \cite{vakili2024quantumcomputingenhancedalgorithmunveils} \cite{artificial_ahmed_2022} \cite{Orus2019QuantumCF}  However, complex systems such as manufacturing, drug discovery, and formulated products \cite{emerson2021} have lagged in fully embracing ML/AI methodologies compared to other fields. This discrepancy reflects unique challenges including high dimensionality, inherent variability, and complex underlying chemical, physical, or biological mechanisms. \cite{boskabadi2025virtual}
+Machine Learning (ML) and Artificial Intelligence (AI) have emerged as transformative tools in diverse scientific disciplines, from cancer research to financial analysis (Figure~\ref{fig:concept_diagram}) \cite{clinical_iqbal_2021, vakili2024quantumcomputingenhancedalgorithmunveils, artificial_ahmed_2022, Orus2019QuantumCF}. However, complex systems such as manufacturing, drug discovery, and formulated products \cite{emerson2021} have lagged in fully embracing ML/AI methodologies compared to other fields. This discrepancy reflects unique challenges including high dimensionality, inherent variability, and complex underlying chemical, physical, or biological mechanisms \cite{boskabadi2025virtual}.
 
-Bioprocess engineering exemplifies these challenges. The field is crucial for producing biofuels, pharmaceuticals, and sustainable materials, yet data analytics applications often grapple with limited datasets due to time-consuming and expensive experiments. \cite{stoneOptimize} This scarcity hinders development of accurate predictive models, particularly for hard-to-quantify quality indicator variables (QIVs) essential for process optimization and real-time monitoring.
+Bioprocess engineering exemplifies these challenges. The field is crucial for producing biofuels, pharmaceuticals, and sustainable materials, yet data analytics applications often grapple with limited datasets due to time-consuming and expensive experiments \cite{stoneOptimize}. This scarcity hinders development of accurate predictive models, particularly for hard-to-quantify quality indicator variables (QIVs) essential for process optimization and real-time monitoring.
 
-Critical QIVs in bioprocesses include biomass concentration, which is often estimated through optical density measurements or viable cell counts but requires complex calibration and suffers from interference in high-density cultures. \cite{kiviharju2008biomass} Product concentration and quality, such as monoclonal antibody titers and glycosylation patterns in mammalian cell culture, typically require offline analytical methods such as High-Performance Liquid Chromatography (HPLC) or mass spectrometry. Metabolic activity indicators, including specific growth rates, substrate consumption rates, and metabolic flux distributions, are fundamental QIVs that are difficult to quantify in real-time without sophisticated analytical platforms. The integration of ML with bioprocess engineering has been gradually expanding, with applications spanning process monitoring, \cite{peng2025machinelearningmethodssmall} optimization, \cite{sharma2025ai} and control. \cite{mondal2023review} These approaches have demonstrated potential to address limitations of traditional mechanistic models, particularly when dealing with non-linear dynamics and multivariate nature of biological systems.
+Critical QIVs in bioprocesses include biomass concentration, which is often estimated through optical density measurements or viable cell counts but requires complex calibration and suffers from interference in high-density cultures \cite{kiviharju2008biomass}. Product concentration and quality, such as monoclonal antibody titers and glycosylation patterns in mammalian cell culture, typically require offline analytical methods such as High-Performance Liquid Chromatography (HPLC) or mass spectrometry. Metabolic activity indicators, including specific growth rates, substrate consumption rates, and metabolic flux distributions, are fundamental QIVs that are difficult to quantify in real-time without sophisticated analytical platforms. The integration of ML with bioprocess engineering has been gradually expanding, with applications spanning process monitoring \cite{peng2025machinelearningmethodssmall}, optimization \cite{sharma2025ai}, and control \cite{mondal2023review}. These approaches have demonstrated potential to address limitations of traditional mechanistic models, particularly when dealing with non-linear dynamics and multivariate nature of biological systems.
 
 \subsection{Data Scarcity as a Fundamental Limitation}
 
-A fundamental challenge limiting widespread adoption of machine learning in bioprocess engineering is data scarcity. \cite{lim2023opportunities, duongtrung2023when} Unlike fields such as computer vision or natural language processing, where datasets may be comprised of millions of samples, bioprocess datasets are typically constrained by several factors. Bioprocess experiments, particularly on pilot and production scales, involve substantial costs in terms of equipment, raw materials, personnel, and time.  \cite{shariatifar2025digital} \cite{exploring_hernndezromero_2025} A single bioreactor run at pilot or production scale may take weeks to complete and can be costly, often on the order of several hundreds of thousands of dollars or more, severely limiting the number of experimental conditions that can be feasibly explored. \cite{exploring_hernndezromero_2025} Biological systems exhibit inherent stochasticity and sensitivity to environmental conditions, resulting in significant batch-to-batch variability even under nominally identical operating conditions. Commercial bioprocesses represent significant intellectual property, which results in limited data sharing across the industry. While fields such as computer vision benefit from open datasets with millions of examples, bioprocess data typically remains siloed within individual companies or research groups. These factors collectively result in datasets that are often too small to effectively train complex ML models, particularly deep learning architectures that typically require substantial amounts of diverse training data.
+A fundamental challenge limiting widespread adoption of machine learning in bioprocess engineering is data scarcity \cite{lim2023opportunities, duongtrung2023when}. Unlike fields such as computer vision or natural language processing, where datasets may be comprised of millions of samples, bioprocess datasets are typically constrained by several factors. Bioprocess experiments, particularly on pilot and production scales, involve substantial costs in terms of equipment, raw materials, personnel, and time \cite{shariatifar2025digital, exploring_hernndezromero_2025}. A single bioreactor run at pilot or production scale may take weeks to complete and can be costly, often on the order of several hundreds of thousands of dollars or more, severely limiting the number of experimental conditions that can be feasibly explored \cite{exploring_hernndezromero_2025}. Biological systems exhibit inherent stochasticity and sensitivity to environmental conditions, resulting in significant batch-to-batch variability even under nominally identical operating conditions. Commercial bioprocesses represent significant intellectual property, which results in limited data sharing across the industry. While fields such as computer vision benefit from open datasets with millions of examples, bioprocess data typically remains siloed within individual companies or research groups. These factors collectively result in datasets that are often too small to effectively train complex ML models, particularly deep learning architectures that typically require substantial amounts of diverse training data.
 
 \subsection{Synthetic Data Generation Approaches}
 
-Synthetic data generation is a promising approach to address data scarcity challenges in bioprocess engineering. \cite{liu2024bestpracticeslessonslearned} By creating artificial datasets that faithfully represent statistical properties and dynamic behaviors of real bioprocesses, synthetic data approaches can potentially overcome limitations in data availability while avoiding confidentiality concerns (a comparison of approaches is provided in Supplementary Table A1 %~\ref{tbl:bioprocess_methods}).
+Synthetic data generation is a promising approach to address data scarcity challenges in bioprocess engineering \cite{liu2024bestpracticeslessonslearned}. By creating artificial datasets that faithfully represent statistical properties and dynamic behaviors of real bioprocesses, synthetic data approaches can potentially overcome limitations in data availability while avoiding confidentiality concerns (a comparison of approaches is provided in Supplementary Table A1 %~\ref{tbl:bioprocess_methods}).
 
-First-principles models have been used to simulate bioprocess dynamics under various conditions, generating synthetic time series data. \cite{vidossich2021role}  Although this approach ensures physical consistency, its fidelity is limited by the accuracy of the underlying model and its ability to capture process variability and uncertainty. Methods such as Gaussian process regression \cite{rasmussen2006gaussian} and multivariate statistical models can generate synthetic data based on estimated probability distributions. These approaches excel at reproducing statistical properties, but often struggle to capture complex temporal dependencies and rare events.
+First-principles models have been used to simulate bioprocess dynamics under various conditions, generating synthetic time series data \cite{vidossich2021role}. Although this approach ensures physical consistency, its fidelity is limited by the accuracy of the underlying model and its ability to capture process variability and uncertainty. Methods such as Gaussian process regression \cite{rasmussen2006gaussian} and multivariate statistical models can generate synthetic data based on estimated probability distributions. These approaches excel at reproducing statistical properties, but often struggle to capture complex temporal dependencies and rare events.
 
-Machine learning models such as variational autoencoders (VAEs) and generative adversarial networks (GANs), including time-series-specific architectures \cite{yoon2019TimeGAN}, can learn directly from available data to generate synthetic samples.  \cite{akkem2024comprehensive} These approaches offer flexibility in generating diverse datasets without requiring detailed mechanistic understanding, although their performance is highly dependent on the quality and quantity of training data. Combining mechanistic knowledge with data-driven techniques represents a promising direction for generation of synthetic bioprocess data.
+Machine learning models such as variational autoencoders (VAEs) and generative adversarial networks (GANs), including time-series-specific architectures \cite{yoon2019TimeGAN}, can learn directly from available data to generate synthetic samples \cite{akkem2024comprehensive}. These approaches offer flexibility in generating diverse datasets without requiring detailed mechanistic understanding, although their performance is highly dependent on the quality and quantity of training data. Combining mechanistic knowledge with data-driven techniques represents a promising direction for generation of synthetic bioprocess data.
 
-Despite these advances, significant challenges remain in generation of high-quality data: accurate capture of complex temporal dependencies, incorporation of mechanistic knowledge constraints, ensuring physical realizability, and validating the quality of synthetic data. Addressing these challenges requires novel methodological approaches. These limitations motivate exploring alternative computational paradigms, including quantum approaches, which \emph{may} offer advantages for certain structured learning tasks in chemical and biochemical engineering \cite{bernal2022perspectives}.
+Despite these advances, significant challenges remain in generation of high-quality data: accurate capture of complex temporal dependencies, incorporation of mechanistic knowledge constraints, ensuring physical realizability, and validating the quality of synthetic data. Addressing these challenges requires novel methodological approaches. These limitations motivate exploring alternative computational paradigms. Quantum approaches \emph{may} offer advantages for certain structured learning tasks in chemical and biochemical engineering \cite{bernal2022perspectives}.
 
 \subsection{Quantum Generative Adversarial Networks}
 
-Quantum Generative Adversarial Networks (QGANs) embed Parameterized Quantum Circuits within the generator of a GAN \cite{Dallaire_Demers_2018, Lloyd_2018, Zoufal_2019}. This motivates the falsifiable question that frames the present study: \emph{can a PQC generator, operating in an exponentially large Hilbert space with $\mathcal{O}(\mathrm{poly}(n))$ parameters, match or exceed a classical generator of equivalent parameter count on a low-data bioprocess task?} Prior work has reported QGAN results in low-data regimes and on multimodal distributions \cite{rudolph2022generationhighresolutionhandwrittendigits, he2025qganbaseddataaugmentationhybrid}, with applications in finance \cite{orlandi2024enhancing} and optimization \cite{Mugel2022}; GANs more broadly, including classical recurrent variants, have also been applied to healthcare time series \cite{esteban2017realvaluedmedicaltimeseries}. We test this claim directly under a matched-parameter, matched-epoch protocol. Current quantum hardware constraints, noise, decoherence, and limited circuit depth, restrict practical scalability \cite{Cerezo_2021}, but QGANs offer a candidate alternative when classical GANs struggle with intricate temporal dependencies in limited datasets \cite{goodfellow2014generativeadversarialnetworks, lloyd2013quantumalgorithmssupervisedunsupervised}. A detailed review of QGANs and their relationship to classical GANs is provided in Section~2.
+Quantum Generative Adversarial Networks (QGANs) embed Parameterized Quantum Circuits within the generator of a GAN \cite{Dallaire_Demers_2018, Lloyd_2018, Zoufal_2019}. This motivates the falsifiable question that frames the present study: \emph{can a PQC generator match or exceed a parameter-matched classical generator on a low-data bioprocess task?} The PQC operates in an exponentially large Hilbert space with $\mathcal{O}(\mathrm{poly}(n))$ parameters; whether that translates into a practical advantage is what we test. Prior work has reported QGAN results in low-data regimes and on multimodal distributions \cite{rudolph2022generationhighresolutionhandwrittendigits, he2025qganbaseddataaugmentationhybrid}, with applications in finance \cite{orlandi2024enhancing} and entangling-state generation \cite{niu2022entangling}; GANs more broadly, including classical recurrent variants, have also been applied to healthcare time series \cite{esteban2017realvaluedmedicaltimeseries}. We test this claim directly under a matched-parameter, matched-epoch protocol. Current quantum hardware constraints, noise, decoherence, and limited circuit depth, restrict practical scalability \cite{Cerezo_2021}, but QGANs offer a candidate alternative when classical GANs struggle with intricate temporal dependencies in limited datasets \cite{goodfellow2014generativeadversarialnetworks, lloyd2013quantumalgorithmssupervisedunsupervised}. A detailed review of QGANs and their relationship to classical GANs is provided in Section~2.
 
 
 \subsection{Principal Contributions}
@@ -98,13 +98,11 @@ The principal contributions of this work are:
 
 - Matched-Parameter Comparison Protocol: A parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against size-matched classical baselines on a data-scarce bioprocess task.
 
-- QWGAN-GP for Process Data Synthesis: A hybrid QWGAN-GP architecture, with a Parameterized Quantum Circuit generator and a classical critic, applied to laboratory-scale bioprocess time series.
+- QWGAN-GP for Process Data Synthesis: A hybrid QWGAN-GP architecture, with a Parameterized Quantum Circuit generator and a classical critic, evaluated on a laboratory-scale photobioreactor cultivation.
 
-- Headline Empirical Finding: Under the matched protocol, quantum generators (55--135 parameters) dominate parameter-matched classical WGAN adversarial baselines (73--78 parameters) on all four matched-budget metrics: log-return temporal alignment (LR-DTW 6.09--9.48 vs WGAN 18.23--69.02), log-return single-step marginal (LR-EMD 0.0040--0.0050 vs WGAN 0.0244--0.1286), optical-density temporal alignment (OD-DTW 0.33--0.41 vs WGAN 0.60--6.99, Welch $p$ as low as $0.002$), and optical-density single-step marginal (OD-EMD 0.028--0.031 vs WGAN 0.077--0.799, Welch $p = 0.019$). The lag-1 autocorrelation of the real series corroborates the cluster-mean separation (quantum cluster mean $-0.0997$ to $-0.0895$ vs real $-0.064$; closer to real than any classical-baseline mean, with per-seed overlap noted). With only 5 seeds per model these between-cluster gaps are reported with explicit power caveats, and per-model dominance is not extended to a per-seed claim (Section~4.1).
+- Matched-Budget Empirical Finding: Under the matched protocol, the quantum cluster dominates the parameter-matched classical WGAN cluster on all four matched-budget fidelity metrics --- log-return and optical-density temporal alignment (LR-DTW, OD-DTW), and log-return and optical-density single-step marginals (LR-EMD, OD-EMD) --- with Welch significance on both optical-density axes; specific values are reported in Section~4.1 and Table~\ref{tbl:cross_model_comparison}, with explicit n=5 power caveats and per-seed-vs-per-model scoping preserved throughout.
 
-- Empirical Evaluation on a Photobioreactor Campaign: A quantitative evaluation on a single real-world cultivation dataset, in which the quantum cluster's matched-budget mean is closer to the real reference than every parameter-matched classical WGAN cluster mean on each of the four matched-budget metrics, with statistical significance reaching Welch $p = 0.019$ on OD-EMD and $p \approx 0.002$ on OD-DTW against the strongest WGAN comparator. With only 5 seeds per model the Welch $t$-test affords approximately 15\% statistical power to detect a moderate effect size of $d = 0.5$, so per-model means rather than per-seed cells anchor the cluster-level claims.
-
-- Open Science and Reproducibility: We make our code and datasets publicly available, facilitating independent verification and future studies of quantum generators for bioprocess time series.
+- Reproducible Open-Science Artifact: We release the code, dataset, and matched-budget reproduction script under an open licence to enable independent verification and future studies of quantum generators for bioprocess time series.
 
 A decision-tree triage workflow is also outlined in the Outlook as an organising concept for future work; it is not implemented or evaluated here and is not an empirical contribution of this study.
 
@@ -118,7 +116,7 @@ This section reviews the classical and quantum machine learning foundations unde
 
 \subsection{Generative Adversarial Networks and WGAN-GP}
 
-GANs represent the foundation of modern synthetic data generation. \cite{goodfellow2014generativeadversarialnetworks} The GAN framework (illustrated in Supplementary Figure A1 %~\ref{fig:classical_gan}) 
+GANs represent the foundation of modern synthetic data generation \cite{goodfellow2014generativeadversarialnetworks}. The GAN framework (illustrated in Supplementary Figure A1 %~\ref{fig:classical_gan}) 
 consists of two neural networks engaged in a competitive minimax game: a generator G that learns to produce synthetic data, and a discriminator D that distinguishes between real and synthetic samples. The objective function is formulated as:
 
 
@@ -152,7 +150,7 @@ This solution stabilizes training across architectures and mitigates issues with
 Quantum machine learning (QML) leverages quantum mechanical principles to improve learning algorithms, with recent advances demonstrating potential advantages in expressivity, training efficiency, and generalization \cite{Biamonte2017, kashyap2025advancesmachinelearningquantum}. Relevant approaches include quantum-enhanced sampling, quantum kernels \cite{havlicek2019supervised, schuld2019quantum}, and variational quantum algorithms, each offering potential benefits for data-scarce bioprocess applications \cite{Cerezo_2021}.
 
 
-QGANs are a hybrid quantum-classical approach in which a Parameterized Quantum Circuit (PQC) serves as the generator, first introduced by Dallaire-Demers and Killoran \cite{Dallaire_Demers_2018}. Superposition and entanglement give a PQC access to a state space that grows exponentially with qubit count; whether this translates into a practical advantage over a parameter-matched classical generator is an empirical question that remains open and is one we examine directly in this work rather than assume \cite{rudolph2022generationhighresolutionhandwrittendigits}. QGANs have been applied to finance \cite{orlandi2024enhancing} and optimization \cite{Mugel2022}; classical recurrent GAN variants have also been applied to healthcare time series \cite{esteban2017realvaluedmedicaltimeseries}. For time-series generation, models such as TimeGAN \cite{yoon2019TimeGAN} and DoppelGANger \cite{Lin_2020} have shown strong classical performance, but remain limited by computational constraints with high-dimensional distributions, a gap that quantum approaches may help address.
+QGANs are a hybrid quantum-classical approach in which a Parameterized Quantum Circuit (PQC) serves as the generator, first introduced by Dallaire-Demers and Killoran \cite{Dallaire_Demers_2018}. Superposition and entanglement give a PQC access to a state space that grows exponentially with qubit count; whether this translates into a practical advantage over a parameter-matched classical generator is an empirical question that remains open and is one we examine directly in this work rather than assume \cite{rudolph2022generationhighresolutionhandwrittendigits}. QGANs have been applied to finance \cite{orlandi2024enhancing} and entangling-state generation \cite{niu2022entangling}; classical recurrent GAN variants have also been applied to healthcare time series \cite{esteban2017realvaluedmedicaltimeseries}. For time-series generation, models such as TimeGAN \cite{yoon2019TimeGAN} and DoppelGANger \cite{Lin_2020} have shown strong classical performance, but remain limited by computational constraints with high-dimensional distributions, a gap that quantum approaches may help address.
 
 \section{Methods}
 
@@ -174,21 +172,11 @@ mean and unit variance, and linearly rescaled to $[-1, 1]$ using the global min 
 max of the standardized log-return series, prior to training (Pipeline B; details and
 the ablation that motivated its selection are in Supplementary Section A.7).
 Overlapping subsequences of length 10 with stride 2 were extracted using a rolling
-window approach \cite{dimoudis2023utilizing}.
+window approach \cite{bergmeir2012rolling}.
 
 The WGAN-GP loss formulation (Eq.~\ref{eq:wgangp}) was chosen for the quantum generator because it provides stable gradients and meaningful convergence metrics, and mitigates mode collapse issues that can be exacerbated by the discrete nature of quantum measurements; we do not attribute reduced mode collapse to the quantum generator.
 
 \paragraph{Training protocol (matched-budget contract).}
-% source: revision/results/model_info.json#models[*].epochs (=2000)
-% source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
-% source: revision/results/model_info.json#models[*].optimizer ("Adam")
-% source: revision/results/model_info.json#models[*].optimizer_betas ([0.0, 0.9])
-% source: revision/results/model_info.json#models[*].lr_generator (6.9173e-05)
-% source: revision/results/model_info.json#models[*].lr_critic (1.8046e-05)
-% source: revision/results/model_info.json#models[*].n_critic (=9)
-% source: revision/results/model_info.json#models[*].lambda_gp (=2.16)
-% source: revision/results/model_info.json#models[*].batch_size (=12)
-% source: revision/results/total_adversarial_param_budget.json#shared_critic_n_params (=250881)
 All adversarial models in this study are trained under a single matched-budget
 contract so that, within the WGAN-GP adversarial cohort, the only component
 that differs between the quantum and classical entrants is the generator
@@ -215,31 +203,29 @@ that all 2000-epoch comparison runs share identical optimizer machinery.
 Full per-model dtype and backend pinning details are given in
 Supplementary Section~A.8 and Appendix.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/training_convergence_all_models.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/training_convergence_all_models.pdf}
   \caption{Matched-budget training convergence: OD-scale in-loop EMD
   versus training epoch (log-$y$) for the 7 WGAN-GP generators
   (4 quantum + 3 classical adversarial). Curves are 5-seed mean
   $\pm$ sample standard deviation over seeds $\{42, 43, 44, 45, 46\}$,
   with EMD evaluated every 10 training epochs across the
-  2000-epoch budget. The frozen-headline reference (epoch-1969 checkpoint) is
-  shown as a distinct diamond marker $+$ horizontal line per D-14-10.
-  All 7 models converge to a tight cluster of mean OD-EMD $\approx 0.026$
-  by $\sim$epoch 250 and remain in that band for the remainder of
-  training, demonstrating that the matched-budget contract is held without
-  divergence or collapse. The visible deep dip is the wgan\_cnn
+  2000-epoch budget. The frozen-headline reference (epoch-1969 checkpoint)
+  is shown as a distinct diamond marker plus horizontal line. All 7
+  models converge to a tight cluster of mean OD-EMD $\approx 0.026$ by
+  $\sim$epoch 250 and remain in that band for the remainder of
+  training, demonstrating that the matched-budget contract is held
+  without divergence or collapse. The visible deep dip is the wgan\_cnn
   seed-42 outlier (single seed where OD-EMD transiently fell to
-  $\sim 10^{-4}$ before recovering --- the outlier reported in
-  Section~4.1 and disclosed at face value rather than excluded). VAE
-  and AR(2) are not plotted: VAE trains with a single-Adam ELBO loop
-  (no per-epoch EMD eval was captured) and AR(2) is fit in closed form
-  via \texttt{lstsq} (no epoch trajectory exists). Source:
-  \protect\path{revision/results/figures/training_convergence_all_models.json};
-  per-seed trajectories from
-  \protect\path{revision/results/matched2000/runs/<model>/<seed>/metrics.json}.}
+  $\sim 10^{-4}$ before recovering, disclosed at face value rather than
+  excluded). VAE and AR(2) are not plotted: VAE trains with a
+  single-Adam ELBO loop (no per-epoch EMD eval was captured) and AR(2)
+  is fit in closed form via \texttt{lstsq} (no epoch trajectory
+  exists). Per-figure data provenance is summarised in the Data
+  Availability section.}
   \label{fig:training_convergence_all_models}
-\end{figure}
+\end{figure*}
 
 \subsection{Circuit Design Rationale}
 
@@ -268,14 +254,18 @@ range-entangled circuit (135 parameters), and a depth-4 linear-entangled
 circuit (75 parameters), each over 5 seeds. Increasing parameter count and
 circuit depth, or changing the entangler topology, did \emph{not} yield a
 fidelity improvement over the compact 55-parameter circuit at the matched
-budget on this dataset (per-model values reported in Section~4, with full
-per-model numbers tabulated in
-\path{revision/results/matched2000_dualscale.json}). Consistent with the
+budget on this dataset (per-model values reported in Section~4; full
+per-model numbers are released in the artifact set, see Data
+Availability). Consistent with the
 expressibility--trainability
-tradeoff for variational circuits, the deeper/larger ansatz is harder to
+tradeoff for variational circuits \cite{mcclean2018barren, holmes2022barrenexpressibility},
+the deeper/larger ansatz is harder to
 optimise in the low-data, fixed-epoch regime without a corresponding accuracy
 gain, motivating the choice of the smaller circuit as the reported
-configuration.
+configuration. The 55-parameter design also sits well inside the regime where
+gradient-magnitude attenuation (``barren plateaus'') is not a dominant concern,
+which is relevant context for the matched-budget dominance reported in
+Section~4 against parameter-comparable classical baselines.
 
 \textbf{Classical critic with a quantum generator.} The critic is a classical
 convolutional network and only the generator is quantum. This is deliberate:
@@ -297,17 +287,16 @@ The system continuously monitors pH, temperature, optical density, dissolved oxy
 
 \paragraph{Dataset and preprocessing.}
 The study uses a single LUCY photobioreactor cultivation campaign
-% source: revision/results/model_info.json#dataset.independent_campaigns (=1)
-% source: revision/results/model_info.json#dataset.raw_csv_rows (=778)
 comprising 778 raw optical-density time points logged at 10-minute intervals.
-% source: revision/results/model_info.json#dataset.log_return_rows (=777)
 First differencing into log-returns yields 777 log-return observations
-($r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$), which are standardized to
-zero mean and unit variance, then linearly rescaled to $[-1, 1]$ using the
-global min and max of the standardized log-return series.
-% source: revision/results/model_info.json#dataset.window_length (=10)
-% source: revision/results/model_info.json#dataset.window_stride (=2)
-% source: revision/results/model_info.json#dataset.rolling_windows (=384)
+($r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$); log-returns are the
+natural rate variable for this signal, because for an exponentially growing
+culture $\mathrm{OD}_t \approx \mathrm{OD}_0\,e^{\mu t}$, so $r_t$ is (up to
+the 10-minute sampling interval) the local specific growth rate $\mu_t$, the
+quantity of physiological interest in cultivation monitoring (supp \S A.7).
+These are then standardized to zero mean and unit variance, then linearly
+rescaled to $[-1, 1]$ using the global min and max of the standardized
+log-return series.
 Overlapping subsequences of length 10 with stride 2 are then extracted with a
 rolling window, producing 384 training windows. We refer to this preprocessing
 chain (log-return $\to$ standardization $\to$ rescale to $[-1, 1]$) as
@@ -327,15 +316,11 @@ so Pipeline~B was selected for simplicity and because it directly addresses
 reviewer concern R1-M3 that the Lambert~$W$ step over-Gaussianizes the input
 distribution. Supplementary Section~A.7 reports the full ablation
 (Figure~\ref{fig:preprocessing_ablation}).
-% source: revision/results/model_info.json#dataset.train_windows (=384)
-% source: revision/results/model_info.json#dataset.val_windows (=0)
-% source: revision/results/model_info.json#dataset.test_windows (=0)
 Because only one independent campaign is available, all 384 windows are used for
 training; no held-out validation or test split is carved out, as a 384-window
 single campaign is too small to support a held-out split without severely
 under-powering training (stated openly per the calibration-honesty standard,
 R1-M5). Multi-campaign generalization is identified as future work.
-% source: revision/results/model_info.json#seed_set ([42,43,44,45,46])
 All reported quantitative results are aggregated over 5 independent random
 seeds (42, 43, 44, 45, 46) and reported as mean $\pm$ standard deviation.
 
@@ -359,9 +344,8 @@ the matched 2000-epoch budget).
 \caption{Evaluation metrics and the scale on which each is computed. Values
 are mean $\pm$ sample standard deviation over 5 seeds \{42, 43, 44, 45, 46\},
 for the 55-parameter IQP:SEL quantum generator (\texttt{iqp\_sel\_55\_repro}),
-matched 2000-epoch budget, Pipeline~B preprocessing. Source:
-\protect\path{revision/results/matched2000_dualscale.json}, filtered to
-\texttt{model\_kind=iqp\_sel\_55\_repro}.}
+matched 2000-epoch budget, Pipeline~B preprocessing. Per-figure data
+provenance is summarised in the Data Availability section.}
 \label{tbl:eval_scale}
 \small
 \begin{tabular}{@{}lccc@{}}
@@ -379,7 +363,6 @@ ACF (lag~1, mean)   & $-0.0949 \pm 0.0092$ & $0.4667 \pm 0.0286$ & both scales \
 \end{tabular}
 \end{table*}
 
-% source: revision/results/matched2000_dualscale.json#rows aggregated by (model_kind, metric_name, scale) over seeds 42-46
 \begin{table*}[!htbp]
 \centering
 \caption{Cross-model comparison on the five headline matched-budget metrics
@@ -401,9 +384,8 @@ non-adversarial column block and does not displace the quantum/WGAN
 cluster-level conclusion.
 Per-seed sample standard deviations and additional decimals are in
 Figures~\ref{fig:cross_model_dtw_dualscale} and
-\ref{fig:cross_model_acf_overlay} and the source JSON. Source:
-\protect\path{revision/results/matched2000_dualscale.json}, rows aggregated by
-\texttt{(model\_kind, metric\_name, scale)} over seeds 42--46.}
+\ref{fig:cross_model_acf_overlay}. Per-figure data provenance is summarised
+in the Data Availability section.}
 \label{tbl:cross_model_comparison}
 \scriptsize
 \setlength{\tabcolsep}{3pt}
@@ -432,8 +414,7 @@ temporal alignment; see the ``VAE characterization'' paragraph below.}
 
 PDF/CDF, Q--Q, and ACF diagnostic plots in the main text are shown on the
 transformed log-return scale (the training space); the corresponding
-original-OD-scale versions are provided as regenerated figures
-(\path{revision/results/figures/acf_iqp_sel_55_repro}, dual-scale). DTW,
+original-OD-scale plots are provided in the supplement. DTW,
 EMD, and the distributional moments are reported on both scales as above.
 
 \subsubsection*{Cross-Model Comparison}
@@ -480,9 +461,9 @@ real $\approx -0.064$; see VAE characterization below), producing a
 high-frequency oscillation that is warped-aligned to the real series
 at low DTW cost without carrying real temporal information.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_dtw_dualscale.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/cross_model_dtw_dualscale.pdf}
   \caption{DTW distance under matched 2000-epoch training (n=5 seeds;
   mean $\pm$ sample standard deviation). Left: optical-density (OD)
   scale, on which the quantum cluster (V2$=0.33$, V1$=0.35$,
@@ -493,12 +474,11 @@ at low DTW cost without carrying real temporal information.
   outperforms the classical adversarial baselines (wgan\_lstm$=18.23$,
   wgan\_mlp$=28.51$, wgan\_cnn$=69.02$) and falls below AR(2)$=7.70$ for
   every quantum variant except V3 (V3$=9.48 > 7.70$). VAE LR-DTW$=0.0876$
-  reflects a degenerate generation regime (see text) and is excluded from
-  the dominance comparison. Source:
-  \protect\path{revision/results/matched2000_dualscale.json}, filtered to
-  \texttt{metric\_name=dtw\_mean}.}
+  reflects a degenerate generation regime (see text) and is excluded
+  from the dominance comparison. Per-figure data provenance is summarised
+  in the Data Availability section.}
   \label{fig:cross_model_dtw_dualscale}
-\end{figure}
+\end{figure*}
 
 On the log-return single-step marginal-distribution axis (LR-EMD,
 earth-mover's distance between the synthetic and real log-return
@@ -550,9 +530,9 @@ cluster trails on both, and the VAE is anomalous on both. We treat
 the two observations as a single structural-alignment finding rather
 than as two independent metric outcomes.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_acf_overlay.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/cross_model_acf_overlay.pdf}
   \caption{Log-return autocorrelation function (lags 0--9) across all
   nine generators (n=5 seeds; per-model mean), with the real-data ACF
   shown as a dashed reference (lag-1 $= -0.064$, matched-pipeline).
@@ -561,36 +541,30 @@ than as two independent metric outcomes.
   (e.g.\ wgan\_lstm seed-46 lag-1 $= -0.076$). Classical adversarial
   baselines and AR(2) overshoot the negative lag-1 magnitude on the
   per-model mean; VAE (lag-1 ACF $= -0.648$) is anomalous, consistent
-  with the degenerate regime discussed in the text. Source:
-  \protect\path{revision/results/figures/cross_model_acf_overlay.json};
-  real-data ACF computed via
-  \protect\path{revision.core.data.load_and_preprocess}.}
+  with the degenerate regime discussed in the text. The real-data ACF
+  is computed under the matched preprocessing pipeline. Per-figure data
+  provenance is summarised in the Data Availability section.}
   \label{fig:cross_model_acf_overlay}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_emd.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/cross_model_emd.pdf}
   \caption{Cross-model OD-EMD (final-eval mean $\pm$ sample standard
   deviation, n=5 seeds). The horizontal reference line marks the
   frozen-headline OD-EMD reference ($0.0231$, from the
-  \texttt{frozen\_checkpoint\_epoch\_1969} aggregate; distinct from
-  the iqp\_sel\_55\_repro 2000-epoch matched-budget reproduction per
-  D-14-10). Eight of nine models lie within $\pm 0.005$ of the cluster
-  mean; the wgan\_cnn marker is inflated by a single seed-42 outlier
+  \texttt{frozen\_checkpoint\_epoch\_1969} aggregate; distinct from the
+  \texttt{iqp\_sel\_55\_repro} 2000-epoch matched-budget reproduction).
+  The wgan\_cnn marker is inflated by a single seed-42 outlier
   (OD-EMD $=0.1587$, with the other four wgan\_cnn seeds between
   $0.020$ and $0.034$). Visualises the quantum-vs-WGAN OD-EMD cluster
   separation: at the matched 2000-epoch budget the quantum cluster mean
-  is $\approx 0.0288$ and the WGAN cluster mean is $\approx 0.3312$, with
-  the cluster-floor Welch $p = 0.019$ over the 12
-  quantum-vs-WGAN OD-EMD pairs (see supp
-  Table~\ref{tbl:welch_od_emd}). Source:
-  \protect\path{revision/results/figures/cross_model_emd.json}; rows
-  aggregated from
-  \protect\path{revision/results/matched2000_dualscale.json}
-  filtered to \texttt{metric\_name=emd}, \texttt{scale=OD}.}
+  is $\approx 0.0288$ and the WGAN cluster mean is $\approx 0.3312$,
+  with the cluster-floor Welch $p = 0.019$ over the 12 quantum-vs-WGAN
+  OD-EMD pairs (see supp Table~\ref{tbl:welch_od_emd}). Per-figure data
+  provenance is summarised in the Data Availability section.}
   \label{fig:cross_model_emd}
-\end{figure}
+\end{figure*}
 
 \paragraph{VAE characterization.}
 The VAE baseline does not fit cleanly into the cluster-level
@@ -613,7 +587,7 @@ generation regime} (faithful one-step marginal, broken temporal
 structure) and exclude the VAE from the LR-DTW dominance comparison
 above.
 
-\paragraph{OD marginal: quantum cluster dominates the WGAN cluster.}
+\paragraph{OD marginal: quantum cluster dominates the WGAN cluster.}\footnote{Reviewers comparing against the first-round submission (origin tag v1.2.4) will note that this paragraph replaces a ``parametric-equivalence under low power'' reading. The directional shift is an artefact of the sample-space correction described in supp \S A.7: under the inference pipeline used in v1.2.4 the WGAN samples were under-scaled by $10\times$, attenuating every WGAN-vs-real distance and inflating the apparent OD-EMD overlap. The corrected pipeline (this paper) restores the WGAN cluster to its true position and the cluster-floor Welch $p$ shifts from $0.37$ to $0.019$. The data artefacts and the bug fix are tagged at release.}
 On the optical-density single-step marginal
 (Figure~\ref{fig:cross_model_emd}), the four quantum variants form a
 tightly grouped cluster
@@ -642,8 +616,6 @@ test but not a TOST-grade equivalence statement, and we do not extend
 the per-model finding to a per-seed claim.
 
 \paragraph{Discriminative-score uniformity (evaluation-protocol observation).}
-% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_mean (=0.4088757634162903)
-% source: revision/results/predictive_discriminative_matched2000.json#scores.*.discriminative_std (=0.0)
 As a property of the evaluation protocol rather than a generator-quality
 result, we note that under Pipeline~B the TimeGAN discriminative score
 collapses to a near-fixed value of approximately 0.4089 (more precisely,
@@ -653,7 +625,7 @@ zero. We therefore treat this metric as a property of the discriminative
 post-hoc network under the matched preprocessing, not as a discriminator of
 generator quality. Predictive-score values, by contrast, do vary across
 models and are reported alongside the per-model TimeGAN scores in the
-artifact set at \path{revision/results/predictive_discriminative_matched2000.json}.
+released artifact set (see Data Availability).
 
 \textbf{Dynamic Time Warping.}
 Under the matched parameter budget and matched 2000-epoch training contract,
@@ -725,7 +697,7 @@ metric are preserved throughout.
 
 Our research presents the following principal contributions. First, we developed and evaluated a QWGAN-GP architecture for bioprocess applications, where the generator component employs a Parameterized Quantum Circuit (PQC) with three layers of quantum gates, including Hadamard gates for superposition creation, rotation gates for amplitude control, and CNOT gates for entanglement generation. Under the matched-budget protocol (Section~3), this quantum generator outperforms every parameter-matched classical WGAN adversarial baseline on all four matched-budget metrics: log-return temporal alignment (LR-DTW 6.09--9.48 vs WGAN 18.23--69.02), log-return single-step marginal (LR-EMD 0.0040--0.0050 vs WGAN 0.0244--0.1286), optical-density temporal alignment (OD-DTW 0.33--0.41 vs WGAN 0.60--6.99), and optical-density single-step marginal (OD-EMD 0.0279--0.0308 vs WGAN 0.0769--0.7989, Welch $p = 0.019$). The quantum cluster also reproduces the lag-1 autocorrelation of the real series ($-0.064$) more closely than any classical generator (quantum cluster $-0.0997$ to $-0.0895$).
 
-Second, our empirical evaluation on a single real-world photobioreactor cultivation campaign produces a four-metric quantum-vs-WGAN dominance finding (Section~4.1, Table~\ref{tbl:cross_model_comparison}, Figures~\ref{fig:cross_model_dtw_dualscale} and~\ref{fig:cross_model_acf_overlay}). The quantum generators \emph{exceed} the parameter-matched classical WGAN adversarial baselines on every matched-budget metric we measured: mean-level dominance on LR-DTW + OD-DTW + LR-EMD + OD-EMD with Welch significance on the OD-marginal axes (OD-EMD $p = 0.019$; OD-DTW $p \approx 0.002$ against the strongest WGAN comparator), and mean-level dominance on lag-1 ACF closeness to real with per-seed overlap observed. The AR(2) reference remains the lowest LR-EMD value and the VAE is characterized as a degenerate generation regime (excluded from LR-DTW dominance). We present the QWGAN-GP as outperforming size-matched classical WGAN adversarial baselines on every matched-budget metric on this dataset, while restricting positive claims to between-cluster means under the n=5 power budget and to the laboratory-scale single-variable setting actually evaluated.
+Second, our empirical evaluation on a single real-world photobioreactor cultivation campaign produces a four-metric quantum-vs-WGAN dominance finding (Section~4.1, Table~\ref{tbl:cross_model_comparison}, Figures~\ref{fig:cross_model_dtw_dualscale} and~\ref{fig:cross_model_acf_overlay}). The quantum generators \emph{exceed} the parameter-matched classical WGAN adversarial baselines on every matched-budget metric we measured: mean-level dominance on LR-DTW + OD-DTW + LR-EMD + OD-EMD with Welch significance on the OD-marginal axes (OD-EMD $p = 0.019$; OD-DTW $p \approx 0.002$ against the strongest WGAN comparator), and mean-level dominance on lag-1 ACF closeness to real with per-seed overlap observed. The AR(2) reference remains the lowest LR-EMD value and the VAE is characterized as a degenerate generation regime (excluded from LR-DTW dominance). We present the QWGAN-GP as outperforming size-matched classical WGAN adversarial baselines on every matched-budget metric on this dataset. Positive claims are restricted to between-cluster means under the n=5 power budget and to the laboratory-scale single-variable setting actually evaluated.
 
 The matched-budget protocol (Section~3) already isolates the contribution of the
 quantum circuit: three parameter-matched classical WGAN-GP baselines
@@ -736,29 +708,26 @@ The per-model evaluation is reported in Section~4.1;
 Figure~\ref{fig:param_efficiency_pareto} visualizes the parameter-efficiency
 frontier on both the OD and log-return scales.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\columnwidth]{revision/results/figures/param_efficiency_pareto.pdf}
+  \includegraphics[width=\linewidth]{revision/results/figures/param_efficiency_pareto.pdf}
   \caption{Parameter-efficiency frontier: cross-model EMD vs.\
   generator parameter count, on the OD scale (left) and log-return
   scale (right). Markers: circle $=$ adversarial-quantum (4 variants,
   55--135 parameters), square $=$ adversarial-classical (3 variants,
   73--78 parameters), triangle $=$ non-adversarial (VAE 562p, AR(2)
   3p). The frozen-headline reference (epoch-1969 checkpoint) is
-  plotted as a distinct diamond marker at the same 55-parameter
-  $x$ as the \texttt{iqp\_sel\_55\_repro} circle, with a distinct
-  color and lower $y$ reflecting the early-stopped best-of-checkpoint
-  value per D-14-10 (\emph{not} merged with the 5-seed 2000-epoch
-  reproduction). Lower-left is better parameter efficiency. The shared
+  plotted as a distinct diamond marker at the same 55-parameter $x$ as
+  the \texttt{iqp\_sel\_55\_repro} circle, with a distinct color and
+  lower $y$ reflecting the early-stopped best-of-checkpoint value
+  (\emph{not} merged with the 5-seed 2000-epoch reproduction).
+  Lower-left is better parameter efficiency. The shared
   250881-parameter critic applies to all adversarial models alike and
   is excluded from the $x$-axis (generator-only parameter count).
-  Source:
-  \protect\path{revision/results/figures/param_efficiency_pareto.json};
-  per-model means from
-  \protect\path{revision/results/matched2000_dualscale.json}, parameter
-  counts from \protect\path{revision/results/model_info.json}.}
+  Per-figure data provenance is summarised in the Data Availability
+  section.}
   \label{fig:param_efficiency_pareto}
-\end{figure}
+\end{figure*}
 
 Third, we have contributed to open science practices by making our code and datasets publicly available at \url{https://github.com/shawngibford/qgan}, facilitating independent verification and accelerating future advances in quantum-enhanced bioprocess engineering.
 
@@ -766,7 +735,7 @@ Fourth, as an organising concept for future work --- not as an empirical contrib
 
 \subsection{Theoretical and Practical Implications}
 
-The contribution of this work is methodological: it provides a parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against classical baselines on a data-scarce bioprocess task, together with a reproducible matched-budget finding. The quantum WGAN-GP cluster dominates the parameter-matched classical adversarial WGAN cluster on all four matched-budget metrics evaluated on the photobioreactor dataset: log-return temporal alignment (LR-DTW, per-seed dominance), log-return single-step marginal (LR-EMD, $\sim 15\times$ quantum advantage on per-model means), optical-density temporal alignment (OD-DTW, Welch cluster-floor $p \approx 0.002$), and optical-density single-step marginal (OD-EMD, Welch cluster-floor $p = 0.019$); the lag-1 autocorrelation of the real series corroborates the cluster-mean separation (Section~4.1). At $n=5$ seeds the OD-EMD per-model dominance is statistically detectable but not extended to a per-seed equivalence-grade claim; the LR-EMD per-model dominance is similarly reported as a between-cluster gap on means rather than a per-seed dominance claim. Whether the matched-budget finding generalizes beyond a single cultivation, holds at higher qubit counts past the simulable boundary, and survives extension to multivariate process variables is a substantive empirical question for future work.
+The contribution of this work is methodological: it provides a parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against classical baselines on a data-scarce bioprocess task, together with a reproducible matched-budget finding. The quantum WGAN-GP cluster dominates the parameter-matched classical adversarial WGAN cluster on all four matched-budget metrics: LR-DTW (per-seed dominance), LR-EMD (cluster-mean separation), OD-DTW (Welch-significant), and OD-EMD (Welch-significant). Lag-1 autocorrelation closeness to the real series corroborates the cluster-mean temporal-structure result (\S 4.1). At $n=5$ seeds the OD-EMD and LR-EMD per-model dominance is reported as a between-cluster gap on means rather than a per-seed dominance claim. Whether the matched-budget finding generalizes beyond a single cultivation, holds at higher qubit counts past the simulable boundary, and survives extension to multivariate process variables is a substantive empirical question for future work.
 
 From a practical perspective, this research addresses a fundamental bottleneck in bioprocess development where experimental data generation is constrained by high operational costs, regulatory requirements, and time limitations. The log-return temporal-structure properties reported here (LR-DTW alignment and lag-1 ACF closeness to real) may be relevant to downstream applications such as soft-sensor training and process-monitoring augmentation; demonstrating downstream utility (e.g., train-on-synthetic / test-on-real accuracy uplift for soft sensors of biomass concentration, product quality, or metabolic activity) requires multivariate process data and is identified as future work, not as a contribution of the present study.
 
@@ -803,10 +772,12 @@ each of which the present protocol does \emph{not} establish:
     quantum seed overlaps any classical WGAN seed) and for the
     cluster-floor Welch tests on OD-EMD ($p = 0.019$) and OD-DTW
     ($p \approx 0.002$), but it does not support either TOST-grade
-    equivalence inference or per-seed claims on OD-EMD / LR-EMD; the
-    cluster-mean separations on those axes are reported with explicit
-    n=5 power caveats and per-seed overlap is acknowledged where it
-    occurs (Section~4.1, supp \S A.7).
+    equivalence inference or per-seed claims on OD-EMD / LR-EMD;
+    the Welch $t$-test affords approximately 15\% statistical power
+    to detect a moderate effect size of $d = 0.5$ at this seed
+    budget, so the cluster-mean separations on those axes are
+    reported with explicit n=5 power caveats and per-seed overlap is
+    acknowledged where it occurs (Section~4.1, supp \S A.7).
   \item \textbf{Qubit count and window dimensionality.} The five-qubit,
     ten-dimensional rolling-window regime is dictated by the
     rolling-window choice (Section~3.1). The finding does not extrapolate
@@ -868,7 +839,44 @@ contributions of the present paper.
 Additionally, extending the framework to multivariate, multimodal bioprocess datasets and exploring alternative quantum generative models such as quantum diffusion models or quantum variational autoencoders could further enhance the versatility and performance of synthetic data generation for bioprocess applications.
 
 \subsection*{Data Availability and Reproducibility Statement}
-The complete source code and datasets used in this study are publicly available at \url{https://github.com/shawngibford/qgan}, with an archived snapshot of the tagged release deposited at Zenodo, DOI: \texttt{ZENODO-DOI-PLACEHOLDER} (to be assigned; the Zenodo DOI is minted at release-freeze time). All experiments were conducted using PennyLane for quantum circuit simulation and PyTorch for classical components. Detailed hyperparameters, circuit specifications, and data preprocessing steps are provided in the Supplementary Information to enable independent reproduction of the reported results.
+The complete source code and datasets used in this study are publicly
+available at \url{https://github.com/shawngibford/qgan}, with an archived
+snapshot of the tagged release deposited at Zenodo, DOI:
+\texttt{ZENODO-DOI-PLACEHOLDER} (to be assigned; the Zenodo DOI is minted
+at release-freeze time). All experiments were conducted using PennyLane
+for quantum circuit simulation and PyTorch for classical components.
+Detailed hyperparameters, circuit specifications, and data preprocessing
+steps are provided in the Supplementary Information to enable independent
+reproduction of the reported results.
+
+\paragraph{Per-figure and per-table data provenance.}
+Every figure and table in the main paper is regenerable from the released
+artifact set. Figure scripts and the JSON/CSV data files they consume are
+organised under the \texttt{revision/results/} tree of the released
+repository (Zenodo archive at the DOI above). The mapping is:
+\begin{itemize}[nosep, leftmargin=*]
+  \item Figure~\ref{fig:training_convergence_all_models} (training
+    convergence): \texttt{revision/results/figures/training\_convergence\_all\_models.json};
+    per-seed trajectories under
+    \texttt{revision/results/matched2000/runs/<model>/<seed>/metrics.json}.
+  \item Figures~\ref{fig:cross_model_dtw_dualscale},
+    \ref{fig:cross_model_emd}; Tables~\ref{tbl:eval_scale},
+    \ref{tbl:cross_model_comparison}:
+    \texttt{revision/results/matched2000\_dualscale.json}, filtered by
+    \texttt{model\_kind}, \texttt{metric\_name}, and \texttt{scale} as
+    appropriate.
+  \item Figure~\ref{fig:cross_model_acf_overlay} (cross-model ACF):
+    \texttt{revision/results/figures/cross\_model\_acf\_overlay.json};
+    real-data ACF computed under the matched preprocessing pipeline.
+  \item Figure~\ref{fig:param_efficiency_pareto}
+    (parameter-efficiency frontier):
+    \texttt{revision/results/figures/param\_efficiency\_pareto.json};
+    parameter counts from \texttt{revision/results/model\_info.json}.
+\end{itemize}
+The WGAN sample-space convention and the $\times 10$ inverse correction
+are applied at the \texttt{samples.npy} load boundary via the shared
+helper \texttt{revision/\_wgan\_unscale.py} (see supp \S A.7). All
+script entry points are documented in \texttt{revision/README.md}.
 
 \section{Concluding Remarks}
 
@@ -876,23 +884,19 @@ Returning to the falsifiable question posed in Section~1.3 --- whether a
 PQC generator can match or exceed a parameter-matched classical generator
 on a low-data bioprocess task --- the matched-budget evidence on this
 single dataset answers in the affirmative against the classical WGAN
-adversarial cluster. The quantum generators \emph{exceed} the
-parameter-matched classical WGAN adversarial baselines on every
-matched-budget metric measured: log-return temporal alignment (LR-DTW
-6.09--9.48 vs 18.23--69.02), log-return single-step marginal (LR-EMD
-0.0040--0.0050 vs 0.0244--0.1286, Welch $p \approx 0.0002$),
-optical-density temporal alignment (OD-DTW 0.33--0.41 vs 0.60--6.99,
-Welch $p \approx 0.002$ against the strongest WGAN comparator), and
-optical-density single-step marginal (OD-EMD 0.0279--0.0308 vs
-0.0769--0.7989, Welch $p = 0.019$), with lag-1 autocorrelation
-closeness to the real series ($-0.064$) corroborating the temporal
-structure result at the mean level (per-seed overlap observed). The
-AR(2) reference leads on LR-EMD; the VAE LR-DTW reflects a degenerate
-generation regime and is excluded from the dominance claim. We treat
-this as a positive answer scoped to the laboratory-scale,
-single-variable photobioreactor cultivation evaluated and to the n=5
-power budget actually exercised, with per-model dominance against the
-WGAN cluster not extended to per-seed claims on this dataset.
+adversarial cluster. The quantum generators exceed the parameter-matched
+classical WGAN adversarial baselines on every matched-budget metric
+measured: log-return temporal alignment (LR-DTW, per-seed dominance),
+log-return single-step marginal (LR-EMD, Welch-significant), optical-density
+temporal alignment (OD-DTW, Welch-significant), and optical-density
+single-step marginal (OD-EMD, Welch-significant); lag-1 autocorrelation
+closeness to the real reference corroborates the temporal-structure result
+at the cluster-mean level (per-seed overlap noted). The AR(2) reference
+leads on LR-EMD; the VAE LR-DTW reflects a degenerate generation regime
+and is excluded from the dominance claim. We treat this as a positive
+answer scoped to the laboratory-scale, single-variable photobioreactor
+cultivation evaluated and to the n=5 power budget actually exercised
+(specific values in Section~4.1 and Table~\ref{tbl:cross_model_comparison}).
 
 The empirical envelope is narrow: a single 778-point optical-density
 cultivation campaign, 384 length-10 rolling windows, five qubits, five
@@ -910,6 +914,53 @@ require the multivariate, longer-series, higher-qubit-count, and
 larger-seed-budget extensions identified in the Outlook above, together
 with downstream-utility evaluation that the present matched-budget
 protocol does not undertake.
+
+\subsection*{Note on the inference-pipeline correction}
+
+The first-round submission (origin tag v1.2.4) was prepared under an
+inference pipeline that under-scaled the WGAN-trained samples by a factor
+of $10$ in the rescaled $[-1, +1]$ window space (see supp \S A.7 for the
+technical disclosure). The corrected inference pipeline, applied uniformly
+at the \texttt{samples.npy} load boundary across every paper-cited
+consumer, shifts the WGAN cluster's distance metrics in the direction of
+higher (i.e., worse) values --- by construction, since the bug attenuated
+WGAN-vs-real distances and the correction restores them. Three properties
+of the corrected pipeline make this fix a defensible methodological
+correction rather than a result-favoring intervention.
+
+\textbf{(i) Asymmetry by design.} The correction is gated by
+\texttt{model\_kind} membership in the WGAN-trained set and excludes the
+VAE and AR(2) baselines, which were trained without the $\times 0.1$
+post-scaling and whose on-disk samples were already in the canonical
+$[-1, +1]$ space. The differential test against the pre-fix JSON
+snapshots confirms every VAE and AR(2) row is bit-identical pre/post;
+only WGAN-kind rows shift. This rules out a uniform
+``rescale-everything'' intervention.
+
+\textbf{(ii) Quantum entrants are also WGAN-trained.} The four quantum
+variants (IQP:SEL, V1, V2, V3) are inside the same gated set and
+receive the same $\times 10$ correction as the classical WGAN
+baselines. The shift therefore moves the quantum cluster's pre-fix
+attenuated values up in the same direction; the cluster-dominance
+reading emerges \emph{after} the correction restores the quantum
+cluster's true scale, not because the correction differentially
+advantages it.
+
+\textbf{(iii) Direction and magnitude are inherited from the bug.} The
+$10\times$ correction is the inverse of the documented $\times 0.1$ at
+the WGAN training/sample-export sites; both the factor and the gated
+subset are reproducible from the code comment at
+\texttt{archive/qgan\_pennylane\_SEL.py} and the Pitfall~3 note at
+\texttt{revision/run\_baselines.py:28}. We did not select the magnitude
+or direction of the correction \emph{post hoc}.
+
+The corrected pipeline inverts the v1.2.4 reading on three of the four
+matched-budget metrics (preserves directionally on LR-DTW; flips OD-EMD
+from underpowered-null to cluster-significant; inverts the LR-EMD
+direction). Reviewers wishing to audit the directional shifts
+cell-by-cell can do so via the pre-fix JSON snapshots preserved in the
+release artifact set and the differential-test apparatus at
+\texttt{revision/scripts/v2.1\_differential\_test.py}.
 
 
 
