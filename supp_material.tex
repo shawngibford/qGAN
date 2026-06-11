@@ -339,12 +339,12 @@ quantum cell and any classical adversarial cell in the cross-grid; all
 \begin{table*}[!htbp]
 \centering
 \caption{Per-seed LR-DTW dominance margin between the worst-case quantum
-variant (V3, 75 parameters) and the best-case classical adversarial
+variant (V3, 75 parameters) and the best-case classical WGAN adversarial
 baseline (wgan\_lstm, 78 parameters) at the matched 2000-epoch budget.
-For every seed the worst quantum LR-DTW is below the best classical
+For every seed the worst quantum LR-DTW is below the best classical WGAN
 LR-DTW; the gap column gives the absolute margin. The tightest margin
-is at seed~46 (0.205, $\approx 16\%$ of the classical value). This table
-makes the ``no quantum--classical seed overlap on LR-DTW'' claim in
+is at seed~45 ($4.91$, $\approx 35\%$ of the classical value). This table
+makes the ``no quantum--WGAN seed overlap on LR-DTW'' claim in
 \S4.1 and \S4.2 of the main text directly verifiable. Source:
 \protect\path{revision/results/matched2000_dualscale.json}, filtered to
 \texttt{metric\_name=dtw\_mean} and \texttt{scale=log\_return}.}
@@ -353,11 +353,11 @@ makes the ``no quantum--classical seed overlap on LR-DTW'' claim in
 \toprule
 \textbf{Seed} & \textbf{Worst quantum (V3)} & \textbf{Best classical (wgan\_lstm)} & \textbf{Gap} \\
 \midrule
-42 & $1.1201$ & $1.6997$ & $0.5796$ \\
-43 & $1.0670$ & $1.5552$ & $0.4882$ \\
-44 & $1.2239$ & $1.8640$ & $0.6401$ \\
-45 & $1.0995$ & $1.4801$ & $0.3806$ \\
-46 & $1.1018$ & $1.3070$ & $0.2052$ \\
+42 & $9.6572$ & $18.6874$ & $9.0303$ \\
+43 & $8.1597$ & $19.3005$ & $11.1407$ \\
+44 & $11.0691$ & $19.7907$ & $8.7217$ \\
+45 & $9.1580$ & $14.0645$ & $4.9065$ \\
+46 & $9.3591$ & $19.3106$ & $9.9516$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -445,26 +445,26 @@ WGAN-CNN) to $d \approx 150$ (vs.\ AR(2)). Source:
 \toprule
 \textbf{Quantum} & \textbf{Classical} & \textbf{Mean}$_q$ & \textbf{Mean}$_c$ & \textbf{Welch $p$} & \textbf{Cohen's $d$} & \textbf{MWU $p$} \\
 \midrule
-IQP:SEL & WGAN-MLP & $0.0150$ & $0.0103$ & $9.5\!\times\!10^{-5}\,^{***}$ & $+8.18$ & $0.008$ \\
-IQP:SEL & WGAN-CNN & $0.0150$ & $0.0071$ & $0.027\,^{*}$ & $+2.15$ & $0.151$ \\
-IQP:SEL & WGAN-LSTM & $0.0150$ & $0.0127$ & $5.8\!\times\!10^{-4}\,^{***}$ & $+5.00$ & $0.008$ \\
-IQP:SEL & VAE & $0.0150$ & $0.0158$ & $6.0\!\times\!10^{-4}\,^{***}$ & $-6.04$ & $0.008$ \\
-IQP:SEL & AR(2) & $0.0150$ & $0.0029$ & $1.2\!\times\!10^{-11}\,^{***}$ & $+73.78$ & $0.008$ \\
-V1 & WGAN-MLP & $0.0150$ & $0.0103$ & $1.4\!\times\!10^{-4}\,^{***}$ & $+8.34$ & $0.008$ \\
-V1 & WGAN-CNN & $0.0150$ & $0.0071$ & $0.027\,^{*}$ & $+2.16$ & $0.151$ \\
-V1 & WGAN-LSTM & $0.0150$ & $0.0127$ & $8.5\!\times\!10^{-4}\,^{***}$ & $+5.16$ & $0.008$ \\
-V1 & VAE & $0.0150$ & $0.0158$ & $7.5\!\times\!10^{-5}\,^{***}$ & $-9.55$ & $0.008$ \\
-V1 & AR(2) & $0.0150$ & $0.0029$ & $4.0\!\times\!10^{-15}\,^{***}$ & $+101.0$ & $0.008$ \\
-V2 & WGAN-MLP & $0.0150$ & $0.0103$ & $1.7\!\times\!10^{-4}\,^{***}$ & $+8.54$ & $0.008$ \\
-V2 & WGAN-CNN & $0.0150$ & $0.0071$ & $0.026\,^{*}$ & $+2.17$ & $0.151$ \\
-V2 & WGAN-LSTM & $0.0150$ & $0.0127$ & $0.001\,^{**}$ & $+5.39$ & $0.008$ \\
-V2 & VAE & $0.0150$ & $0.0158$ & $3.0\!\times\!10^{-11}\,^{***}$ & $-43.07$ & $0.008$ \\
-V2 & AR(2) & $0.0150$ & $0.0029$ & $9.5\!\times\!10^{-10}\,^{***}$ & $+151.5$ & $0.008$ \\
-V3 & WGAN-MLP & $0.0143$ & $0.0103$ & $1.8\!\times\!10^{-4}\,^{***}$ & $+7.04$ & $0.008$ \\
-V3 & WGAN-CNN & $0.0143$ & $0.0071$ & $0.035\,^{*}$ & $+1.98$ & $0.151$ \\
-V3 & WGAN-LSTM & $0.0143$ & $0.0127$ & $0.003\,^{**}$ & $+3.55$ & $0.008$ \\
-V3 & VAE & $0.0143$ & $0.0158$ & $7.5\!\times\!10^{-5}\,^{***}$ & $-10.19$ & $0.008$ \\
-V3 & AR(2) & $0.0143$ & $0.0029$ & $2.9\!\times\!10^{-11}\,^{***}$ & $+68.07$ & $0.008$ \\
+IQP:SEL & WGAN-MLP & $0.0040$ & $0.0444$ & $2.2\!\times\!10^{-4}\,^{***}$ & $-7.65$ & $0.008$ \\
+IQP:SEL & WGAN-CNN & $0.0040$ & $0.1286$ & $0.011\,^{*}$ & $-2.81$ & $0.008$ \\
+IQP:SEL & WGAN-LSTM & $0.0040$ & $0.0244$ & $0.001\,^{**}$ & $-5.10$ & $0.008$ \\
+IQP:SEL & VAE & $0.0040$ & $0.0158$ & $9.4\!\times\!10^{-6}\,^{***}$ & $-17.78$ & $0.008$ \\
+IQP:SEL & AR(2) & $0.0040$ & $0.0029$ & $0.060$ & $+1.63$ & $0.056$ \\
+V1 & WGAN-MLP & $0.0041$ & $0.0444$ & $2.5\!\times\!10^{-4}\,^{***}$ & $-7.68$ & $0.008$ \\
+V1 & WGAN-CNN & $0.0041$ & $0.1286$ & $0.011\,^{*}$ & $-2.81$ & $0.008$ \\
+V1 & WGAN-LSTM & $0.0041$ & $0.0244$ & $0.001\,^{**}$ & $-5.13$ & $0.008$ \\
+V1 & VAE & $0.0041$ & $0.0158$ & $7.0\!\times\!10^{-7}\,^{***}$ & $-33.77$ & $0.008$ \\
+V1 & AR(2) & $0.0041$ & $0.0029$ & $0.005\,^{**}$ & $+3.31$ & $0.008$ \\
+V2 & WGAN-MLP & $0.0044$ & $0.0444$ & $2.7\!\times\!10^{-4}\,^{***}$ & $-7.64$ & $0.008$ \\
+V2 & WGAN-CNN & $0.0044$ & $0.1286$ & $0.011\,^{*}$ & $-2.81$ & $0.008$ \\
+V2 & WGAN-LSTM & $0.0044$ & $0.0244$ & $0.001\,^{**}$ & $-5.08$ & $0.008$ \\
+V2 & VAE & $0.0044$ & $0.0158$ & $5.5\!\times\!10^{-13}\,^{***}$ & $-267.45$ & $0.008$ \\
+V2 & AR(2) & $0.0044$ & $0.0029$ & $2.6\!\times\!10^{-7}\,^{***}$ & $+16.42$ & $0.008$ \\
+V3 & WGAN-MLP & $0.0050$ & $0.0444$ & $1.8\!\times\!10^{-4}\,^{***}$ & $-7.33$ & $0.008$ \\
+V3 & WGAN-CNN & $0.0050$ & $0.1286$ & $0.012\,^{*}$ & $-2.79$ & $0.008$ \\
+V3 & WGAN-LSTM & $0.0050$ & $0.0244$ & $8.7\!\times\!10^{-4}\,^{***}$ & $-4.70$ & $0.008$ \\
+V3 & VAE & $0.0050$ & $0.0158$ & $1.5\!\times\!10^{-4}\,^{***}$ & $-8.93$ & $0.008$ \\
+V3 & AR(2) & $0.0050$ & $0.0029$ & $0.053$ & $+1.71$ & $0.016$ \\
 \bottomrule
 \end{tabular}
 \end{table*}

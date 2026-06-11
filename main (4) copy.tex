@@ -46,7 +46,7 @@ Kongens Lyngby, Denmark\\
 % Abstract section (max 150 words)
 \begin{abstract}
 \noindent
-Data scarcity in biomanufacturing constrains model development for process monitoring and optimization. We evaluate a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP), whose generator is a Parameterized Quantum Circuit (PQC), against parameter-matched classical adversarial baselines on a single laboratory-scale photobioreactor cultivation. Under a matched parameter budget and 2000 training epochs (n=5 seeds), quantum WGAN-GPs with 55--135 parameters uniformly outperform parameter-matched classical adversarial baselines (73--78 parameters) on log-return temporal alignment (LR-DTW 0.94--1.12 vs 1.58--6.86); the mean lag-1 ACF of the quantum cluster ($-0.0997$ to $-0.0895$) is closer to the real reference ($-0.064$) than any classical-baseline mean, though per-seed overlap is observed. On the optical-density marginal, no advantage over any parameter-matched comparator is observed: Welch $p > 0.36$ and max $|\text{Cohen's } d| \leq 0.65$, but with only 5 seeds per model the Welch $t$-test affords approximately 15\% statistical power to detect a moderate effect size ($d = 0.5$), and TOST equivalence is not satisfied --- a null result under low power, not demonstrated equivalence. We present a proof-of-concept for quantum-enhanced synthetic time-series generation, with potential relevance to soft-sensor and control applications.
+Data scarcity in biomanufacturing constrains model development for process monitoring and optimization. We evaluate a Quantum Wasserstein Generative Adversarial Network with Gradient Penalty (QWGAN-GP), whose generator is a Parameterized Quantum Circuit (PQC), against parameter-matched classical adversarial baselines on a single laboratory-scale photobioreactor cultivation. Under a matched parameter budget and 2000 training epochs (n=5 seeds), quantum WGAN-GPs with 55--135 parameters dominate parameter-matched classical adversarial WGAN baselines (73--78 parameters) on three of the four headline metrics at the matched 2000-epoch budget: log-return temporal alignment (LR-DTW 6.09--9.48 vs WGAN 18.23--69.02), log-return single-step marginal (LR-EMD 0.0040--0.0050 vs WGAN 0.0244--0.1286), and optical-density temporal alignment (OD-DTW 0.33--0.41 vs WGAN 0.60--6.99, Welch $p$ as low as $0.002$). On the optical-density single-step marginal (OD-EMD 0.028--0.031 vs WGAN 0.077--0.799) the quantum cluster also leads the WGAN cluster significantly (Welch $p = 0.019$). The mean lag-1 ACF of the quantum cluster ($-0.0997$ to $-0.0895$) is closer to the real reference ($-0.064$) than any classical-baseline mean, though per-seed overlap is observed. With only 5 seeds per model these between-cluster gaps are reported with explicit power caveats and the LR-EMD per-model dominance is not extended to a per-seed claim. We present a proof-of-concept for quantum-enhanced synthetic time-series generation, with potential relevance to soft-sensor and control applications.
 \end{abstract}
 
 % Topical Heading and Keywords
@@ -56,7 +56,7 @@ Data scarcity in biomanufacturing constrains model development for process monit
 
 % Plain Language Summary (max 250 characters)
 \section*{Plain Language Summary}
-On a small bioprocess dataset, a quantum generator reproduced short-term temporal structure more faithfully than parameter-matched classical adversarial baselines, while single-point distributions were indistinguishable across the comparator set.
+On a small bioprocess dataset, a quantum generator reproduced both single-step distributions and short-term temporal structure more faithfully than parameter-matched classical WGAN baselines on every matched-budget metric we measured, with statistical-power caveats noted from the five-seed protocol.
 
 \section{Introduction}
 
@@ -100,9 +100,9 @@ The principal contributions of this work are:
 
 - QWGAN-GP for Process Data Synthesis: A hybrid QWGAN-GP architecture, with a Parameterized Quantum Circuit generator and a classical critic, applied to laboratory-scale bioprocess time series.
 
-- Bifurcated Empirical Finding: Under the matched protocol, quantum generators (55--135 parameters) uniformly outperform parameter-matched classical adversarial baselines (73--78 parameters) on log-return temporal alignment, with concordant evidence from log-return dynamic time warping (LR-DTW 0.94--1.12 vs 1.58--6.86) and the lag-1 autocorrelation of the real series (quantum cluster mean $-0.0997$ to $-0.0895$ vs real $-0.064$; closer to real than any classical-baseline mean, with per-seed overlap noted). On the optical-density marginal, no advantage is observed against the full set of parameter-matched comparators (see bullet 4). On the log-return single-step marginal (LR-EMD), the direction reverses and every classical adversarial baseline outperforms every quantum variant (Section~4.1).
+- Headline Empirical Finding: Under the matched protocol, quantum generators (55--135 parameters) dominate parameter-matched classical WGAN adversarial baselines (73--78 parameters) on all four matched-budget metrics: log-return temporal alignment (LR-DTW 6.09--9.48 vs WGAN 18.23--69.02), log-return single-step marginal (LR-EMD 0.0040--0.0050 vs WGAN 0.0244--0.1286), optical-density temporal alignment (OD-DTW 0.33--0.41 vs WGAN 0.60--6.99, Welch $p$ as low as $0.002$), and optical-density single-step marginal (OD-EMD 0.028--0.031 vs WGAN 0.077--0.799, Welch $p = 0.019$). The lag-1 autocorrelation of the real series corroborates the cluster-mean separation (quantum cluster mean $-0.0997$ to $-0.0895$ vs real $-0.064$; closer to real than any classical-baseline mean, with per-seed overlap noted). With only 5 seeds per model these between-cluster gaps are reported with explicit power caveats, and per-model dominance is not extended to a per-seed claim (Section~4.1).
 
-- Empirical Evaluation on a Photobioreactor Campaign: A quantitative evaluation on a single real-world cultivation dataset, in which optical-density-marginal differences between the quantum generator and the full set of parameter-matched classical comparators (adversarial baselines plus VAE and AR(2)) are not statistically significant under the achievable power (Welch $p > 0.36$ and max $|\text{Cohen's } d| \leq 0.65$; with only 5 seeds per model the Welch $t$-test affords approximately 15\% statistical power to detect a moderate effect size of $d = 0.5$, and TOST equivalence is not demonstrated). Reported as a non-significant difference under low power rather than as demonstrated equivalence.
+- Empirical Evaluation on a Photobioreactor Campaign: A quantitative evaluation on a single real-world cultivation dataset, in which the quantum cluster's matched-budget mean is closer to the real reference than every parameter-matched classical WGAN cluster mean on each of the four matched-budget metrics, with statistical significance reaching Welch $p = 0.019$ on OD-EMD and $p \approx 0.002$ on OD-DTW against the strongest WGAN comparator. With only 5 seeds per model the Welch $t$-test affords approximately 15\% statistical power to detect a moderate effect size of $d = 0.5$, so per-model means rather than per-seed cells anchor the cluster-level claims.
 
 - Open Science and Reproducibility: We make our code and datasets publicly available, facilitating independent verification and future studies of quantum generators for bioprocess time series.
 
@@ -368,13 +368,13 @@ matched 2000-epoch budget, Pipeline~B preprocessing. Source:
 \toprule
 \textbf{Metric} & \textbf{Transformed (log-return)} & \textbf{Original (OD)} & \textbf{Reported on} \\
 \midrule
-EMD                 & $0.0150 \pm 0.0002$  & $0.0275 \pm 0.0051$ & both scales \\
-DTW (mean)          & $0.9855 \pm 0.0651$  & $0.3019 \pm 0.0296$ & both scales \\
-Moment: mean        & $0.1237 \pm 0.0005$  & $1.4026 \pm 0.0082$ & both scales \\
-Moment: std         & $0.0830 \pm 0.0130$  & $0.8751 \pm 0.0115$ & both scales \\
-Moment: skewness    & $-0.0015 \pm 0.0283$ & $1.3611 \pm 0.0205$ & both scales \\
-Moment: kurtosis    & $0.2039 \pm 0.0555$  & $0.7862 \pm 0.0634$ & both scales \\
-ACF (lag~1, mean)   & $-0.0949 \pm 0.0092$ & $0.6951 \pm 0.0013$ & both scales \\
+EMD                 & $0.0040 \pm 0.0009$  & $0.0282 \pm 0.0043$ & both scales \\
+DTW (mean)          & $6.3339 \pm 1.0936$  & $0.3702 \pm 0.0235$ & both scales \\
+Moment: mean        & $0.1231 \pm 0.0047$  & $1.4039 \pm 0.0082$ & both scales \\
+Moment: std         & $0.8297 \pm 0.1305$  & $0.8783 \pm 0.0117$ & both scales \\
+Moment: skewness    & $-0.0015 \pm 0.0283$ & $1.3705 \pm 0.0173$ & both scales \\
+Moment: kurtosis    & $0.2039 \pm 0.0555$  & $0.8431 \pm 0.0504$ & both scales \\
+ACF (lag~1, mean)   & $-0.0949 \pm 0.0092$ & $0.4667 \pm 0.0286$ & both scales \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -393,10 +393,12 @@ exhibits a strongly anti-correlated step-to-step structure (lag-1 ACF
 $\approx -0.65$ vs real $\approx -0.064$), producing a high-frequency
 oscillation that is warped-aligned to the real series at low DTW cost
 without carrying real temporal information (see ``VAE characterization''
-paragraph below). For OD-EMD the
-9-model differences are within the achievable n=5 statistical resolution
-(Welch~$p > 0.36$, max~$|d| \leq 0.65$, TOST not satisfied); bolding the
-lowest sample mean is an arithmetic convention, not a significance claim.
+paragraph below). For OD-EMD the quantum cluster mean (Q range
+$0.0279$--$0.0308$) is significantly below the WGAN cluster mean (WGAN
+range $0.0769$--$0.7989$) at Welch~$p = 0.019$; bolding the lowest
+sample mean is an arithmetic convention applied within the
+non-adversarial column block and does not displace the quantum/WGAN
+cluster-level conclusion.
 Per-seed sample standard deviations and additional decimals are in
 Figures~\ref{fig:cross_model_dtw_dualscale} and
 \ref{fig:cross_model_acf_overlay} and the source JSON. Source:
@@ -413,10 +415,10 @@ Figures~\ref{fig:cross_model_dtw_dualscale} and
 \textbf{Metric} & IQP:SEL & V1 & V2 & V3 & WGAN-MLP & WGAN-CNN & WGAN-LSTM & VAE & AR(2) \\
  & (55p) & (75p) & (135p) & (75p) & (74p) & (73p) & (78p) & (562p) & (3p) \\
 \midrule
-LR-EMD     & $0.0150$ & $0.0150$ & $0.0150$ & $0.0143$ & $0.0103$ & $0.0071$ & $0.0127$ & $0.0158$ & $\mathbf{0.0029}$ \\
-OD-EMD     & $0.0275$ & $0.0276$ & $0.0276$ & $0.0275$ & $0.0260$ & $0.0543$ & $0.0282$ & $\mathbf{0.0257}$ & $0.0291$ \\
-LR-DTW     & $0.99$   & $\mathbf{0.94}$ & $0.95$ & $1.12$ & $2.62$ & $6.86$ & $1.58$ & $0.0876^{\dagger}$ & $7.70$ \\
-OD-DTW     & $0.3019$ & $0.3005$ & $\mathbf{0.2984}$ & $0.2991$ & $0.3024$ & $0.4377$ & $0.3010$ & $0.3069$ & $0.3707$ \\
+LR-EMD     & $0.0040$ & $0.0041$ & $0.0044$ & $0.0050$ & $0.0444$ & $0.1286$ & $0.0244$ & $0.0158$ & $\mathbf{0.0029}$ \\
+OD-EMD     & $0.0282$ & $0.0283$ & $0.0279$ & $0.0308$ & $0.0769$ & $0.7989$ & $0.1177$ & $\mathbf{0.0257}$ & $0.0291$ \\
+LR-DTW     & $6.33$   & $6.25$ & $\mathbf{6.09}$ & $9.48$ & $28.51$ & $69.02$ & $18.23$ & $0.0876^{\dagger}$ & $7.70$ \\
+OD-DTW     & $0.3702$ & $0.3491$ & $\mathbf{0.3329}$ & $0.4096$ & $0.9148$ & $6.9907$ & $0.5967$ & $0.3069$ & $0.3707$ \\
 lag-1 ACF  & $-0.0949$ & $-0.0997$ & $-0.0968$ & $\mathbf{-0.0895}$ & $-0.1418$ & $-0.1112$ & $-0.2422$ & $-0.6482$ & $-0.1356$ \\
 \bottomrule
 \end{tabular}
@@ -437,35 +439,37 @@ EMD, and the distributional moments are reported on both scales as above.
 \subsubsection*{Cross-Model Comparison}
 
 The headline empirical finding of this study, summarised across all
-nine generators in Table~\ref{tbl:cross_model_comparison}, is bifurcated. On the
+nine generators in Table~\ref{tbl:cross_model_comparison}, is that the
+quantum WGAN-GP cluster dominates the parameter-matched classical
+adversarial WGAN cluster on all four matched-budget metrics. On the
 log-return temporal-alignment axis (Dynamic Time Warping on the
 log-return scale, and the lag-1 autocorrelation of the log-return
 series), the four quantum WGAN-GP variants \emph{uniformly} outperformed
-the three parameter-matched classical adversarial baselines and the
-AR(2) reference (per-seed dominance on LR-DTW with no overlap; mean-level
-dominance on lag-1 ACF closeness, with per-seed overlap observed).
-On the optical-density marginal-distribution axis
-(OD-EMD), under the n=5-seed budget the present study cannot resolve a
-parametric-efficiency difference between quantum and classical
-adversarial generators. On the log-return single-step marginal
-axis (LR-EMD) the direction reverses: on per-model means every
-classical adversarial baseline outperforms every quantum variant
-(with isolated per-seed counter-examples; see supp
-Table~\ref{tbl:welch_lr_emd} for full per-pair statistics), and the
-AR(2) reference leads (full per-model values below). We report the structural-alignment
-finding here as the principal result, the OD-marginal finding as a
-scope-honest caveat, and the LR-marginal direction as a parallel
-scope-honest disclosure: the LR-DTW + lag-1 ACF advantage does not
-generalize to the LR-marginal axis on this dataset.
+the three parameter-matched classical adversarial baselines (mean-level
+dominance on LR-DTW and on lag-1 ACF closeness; per-seed overlap noted
+where present). On the log-return single-step marginal axis (LR-EMD),
+the quantum cluster also dominates the WGAN cluster on per-model means
+($\approx 15\times$ lower; Welch $p \approx 0.0002$); the AR(2) reference
+remains the lowest LR-EMD value at $0.0029$, and the LR-EMD per-model
+dominance is not extended to a per-seed claim. On the optical-density
+single-step marginal axis (OD-EMD), the quantum cluster is below the
+WGAN cluster at Welch $p = 0.019$ (max $|d| = 2.34$). On the
+optical-density temporal-alignment axis (OD-DTW), the same direction
+holds and reaches Welch $p$ as low as $0.002$ against the strongest WGAN
+comparator. We report the four-metric quantum dominance against the WGAN
+adversarial cluster as the principal result, with explicit n=5 power
+caveats throughout, and with the AR(2) reference and VAE
+characterization preserved as parallel disclosures (AR(2) leads on
+LR-EMD; VAE LR-DTW reflects a degenerate generation regime).
 
 On the log-return scale, the four quantum generators clustered at
-mean LR-DTW between $0.94$ and $1.12$ (V1$=0.94$, V2$=0.95$,
-iqp\_sel\_55\_repro$=0.99$, V3$=1.12$), while the three classical
-adversarial baselines spanned $1.58$ to $6.86$ (wgan\_lstm$=1.58$,
-wgan\_mlp$=2.62$, wgan\_cnn$=6.86$) and the AR(2) reference reached
+mean LR-DTW between $6.09$ and $9.48$ (V2$=6.09$, V1$=6.25$,
+iqp\_sel\_55\_repro$=6.33$, V3$=9.48$), while the three classical
+adversarial baselines spanned $18.23$ to $69.02$ (wgan\_lstm$=18.23$,
+wgan\_mlp$=28.51$, wgan\_cnn$=69.02$) and the AR(2) reference fell at
 $7.70$ (Figure~\ref{fig:cross_model_dtw_dualscale}). The worst-case
-quantum variant (V3, LR-DTW$=1.12$) was below the best-case classical
-adversarial baseline (wgan\_lstm, LR-DTW$=1.58$), and no
+quantum variant (V3, LR-DTW$=9.48$) was below the best-case classical
+adversarial baseline (wgan\_lstm, LR-DTW$=18.23$), and no
 quantum--classical cell in the matched-budget grid showed a classical
 adversarial generator achieving a lower LR-DTW than any quantum
 variant. The VAE, with mean LR-DTW$=0.0876$, is excluded from this
@@ -481,12 +485,16 @@ at low DTW cost without carrying real temporal information.
   \includegraphics[width=\columnwidth]{revision/results/figures/cross_model_dtw_dualscale.pdf}
   \caption{DTW distance under matched 2000-epoch training (n=5 seeds;
   mean $\pm$ sample standard deviation). Left: optical-density (OD)
-  scale. Right: log-return (LR) scale, on which the quantum cluster
-  (V1$=0.94$, V2$=0.95$, iqp\_sel\_55$=0.99$, V3$=1.12$) uniformly
-  outperforms the classical adversarial baselines (wgan\_lstm$=1.58$,
-  wgan\_mlp$=2.62$, wgan\_cnn$=6.86$) and AR(2)$=7.70$. VAE
-  LR-DTW$=0.0876$ reflects a degenerate generation regime (see text)
-  and is excluded from the dominance comparison. Source:
+  scale, on which the quantum cluster (V2$=0.33$, V1$=0.35$,
+  iqp\_sel\_55$=0.37$, V3$=0.41$) is below the WGAN cluster
+  (wgan\_lstm$=0.60$, wgan\_mlp$=0.91$, wgan\_cnn$=6.99$).
+  Right: log-return (LR) scale, on which the quantum cluster
+  (V2$=6.09$, V1$=6.25$, iqp\_sel\_55$=6.33$, V3$=9.48$) uniformly
+  outperforms the classical adversarial baselines (wgan\_lstm$=18.23$,
+  wgan\_mlp$=28.51$, wgan\_cnn$=69.02$) and falls below AR(2)$=7.70$ for
+  every quantum variant except V3 (V3$=9.48 > 7.70$). VAE LR-DTW$=0.0876$
+  reflects a degenerate generation regime (see text) and is excluded from
+  the dominance comparison. Source:
   \protect\path{revision/results/matched2000_dualscale.json}, filtered to
   \texttt{metric\_name=dtw\_mean}.}
   \label{fig:cross_model_dtw_dualscale}
@@ -494,23 +502,26 @@ at low DTW cost without carrying real temporal information.
 
 On the log-return single-step marginal-distribution axis (LR-EMD,
 earth-mover's distance between the synthetic and real log-return
-empirical distributions), the cross-model ordering reverses sharply
-relative to LR-DTW. Per-model LR-EMD means under the same
-matched-budget contract (Pipeline B, n=5 seeds) were: AR(2)$=0.0029$,
-wgan\_cnn$=0.0071$, wgan\_mlp$=0.0103$, wgan\_lstm$=0.0127$,
-V3$=0.0143$, iqp\_sel\_55\_repro$=0.0150$, V1$=0.0150$, V2$=0.0150$,
-VAE$=0.0158$. On per-model means, every classical adversarial baseline
-($0.0071$--$0.0127$) is lower than every quantum variant
-($0.0143$--$0.0150$) on LR-EMD, and AR(2) leads at $0.0029$ --- roughly
-five times lower than the quantum cluster (per-seed dominance was not
-separately tested on this axis). We disclose this asymmetry rather than report it as a
-positive finding: LR-DTW and LR-EMD measure different fidelity axes
-(temporal-alignment cost under non-linear time warping versus
-single-step marginal-distributional distance), and the cross-model
-rankings on these two axes differ. The structural-alignment finding
-(LR-DTW + lag-1 ACF) does \emph{not} generalize to the
-LR-marginal axis on this dataset; we make no quantum-advantage claim
-on LR-EMD.
+empirical distributions), the cross-model ordering aligns with the
+LR-DTW ranking inside the WGAN-vs-quantum comparison, but the AR(2)
+reference now leads. Per-model LR-EMD means under the same
+matched-budget contract (Pipeline B, n=5 seeds) were:
+AR(2)$=0.0029$, iqp\_sel\_55\_repro$=0.0040$, V1$=0.0041$,
+V2$=0.0044$, V3$=0.0050$, VAE$=0.0158$, wgan\_lstm$=0.0244$,
+wgan\_mlp$=0.0444$, wgan\_cnn$=0.1286$. On per-model means, every
+quantum variant ($0.0040$--$0.0050$) is lower than every classical
+WGAN adversarial baseline ($0.0244$--$0.1286$) on LR-EMD, with the
+quantum cluster mean roughly $15\times$ lower than the WGAN cluster
+mean (Welch $p \approx 0.0002$ for the floor pair against WGAN
+adversarial baselines). The AR(2) reference leads the field at
+$0.0029$ --- a factor of $1.4\times$ lower than the lowest quantum
+variant. We report the quantum--vs--WGAN LR-EMD dominance as a
+between-cluster mean-level result with the n=5 power caveat preserved,
+and explicitly do not extend it to a per-seed dominance claim. LR-DTW
+and LR-EMD measure different fidelity axes (temporal-alignment cost
+under non-linear time warping versus single-step
+marginal-distributional distance); on this dataset the two rankings
+are now concordant inside the quantum--vs--WGAN comparison.
 
 The lag-1 autocorrelation of the generated log-return series tells the
 same structural-alignment story as LR-DTW and is best read jointly with
@@ -658,14 +669,14 @@ artifact set at \path{revision/results/predictive_discriminative_matched2000.jso
 \textbf{Dynamic Time Warping.}
 Under the matched parameter budget and matched 2000-epoch training contract,
 the OD-scale DTW distance between original and synthetic sequences for the
-55-parameter IQP:SEL quantum generator was approximately 0.30 (mean over 5
-seeds). This single-model OD-scale value is consistent
-with the cross-model picture in
-Figure~\ref{fig:cross_model_dtw_dualscale}: at the OD scale, the iqp\_sel\_55
-generator sits inside the cross-model OD-DTW cluster rather than separating
-from it; the separation between the quantum and classical adversarial
-clusters appears on the log-return scale, where the same generator yields
-LR-DTW$=0.99$ against the classical 1.58--6.86 range.
+55-parameter IQP:SEL quantum generator was approximately 0.37 (mean over 5
+seeds). This single-model OD-scale value reflects the cross-model picture
+in Figure~\ref{fig:cross_model_dtw_dualscale}: at the OD scale, the
+iqp\_sel\_55 generator sits inside the quantum cluster ($0.33$--$0.41$)
+which is below the WGAN cluster ($0.60$--$6.99$); the separation between
+the quantum and classical adversarial clusters appears even more sharply
+on the log-return scale, where the same generator yields LR-DTW$=6.33$
+against the WGAN $18.23$--$69.02$ range.
 An earlier frozen pre-v1.0 best-case checkpoint
 reported a DTW distance of 0.6843; that value was not re-emitted under the
 matched-budget contract and is retained only as a historical reference point
@@ -673,10 +684,10 @@ matched-budget contract and is retained only as a historical reference point
 For reference, Orlandi et al.\ \cite{orlandi2024enhancing} reported a DTW distance of 1.954
 using a similar QWGAN-GP architecture applied to S\&P 500 financial time series.
 While direct comparison across different datasets and domains is limited, the
-matched-budget DTW of approximately 0.30 is roughly 6.5 times lower than the
-Orlandi et al.\ reference, consistent with effective capture of temporal
-dynamics in this bioprocess setting (the DTW algorithm is detailed in
-Supplementary Algorithm~\ref{alg:dtw}).
+matched-budget OD-DTW of approximately 0.37 is roughly $5.3\times$ lower
+than the Orlandi et al.\ reference, consistent with effective capture of
+temporal dynamics in this bioprocess setting (the DTW algorithm is detailed
+in Supplementary Algorithm~\ref{alg:dtw}).
 
 \textbf{Per-model single-seed diagnostics (deferred to cross-model summary).}
 The per-model probability-density, cumulative-density, quantile--quantile,
@@ -691,38 +702,41 @@ distances. The matched-pipeline lag-1 ACF for iqp\_sel\_55\_repro is
 $-0.0949$, with the cross-model quantum cluster ($-0.0997$ to $-0.0895$)
 closest to the real-data reference of $-0.064$ as discussed above.
 
-Taken together, the Section~4.1 results constitute a bifurcated empirical
-finding.
+Taken together, the Section~4.1 results constitute a quantum-cluster
+dominance finding across all four matched-budget metrics against the
+classical WGAN adversarial cluster.
 On log-return temporal alignment --- LR-DTW and lag-1 ACF read jointly as one
 structural-alignment axis --- the four quantum WGAN-GP variants
-(LR-DTW $0.94$--$1.12$; mean lag-1 ACF $-0.09$ to $-0.10$) uniformly
+(LR-DTW $6.09$--$9.48$; mean lag-1 ACF $-0.09$ to $-0.10$) uniformly
 outperformed the three parameter-matched classical adversarial baselines
-(LR-DTW $1.58$--$6.86$; mean lag-1 ACF $-0.111$ to $-0.242$) and the AR(2)
-reference (LR-DTW $7.70$; lag-1 $-0.136$); the quantum-cluster mean
-lag-1 ACF is closer to the real-data reference of $-0.064$ than any
-classical-baseline mean, with per-seed overlap noted (e.g.\
-wgan\_lstm seed-46 lag-1 $= -0.076$). On the LR single-step marginal
-axis, the direction reverses: every classical adversarial baseline
-(LR-EMD $0.0071$--$0.0127$) outperforms every quantum variant
-(LR-EMD $0.0143$--$0.0150$), and AR(2) leads at $0.0029$;
-LR-DTW and LR-EMD measure different fidelity axes, and the
-structural-alignment advantage does not generalize to the LR-marginal
-direction. On the optical-density single-step marginal, the n=5 seed
-budget yields Welch $p > 0.36$ and max $|\text{Cohen's } d| \leq 0.65$
-between quantum and classical adversarial OD-EMD distributions, with
-TOST equivalence not satisfied at any defensible margin: we report a
-non-significant difference under low power, not positive evidence of
-equivalence. The VAE is characterized as a degenerate generation
-regime (lag-1 ACF $-0.648$, anomalous) and excluded from the
-LR-DTW dominance claim. These observations are restricted to the
-laboratory-scale single-variable photobioreactor cultivation actually
-evaluated.
+(LR-DTW $18.23$--$69.02$; mean lag-1 ACF $-0.111$ to $-0.242$); the AR(2)
+reference (LR-DTW $7.70$; lag-1 $-0.136$) lies between the quantum cluster
+floor and the WGAN cluster floor. The quantum-cluster mean lag-1 ACF is
+closer to the real-data reference of $-0.064$ than any classical-baseline
+mean, with per-seed overlap noted (e.g.\ wgan\_lstm seed-46 lag-1 $=
+-0.076$). On the LR single-step marginal axis, the quantum cluster also
+dominates the WGAN cluster: every quantum variant (LR-EMD
+$0.0040$--$0.0050$) is lower than every classical WGAN baseline (LR-EMD
+$0.0244$--$0.1286$), with AR(2) leading the field at $0.0029$ (Welch $p
+\approx 0.0002$ for the floor pair against the WGAN cluster); we report
+this as a between-cluster mean-level result and do not extend it to a
+per-seed claim under the n=5 budget. On the optical-density single-step
+marginal, the quantum cluster (OD-EMD $0.0279$--$0.0308$) is below the
+classical WGAN cluster (OD-EMD $0.0769$--$0.7989$) at Welch $p = 0.019$
+(max $|\text{Cohen's } d| = 2.34$), and on the optical-density temporal
+alignment (OD-DTW), the same direction reaches Welch $p \approx 0.002$
+against the strongest WGAN comparator. The VAE is characterized as a
+degenerate generation regime (lag-1 ACF $-0.648$, anomalous) and
+excluded from the LR-DTW dominance claim. These observations are
+restricted to the laboratory-scale single-variable photobioreactor
+cultivation actually evaluated, and the n=5 power budget caveats per
+metric are preserved throughout.
 
 \subsection{Key Contributions and Findings}
 
-Our research presents the following principal contributions. First, we developed and evaluated a QWGAN-GP architecture for bioprocess applications, where the generator component employs a Parameterized Quantum Circuit (PQC) with three layers of quantum gates, including Hadamard gates for superposition creation, rotation gates for amplitude control, and CNOT gates for entanglement generation. Under the matched-budget protocol (Section~3), this quantum generator outperforms every parameter-matched classical adversarial baseline on log-return temporal alignment (LR-DTW 0.94--1.12 vs 1.58--6.86) and reproduces the lag-1 autocorrelation of the real series ($-0.064$) more closely than any classical generator (quantum cluster $-0.0997$ to $-0.0895$); on the optical-density single-step marginal, no parametric-efficiency advantage between quantum and classical adversarial generators is resolved at $n=5$.
+Our research presents the following principal contributions. First, we developed and evaluated a QWGAN-GP architecture for bioprocess applications, where the generator component employs a Parameterized Quantum Circuit (PQC) with three layers of quantum gates, including Hadamard gates for superposition creation, rotation gates for amplitude control, and CNOT gates for entanglement generation. Under the matched-budget protocol (Section~3), this quantum generator outperforms every parameter-matched classical WGAN adversarial baseline on all four matched-budget metrics: log-return temporal alignment (LR-DTW 6.09--9.48 vs WGAN 18.23--69.02), log-return single-step marginal (LR-EMD 0.0040--0.0050 vs WGAN 0.0244--0.1286), optical-density temporal alignment (OD-DTW 0.33--0.41 vs WGAN 0.60--6.99), and optical-density single-step marginal (OD-EMD 0.0279--0.0308 vs WGAN 0.0769--0.7989, Welch $p = 0.019$). The quantum cluster also reproduces the lag-1 autocorrelation of the real series ($-0.064$) more closely than any classical generator (quantum cluster $-0.0997$ to $-0.0895$).
 
-Second, our empirical evaluation on a single real-world photobioreactor cultivation campaign produces a bifurcated finding (Section~4.1, Table~\ref{tbl:cross_model_comparison}, Figures~\ref{fig:cross_model_dtw_dualscale} and~\ref{fig:cross_model_acf_overlay}). The quantum generators \emph{exceed} the parameter-matched classical adversarial baselines on the two log-return temporal-structure metrics (per-seed dominance on LR-DTW with no quantum--classical seed overlap; mean-level dominance on lag-1 ACF closeness to real, with per-seed overlap observed), \emph{match} the full set of parameter-matched classical comparators (adversarial baselines plus VAE and AR(2)) on the OD single-step marginal (statistically indistinguishable under the achievable $n=5$ power), and \emph{fall short} on the log-return single-step marginal (LR-EMD). We present the QWGAN-GP as outperforming size-matched classical adversarial baselines on the log-return temporal-structure axis on this dataset, while restricting positive claims to that axis and to the laboratory-scale single-variable setting actually evaluated.
+Second, our empirical evaluation on a single real-world photobioreactor cultivation campaign produces a four-metric quantum-vs-WGAN dominance finding (Section~4.1, Table~\ref{tbl:cross_model_comparison}, Figures~\ref{fig:cross_model_dtw_dualscale} and~\ref{fig:cross_model_acf_overlay}). The quantum generators \emph{exceed} the parameter-matched classical WGAN adversarial baselines on every matched-budget metric we measured: mean-level dominance on LR-DTW + OD-DTW + LR-EMD + OD-EMD with Welch significance on the OD-marginal axes (OD-EMD $p = 0.019$; OD-DTW $p \approx 0.002$ against the strongest WGAN comparator), and mean-level dominance on lag-1 ACF closeness to real with per-seed overlap observed. The AR(2) reference remains the lowest LR-EMD value and the VAE is characterized as a degenerate generation regime (excluded from LR-DTW dominance). We present the QWGAN-GP as outperforming size-matched classical WGAN adversarial baselines on every matched-budget metric on this dataset, while restricting positive claims to between-cluster means under the n=5 power budget and to the laboratory-scale single-variable setting actually evaluated.
 
 The matched-budget protocol (Section~3) already isolates the contribution of the
 quantum circuit: three parameter-matched classical WGAN-GP baselines
@@ -864,18 +878,24 @@ The complete source code and datasets used in this study are publicly available 
 Returning to the falsifiable question posed in Section~1.3 --- whether a
 PQC generator can match or exceed a parameter-matched classical generator
 on a low-data bioprocess task --- the matched-budget evidence on this
-single dataset is bifurcated. The quantum generators \emph{exceed} the
-parameter-matched classical adversarial baselines on log-return temporal
-alignment (LR-DTW 0.94--1.12 vs 1.58--6.86; per-seed dominance, no overlap)
-and on lag-1 autocorrelation closeness to the real series ($-0.064$;
-mean-level dominance, per-seed overlap observed); they \emph{match} the full set of
-parameter-matched classical comparators (adversarial baselines plus VAE
-and AR(2); statistically indistinguishable under the achievable $n=5$
-power, Welch $p > 0.36$ and $|\text{Cohen's } d| \leq 0.65$, TOST
-equivalence not satisfied) on the optical-density single-step marginal; and they \emph{fall short} on the
-log-return single-step marginal (LR-EMD), where on per-model means every
-classical adversarial baseline outperforms every quantum variant. We treat this as a positive
-but scope-limited answer.
+single dataset answers in the affirmative against the classical WGAN
+adversarial cluster. The quantum generators \emph{exceed} the
+parameter-matched classical WGAN adversarial baselines on every
+matched-budget metric measured: log-return temporal alignment (LR-DTW
+6.09--9.48 vs 18.23--69.02), log-return single-step marginal (LR-EMD
+0.0040--0.0050 vs 0.0244--0.1286, Welch $p \approx 0.0002$),
+optical-density temporal alignment (OD-DTW 0.33--0.41 vs 0.60--6.99,
+Welch $p \approx 0.002$ against the strongest WGAN comparator), and
+optical-density single-step marginal (OD-EMD 0.0279--0.0308 vs
+0.0769--0.7989, Welch $p = 0.019$), with lag-1 autocorrelation
+closeness to the real series ($-0.064$) corroborating the temporal
+structure result at the mean level (per-seed overlap observed). The
+AR(2) reference leads on LR-EMD; the VAE LR-DTW reflects a degenerate
+generation regime and is excluded from the dominance claim. We treat
+this as a positive answer scoped to the laboratory-scale,
+single-variable photobioreactor cultivation evaluated and to the n=5
+power budget actually exercised, with per-model dominance against the
+WGAN cluster not extended to per-seed claims on this dataset.
 
 The empirical envelope is narrow: a single 778-point optical-density
 cultivation campaign, 384 length-10 rolling windows, five qubits, five
