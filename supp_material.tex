@@ -734,6 +734,17 @@ metrics and the ablation summary are in
   \label{fig:preprocessing_ablation}
 \end{figure}
 
+\paragraph{Note for reviewers comparing to the v1.2.4 submission.}
+The first-round submission (origin tag v1.2.4) reported a bifurcated
+reading on which classical WGAN baselines outperformed the quantum
+cluster on LR-EMD and matched parametric-equivalence on OD-EMD. Both
+readings were artefacts of the under-disclosed sample-space convention
+described below; under the corrected inference pipeline the quantum
+cluster dominates the WGAN cluster on all four matched-budget metrics.
+We retain the v1.2.4 release tag and the pre-fix data artefacts for
+historical traceability and document the directional shifts cell by
+cell against the post-fix matched-budget data set.
+
 \paragraph{WGAN sample-space convention and inverse-pipeline scaling.}
 WGAN-trained generators in this study (quantum IQP:SEL plus V1/V2/V3,
 classical wgan\_mlp/cnn/lstm) are trained and saved with their
@@ -777,6 +788,19 @@ cross\_model\_acf\_overlay) carries differential confirmation against
 this gate: every WGAN-kind row reflects the $\times 10$-corrected
 inverse pipeline, every VAE and AR(2) row is unaffected.
 
+\paragraph{Relative-fidelity impact.}
+The pre-correction WGAN samples were attenuated by a factor of 10 in
+the rescaled $[-1, +1]$ window space, which translated to a
+$\sim 10\times$ under-statement of every WGAN-vs-real distance metric.
+Under the corrected inference pipeline, the WGAN cluster mean shifts
+up on every distance metric reported in main \S4.1 (LR-EMD, OD-EMD,
+LR-DTW, OD-DTW). The four quantum entrants are inside the
+\texttt{\_WGAN\_KINDS} gate and receive the same $\times 10$
+correction, so the cluster-dominance reading emerges after the
+correction restores both clusters to their true scale, not because the
+correction differentially advantages the quantum cluster.
+
+\paragraph{Residual generator mean-bias.}
 A residual generator mean-bias in standardized space persists for the
 quantum cluster (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
 $\approx -0.03$) and contributes a $\sim 2\times$ OD drift over 777
@@ -786,6 +810,23 @@ boundary and is disclosed for transparency. All matched-budget
 headline metrics reported in main \S4 and supp \S A.10--A.13 are
 computed under the $\times 10$-corrected inverse pipeline described
 above.
+
+\paragraph{Acceptance-gate amendment.}
+The v1.2.4 evaluation pipeline included a strong-claim acceptance gate
+at \texttt{revision/run\_welch\_aggregator.py} that hard-aborted when
+the OD-EMD cluster-floor Welch $p$ fell below $0.36$ or
+$|\mathrm{Cohen's}\,d|$ exceeded $0.65$ --- the H2 parametric-equivalence
+acceptance thresholds. Under the corrected inference pipeline these
+thresholds no longer correspond to a defensible claim (the cluster-floor
+$p$ drops to $0.019$ with $|d|$ exceeding $2$, in the cluster-dominance
+direction). The gate was converted to a soft-fail diagnostic (logs the
+violation to \texttt{stderr} and to the output JSON, no longer aborts
+the pipeline), with the historical threshold values preserved in
+\texttt{strong\_claim\_thresholds.\{floor\_welch\_p\_OD,
+ceiling\_abs\_cohen\_d\_OD\}} for traceability. The amendment was
+authorised at the R3 user-decision checkpoint of the post-submission
+remediation; the rationale is recorded in the source-file comment
+block of the aggregator script.
 
 \subsubsection{Rolling Window Implementation}
 
