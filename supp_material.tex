@@ -637,9 +637,9 @@ This schematic depicts the photobioreactor experimental setup described in Secti
 
 \subsection{Data Transformation Details}
 
-\begin{figure}[h]
+\begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_pipeline_4panel.pdf}
+ \includegraphics[width=\linewidth]{revision/results/figures/preprocessing_pipeline_4panel.pdf}
  \caption{Four-stage preprocessing pipeline (Pipeline~B, native): raw OD ($n=778$),
  log-returns $r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$ ($n=777$),
  standardized ($\mu=0$, $\sigma=1$), and linearly rescaled to $[-1, 1]$ using
@@ -648,7 +648,7 @@ This schematic depicts the photobioreactor experimental setup described in Secti
  matched-budget evaluation results in Section~4 of the main text are reported
  under this pipeline.}
  \label{fig:preprocessing_pipeline}
-\end{figure}
+\end{figure*}
 
 The transformation from optical density measurements to log differences is motivated by the bioprocess itself: for an exponentially growing culture the optical density follows $\mathrm{OD}_t \approx \mathrm{OD}_0\,e^{\mu t}$, so the log difference between successive samples is a direct discrete estimate of the instantaneous specific growth rate. For optical density measurements $OD_t$ at time $t$:
 
@@ -710,9 +710,9 @@ metrics and the ablation summary are in
 \path{revision/results/transform_ablation/metrics.csv} and
 \texttt{summary.md}.
 
-\begin{figure}[h]
+\begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\columnwidth]{revision/results/figures/preprocessing_ablation_comparison.pdf}
+ \includegraphics[width=\linewidth]{revision/results/figures/preprocessing_ablation_comparison.pdf}
  \caption{Preprocessing ablation across three pipelines (A: raw min-max OD;
  B: log-returns standardized $+$ rescaled to $[-1, 1]$, selected;
  C: log-return $\to$ standardize $\to$ inverse Lambert~$W$ $\to$
@@ -722,7 +722,7 @@ metrics and the ablation summary are in
  Pipelines~B and~C are within sampling noise of each other on every
  OD-scale metric; Pipeline~B was selected per decision D-10-05.}
  \label{fig:preprocessing_ablation}
-\end{figure}
+\end{figure*}
 
 \paragraph{Note for reviewers comparing to the v1.2.4 submission.}
 The first-round submission (origin tag v1.2.4) reported a bifurcated
@@ -902,13 +902,13 @@ small-magnitude negative band within $\sim\!100$ eval steps. The
 generator loss correspondingly rises from $\sim\!0$ and oscillates within
 a bounded range, with no NaN, no divergence, and no critic saturation
 across any of the 35 individual runs (7 models $\times$ 5 seeds).
-The IQP:SEL panel (Figure~\ref{fig:per_model_loss_grid}a) is
+The IQP:SEL panel (Figure~\ref{fig:per_model_loss_grid_a}) is
 representative: critic loss settles around $-0.65$, generator loss
 oscillates between $0.1$ and $1.2$ --- the dynamic
 equilibrium characteristic of healthy WGAN-GP training.
 
 \textbf{WGAN-CNN training instability (quantum--classical contrast).}
-The WGAN-CNN panel (Figure~\ref{fig:per_model_loss_grid}f) shows a
+The WGAN-CNN panel (Figure~\ref{fig:per_model_loss_grid_f}) shows a
 qualitatively different signature: the critic loss bottoms out near
 $-3.0$ by eval step $\sim\!50$ but then drifts monotonically back
 toward $-1.2$ over the remainder of training, indicating the
@@ -923,7 +923,7 @@ matched-budget contract is intermittently fragile on this dataset
 while the quantum-cluster training is stable across all 5 seeds.
 
 \textbf{VAE convergence pattern (regularization collapse).} The VAE
-panel (Figure~\ref{fig:per_model_loss_grid}h) shows ELBO and
+panel (Figure~\ref{fig:per_model_loss_grid_h}) shows ELBO and
 reconstruction terms collapsing to $\sim\!0.058$ within the first
 $\sim\!50$ eval steps and remaining flat thereafter, while the KL
 divergence term collapses essentially to zero in the same window
@@ -951,49 +951,63 @@ known fragility at the matched-budget parameter count of 73.
 
 \begin{figure*}[!htbp]
  \centering
- \begin{subfigure}{0.24\linewidth}
+ \begin{subfigure}{0.48\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_iqp_sel_55_repro.pdf}
  \caption{IQP:SEL (55p, Q)}
+ \label{fig:per_model_loss_grid_a}
  \end{subfigure}\hfill
- \begin{subfigure}{0.24\linewidth}
+ \begin{subfigure}{0.48\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_V1.pdf}
  \caption{V1 (75p, Q)}
- \end{subfigure}\hfill
- \begin{subfigure}{0.24\linewidth}
- \includegraphics[width=\linewidth]{revision/results/figures/loss_V2.pdf}
- \caption{V2 (135p, Q)}
- \end{subfigure}\hfill
- \begin{subfigure}{0.24\linewidth}
- \includegraphics[width=\linewidth]{revision/results/figures/loss_V3.pdf}
- \caption{V3 (75p, Q)}
+ \label{fig:per_model_loss_grid_b}
  \end{subfigure}
 
  \vspace{4pt}
 
- \begin{subfigure}{0.24\linewidth}
+ \begin{subfigure}{0.48\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_V2.pdf}
+ \caption{V2 (135p, Q)}
+ \label{fig:per_model_loss_grid_c}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.48\linewidth}
+ \includegraphics[width=\linewidth]{revision/results/figures/loss_V3.pdf}
+ \caption{V3 (75p, Q)}
+ \label{fig:per_model_loss_grid_d}
+ \end{subfigure}
+
+ \vspace{4pt}
+
+ \begin{subfigure}{0.48\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_mlp.pdf}
  \caption{WGAN-MLP (74p, C)}
+ \label{fig:per_model_loss_grid_e}
  \end{subfigure}\hfill
- \begin{subfigure}{0.24\linewidth}
+ \begin{subfigure}{0.48\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_cnn.pdf}
  \caption{WGAN-CNN (73p, C)}
- \end{subfigure}\hfill
- \begin{subfigure}{0.24\linewidth}
+ \label{fig:per_model_loss_grid_f}
+ \end{subfigure}
+
+ \vspace{4pt}
+
+ \begin{subfigure}{0.48\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_lstm.pdf}
  \caption{WGAN-LSTM (78p, C)}
+ \label{fig:per_model_loss_grid_g}
  \end{subfigure}\hfill
- \begin{subfigure}{0.24\linewidth}
+ \begin{subfigure}{0.48\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_vae.pdf}
  \caption{VAE (562p, ELBO+recon+KLD)}
+ \label{fig:per_model_loss_grid_h}
  \end{subfigure}
  \caption{Per-model training loss trajectories at the matched-budget
  contract (single representative seed 42, 2000 epochs, Pipeline~B).
- (a)--(d): 4 quantum WGAN-GP variants. (e)--(g): 3 classical
- adversarial WGAN-GP baselines. (h): VAE (single-Adam ELBO loop;
- the only non-adversarial model with a per-epoch trajectory). Q $=$
- quantum, C $=$ classical. AR(2) is fit in closed form via
- \texttt{lstsq} and has no epoch-wise loss trajectory ($\hat\sigma^2 =
- 0.057$ reported in text).}
+ Panels~(a)--(d) show the 4 quantum WGAN-GP variants; panels~(e)--(g)
+ show the 3 classical adversarial WGAN-GP baselines; panel~(h) shows
+ the VAE (single-Adam ELBO loop; the only non-adversarial model with a
+ per-epoch trajectory). Q $=$ quantum, C $=$ classical. AR(2) is fit
+ in closed form via \texttt{lstsq} and has no epoch-wise loss
+ trajectory ($\hat\sigma^2 = 0.057$ reported in text).}
  \label{fig:per_model_loss_grid}
 \end{figure*}
 
@@ -1426,9 +1440,9 @@ analytic baseline) and noise-model sensitivity (depolarizing
 $p \in \{0, 0.001, 0.01, 0.05\}$ and amplitude-damping
 $\gamma \in \{0, 0.001, 0.01, 0.05\}$, per-layer channel insertion).
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\columnwidth]{revision/results/figures/shot_noise_robustness.pdf}
+ \includegraphics[width=\linewidth]{revision/results/figures/shot_noise_robustness.pdf}
  \caption{Shot-noise sensitivity of the quantum generator
  (IQP:SEL 55p) under finite-shot measurement: analytic statevector
  baseline vs.\ 8192 shots vs.\ 1024 shots. OD-EMD reported as
@@ -1436,14 +1450,13 @@ $\gamma \in \{0, 0.001, 0.01, 0.05\}$, per-layer channel insertion).
  and~B. The 1024-shot and 8192-shot curves remain within sampling
  noise of the analytic baseline, indicating the matched-budget
  finding is robust to the shot-noise levels accessible on
- near-term hardware. underlying data
- \protect\path{revision/results/shot_noise_sensitivity.json}.}
+ near-term hardware.}
  \label{fig:shot_noise_robustness}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\columnwidth]{revision/results/figures/noise_robustness_quantum.pdf}
+ \includegraphics[width=\linewidth]{revision/results/figures/noise_robustness_quantum.pdf}
  \caption{Noise-model sensitivity of the quantum generator
  (IQP:SEL 55p) under per-layer depolarizing and amplitude-damping
  channels (inserted after each entangling block). OD-EMD as 3-seed
@@ -1451,12 +1464,11 @@ $\gamma \in \{0, 0.001, 0.01, 0.05\}$, per-layer channel insertion).
  $\{0, 0.001, 0.01, 0.05\}$ per channel type. Pipelines~A and~B
  shown as separate curves. Both channels show graceful degradation:
  the matched-budget finding is preserved at the 0.001 level, begins
- to degrade at 0.01, and is degraded at 0.05 — consistent with the
+ to degrade at 0.01, and is degraded at 0.05 --- consistent with the
  noise tolerance reported for similar PQC variational circuits
- in the literature. underlying data
- \protect\path{revision/results/noise_model_sensitivity.json}.}
+ in the literature.}
  \label{fig:noise_robustness_quantum}
-\end{figure}
+\end{figure*}
 
 
 
