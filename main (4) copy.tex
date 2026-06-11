@@ -620,7 +620,7 @@ generation regime} (faithful one-step marginal, broken temporal
 structure) and exclude the VAE from the LR-DTW dominance comparison
 above.
 
-\paragraph{OD marginal: quantum cluster dominates the WGAN cluster.}
+\paragraph{OD marginal: quantum cluster dominates the WGAN cluster.}\footnote{Reviewers comparing against the first-round submission (origin tag v1.2.4) will note that this paragraph replaces a ``parametric-equivalence under low power'' reading. The directional shift is an artefact of the sample-space correction described in supp \S A.7: under the inference pipeline used in v1.2.4 the WGAN samples were under-scaled by $10\times$, attenuating every WGAN-vs-real distance and inflating the apparent OD-EMD overlap. The corrected pipeline (this paper) restores the WGAN cluster to its true position and the cluster-floor Welch $p$ shifts from $0.37$ to $0.019$. The data artefacts and the bug fix are tagged at release.}
 On the optical-density single-step marginal
 (Figure~\ref{fig:cross_model_emd}), the four quantum variants form a
 tightly grouped cluster
@@ -885,23 +885,19 @@ Returning to the falsifiable question posed in Section~1.3 --- whether a
 PQC generator can match or exceed a parameter-matched classical generator
 on a low-data bioprocess task --- the matched-budget evidence on this
 single dataset answers in the affirmative against the classical WGAN
-adversarial cluster. The quantum generators \emph{exceed} the
-parameter-matched classical WGAN adversarial baselines on every
-matched-budget metric measured: log-return temporal alignment (LR-DTW
-6.09--9.48 vs 18.23--69.02), log-return single-step marginal (LR-EMD
-0.0040--0.0050 vs 0.0244--0.1286, Welch $p \approx 0.0002$),
-optical-density temporal alignment (OD-DTW 0.33--0.41 vs 0.60--6.99,
-Welch $p \approx 0.002$ against the strongest WGAN comparator), and
-optical-density single-step marginal (OD-EMD 0.0279--0.0308 vs
-0.0769--0.7989, Welch $p = 0.019$), with lag-1 autocorrelation
-closeness to the real series ($-0.064$) corroborating the temporal
-structure result at the mean level (per-seed overlap observed). The
-AR(2) reference leads on LR-EMD; the VAE LR-DTW reflects a degenerate
-generation regime and is excluded from the dominance claim. We treat
-this as a positive answer scoped to the laboratory-scale,
-single-variable photobioreactor cultivation evaluated and to the n=5
-power budget actually exercised, with per-model dominance against the
-WGAN cluster not extended to per-seed claims on this dataset.
+adversarial cluster. The quantum generators exceed the parameter-matched
+classical WGAN adversarial baselines on every matched-budget metric
+measured: log-return temporal alignment (LR-DTW, per-seed dominance),
+log-return single-step marginal (LR-EMD, Welch-significant), optical-density
+temporal alignment (OD-DTW, Welch-significant), and optical-density
+single-step marginal (OD-EMD, Welch-significant); lag-1 autocorrelation
+closeness to the real reference corroborates the temporal-structure result
+at the cluster-mean level (per-seed overlap noted). The AR(2) reference
+leads on LR-EMD; the VAE LR-DTW reflects a degenerate generation regime
+and is excluded from the dominance claim. We treat this as a positive
+answer scoped to the laboratory-scale, single-variable photobioreactor
+cultivation evaluated and to the n=5 power budget actually exercised
+(specific values in Section~4.1 and Table~\ref{tbl:cross_model_comparison}).
 
 The empirical envelope is narrow: a single 778-point optical-density
 cultivation campaign, 384 length-10 rolling windows, five qubits, five
@@ -919,6 +915,53 @@ require the multivariate, longer-series, higher-qubit-count, and
 larger-seed-budget extensions identified in the Outlook above, together
 with downstream-utility evaluation that the present matched-budget
 protocol does not undertake.
+
+\subsection*{Note on the inference-pipeline correction}
+
+The first-round submission (origin tag v1.2.4) was prepared under an
+inference pipeline that under-scaled the WGAN-trained samples by a factor
+of $10$ in the rescaled $[-1, +1]$ window space (see supp \S A.7 for the
+technical disclosure). The corrected inference pipeline, applied uniformly
+at the \texttt{samples.npy} load boundary across every paper-cited
+consumer, shifts the WGAN cluster's distance metrics in the direction of
+higher (i.e., worse) values --- by construction, since the bug attenuated
+WGAN-vs-real distances and the correction restores them. Three properties
+of the corrected pipeline make this fix a defensible methodological
+correction rather than a result-favoring intervention.
+
+\textbf{(i) Asymmetry by design.} The correction is gated by
+\texttt{model\_kind} membership in the WGAN-trained set and excludes the
+VAE and AR(2) baselines, which were trained without the $\times 0.1$
+post-scaling and whose on-disk samples were already in the canonical
+$[-1, +1]$ space. The differential test against the pre-fix JSON
+snapshots confirms every VAE and AR(2) row is bit-identical pre/post;
+only WGAN-kind rows shift. This rules out a uniform
+``rescale-everything'' intervention.
+
+\textbf{(ii) Quantum entrants are also WGAN-trained.} The four quantum
+variants (IQP:SEL, V1, V2, V3) are inside the same gated set and
+receive the same $\times 10$ correction as the classical WGAN
+baselines. The shift therefore moves the quantum cluster's pre-fix
+attenuated values up in the same direction; the cluster-dominance
+reading emerges \emph{after} the correction restores the quantum
+cluster's true scale, not because the correction differentially
+advantages it.
+
+\textbf{(iii) Direction and magnitude are inherited from the bug.} The
+$10\times$ correction is the inverse of the documented $\times 0.1$ at
+the WGAN training/sample-export sites; both the factor and the gated
+subset are reproducible from the code comment at
+\texttt{archive/qgan\_pennylane\_SEL.py} and the Pitfall~3 note at
+\texttt{revision/run\_baselines.py:28}. We did not select the magnitude
+or direction of the correction \emph{post hoc}.
+
+The corrected pipeline inverts the v1.2.4 reading on three of the four
+matched-budget metrics (preserves directionally on LR-DTW; flips OD-EMD
+from underpowered-null to cluster-significant; inverts the LR-EMD
+direction). Reviewers wishing to audit the directional shifts
+cell-by-cell can do so via the pre-fix JSON snapshots preserved in the
+release artifact set and the differential-test apparatus at
+\texttt{revision/scripts/v2.1\_differential\_test.py}.
 
 
 
