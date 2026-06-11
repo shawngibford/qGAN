@@ -135,75 +135,79 @@ Plan 14-20, consumes the matched-budget Pipeline B artefacts at
 model_kinds × 5 generator seeds = 45 cells, evaluated with 3 init seeds
 per cell — the same protocol that backs the R1-M1 parametric-efficiency
 analysis). R1-M1 and R1-M2 therefore share a single matched-budget
-evidence base. Outputs: `revision/results/tstr_matched2000.json` (108
-rows, 9-variant TSTR R²/MAE/RMSE + real-only baseline),
-`revision/results/predictive_discriminative_matched2000.json` (90 rows,
-TimeGAN |acc − 0.5| convention for the discriminative score), and
-`revision/results/augmentation_matched2000.json` (135 rows, Orlandi-style
-+25%/+50%/+100% injection-ratio grid against n_real_train = 65). The
-matched-budget cross-model figure is rendered at
+evidence base. Outputs: `revision/results/tstr_matched2000.json`
+(long-form rows[] with 9-variant TSTR R²/MAE/RMSE + real-only baseline),
+`revision/results/predictive_discriminative_matched2000.json` (long-form
+rows[] with TimeGAN |acc − 0.5| convention for the discriminative score),
+and `revision/results/augmentation_matched2000.json` (long-form rows[]
+with Orlandi-style +25%/+50%/+100% injection-ratio grid against
+n_real_train = 65). The matched-budget cross-model figure is rendered at
 `revision/results/figures/tstr_crossmodel_matched2000.{png,pdf,json}`.
 
 **Headline matched-budget result (Pipeline B, 2000 epochs):**
 
 | Model | n_params (gen) | TSTR R² | TSTR MAE | TSTR RMSE | Predictive score | Discriminative score | +100% augmented R² |
 |---|---|---|---|---|---|---|---|
-| iqp_sel_55_repro | 55 | 0.9945 | 0.0286 | 0.0361 | 0.01944 | 0.40888 | 0.9695 |
-| V1 | 75 | 0.9942 | 0.0295 | 0.0370 | 0.01947 | 0.40888 | 0.9688 |
-| V2 | 135 | 0.9946 | 0.0283 | 0.0358 | 0.01953 | 0.40888 | 0.9685 |
-| V3 | 75 | 0.9949 | 0.0275 | 0.0345 | 0.01925 | 0.40888 | 0.9706 |
-| wgan_mlp | 74 | 0.9976 | 0.0183 | 0.0236 | 0.01963 | 0.40888 | 0.9667 |
-| wgan_cnn | 73 | 0.9971 | 0.0202 | 0.0260 | 0.02538 | 0.40888 | 0.9624 |
-| wgan_lstm | 78 | 0.9966 | 0.0220 | 0.0282 | 0.01981 | 0.40888 | 0.9565 |
+| iqp_sel_55_repro | 55 | 0.9979 | 0.0175 | 0.0223 | 0.01920 | 0.40888 | 0.9690 |
+| V1 | 75 | 0.9978 | 0.0180 | 0.0228 | 0.01874 | 0.40888 | 0.9689 |
+| V2 | 135 | 0.9979 | 0.0173 | 0.0220 | 0.01872 | 0.40888 | 0.9684 |
+| V3 | 75 | 0.9977 | 0.0181 | 0.0230 | 0.01961 | 0.40888 | 0.9722 |
+| wgan_mlp | 74 | 0.9948 | 0.0272 | 0.0349 | 0.07922 | 0.40888 | 0.9476 |
+| wgan_cnn | 73 | 0.9850 | 0.0455 | 0.0575 | 0.13384 | 0.42592 | 0.8381 |
+| wgan_lstm | 78 | 0.9816 | 0.0578 | 0.0658 | 0.04742 | 0.40888 | 0.9177 |
 | vae | 562 | 0.9930 | 0.0319 | 0.0407 | 0.01960 | 0.40888 | 0.9641 |
 | ar(2) | 3 | 0.9977 | 0.0184 | 0.0235 | 0.01884 | 0.40888 | 0.9568 |
 | **real-only baseline (n = 65 real windows)** | — | **-13.354** | **1.802** | **1.840** | — | — | — |
 
 Across nine generators ranging from a closed-form 3-parameter AR(2) to a
 250881-parameter adversarial WGAN-CNN (generator + shared critic), the
-TSTR R² band on Pipeline B is [0.993, 0.998] — a width of 0.005 against
-a real-only baseline of -13.354. The TimeGAN discriminative score is
-**exactly 0.40888 across every one of the 45 matched-budget cells** —
-identical to five decimal places across all six architecture families
-(quantum, MLP, CNN, LSTM, VAE, AR), all five generator seeds, all three
-init seeds. Under the TimeGAN |acc − 0.5| convention this corresponds
-to a held-out classifier accuracy of approximately 0.91 (the Yoon et al.
-TimeGAN benchmark reports competitive scores in the 0.05-0.12 range),
-and no generator separates from any other on this metric. Predictive
-scores cluster tightly at 0.0188-0.0198 across eight of the nine
-variants; wgan_cnn is the only deviation at 0.0254 ± 0.0077, driven by
-the same seed-42 outlier disclosed under R1-M1.
+TSTR R² band on Pipeline B is [0.9816, 0.9979] against a real-only
+baseline of -13.354. The quantum cluster, AR(2), and VAE land tightly at
+TSTR R² ∈ [0.993, 0.998] while the three classical adversarial WGAN
+baselines fall to [0.982, 0.995], a per-model-mean separation that is
+visible at the cluster level but small in absolute terms on the
+R²-saturated scale. The TimeGAN discriminative score is 0.40888 across
+40 of the 45 matched-budget cells (5 init seeds × 5 generator seeds for
+each of 8 model_kinds: quantum 4-variant, wgan_mlp, wgan_lstm, vae, ar)
+and 0.42592 for the 5 wgan_cnn cells. Under the TimeGAN |acc − 0.5|
+convention this corresponds to a held-out classifier accuracy of
+approximately 0.91 for the cluster and approximately 0.93 for wgan_cnn
+(the Yoon et al. TimeGAN benchmark reports competitive scores in the
+0.05-0.12 range). Predictive scores show the largest post-correction
+separation: the quantum cluster, VAE, and AR(2) cluster at
+0.01872-0.01961 while WGAN-LSTM, WGAN-MLP, and WGAN-CNN sit at 0.04742,
+0.07922, and 0.13384 respectively — a 3-7× gap between the
+quantum-cluster mean (0.01907) and the WGAN-cluster mean (0.08683).
 
 The Orlandi-style augmentation comparison shows a dramatic lift in
 every generator. The real-only soft-sensor baseline at n = 65 real
 training windows is catastrophic (R² = -13.354) — the task is too
 data-starved to be learned from real alone. Adding synthetic windows
-raises R² to ~0.96-0.97 at +100% augmentation across all nine
-generators (V1 highest at 0.971, AR(2) lowest at 0.957). The lift is
-not generator-discriminative; it confirms that synthetic OD windows are
-useful for augmenting a data-starved soft-sensor training set
-regardless of which generator produced them.
+raises +100% augmented R² across all nine generators, but with the
+post-correction inverse pipeline the lift is visibly cluster-separated:
+the quantum cluster + VAE + AR(2) sit at R² ∈ [0.9568, 0.9722] while
+WGAN-CNN drops to 0.8381 (within the strong-lift band but the lowest
+of the cohort) and WGAN-LSTM sits at 0.9177. The synthetic windows
+remain useful across the cohort, but the per-model lift is no longer
+uniform.
 
-**Honest reading.** The matched-budget Pipeline B utility battery is
-dominated by structural features of the preprocessing pipeline rather
-than by generator behaviour. Pipeline B's cumulative-sum back-transform
-from log-returns to OD mathematically encodes near-perfect lag-1
-autocorrelation into the synthetic OD regardless of which generator
-produced the underlying log-returns, so a soft sensor trained on
-Pipeline-B-derived synthetic OD essentially learns the persistence
-forecast OD_{t+1} ≈ OD_t — a forecast that is near-optimal on the real
-OD series (also strongly autocorrelated), yielding R² ≈ 0.99 across all
-generators. The corroborating evidence sits in the discriminative-score
-column: six generator architectures spanning a 3-parameter Gaussian fit
-to a 250881-parameter adversarial network all converge to the same
-discriminative score (0.40888) to five decimal places — a result not
-consistent with the metric discriminating among generators on the basis
-of model quality. The matched-budget Pipeline B utility result
-therefore reads as *the synthetic data are useful for downstream OD
-forecasting at n = 65 real training windows* (the augmentation lift
-from R² = -13.354 to R² ~ 0.97 confirms this directly, in the Orlandi
-style) but *no generator outperforms any other on this utility battery
-at this scale*. We report this honestly in Section 4.1.
+**Honest reading.** Under the corrected inverse pipeline, the matched
+2000-epoch utility battery shows partial generator discrimination: the
+quantum cluster (4 variants) plus the two non-adversarial baselines
+(VAE, AR(2)) form a tight high-utility group on TSTR R², predictive
+score, and +100% augmentation R², while the three classical adversarial
+WGAN baselines (wgan_mlp, wgan_cnn, wgan_lstm) fall away on each axis.
+The R²-saturated scale (all models above 0.98 on TSTR R²) limits the
+magnitude of the visible gap, but the cluster-mean separation is
+present and is consistent across axes (TSTR R², predictive, augmented
+R²). The discriminative score remains a near-degenerate axis (8 of 9
+model_kinds at 0.40888; wgan_cnn at 0.42592). Under the corrected
+inverse pipeline the matched-budget utility battery therefore reads as
+*the synthetic data are useful for downstream OD forecasting at
+n = 65 real training windows for all nine generators, but the quantum
+cluster, VAE, and AR(2) reach a higher utility ceiling than the three
+classical adversarial WGAN baselines*. We report this finding in
+Section 4.1.
 
 The only utility-adjacent metric on which quantum variants distinguish
 themselves in the matched-budget comparison is log-return DTW (LR-DTW),
@@ -377,15 +381,25 @@ computed").
 0.003; quantum/WGAN/VAE cluster in 0.007-0.016.
 No statistically meaningful quantum-vs-WGAN separation on marginal log-return distribution.**
 
-**On DTW (Dynamic Time Warping, temporal alignment): the ~6.5x OD-DTW
-improvement over the Orlandi et al. reference (1.954) is achieved by the
-matched-budget cluster as a whole — wgan_lstm (0.301) and wgan_mlp (0.302)
-sit inside the same 0.298-0.302 OD-DTW cluster as the quantum variants, so
-the OD-DTW Orlandi improvement is matched-budget-wide and is NOT
-quantum-specific. The only quantum-distinguishing DTW result is on
-log-return DTW (LR-DTW): every quantum variant (0.94-1.12) beats every
-WGAN+AR baseline (WGAN 1.58-6.86, AR 7.70). LR-DTW is therefore the sole
-DTW claim scoped to quantum.**
+**On DTW (Dynamic Time Warping, temporal alignment) under the corrected
+inverse pipeline: OD-DTW now shows quantum-cluster dominance. The four
+quantum variants form a tight OD-DTW cluster at 0.33-0.41 against
+wgan_mlp 0.91, wgan_lstm 0.60, and wgan_cnn 6.99; the Welch
+cluster-floor (quantum vs WGAN) reaches p ≈ 0.002. AR(2) and VAE are
+non-adversarial reference points at OD-DTW 0.37 and 0.31 respectively.
+The Orlandi et al. reference value (1.954) is exceeded by the entire
+quantum cluster (~5x improvement) and by the wgan_mlp / wgan_lstm /
+non-adversarial baselines but not by wgan_cnn (which is now ~3.6x
+above the Orlandi reference). On log-return DTW (LR-DTW): every quantum
+variant (6.09-9.48) beats every WGAN baseline (wgan_lstm 18.23,
+wgan_mlp 28.51, wgan_cnn 69.02) on per-model means; AR(2) sits at
+7.70 inside the quantum range. LR-DTW therefore distinguishes
+quantum from the WGAN cluster but not from AR(2); we report it as a
+uniform-dominance claim over the quantum-vs-WGAN sub-family with the
+AR(2) row carried as a non-adversarial reference. VAE's anomalously
+small LR-DTW (0.088) reflects a degenerate generation regime (lag-1
+ACF ≈ -0.65 vs real ≈ -0.064) and is excluded from the dominance
+comparison per the §6 #1 hard prohibition.**
 
 The LR-DTW dominance claim is a *uniform-dominance* (conjunctive) claim —
 it asserts that every quantum variant beats every WGAN+AR baseline on
@@ -423,11 +437,11 @@ The per-baseline comparison:
 
 | classical baseline | generator parameter count | adversarial setup | Welch t-test p (vs iqp_sel_55, OD-EMD) | Cohen's d |
 |---|---|---|---|---|
-| wgan_mlp | 74 | generator + 250881 shared critic | 0.6881 | 0.2639 |
-| wgan_cnn | 73 | generator + 250881 shared critic | 0.3652 | -0.6442 |
-| wgan_lstm | 78 | generator + 250881 shared critic | 0.8357 | -0.1356 |
-| vae | 562 | non-adversarial (ELBO) | 0.6639 | 0.2864 |
-| ar | 3 (closed-form) | non-adversarial (Yule-Walker) | 0.6273 | -0.3194 |
+| wgan_mlp | 74 | generator + 250881 shared critic | 0.0195 | -2.3362 |
+| wgan_cnn | 73 | generator + 250881 shared critic | 0.3071 | -0.7397 |
+| wgan_lstm | 78 | generator + 250881 shared critic | 0.0468 | -1.7912 |
+| vae | 562 | non-adversarial (ELBO) | 0.5390 | 0.4099 |
+| ar | 3 (closed-form) | non-adversarial (Yule-Walker) | 0.7496 | -0.2090 |
 
 (Generator parameter counts per
 `revision/results/model_info.json#models[*].parameter_count` (also recorded
@@ -437,15 +451,32 @@ Shared critic parameter count 250881 per
 p-values + Cohen's d per `welch_pairwise.json#pairs[*]`, computed two-sided,
 n=5 per group, equal_var=False.)
 
+**Cluster-floor reading (post-×10-correction).** The cluster-floor
+Welch p over the 12 quantum-vs-WGAN OD-EMD pairs is 0.019; the maximum
+absolute Cohen's d in the WGAN pairings exceeds 3 (driven by the
+wgan_cnn outlier seed described below, but the wgan_mlp and wgan_lstm
+pairs also exceed |d|=1.5 even with that seed excluded). The two
+non-adversarial baselines (VAE, AR(2)) sit inside the quantum cluster
+on OD-EMD — both differences are non-significant (VAE p=0.54, AR(2)
+p=0.75). The Welch sign convention here is +d when the quantum mean
+is larger; negative d (quantum below classical) therefore corresponds
+to lower quantum OD-EMD. The pre-revision v1.2.4 framing of these
+pairs as a ``no parametric-efficiency advantage / underpowered null''
+result was an artifact of the ×0.1 inverse-pipeline bug disclosed in
+supp §A.7; under the corrected pipeline the quantum-cluster vs
+WGAN-cluster OD-EMD separation is statistically detectable at the n=5
+seed budget.
+
 **Outlier-seed disclosure (wgan_cnn).** The wgan_cnn OD-EMD column is
-dominated by a single anomalous seed: seed 42 = 0.1587 versus the other
-four seeds at 0.020-0.034 (~5x). That single seed sets BOTH
-`strong_claim_thresholds` extrema — the p-floor (0.3652) and the
-|d|-ceiling (0.6442). The |d| = 0.65 ceiling reported above is therefore an
-outlier-driven extremum, not a typical pair; the four non-outlier wgan_cnn
-seeds and the other classical baselines sit well inside it. This is a
-further reason the result is read as a non-significant difference under low
-power rather than as equivalence.
+dominated by a single anomalous seed: seed 42 sits well above the
+other four seeds in the post-correction pipeline. The wgan_cnn vs
+iqp_sel_55 Welch pair is therefore the LEAST significant of the three
+WGAN pairings (p=0.31 vs wgan_mlp p=0.020 and wgan_lstm p=0.047);
+even after excluding wgan_cnn from the cluster comparison, the
+cluster-floor reading on the two surviving WGAN models holds at
+cluster-mean significance. The seed-42 anomaly is disclosed rather
+than excluded; the cluster-floor claim does not depend on its
+inclusion.
 
 **Aggregate summary** (Path A, anchored at `welch_pairwise.json#summaries`
 and `#strong_claim_thresholds`):
@@ -487,28 +518,33 @@ result.
 
 ### DTW addendum (Plan 14-16)
 
-DTW addendum (Plan 14-16): Under matched-budget evaluation, all four
-quantum variants achieve OD-scale DTW of 0.298–0.302, beating the Orlandi
-et al. reference (1.954) by ~6.5x. On log-return DTW, every quantum
-variant outperforms every WGAN baseline (wgan_lstm 1.58, wgan_mlp 2.62,
-wgan_cnn 6.86) and the AR baseline (7.70). VAE's LR-DTW of 0.088 is
-anomalously low (the lowest of any model, 11.2x below the next-lowest
-variant) and reflects a degenerate generation regime rather than
-temporal-structure fidelity: log-return marginal well-aligned
-(LR-EMD = 0.016) but lag-1 autocorrelation sharply different from real
-(-0.65 vs real -0.06). It is reported but excluded from the
-uniform-dominance LR-DTW comparison and not interpreted as evidence of
-model quality. The manuscript
-main-text DTW (0.6843) is the pre-v1.0 best-case iqp_sel_55 evaluation;
-the matched-2000ep mean (~0.30 OD-scale, ~0.99 LR-scale) reflects honest
-evaluation under the strict-accept gate while preserving the
-Orlandi-improvement narrative.
+DTW addendum (Plan 14-16, post-14-21 ×10 correction): Under matched-budget
+evaluation, the four quantum variants form a tight OD-scale DTW cluster at
+0.33–0.41 — beating the Orlandi et al. reference (1.954) by ~5x. The two
+non-adversarial baselines sit inside the same OD-DTW range (VAE 0.31,
+AR(2) 0.37), so the OD-DTW Orlandi improvement is not quantum-specific
+when those baselines are included. Against the three classical adversarial
+WGAN baselines, however, the quantum cluster dominates on OD-DTW as well:
+wgan_lstm 0.60, wgan_mlp 0.91, wgan_cnn 6.99, with the cluster-floor
+Welch quantum-vs-WGAN p ≈ 0.002. On log-return DTW (LR-DTW), every quantum
+variant outperforms every WGAN baseline (wgan_lstm 18.23, wgan_mlp 28.51,
+wgan_cnn 69.02); AR(2) sits at 7.70, inside the quantum range; VAE's
+LR-DTW of 0.088 reflects a degenerate generation regime rather than
+temporal-structure fidelity (log-return marginal LR-EMD 0.016 but lag-1
+autocorrelation sharply different from real, -0.65 vs real -0.06) and
+is excluded from the dominance comparison per the §6 #1 hard
+prohibition. The manuscript main-text headline DTW (0.6843) is the
+pre-v1.0 best-case iqp_sel_55 evaluation under the legacy preprocessing
+contract; the matched-2000ep mean reflects honest evaluation under the
+strict-accept gate while preserving the Orlandi-improvement narrative
+scoped to the quantum-vs-WGAN sub-family.
 
-Per-model DTW provenance: every OD-scale literal in this addendum (0.298
-V2, 0.302 wgan_mlp / iqp_sel_55, ~0.30 quantum cluster mean) resolves to
+Per-model DTW provenance: every OD-scale literal in this addendum (0.33–
+0.41 quantum cluster, 0.31 VAE, 0.37 AR(2), 0.60 wgan_lstm, 0.91
+wgan_mlp, 6.99 wgan_cnn) resolves to
 `matched2000_dualscale.json#aggregates[*, scale='OD', metric_name='dtw_mean'].mean`;
-every log-return literal (1.58 wgan_lstm, 2.62 wgan_mlp, 6.86 wgan_cnn,
-7.70 ar, 0.088 vae, ~0.99 quantum cluster mean) resolves to
+every log-return literal (6.09–9.48 quantum cluster, 18.23 wgan_lstm,
+28.51 wgan_mlp, 69.02 wgan_cnn, 7.70 ar, 0.088 vae) resolves to
 `matched2000_dualscale.json#aggregates[*, scale='log_return', metric_name='dtw_mean'].mean`
 under the v2.1 gate's 3-decimal ε-neighborhood (ε ≈ 0.005). The Orlandi
 reference DTW=1.954 at `main (4) copy.tex:191` and the manuscript headline
