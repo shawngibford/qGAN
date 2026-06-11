@@ -174,7 +174,7 @@ mean and unit variance, and linearly rescaled to $[-1, 1]$ using the global min 
 max of the standardized log-return series, prior to training (Pipeline B; details and
 the ablation that motivated its selection are in Supplementary Section A.7).
 Overlapping subsequences of length 10 with stride 2 were extracted using a rolling
-window approach \cite{dimoudis2023utilizing}.  % [41] removed: it was adaptive rolling-median anomaly detection, not subsequence extraction (R1-m1)
+window approach \cite{dimoudis2023utilizing}.
 
 The WGAN-GP loss formulation (Eq.~\ref{eq:wgangp}) was chosen for the quantum generator because it provides stable gradients and meaningful convergence metrics, and mitigates mode collapse issues that can be exacerbated by the discrete nature of quantum measurements; we do not attribute reduced mode collapse to the quantum generator.
 
