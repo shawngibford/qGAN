@@ -544,6 +544,46 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
         "methodological framing."
     )
     lines.append("")
+    lines.append(
+        "**Plan 14-21 amendment (current state of the LR-EMD ranking and the "
+        "OD-EMD delta column).** A WGAN sample-space convention preserved at "
+        "9 paper-cited `samples.npy` load sites was undone via the shared "
+        "inference-only helper `revision/_wgan_unscale.py` (see "
+        "`supp_material.tex` §A.7 disclosure paragraph and "
+        "`14-21-SUMMARY.md` for the full audit trail). The correction is "
+        "gated by the `_WGAN_KINDS` set so VAE and AR(2) samples are passed "
+        "through untouched (the differential test on every regenerated JSON "
+        "confirms every VAE+AR(2) row is bit-identical pre/post). Two "
+        "load-bearing readings of the tables above shift as a result:"
+    )
+    lines.append("")
+    lines.append(
+        "1. **OD-EMD delta column** — the WGAN-family rows in the `delta` "
+        "column at the top of this note are now substantially larger than "
+        "the pre-14-21 \"within seed variance\" framing implied (the Plan "
+        "14-14 wgan_cnn `-0.059` claim now reads off the regenerated "
+        "`matched2000_dualscale.json` as a larger positive delta). The "
+        "quantum + VAE + AR(2) rows are unchanged. The Plan 14-14 "
+        "interpretation paragraph above remains the historical record of how "
+        "the C-1 / PROV-CRIT-1 scale-collision was closed at 14-13/14-14; "
+        "the current numerical reading is the post-14-21 row directly above "
+        "it in this table."
+    )
+    lines.append("")
+    lines.append(
+        "2. **LR-EMD ranking (column 2 of the comparable-variants table "
+        "below)** — the Plan 14-16 r3 remediation claim that \"AR is first "
+        "at 0.003 and quantum/WGAN/VAE cluster in the 0.007-0.016 band with "
+        "no statistically meaningful separation\" was authored from the "
+        "pre-14-21 column. The corrected column places AR first "
+        "(closed-form Yule-Walker on the marginal log-return distribution), "
+        "quantum second (~0.0040-0.0050), VAE third (~0.0158), and the "
+        "WGAN cluster substantially worse (~0.024-0.129) with cluster-floor "
+        "Welch p well inside conventional significance. The Plan 14-16 "
+        "r3-process retraction section of `peer_review_remediation.md` "
+        "carries the same supersession banner."
+    )
+    lines.append("")
 
     # Plan 14-15 T2 — append the 3-column comparable-variants section.
     comp = _comparable_variants_rows()
