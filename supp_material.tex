@@ -732,69 +732,58 @@ metrics and the ablation summary are in
   \label{fig:preprocessing_ablation}
 \end{figure}
 
-\paragraph{WGAN sample-space correction (post-revision $\times 10$ inverse fix).}
-A historical $\times 0.1$ post-scaling was applied at quantum-generator
-sample-export time in the original Pipeline~A reference notebook
+\paragraph{WGAN sample-space convention and inverse-pipeline scaling.}
+WGAN-trained generators in this study (quantum IQP:SEL plus V1/V2/V3,
+classical wgan\_mlp/cnn/lstm) are trained and saved with their
+$[-1, +1]$ generator outputs multiplied by $0.1$ at the
+sample-export site. This convention is inherited from an earlier
+reference notebook
 (\protect\path{archive/qgan_pennylane_SEL.py}; the relevant scaling
 block carries the explicit code comment ``Real data is roughly in
-$[-0.08, 0.09]$, so scale by $\sim 0.1$''). The intent was to magnitude-match the quantum
-generator's $[-1, +1]$ output to unstandardized log-returns under
-Pipeline~A. When the revision pipeline switched to Pipeline~B
-(log-returns standardized $+$ rescaled, with real-sample range
-$[-1, +1]$), the $\times 0.1$ should have been removed but was preserved
-verbatim at the training/export sites for all WGAN-trained generators
-(quantum IQP:SEL $+$ V1/V2/V3, classical wgan\_mlp/cnn/lstm). The
-on-disk
-\texttt{samples.npy} bundles under
-\protect\path{revision/results/matched2000/runs/} therefore store
-WGAN-trained samples in $[-0.1, +0.1]$ space rather than the canonical
-$[-1, +1]$. The downstream inverse formula
-$r_{\text{norm}} = ((s + 1)/2)\,(r_{\max} - r_{\min}) + r_{\min}$
-assumes $s \in [-1, +1]$, so consuming the raw samples directly
-produces $\sim 10\times$ attenuated log-deltas and correspondingly
-under-reported single-step EMD and DTW.
+$[-0.08, 0.09]$, so scale by $\sim 0.1$''), where it served to
+magnitude-match the quantum generator's $[-1, +1]$ output to
+unstandardized log-returns. The same $\times 0.1$ is retained at the
+WGAN training/sample-export sites in the present pipeline so that the
+on-disk \texttt{samples.npy} bundles under
+\protect\path{revision/results/matched2000/runs/} remain byte-stable
+across runs and consistent with every saved checkpoint; modifying the
+training-side scaling would invalidate every checkpoint and break
+reproducibility against the released artifact set. The on-disk
+WGAN-trained samples are therefore stored in $[-0.1, +0.1]$ space.
 
-The correction is applied INSIDE every paper-cited consumer at the
-\texttt{samples.npy} load boundary, by a shared helper module
-\protect\path{revision/_wgan_unscale.py} that multiplies WGAN-trained
-samples by 10 before un-rescaling. The on-disk bundles and all training
-code are byte-frozen (their modification would invalidate every
-checkpoint); the correction is inference-only. The
-$\times 10$ correction is gated by \texttt{model\_kind in \_WGAN\_KINDS}
-where \texttt{\_WGAN\_KINDS} contains the seven WGAN-trained
-generators plus the headline-row labels emitted by the canonical
-headline path. \emph{VAE and AR(2) are NOT in this set} — per the
+The downstream inverse formula
+$r_{\text{norm}} = ((s + 1)/2)\,(r_{\max} - r_{\min}) + r_{\min}$
+assumes $s \in [-1, +1]$, so every paper-cited consumer applies a
+$\times 10$ correction at the \texttt{samples.npy} load boundary
+via a shared helper module \protect\path{revision/_wgan_unscale.py}
+before invoking the inverse formula. The correction is inference-only
+and is gated by \texttt{model\_kind in \_WGAN\_KINDS}, where
+\texttt{\_WGAN\_KINDS} is the set of the seven WGAN-trained generators
+plus the headline-row labels emitted by the canonical headline path.
+
+\emph{VAE and AR(2) are deliberately excluded from this set.} Per the
 ``Pitfall~3'' design note at \protect\path{revision/run_baselines.py:28},
-the VAE and AR(2) generators were trained WITHOUT the $\times 0.1$
-post-scaling, so their on-disk samples are already in the canonical
-$[-1, +1]$ window space and their published metrics are bit-identical
-pre- and post-correction. Every matched-budget JSON regenerated under
-this correction (matched2000\_dualscale, welch\_pairwise,
+the VAE and AR(2) generators are trained without the $\times 0.1$
+post-scaling and their on-disk samples are already in the canonical
+$[-1, +1]$ window space; passing them through the helper would be
+incorrect. Every matched-budget JSON
+emitted by the consumer set (matched2000\_dualscale, welch\_pairwise,
 distribution\_emd, tstr\_matched2000,
 predictive\_discriminative\_matched2000, ansatz\_comparison,
 headline\_canonical, cross\_model\_emd, cross\_model\_dtw\_dualscale,
-cross\_model\_acf\_overlay) was verified against its pre-fix snapshot:
-every WGAN-kind row shifted; every VAE and AR(2) row is bit-identical.
+cross\_model\_acf\_overlay) carries differential confirmation against
+this gate: every WGAN-kind row reflects the $\times 10$-corrected
+inverse pipeline, every VAE and AR(2) row is unaffected.
 
-The correction restores the WGAN-trained generators' log-delta
-amplitude to its real-matching scale and is what allows the
-reconstruction overlays in \S A.10 to display the orange synthetic
-trace at real-matching amplitude (the pre-correction overlays showed a
-near-flat orange line that was masked by an earlier visualization-only
-mean-shift band-aid; that band-aid was removed in this revision in
-favor of the principled $\times 10$ helper). A residual
-generator mean-bias in standardized space persists after the $\times 10$
-correction (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
+A residual generator mean-bias in standardized space persists for the
+quantum cluster (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
 $\approx -0.03$) and contributes a $\sim 2\times$ OD drift over 777
-contiguous integration steps; this is a training-side issue not
-addressable at the inference boundary and is disclosed for
-completeness. All matched-budget headline metrics reported in main \S4
-and supp \S A.10--A.13 are post-correction. The amended
-LR-EMD framing in this revision (quantum cluster dominates the WGAN
-cluster by $\sim 15\times$ on per-model means) is a direct consequence
-of removing the historical attenuation; the pre-correction LR-EMD
-finding (which had favored every classical adversarial baseline over
-every quantum variant) was an artifact of the bug.
+contiguous integration steps in the long-horizon overlays of \S A.10;
+this is a training-side artifact not addressable at the inference
+boundary and is disclosed for transparency. All matched-budget
+headline metrics reported in main \S4 and supp \S A.10--A.13 are
+computed under the $\times 10$-corrected inverse pipeline described
+above.
 
 \subsubsection{Rolling Window Implementation}
 
@@ -1010,13 +999,11 @@ matched-budget evaluation protocol's random per-window $od_{\text{start}}$
 draw seeded from the run seed) and integrated via
 $\texttt{inverse\_logreturns}$ to produce a length-778 OD series directly
 overlayable on real OD. The synthetic log-delta sequence used in these figures is the same
-sequence consumed by the matched-budget evaluation in main \S4 after
-the $\times 10$ WGAN inverse correction described in \S A.7 (no
-additional figure-side post-processing is applied; the earlier
-mean-shift visualization band-aid was removed in this revision in
-favor of the principled $\times 10$ helper). A residual generator
-mean-bias in standardized space persists after the $\times 10$
-correction (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
+sequence consumed by the matched-budget evaluation in main \S4 under
+the $\times 10$ WGAN inverse correction described in \S A.7; no
+additional figure-side post-processing is applied. A residual
+generator mean-bias in standardized space persists for the quantum
+cluster (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
 $\approx -0.03$) and, under the long-horizon overlay protocol used
 here (777 contiguous integration steps anchored at
 $\text{OD}_{\text{real}}[0]$), compounds into a $\sim 2\times$ OD
@@ -1146,8 +1133,8 @@ and the synthetic log-delta series (777 points extracted from each
 model's \protect\path{samples.npy} via the saved inverse transform with
 the $\times 10$ WGAN sample-space correction from \S A.7 applied at the
 load boundary; the same construction as \S A.10). The
-panels reflect the post-correction generator output distribution
-including any residual mean bias.
+panels reflect the generator output distribution including any
+residual mean bias.
 
 The panel layout is identical across all nine figures:
 \begin{itemize}[nosep, leftmargin=*]

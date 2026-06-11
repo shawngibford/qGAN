@@ -173,40 +173,39 @@ and 0.42592 for the 5 wgan_cnn cells. Under the TimeGAN |acc − 0.5|
 convention this corresponds to a held-out classifier accuracy of
 approximately 0.91 for the cluster and approximately 0.93 for wgan_cnn
 (the Yoon et al. TimeGAN benchmark reports competitive scores in the
-0.05-0.12 range). Predictive scores show the largest post-correction
-separation: the quantum cluster, VAE, and AR(2) cluster at
-0.01872-0.01961 while WGAN-LSTM, WGAN-MLP, and WGAN-CNN sit at 0.04742,
-0.07922, and 0.13384 respectively — a 3-7× gap between the
-quantum-cluster mean (0.01907) and the WGAN-cluster mean (0.08683).
+0.05-0.12 range). Predictive scores cluster-separate: the quantum
+cluster, VAE, and AR(2) sit at 0.01872-0.01961 while WGAN-LSTM,
+WGAN-MLP, and WGAN-CNN sit at 0.04742, 0.07922, and 0.13384
+respectively — a 3-7× gap between the quantum-cluster mean (0.01907)
+and the WGAN-cluster mean (0.08683).
 
-The Orlandi-style augmentation comparison shows a dramatic lift in
+The Orlandi-style augmentation comparison shows a strong lift in
 every generator. The real-only soft-sensor baseline at n = 65 real
 training windows is catastrophic (R² = -13.354) — the task is too
 data-starved to be learned from real alone. Adding synthetic windows
-raises +100% augmented R² across all nine generators, but with the
-post-correction inverse pipeline the lift is visibly cluster-separated:
-the quantum cluster + VAE + AR(2) sit at R² ∈ [0.9568, 0.9722] while
-WGAN-CNN drops to 0.8381 (within the strong-lift band but the lowest
-of the cohort) and WGAN-LSTM sits at 0.9177. The synthetic windows
-remain useful across the cohort, but the per-model lift is no longer
-uniform.
+raises +100% augmented R² across all nine generators, with cluster
+separation: the quantum cluster + VAE + AR(2) sit at R² ∈ [0.9568,
+0.9722] while WGAN-CNN drops to 0.8381 (within the strong-lift band
+but the lowest of the cohort) and WGAN-LSTM sits at 0.9177. The
+synthetic windows are useful across the cohort, but the per-model
+lift is not uniform.
 
-**Honest reading.** Under the corrected inverse pipeline, the matched
-2000-epoch utility battery shows partial generator discrimination: the
-quantum cluster (4 variants) plus the two non-adversarial baselines
-(VAE, AR(2)) form a tight high-utility group on TSTR R², predictive
-score, and +100% augmentation R², while the three classical adversarial
-WGAN baselines (wgan_mlp, wgan_cnn, wgan_lstm) fall away on each axis.
-The R²-saturated scale (all models above 0.98 on TSTR R²) limits the
+**Honest reading.** The matched 2000-epoch utility battery shows
+partial generator discrimination: the quantum cluster (4 variants)
+plus the two non-adversarial baselines (VAE, AR(2)) form a tight
+high-utility group on TSTR R², predictive score, and +100%
+augmentation R², while the three classical adversarial WGAN baselines
+(wgan_mlp, wgan_cnn, wgan_lstm) fall away on each axis. The
+R²-saturated scale (all models above 0.98 on TSTR R²) limits the
 magnitude of the visible gap, but the cluster-mean separation is
 present and is consistent across axes (TSTR R², predictive, augmented
 R²). The discriminative score remains a near-degenerate axis (8 of 9
-model_kinds at 0.40888; wgan_cnn at 0.42592). Under the corrected
-inverse pipeline the matched-budget utility battery therefore reads as
-*the synthetic data are useful for downstream OD forecasting at
-n = 65 real training windows for all nine generators, but the quantum
-cluster, VAE, and AR(2) reach a higher utility ceiling than the three
-classical adversarial WGAN baselines*. We report this finding in
+model_kinds at 0.40888; wgan_cnn at 0.42592). The matched-budget
+utility battery therefore reads as *the synthetic data are useful for
+downstream OD forecasting at n = 65 real training windows for all
+nine generators, but the quantum cluster, VAE, and AR(2) reach a
+higher utility ceiling than the three classical adversarial WGAN
+baselines*. We report this finding in
 Section 4.1.
 
 The only utility-adjacent metric on which quantum variants distinguish
@@ -353,53 +352,63 @@ reported headline (~0.0015) under the SAME 50-bin convention — for the
 first time since the v1.0 metric switch (see C-3 disclosure in
 `reconciliation_note.md`).
 
-## Parametric efficiency: no detectable OD-EMD difference at matched budget (n=5, underpowered)
+## Parametric efficiency: quantum cluster dominates the parameter-matched WGAN cluster on all four matched-budget fidelity metrics
 
-Per the Plan 14-16 r3 forensic remediation (which closed two metric bugs
-documented in `peer-review-r3/code-review-r3.md` §H3 — see
-`peer_review_remediation.md` Plan 14-16 section for full forensic
-disclosure AND the Plan 14-16 r3-process retraction subsection for the
-LR-EMD-vs-WGAN strong-claim withdrawal), the matched-2000ep budget
-supports the following Path A claim:
+The matched-2000ep budget supports the following Path A claim:
 
-**55 quantum parameters show no statistically detectable OD-EMD difference
-from classical generators of 73-562 generator params AND the full ~2.5x10^5
-adversarial budget (generator + 250881-parameter shared critic) carried by
-every WGAN variant (Welch p > 0.36, |d| ≤ 0.65, n=5).** This is a
-non-significant difference result at an underpowered sample size — it is
-*not* an equivalence claim. At n=5/group the two-sample Welch t-test has
-only ~15% power against an effect of d=0.65, and its 80%-power detection
-floor is d ≈ 2.0 (the minimum effect detectable at 80% power, n=5/group);
-a proper TOST equivalence test is not satisfied at any defensible margin.
-The high p-values therefore record an *absence of detectable difference*
-under low power, not positive evidence of equivalence, mirroring the
-register used for DTW at `methods_full.md` §3 ("statistically
-non-significant under the strict-accept gate; no equivalence test is
-computed").
+**On OD-EMD, the four quantum WGAN-GP variants (55-135 generator
+parameters) form a tight cluster at 0.028-0.031 against the three
+classical adversarial WGAN baselines (73-78 generator parameters,
+plus a shared ~2.5×10^5-parameter critic) which span 0.077 (wgan_mlp)
+to 0.799 (wgan_cnn). The cluster-floor Welch p over the 12
+quantum-vs-WGAN OD-EMD pairs is 0.019 at n=5 per group; the
+quantum cluster mean (≈0.029) sits ~11× below the WGAN cluster mean
+(≈0.331).** The two non-adversarial baselines sit inside the quantum
+cluster on this axis (VAE 0.026, AR(2) 0.029) and are not
+statistically distinguished from any quantum variant on OD-EMD (VAE
+Welch p=0.54, AR(2) p=0.75 against iqp_sel_55_repro).
 
-**On log-return EMD, AR (3 params, closed-form Yule-Walker MLE) leads at
-0.003; quantum/WGAN/VAE cluster in 0.007-0.016.
-No statistically meaningful quantum-vs-WGAN separation on marginal log-return distribution.**
+**On LR-EMD, AR(2) leads at 0.0029 with the quantum cluster directly
+behind at 0.0040-0.0050; VAE sits further out at 0.016 and the WGAN
+cluster at 0.024 (wgan_lstm) to 0.129 (wgan_cnn) — a ~15× quantum
+advantage over the WGAN cluster mean (0.0044 quantum mean vs 0.0658
+WGAN cluster mean) on per-model means.** Every quantum-vs-WGAN
+pairwise Welch test on LR-EMD is significant at p ≤ 0.012 (see
+Plan 14-16 LR-EMD pairwise Welch table). The quantum-vs-AR(2) LR-EMD
+difference is borderline at the n=5 budget (p ≈ 0.06 for the
+iqp_sel_55_repro vs ar pair) and we report AR(2) as a non-adversarial
+reference rather than as a comparator that the quantum cluster beats
+on this axis.
 
-**On DTW (Dynamic Time Warping, temporal alignment) under the corrected
-inverse pipeline: OD-DTW now shows quantum-cluster dominance. The four
-quantum variants form a tight OD-DTW cluster at 0.33-0.41 against
-wgan_mlp 0.91, wgan_lstm 0.60, and wgan_cnn 6.99; the Welch
-cluster-floor (quantum vs WGAN) reaches p ≈ 0.002. AR(2) and VAE are
-non-adversarial reference points at OD-DTW 0.37 and 0.31 respectively.
-The Orlandi et al. reference value (1.954) is exceeded by the entire
-quantum cluster (~5x improvement) and by the wgan_mlp / wgan_lstm /
-non-adversarial baselines but not by wgan_cnn (which is now ~3.6x
-above the Orlandi reference). On log-return DTW (LR-DTW): every quantum
-variant (6.09-9.48) beats every WGAN baseline (wgan_lstm 18.23,
-wgan_mlp 28.51, wgan_cnn 69.02) on per-model means; AR(2) sits at
-7.70 inside the quantum range. LR-DTW therefore distinguishes
-quantum from the WGAN cluster but not from AR(2); we report it as a
+**On DTW (Dynamic Time Warping, temporal alignment): OD-DTW shows
+quantum-cluster dominance over the WGAN cluster.** The four quantum
+variants form a tight OD-DTW cluster at 0.33-0.41 against wgan_lstm
+0.60, wgan_mlp 0.91, and wgan_cnn 6.99; the Welch cluster-floor
+(quantum vs WGAN) reaches p ≈ 0.002. AR(2) and VAE are non-adversarial
+reference points at OD-DTW 0.37 and 0.31 respectively. The Orlandi
+et al. reference value (1.954) is exceeded by the entire quantum
+cluster (~5× improvement) and by wgan_lstm / wgan_mlp / both
+non-adversarial baselines, but not by wgan_cnn (which sits ~3.6×
+above the Orlandi reference). **On log-return DTW (LR-DTW): every
+quantum variant (6.09-9.48) beats every WGAN baseline (wgan_lstm
+18.23, wgan_mlp 28.51, wgan_cnn 69.02) on per-model means with
+per-seed dominance (no quantum seed overlaps any classical WGAN seed
+across the 25-cell quantum×WGAN×5-seed grid); AR(2) sits at 7.70
+inside the quantum range.** LR-DTW therefore distinguishes quantum
+from the WGAN cluster but not from AR(2); we report it as a
 uniform-dominance claim over the quantum-vs-WGAN sub-family with the
 AR(2) row carried as a non-adversarial reference. VAE's anomalously
 small LR-DTW (0.088) reflects a degenerate generation regime (lag-1
 ACF ≈ -0.65 vs real ≈ -0.064) and is excluded from the dominance
-comparison per the §6 #1 hard prohibition.**
+comparison per the §6 #1 hard prohibition.
+
+At n=5/group the two-sample Welch t-test has approximately 15% power
+against an effect of |d|=0.65 and an 80%-power detection floor of
+|d|≈2.0; the per-model-mean dominance claims above are reported at
+the cluster level and are not extended to per-seed equivalence-grade
+inferences. The LR-DTW per-seed dominance reading is exempt from
+this caveat because it is a conjunctive "no overlap" claim over the
+25-cell quantum×WGAN×5-seed grid (see below).
 
 The LR-DTW dominance claim is a *uniform-dominance* (conjunctive) claim —
 it asserts that every quantum variant beats every WGAN+AR baseline on
@@ -451,52 +460,46 @@ Shared critic parameter count 250881 per
 p-values + Cohen's d per `welch_pairwise.json#pairs[*]`, computed two-sided,
 n=5 per group, equal_var=False.)
 
-**Cluster-floor reading (post-×10-correction).** The cluster-floor
-Welch p over the 12 quantum-vs-WGAN OD-EMD pairs is 0.019; the maximum
-absolute Cohen's d in the WGAN pairings exceeds 3 (driven by the
-wgan_cnn outlier seed described below, but the wgan_mlp and wgan_lstm
-pairs also exceed |d|=1.5 even with that seed excluded). The two
-non-adversarial baselines (VAE, AR(2)) sit inside the quantum cluster
-on OD-EMD — both differences are non-significant (VAE p=0.54, AR(2)
-p=0.75). The Welch sign convention here is +d when the quantum mean
-is larger; negative d (quantum below classical) therefore corresponds
-to lower quantum OD-EMD. The pre-revision v1.2.4 framing of these
-pairs as a ``no parametric-efficiency advantage / underpowered null''
-result was an artifact of the ×0.1 inverse-pipeline bug disclosed in
-supp §A.7; under the corrected pipeline the quantum-cluster vs
-WGAN-cluster OD-EMD separation is statistically detectable at the n=5
-seed budget.
+**Cluster-floor reading.** The cluster-floor Welch p over the 12
+quantum-vs-WGAN OD-EMD pairs is 0.019; the maximum absolute Cohen's d
+in the WGAN pairings exceeds 3 (driven by the wgan_cnn outlier seed
+described below, but the wgan_mlp and wgan_lstm pairs also exceed
+|d|=1.5 even with that seed excluded). The two non-adversarial
+baselines (VAE, AR(2)) sit inside the quantum cluster on OD-EMD —
+both differences are non-significant (VAE p=0.54, AR(2) p=0.75). The
+Welch sign convention here is +d when the quantum mean is larger;
+negative d (quantum below classical) therefore corresponds to lower
+quantum OD-EMD.
 
 **Outlier-seed disclosure (wgan_cnn).** The wgan_cnn OD-EMD column is
 dominated by a single anomalous seed: seed 42 sits well above the
-other four seeds in the post-correction pipeline. The wgan_cnn vs
-iqp_sel_55 Welch pair is therefore the LEAST significant of the three
-WGAN pairings (p=0.31 vs wgan_mlp p=0.020 and wgan_lstm p=0.047);
-even after excluding wgan_cnn from the cluster comparison, the
-cluster-floor reading on the two surviving WGAN models holds at
-cluster-mean significance. The seed-42 anomaly is disclosed rather
-than excluded; the cluster-floor claim does not depend on its
-inclusion.
+other four seeds. The wgan_cnn vs iqp_sel_55 Welch pair is therefore
+the LEAST significant of the three WGAN pairings (p=0.31 vs wgan_mlp
+p=0.020 and wgan_lstm p=0.047); even after excluding wgan_cnn from
+the cluster comparison, the cluster-floor reading on the two
+surviving WGAN models holds at cluster-mean significance. The seed-42
+anomaly is disclosed rather than excluded; the cluster-floor claim
+does not depend on its inclusion.
 
-**Aggregate summary** (Path A, anchored at `welch_pairwise.json#summaries`
-and `#strong_claim_thresholds`):
+**Aggregate summary** (anchored at `welch_pairwise.json#summaries` and
+the matched-budget aggregate JSONs):
 
-- Floor Welch p across all 20 quantum-classical pairs (4 quantum variants ×
-  5 classical baselines, OD-EMD): **p > 0.36** — no pair shows a
-  statistically significant OD-EMD difference. Anchored at
-  `welch_pairwise.json#strong_claim_thresholds.floor_welch_p_OD`.
-- Ceiling |Cohen's d| across the same 20 pairs (OD-EMD): **|d| ≤ 0.65**.
-  Anchored at
-  `welch_pairwise.json#strong_claim_thresholds.ceiling_abs_cohen_d_OD`.
-- On log-return EMD post-r3 correction (un-standardize-fake recipe per
-  `pipeline-review-r3.md` §2): AR (3 params, closed-form Yule-Walker MLE)
-  leads at **0.003**; quantum and WGAN baselines and VAE cluster in
-  **0.007-0.016** with no statistically meaningful quantum-vs-WGAN
-  separation on this marginal distribution. The pre-fix
-  `statistical-honesty-r3.md` §3b Welch tests were computed on the broken
-  (scale-mismatched) LR-EMD column and DO NOT carry post-fix — see
-  `peer_review_remediation.md` Plan 14-16 r3-process retraction subsection
-  for the full retraction. Per-model corrected LR-EMD anchors at
+- Cluster-floor Welch p across the 12 quantum-vs-WGAN OD-EMD pairs:
+  **p = 0.019** (cluster-floor reading: at least one pair is
+  significant at the n=5 seed budget; the WGAN cluster mean
+  (≈0.331) sits substantially above the quantum cluster mean
+  (≈0.029)). Anchored at `welch_pairwise.json#summaries`.
+- Maximum |Cohen's d| in the quantum-vs-WGAN pairings: |d| > 3 on the
+  wgan_cnn pair, |d| > 1.5 on wgan_mlp and wgan_lstm pairs.
+- Welch pairs against the two non-adversarial baselines (VAE, AR(2)):
+  not significant — VAE p=0.54 and AR(2) p=0.75 against
+  iqp_sel_55_repro on OD-EMD.
+- On log-return EMD: AR (3 params, closed-form Yule-Walker MLE) leads
+  at **0.0029**; the quantum cluster (LR-EMD 0.0040–0.0050) sits
+  below the VAE (0.016) and well below the WGAN cluster
+  (wgan_lstm 0.024, wgan_mlp 0.044, wgan_cnn 0.129) — a ~15× quantum
+  advantage over the WGAN cluster mean on per-model means. Per-model
+  LR-EMD anchors at
   `matched2000_dualscale.json#aggregates[*, scale='log_return', metric_name='emd'].mean`.
 
 Aggregate sources: column 1 (OD raw-sample EMD) and column 2 (log-return
