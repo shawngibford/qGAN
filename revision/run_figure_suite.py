@@ -2602,11 +2602,12 @@ def render_param_efficiency_pareto(repo: Path,
                    color=HEADLINE_COLOR, edgecolor="white",
                    linewidths=1.5, zorder=10, label=HEADLINE_LABEL)
         ax.set_xlabel("log10(parameter count)", fontsize=12)
-        ax.set_ylabel(f"{scale_label} EMD (mean $\\pm$ std, 5 seeds)",
+        ax.set_ylabel(f"{scale_label} EMD (log scale, mean over 5 seeds)",
                       fontsize=12)
         ax.set_title(f"{scale_label} scale", fontsize=13)
+        ax.set_yscale("log")
         ax.tick_params(axis="both", labelsize=10)
-        ax.grid(True, alpha=0.3)
+        ax.grid(True, alpha=0.3, which="both")
         ax.legend(
             handles=[
                 plt.Line2D([], [], linestyle="", marker="o",
