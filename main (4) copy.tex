@@ -850,32 +850,20 @@ reproduction of the reported results.
 
 \paragraph{Per-figure and per-table data provenance.}
 Every figure and table in the main paper is regenerable from the released
-artifact set. Figure scripts and the JSON/CSV data files they consume are
-organised under the \texttt{revision/results/} tree of the released
-repository (Zenodo archive at the DOI above). The mapping is:
-\begin{itemize}[nosep, leftmargin=*]
-  \item Figure~\ref{fig:training_convergence_all_models} (training
-    convergence): \texttt{revision/results/figures/training\_convergence\_all\_models.json};
-    per-seed trajectories under
-    \texttt{revision/results/matched2000/runs/<model>/<seed>/metrics.json}.
-  \item Figures~\ref{fig:cross_model_dtw_dualscale},
-    \ref{fig:cross_model_emd}; Tables~\ref{tbl:eval_scale},
-    \ref{tbl:cross_model_comparison}:
-    \texttt{revision/results/matched2000\_dualscale.json}, filtered by
-    \texttt{model\_kind}, \texttt{metric\_name}, and \texttt{scale} as
-    appropriate.
-  \item Figure~\ref{fig:cross_model_acf_overlay} (cross-model ACF):
-    \texttt{revision/results/figures/cross\_model\_acf\_overlay.json};
-    real-data ACF computed under the matched preprocessing pipeline.
-  \item Figure~\ref{fig:param_efficiency_pareto}
-    (parameter-efficiency frontier):
-    \texttt{revision/results/figures/param\_efficiency\_pareto.json};
-    parameter counts from \texttt{revision/results/model\_info.json}.
-\end{itemize}
-The WGAN sample-space convention and the $\times 10$ inverse correction
-are applied at the \texttt{samples.npy} load boundary via the shared
-helper \texttt{revision/\_wgan\_unscale.py} (see supp \S A.7). All
-script entry points are documented in \texttt{revision/README.md}.
+artifact set; all paths are enumerated in the supplementary artifact
+reference table (Table~\ref{tbl:artifact_pointers}). In short:
+Figure~\ref{fig:training_convergence_all_models} (training convergence)
+reads R14 with per-seed trajectories at R15;
+Figures~\ref{fig:cross_model_dtw_dualscale} and
+\ref{fig:cross_model_emd} plus Tables~\ref{tbl:eval_scale} and
+\ref{tbl:cross_model_comparison} read R1 (filtered by
+\texttt{model\_kind}, \texttt{metric\_name}, \texttt{scale});
+Figure~\ref{fig:cross_model_acf_overlay} reads R6;
+Figure~\ref{fig:param_efficiency_pareto} reads R7 with parameter counts
+from R8. The WGAN sample-space convention and the $\times 10$ inverse
+correction are applied at the \texttt{samples.npy} load boundary via
+helper C1 (see supp \S A.7); all script entry points are documented in
+D4.
 
 \section{Concluding Remarks}
 
@@ -949,8 +937,8 @@ advantages it.
 $10\times$ correction is the inverse of the documented $\times 0.1$ at
 the WGAN training/sample-export sites; both the factor and the gated
 subset are reproducible from the code comment at
-\texttt{archive/qgan\_pennylane\_SEL.py} and the Pitfall~3 note at
-\texttt{revision/run\_baselines.py:28}. We did not select the magnitude
+\texttt{archive/qgan\_pennylane\_SEL.py} and the Pitfall~3 note in C5
+(line~28). We did not select the magnitude
 or direction of the correction \emph{post hoc}.
 
 The corrected pipeline inverts the v1.2.4 reading on three of the four
@@ -958,8 +946,7 @@ matched-budget metrics (preserves directionally on LR-DTW; flips OD-EMD
 from underpowered-null to cluster-significant; inverts the LR-EMD
 direction). Reviewers wishing to audit the directional shifts
 cell-by-cell can do so via the pre-fix JSON snapshots preserved in the
-release artifact set and the differential-test apparatus at
-\texttt{revision/scripts/v2.1\_differential\_test.py}.
+release artifact set and the differential-test apparatus at C7.
 
 
 

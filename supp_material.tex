@@ -120,42 +120,27 @@ This formulation allows WGAN to use a neural network (the critic) to approximate
 
 \subsubsection{Quantum Computing Fundamentals for QGANs}
 
-\textbf{Quantum State Representation:}
-
-A quantum state of n qubits is represented by a vector in a $2^n$-dimensional Hilbert space:
-
-$$|\psi\rangle = \sum_{i=0}^{2^n-1} \alpha_i |i\rangle$$
-
-where $\sum_i |\alpha_i|^2 = 1$ (normalization condition).
-
-
-
-\textbf{Key Quantum Gates Used:}
-\begin{itemize}[nosep, leftmargin=*]
- \item \textbf{Hadamard ($H$):} Creates superposition: $H\ket{0} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$
- \item \textbf{Rotation gates ($R_x$, $R_y$, $R_z$):} Parameterized single-qubit rotations
- \item \textbf{CNOT:} Two-qubit entangling gate
-\end{itemize}
-
-\textbf{Quantum Advantage for Generative Models:}
-
-QGANs leverage the inherent properties of quantum systems to provide potential advantages over classical generative models. \cite{Dallaire_Demers_2018, Lloyd_2018, Zoufal_2019}
-
-Specific advantages include:
-\begin{itemize}[nosep, leftmargin=*]
- \item \textbf{Exponential state space:} $n$ qubits represent $2^n$ amplitudes, enabling more efficient representation of complex probability distributions \cite{zoufal2021generativequantummachinelearning}
- \item \textbf{Quantum interference:} Constructive/destructive interference explores solution space more efficiently
- \item \textbf{Entanglement:} Creates correlations impossible in classical probability, potentially affecting convergence behaviour; we do not claim a mode-collapse advantage and did not measure one \cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}
-\end{itemize}
-
-Quantum interference effects can enhance the model's ability to capture subtle correlations and nonlinear relationships present in real-world data, making them particularly suited for complex temporal dependencies found in bioprocess systems. Practical scalability nonetheless remains constrained by current NISQ-device noise and limited circuit depth \cite{Cerezo_2021}.
-
-Recent experimental implementations have demonstrated proof-of-concept QGANs on noisy intermediate-scale quantum (NISQ) devices. \cite{rudolph2022generationhighresolutionhandwrittendigits, Huang_2021} Rudolph et al. demonstrated that QGANs can generate high-resolution images using an ion trap quantum computer, highlighting the potential of quantum models to exceed classical limitations in certain generative tasks. \cite{rudolph2022generationhighresolutionhandwrittendigits}
+The standard quantum-computing primitives used in this work --- $n$-qubit
+state vectors in a $2^n$-dimensional Hilbert space, Hadamard and
+parameterised single-qubit rotations ($R_x$, $R_y$, $R_z$), and CNOT
+entangling gates --- are textbook material; we summarise only the
+properties most relevant to the QGAN generator and refer the reader to
+\cite{Dallaire_Demers_2018, Lloyd_2018, Zoufal_2019} for detailed
+exposition. The Hilbert-space dimension grows as $2^n$, giving the PQC
+generator access to a state space exponentially larger than its parameter
+count \cite{zoufal2021generativequantummachinelearning}; entanglement
+creates correlations not representable by classical product
+distributions \cite{romero2019variationalquantumgeneratorsgenerative,
+Amin_2018}. We do \emph{not} claim a mode-collapse advantage and did not
+measure one. Practical scalability remains constrained by current
+NISQ-device noise and limited circuit depth \cite{Cerezo_2021}, and
+proof-of-concept QGAN implementations on NISQ hardware have already been
+reported \cite{rudolph2022generationhighresolutionhandwrittendigits,
+Huang_2021}.
 
 \subsection{Proposed Extension (Outlook): Hybrid-GAN-Mechanistic Framework}
 
-\subsubsection{Proposed Mathematical Formulation (not implemented in this study)}
-
+\paragraph{Proposed mathematical formulation (not implemented in this study).}
 \emph{The following Hybrid-GAN-mechanistic structure is a proposed extension and was not implemented, trained, or evaluated in this work; it is included to motivate future research and is presented as a formulation only.} The proposed Hybrid-GAN-mechanistic structure would integrate generative adversarial networks with physics-informed mechanistic components to enhance predictive modeling in data-scarce environments. This approach complements hybrid machine learning approaches prevalent in chemical and biological process modeling applications, particularly when data availability is limited. \cite{mansouri2025models, nielsen2020hybrid,nazemzadeh2021integration, ehtesham2025dynamics}
 
 \begin{figure*}
@@ -203,8 +188,7 @@ vanishing-gradient pathologies of the original GAN objective.
 
 This optimization balances statistical fidelity from empirical data distributions ($p_{data}$) with physical consistency, minimizing residuals from time derivatives.
 
-\subsubsection{Integration with Process Models}
-
+\paragraph{Integration with process models.}
 The mechanistic component $M(G(z))$ in the proposed objective above
 would, in any implementation, take the standard
 (bio)chemical-process balance / constraint / constitutive form
@@ -222,7 +206,7 @@ reproduced here.
  \label{fig:mech_rep}
 \end{figure}
 
-\subsubsection{Comparison with Other Modeling Approaches}
+\paragraph{Qualitative comparison with other modelling approaches.}
 
 \begin{table}
 \small
@@ -613,69 +597,80 @@ Archived snapshot of the tagged release: Zenodo, DOI: \texttt{ZENODO-DOI-PLACEHO
 
 The complete code, trained models, and datasets have been released for transparency, independent verification, and acceleration of subsequent advances in quantum-enhanced chemical and biochemical engineering.
 
-\paragraph{Per-figure and per-table data provenance.}
-Every paper-cited numeric literal (main text, this supplement, and the
-authors' point-by-point response to reviewers) resolves to a JSON file
-under \texttt{revision/results/} in the release repository. The
-mapping below is exhaustive for the figures and tables whose captions
-in this manuscript intentionally omit source-trace clauses (the
-preferred reader-facing convention; reproducibility-critical traces
-live here).
+\paragraph{Artifact reference table.}
+Every results JSON, code module, and documentation file cited
+elsewhere in this manuscript and supplement is enumerated in
+Table~\ref{tbl:artifact_pointers}; in-line path strings throughout the
+paper have been replaced with the corresponding ID. Paths are relative
+to the project root in the released repository, all paths under the
+\texttt{revision/} tree.
 
-\begin{itemize}[nosep, leftmargin=*]
- \item Main text Figures 2--6 (cross-model EMD, DTW dualscale, ACF
- overlay, training convergence, Pareto): aggregates under
- \texttt{matched2000\_dualscale.json}, \texttt{distribution\_emd.json},
- \texttt{welch\_pairwise.json}, \texttt{cross\_model\_emd.json},
- \texttt{cross\_model\_dtw\_dualscale.json},
- \texttt{cross\_model\_acf\_overlay.json},
- \texttt{param\_efficiency\_pareto.json}.
- \item Main text Table 2 (matched-budget headline metrics):
- \texttt{matched2000\_dualscale.json\#aggregates}, filtered per
- (\texttt{model\_kind}, \texttt{scale}, \texttt{metric\_name}).
- \item Per-model loss diagnostics
- (Fig.~\ref{fig:per_model_loss_grid}): per-seed training-loop
- trajectories at \texttt{matched2000/runs/<model>/<seed>/metrics.json};
- fit-summary statistics at \texttt{figures/loss\_<model>.json}.
- \item Per-model reconstruction overlays
- (Figs.~\ref{fig:reconstruction_iqp_sel_55_repro} and following): per-model JSON at
- \texttt{figures/reconstruction\_<model>.json}; the $\times 10$ WGAN
- inverse-pipeline correction documented in §A.7 is applied at the
- \texttt{samples.npy} load boundary by the shared helper
- \texttt{revision/\_wgan\_unscale.py}.
- \item Welch-pairwise tables (\S A.6, this section):
- \texttt{welch\_pairwise.json}, filtered to the requested
- (\texttt{scale}, \texttt{metric\_name}) pair.
- \item Preprocessing pipeline visualisations
- (Figs.~\ref{fig:preprocessing_pipeline},
- \ref{fig:preprocessing_ablation}):
- \texttt{transform\_ablation/metrics.csv} and
- \texttt{transform\_ablation/tstr\_lite.json}.
- \item Hardware-noise sensitivity sweeps
- (Figs.~\ref{fig:shot_noise_robustness},
- \ref{fig:noise_robustness_quantum}):
- \texttt{shot\_noise\_sensitivity.json},
- \texttt{noise\_model\_sensitivity.json}.
- \item Quantum circuit introspection diagnostics
- (Figs.~\ref{fig:training_progression}, \ref{fig:entanglement_trajectory},
- \ref{fig:param_trajectory}): per-trajectory JSON at
- \texttt{figures/training\_progression.json},
- \texttt{figures/entanglement\_trajectory.json},
- \texttt{figures/param\_trajectory.json}.
- \item TSTR cross-model utility
- (Fig.~\ref{fig:tstr_crossmodel_matched2000}, this section):
- \texttt{tstr\_matched2000.json}.
- \item Circuit-architecture diagrams (Fig.~\ref{fig:quantum_circuit}):
- rendered via PennyLane's \texttt{qml.draw\_mpl} from the locked
- circuit configurations at \texttt{figures/circuits/<name>.json}.
-\end{itemize}
+\begin{table}[!htbp]
+\centering
+\caption{Artifact reference table. \textbf{R}-rows are results files
+(JSON / CSV) under \texttt{revision/results/}; \textbf{C}-rows are code
+modules + executable scripts under \texttt{revision/}; \textbf{D}-rows
+are documentation files. All paths relative to the project root in the
+released repository.}
+\label{tbl:artifact_pointers}
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabular}{@{}llp{6.3cm}@{}}
+\toprule
+\textbf{ID} & \textbf{Path} & \textbf{Purpose / contents} \\
+\midrule
+\multicolumn{3}{l}{\textit{Results aggregates (main paper figures + tables)}} \\
+\midrule
+R1  & \texttt{matched2000\_dualscale.json}            & Main Table 2 + Figs 3--6 aggregates; dual-scale per-model + per-seed values \\
+R2  & \texttt{distribution\_emd.json}                 & Per-model distributional EMD on log-return + OD scales \\
+R3  & \texttt{welch\_pairwise.json}                   & Pairwise Welch $t$-tests on EMD (\S A.4) \\
+R4  & \texttt{cross\_model\_emd.json}                 & Fig 5 EMD overlay across all 9 models \\
+R5  & \texttt{cross\_model\_dtw\_dualscale.json}      & Fig 3 DTW dual-scale \\
+R6  & \texttt{cross\_model\_acf\_overlay.json}        & Fig 4 lag-1 ACF overlay \\
+R7  & \texttt{param\_efficiency\_pareto.json}         & Fig 6 parameter-efficiency Pareto \\
+R8  & \texttt{model\_info.json}                       & Master hyperparameter + metadata record \\
+R9  & \texttt{tstr\_matched2000.json}                 & TSTR cross-model utility (\S A.4) \\
+R10 & \texttt{shot\_noise\_sensitivity.json}          & Shot-noise sensitivity sweep (\S A.14) \\
+R11 & \texttt{noise\_model\_sensitivity.json}         & Depolarising + amplitude-damping noise sweep (\S A.14) \\
+R12 & \texttt{transform\_ablation/metrics.csv}        & Preprocessing-pipeline ablation metrics \\
+R13 & \texttt{transform\_ablation/tstr\_lite.json}    & Preprocessing-pipeline TSTR-lite \\
+R14 & \texttt{figures/training\_convergence\_all\_models.json} & In-loop OD-EMD convergence across all 7 WGAN-GP generators \\
+\midrule
+\multicolumn{3}{l}{\textit{Per-model + per-seed JSONs}} \\
+\midrule
+R15 & \texttt{matched2000/runs/<model>/<seed>/metrics.json} & Per-seed training-loop trajectories \\
+R16 & \texttt{figures/loss\_<model>.json}             & Per-model loss-figure data + fit summaries \\
+R17 & \texttt{figures/reconstruction\_<model>.json}   & Per-model reconstruction-figure data \\
+R18 & \texttt{figures/training\_progression.json}     & Quantum circuit training-progression (\S A.8) \\
+R19 & \texttt{figures/entanglement\_trajectory.json}  & Quantum entanglement entropy over training (\S A.8) \\
+R20 & \texttt{figures/param\_trajectory.json}         & PQC parameter trajectories over training (\S A.8) \\
+R21 & \texttt{figures/circuits/<name>.json}           & Locked circuit configurations (per ansatz) \\
+\midrule
+\multicolumn{3}{l}{\textit{Code modules + executable scripts}} \\
+\midrule
+C1 & \texttt{\_wgan\_unscale.py}                  & $\times 10$ WGAN inverse-pipeline correction helper (\S A.7) \\
+C2 & \texttt{verify\_number\_provenance.py}       & Number-provenance audit gate (every literal $\to$ JSON) \\
+C3 & \texttt{core/eval.py}                        & Canonical metric implementations (DTW, EMD, JSD, moments) \\
+C4 & \texttt{core/data.py}                        & Data loading, log-return + Lambert W transforms \\
+C5 & \texttt{run\_baselines.py}                   & Classical baseline orchestrator (line 28: Pitfall~3 note) \\
+C6 & \texttt{run\_welch\_aggregator.py}           & Welch-table aggregator script \\
+C7 & \texttt{scripts/v2.1\_differential\_test.py} & Pre/post inverse-pipeline differential test \\
+\midrule
+\multicolumn{3}{l}{\textit{Documentation files + architecture records}} \\
+\midrule
+D1 & \texttt{docs/methods\_full.md}               & Full methods documentation \\
+D2 & \texttt{docs/circuit\_atlas.md}              & Per-ansatz circuit gate sequences \\
+D3 & \texttt{results/classical\_architectures.json} & Critic + classical-generator per-layer architecture record \\
+D4 & \texttt{README.md}                           & Script entry-points + reproduction instructions \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-The number-provenance gate
-(\texttt{revision/verify\_number\_provenance.py}) audits every literal
-in the manuscript, supplementary, and rebuttal against the
-\texttt{revision/results/} corpus at submission time; the gate
-schema, the corpus snapshot, and the per-literal resolution manifest
-are part of the tagged release.
+The number-provenance gate (C2) audits every literal in the manuscript,
+supplementary, and rebuttal against the results corpus at submission
+time; the gate schema, the corpus snapshot, and the per-literal
+resolution manifest are part of the tagged release.
 
 \textbf{Quantum Circuit Specifications:}
 
@@ -748,41 +743,21 @@ the figure.
  \label{fig:quantum_circuit}
 \end{figure*}
 
-\paragraph{IQP:SEL (55 parameters, depth 3, range entangler) --- headline.}
-The reported generator. Hadamard gates create uniform superposition; two
-IQP layers (the first with $R_z$ rotations parameterised by the latent
-noise vector as the input encoding, the second with trainable $R_z$
-rotations) embed the latent vector through quadratic phase encoding;
-three strongly-entangling layers with $\text{Rot}(\phi, \theta, \omega)$
-gates and range-based CNOTs implement the trainable transformation; final
-$R_x$ and $R_y$ rotations prepare the measurement bases. The 10-dimensional
-output vector is read out as Pauli-X and Pauli-Z expectation values, one
-of each per qubit.
-
-\paragraph{V1 (75 parameters, depth 4, range entangler).}
-Same IQP encoding and SEL stack as IQP:SEL, with one additional entangling
-layer (depth 4 versus 3) and the corresponding +20 trainable parameters.
-Tests whether a modest depth increase at fixed entangler topology yields
-a fidelity improvement.
-
-\paragraph{V2 (135 parameters, depth 8, range entangler).}
-The deepest range-entangled variant; doubles V1's depth and roughly
-triples IQP:SEL's parameter count. Tests whether the additional
-expressibility is recoverable under the matched-budget training contract
-(2000 epochs, $n = 5$ seeds, fixed hyperparameters).
-
-\paragraph{V3 (75 parameters, depth 4, linear entangler).}
-Parameter- and depth-matched to V1 (both 75 parameters, depth 4) but with
-linear CNOT connectivity ($q_i \to q_{i+1}$) in place of the range-based
-pattern $r = (\text{layer} \bmod (n_{\text{qubits}} - 1)) + 1$ used by the
-other three variants. Isolates the contribution of entangler topology
-from depth or parameter count.
-
-The main-text §3.2 result is that, under the matched-budget contract, the
-smaller 55-parameter IQP:SEL circuit was not outperformed in fidelity by
-any of V1--V3, motivating its selection as the reported configuration
-(see the headline LR-DTW dominance reported in main-text §4.2).
-\cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}
+\paragraph{Ansatz variants.}
+The four ansatz variants compared at matched-budget are: \textbf{IQP:SEL}
+(55 parameters, depth 3, range entangler — the reported headline
+generator), \textbf{V1} (75p, depth 4, range entangler — depth-increment
+control), \textbf{V2} (135p, depth 8, range entangler — deepest
+range-entangled variant), and \textbf{V3} (75p, depth 4, linear
+entangler — isolates entangler topology from depth at fixed parameter
+count). Each variant is depicted as a panel of Figure~\ref{fig:circuit_atlas},
+with per-variant gate-sequence + qubit topology + encoding/measurement
+basis recorded in D2. Under the
+matched-budget contract, the smaller 55-parameter IQP:SEL circuit was
+not outperformed in fidelity by any of V1--V3, motivating its selection
+as the reported configuration (see the headline LR-DTW dominance
+reported in main-text §4.2)
+\cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}.
 
 
 \begin{figure*}
@@ -913,7 +888,7 @@ magnitude-match the quantum generator's $[-1, +1]$ output to
 unstandardized log-returns. The same $\times 0.1$ is retained at the
 WGAN training/sample-export sites in the present pipeline so that the
 on-disk \texttt{samples.npy} bundles under
-\protect\path{revision/results/matched2000/runs/} remain byte-stable
+R15 paths remain byte-stable
 across runs and consistent with every saved checkpoint; modifying the
 training-side scaling would invalidate every checkpoint and break
 reproducibility against the released artifact set. The on-disk
@@ -923,14 +898,14 @@ The downstream inverse formula
 $r_{\text{norm}} = ((s + 1)/2)\,(r_{\max} - r_{\min}) + r_{\min}$
 assumes $s \in [-1, +1]$, so every paper-cited consumer applies a
 $\times 10$ correction at the \texttt{samples.npy} load boundary
-via a shared helper module \protect\path{revision/_wgan_unscale.py}
+via a shared helper module (C1)
 before invoking the inverse formula. The correction is inference-only
 and is gated by \texttt{model\_kind in \_WGAN\_KINDS}, where
 \texttt{\_WGAN\_KINDS} is the set of the seven WGAN-trained generators
 plus the headline-row labels emitted by the canonical headline path.
 
 \emph{VAE and AR(2) are deliberately excluded from this set.} Per the
-``Pitfall~3'' design note at \protect\path{revision/run_baselines.py:28},
+``Pitfall~3'' design note in C5 (line~28),
 the VAE and AR(2) generators are trained without the $\times 0.1$
 post-scaling and their on-disk samples are already in the canonical
 $[-1, +1]$ window space; passing them through the helper would be
@@ -968,7 +943,7 @@ above.
 
 \paragraph{Acceptance-gate amendment.}
 The v1.2.4 evaluation pipeline included a strong-claim acceptance gate
-at \texttt{revision/run\_welch\_aggregator.py} that hard-aborted when
+at C6 that hard-aborted when
 the OD-EMD cluster-floor Welch $p$ fell below $0.36$ or
 $|\mathrm{Cohen's}\,d|$ exceeded $0.65$ --- the H2 parametric-equivalence
 acceptance thresholds. Under the corrected inference pipeline these
@@ -983,8 +958,36 @@ authorised at the R3 user-decision checkpoint of the post-submission
 remediation; the rationale is recorded in the source-file comment
 block of the aggregator script.
 
-\subsection{Quantum Circuit Introspection}
-\label{sec:quantum_introspection}
+\subsection{Model Architecture Details and Quantum Circuit Introspection}
+\label{sec:model_arch_and_introspection}
+
+\subsubsection{Critic network architecture}
+
+The critic model is a convolutional neural network that processes
+sequential data to distinguish between real and generated samples,
+following the WGAN-GP architecture \cite{gulrajani2017improved} with
+adaptations for time-series.
+
+% source: revision/results/total_adversarial_param_budget.json#shared_critic_n_params (=250881)
+% source: revision/results/classical_architectures.json#models.shared_critic.total_params (=250881)
+The critic network has a total of 250881 trainable parameters. This
+same critic was used for all WGAN-GP generators (quantum and classical)
+under the matched-budget protocol defined in main-text Section~3.1;
+only the generator varies between quantum and classical entrants,
+isolating the effect of the quantum circuit on the generated
+distribution.
+
+The critic is a standard WGAN-GP 1D-CNN: three Conv1D blocks with
+LeakyReLU activations followed by a flatten-and-dense head with dropout
+and an unbounded scalar output, consistent with the gradient-penalty
+WGAN formulation \cite{gulrajani2017improved, arjovsky17a}. The full
+per-layer specification (filter counts, kernel sizes, activation slope,
+dropout rate, and dense width) is recorded in the released artifact
+corpus at D1 and D3; both are
+provenance-verified and tracked in the matched-budget reproducibility
+bundle.
+
+\subsubsection{Quantum circuit introspection diagnostics}\label{sec:quantum_introspection}
 
 This section addresses reviewer comment R2-6 (``what is the quantum
 circuit actually learning?'') with three introspection diagnostics
@@ -1091,7 +1094,7 @@ on the training log-return windows (residual variance
 $\hat{\sigma}^2 = 0.057$, sample mean $-0.003$, sample standard
 deviation $0.242$) and therefore has no epoch-wise loss trajectory.
 The fit-summary statistics are recorded in
-\protect\path{revision/results/figures/loss_ar.json#fit_summary}.
+the \texttt{fit\_summary} block of R16 for AR(2).
 
 \textbf{No training pathology detected at the matched-budget contract.}
 Across all 9 generators (or 35 individual WGAN-GP runs), no run
@@ -1163,196 +1166,129 @@ known fragility at the matched-budget parameter count of 73.
 
 \subsection{Per-Model Reconstruction Overlays}
 
-Figures~\ref{fig:reconstruction_iqp_sel_55_repro}--\ref{fig:reconstruction_ar}
-provide a per-model time-series view of generation fidelity, complementing
-the per-model loss diagnostics of \S A.9 and the cross-model distributional
-metrics of main-text \S4. For each of the nine matched-budget generators
-(seed 42), three vertically stacked panels overlay the generated trajectory
-on the corresponding real series across the full data extent (777
-log-deltas + 778 OD points):
-\begin{itemize}[nosep, leftmargin=*]
- \item \textbf{Top:} Log-delta comparison (generated vs. real log-returns,
- 777 points).
- \item \textbf{Middle:} OD reconstruction on linear scale (778 points).
- \item \textbf{Bottom:} OD reconstruction on log scale (778 points).
-\end{itemize}
+Figure~\ref{fig:reconstruction_atlas} provides a per-model time-series
+view of generation fidelity across all nine matched-budget generators
+(seed~42), complementing the per-model loss diagnostics of \S A.9 and
+the cross-model distributional metrics of main-text \S 4. Each subpanel
+consists of three vertically stacked sub-plots (log-delta comparison,
+OD reconstruction on linear scale, OD reconstruction on log scale) per
+the protocol detailed in the umbrella caption. The visualisation
+protocol differs from the canonical matched-budget per-window
+evaluation of main-text \S 4.2: synthetic samples are reconstructed as
+a 777-point contiguous sequence anchored at $\text{OD}_{\text{real}}[0]$,
+rather than aggregated over the per-window random anchors that the
+fidelity metrics use.
 
-\textbf{Visualization protocol (differs from the fidelity-metric protocol
-of main-text \S4.2).} The generated 777-point log-delta sequence is built
-by concatenating the first 78 rows of each model's $(3840, 10)$
-\texttt{samples.npy} bundle (each row an independent 10-step draw in
-$[-1, 1]$ rescaled space), un-rescaling to standardized log-returns via
-the saved $r_{\min}, r_{\max}$ bounds, and un-standardizing to raw
-log-deltas via the saved $\mu, \sigma$. The reconstructed OD trajectory is
-then anchored at $\text{OD}_{\text{real}}[0]$ (rather than the canonical
-matched-budget evaluation protocol's random per-window $od_{\text{start}}$
-draw seeded from the run seed) and integrated via
-$\texttt{inverse\_logreturns}$ to produce a length-778 OD series directly
-overlayable on real OD. The synthetic log-delta sequence used in these figures is the same
-sequence consumed by the matched-budget evaluation in main \S4 under
-the $\times 10$ WGAN inverse correction described in \S A.7; no
-additional figure-side post-processing is applied. A residual
-generator mean-bias in standardized space persists for the quantum
-cluster (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
+\paragraph{Residual generator mean-bias.}
+A residual generator mean-bias in standardized space persists for the
+quantum cluster (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
 $\approx -0.03$) and, under the long-horizon overlay protocol used
 here (777 contiguous integration steps anchored at
-$\text{OD}_{\text{real}}[0]$), compounds into a $\sim 2\times$ OD
-drift visible in the bottom panel of each figure as a slow
-positive trend on the synthetic line relative to real. This residual
-drift is a training-side artifact not addressable at inference; it does
-not affect the matched-budget fidelity metrics in main \S4, which are
+$\text{OD}_{\text{real}}[0]$), compounds into a $\sim\!2\times$ OD
+drift visible in the bottom panel of each subfigure as a slow positive
+trend on the synthetic line relative to real. This residual drift is a
+training-side artifact not addressable at inference; it does \emph{not}
+affect the matched-budget fidelity metrics in main \S 4, which are
 computed under the canonical per-window-anchor protocol over short
-windows.
-
-\textbf{What the figures show.} Each model's log-delta amplitude relative
-to real (top panel) is the primary visual signal: a generator that
-captures real log-delta variance produces an overlay with matched
-oscillation amplitude (cf.\ AR(2),
-Figure~\ref{fig:reconstruction_ar}); a generator with attenuated outputs
-produces a near-flat orange trace (cf.\ the four quantum variants).
-Reconstructed OD smoothness in the middle/bottom panels follows directly:
-attenuated log-delta amplitude integrates to a smoother OD trajectory,
-consistent with the main-text \S4.1/\S4.2 finding that the
-matched-budget quantum entrants exceed classical adversarials on
-temporal alignment (LR-DTW) while falling short on single-step
-log-return marginals (LR-EMD). AR(2) and the WGAN-LSTM/MLP entrants
-exhibit the closest amplitude match to real, also consistent with the
-main-text finding that classical adversarials lead on LR-EMD.
+windows. See also the residual-drift disclosure in \S A.7.
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_iqp_sel_55_repro.pdf}
- \caption{Reconstruction overlay --- IQP:SEL 55p (2000ep repro), seed 42.
- Top: log-delta comparison (777 points). Middle: OD linear scale (778
- points). Bottom: OD log scale (778 points). Real series in blue;
- generated/reconstructed in orange.}
- \label{fig:reconstruction_iqp_sel_55_repro}
-\end{figure*}
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_iqp_sel_55_repro.pdf}
+   \caption{IQP:SEL (55p, Q)}\label{fig:reconstruction_atlas_a}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V1.pdf}
+   \caption{V1 (75p, Q)}\label{fig:reconstruction_atlas_b}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V2.pdf}
+   \caption{V2 (135p, Q)}\label{fig:reconstruction_atlas_c}
+ \end{subfigure}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V1.pdf}
- \caption{Reconstruction overlay --- Quantum V1 (75p, depth 4, range
- entangler), seed 42. Panels as in
- Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
- \label{fig:reconstruction_V1}
-\end{figure*}
+ \vspace{4pt}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V2.pdf}
- \caption{Reconstruction overlay --- Quantum V2 (135p, depth 8, range
- entangler), seed 42. Panels as in
- Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
- \label{fig:reconstruction_V2}
-\end{figure*}
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V3.pdf}
+   \caption{V3 (75p, Q, linear)}\label{fig:reconstruction_atlas_d}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_mlp.pdf}
+   \caption{WGAN-MLP (74p)}\label{fig:reconstruction_atlas_e}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_cnn.pdf}
+   \caption{WGAN-CNN (73p)}\label{fig:reconstruction_atlas_f}
+ \end{subfigure}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_V3.pdf}
- \caption{Reconstruction overlay --- Quantum V3 (75p, depth 4, linear
- entangler), seed 42. Panels as in
- Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
- \label{fig:reconstruction_V3}
-\end{figure*}
+ \vspace{4pt}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_mlp.pdf}
- \caption{Reconstruction overlay --- WGAN-GP (MLP), 74p, seed 42.
- Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
- \label{fig:reconstruction_wgan_mlp}
-\end{figure*}
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_lstm.pdf}
+   \caption{WGAN-LSTM (78p)}\label{fig:reconstruction_atlas_g}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_vae.pdf}
+   \caption{VAE (562p)}\label{fig:reconstruction_atlas_h}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_ar.pdf}
+   \caption{AR(2) (3p)}\label{fig:reconstruction_atlas_i}
+ \end{subfigure}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_cnn.pdf}
- \caption{Reconstruction overlay --- WGAN-GP (CNN), 73p, seed 42.
- The seed-42 LR-EMD outlier
- (OD-EMD~$=\!0.1587$ vs.\ the other four seeds in 0.020--0.034,
- disclosed at face value in main-text \S4.1) is the run plotted here.
- Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
- \label{fig:reconstruction_wgan_cnn}
-\end{figure*}
-
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_wgan_lstm.pdf}
- \caption{Reconstruction overlay --- WGAN-GP (LSTM), 78p, seed 42.
- Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
- \label{fig:reconstruction_wgan_lstm}
-\end{figure*}
-
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_vae.pdf}
- \caption{Reconstruction overlay --- VAE (562p, degenerate generation
- regime; see main-text \S4.1), seed 42. Panels as in
- Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.}
- \label{fig:reconstruction_vae}
-\end{figure*}
-
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_ar.pdf}
- \caption{Reconstruction overlay --- AR(2) closed-form baseline, seed
- 42. Panels as in Figure~\ref{fig:reconstruction_iqp_sel_55_repro}.
- Note the visibly tighter amplitude match in the top panel, consistent
- with AR(2)'s leading LR-EMD ranking under the matched-budget contract
- (main-text \S4.2).}
- \label{fig:reconstruction_ar}
+ \caption{Per-model reconstruction overlay atlas, seed~42, 2000ep
+ matched budget. Each panel: top sub-plot = log-delta comparison
+ (777 points, real blue vs.\ generated orange); middle = OD
+ reconstruction on linear scale (778 points); bottom = OD
+ reconstruction on log scale (778 points). Sample construction:
+ contiguous 777-point log-delta sequence from each model's
+ \texttt{samples.npy} (with $\times 10$ WGAN sample-space correction
+ per \S A.7 applied at the load boundary), un-rescaled then
+ un-standardised via the saved $r_{\min}, r_{\max}, \mu, \sigma$;
+ OD reconstructed by anchoring at $\text{OD}_{\text{real}}[0]$ and
+ integrating. Panel (f) is the WGAN-CNN seed-42 LR-EMD outlier
+ (OD-EMD $=0.1587$ vs.\ the other four seeds in $0.020$--$0.034$),
+ disclosed at face value in main-text \S 4.1. Panel (h) is the VAE
+ degenerate-generation regime characterised in main-text \S 4.1.
+ Panel (i) AR(2) shows the visibly tighter amplitude match
+ consistent with its leading LR-EMD ranking under the matched-budget
+ contract.}
+ \label{fig:reconstruction_atlas}
 \end{figure*}
 
 \subsection{Per-Model Log-Return Distribution Diagnostics}
 
 Figures~\ref{fig:stat_grid_iqp_sel_55_repro}--\ref{fig:stat_grid_ar}
 present, for each of the nine matched-budget generators (seed~42), a
-six-panel statistical-comparison grid on the log-return scale. Inputs
-are the full real log-delta series (777 points from
-\protect\path{data.csv} via \protect\path{revision/core/data.py::compute_log_delta})
-and the synthetic log-delta series (777 points extracted from each
-model's \protect\path{samples.npy} via the saved inverse transform with
-the $\times 10$ WGAN sample-space correction from \S A.7 applied at the
-load boundary; the same construction as \S A.10). The
-panels reflect the generator output distribution including any
-residual mean bias.
-
-The panel layout is identical across all nine figures:
-\begin{itemize}[nosep, leftmargin=*]
- \item Top-left: probability density histograms (50 bins, overlaid).
- \item Top-middle: cumulative density histograms (100 bins, overlaid).
- \item Top-right: Q-Q plot vs.\ the standard normal distribution
- (\texttt{scipy.stats.probplot(dist="norm")} called for each series;
- deviation from the red reference line indicates non-Gaussianity).
- \item Bottom-left: statistical moments bar chart (mean, std,
- skewness, Fisher excess kurtosis; std computed with
- \texttt{ddof=0} and kurtosis as \texttt{scipy.stats.kurtosis}'s
- default to match \protect\path{revision/core/eval.py::compute_moments}).
- \item Bottom-middle: distance metrics bar chart with numerical
- labels --- EMD via \texttt{scipy.stats.wasserstein\_distance} on
- raw samples (\protect\path{revision/core/eval.py::compute_emd});
- Jensen-Shannon divergence on a shared-bin histogram
- (\protect\path{revision/core/eval.py::compute_jsd}, default 100
- bins); and the absolute difference of the two Shannon entropies.
- \item Bottom-right: Shannon entropy comparison (in nats), computed
- on shared 50-bin histograms with a small floor
- ($+10^{-12}$ per bin) to avoid $\log 0$.
-\end{itemize}
-
-\textbf{Scope.} These are diagnostic visualizations for distributional
-fidelity at the log-return scale; they are not a restatement of the
-canonical fidelity metrics reported in main-text \S 4.2 (which are
-computed under the matched-budget per-window evaluation protocol with
-different sample-construction details and aggregation across the five
-seeds). Each panel grid is single-seed (seed~42) and uses the
-777-point contiguous reconstruction sequence.
+six-panel statistical-comparison grid on the log-return scale; the
+six-panel layout (PDF / CDF histograms, normal Q--Q, statistical
+moments, distance metrics, Shannon entropy comparison) is identical
+across all nine figures and is detailed in the caption of
+Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Sample construction
+matches the \S A.10 protocol (777 contiguous log-deltas from each
+model's \texttt{samples.npy} with the $\times 10$ WGAN sample-space
+correction from \S A.7 applied at the load boundary). The panels
+reflect the generator output distribution including any residual mean
+bias, and are visualisations of distributional fidelity at the
+log-return scale; they are not a restatement of the canonical
+matched-budget fidelity metrics of main-text \S 4.2 (which use a
+per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
  \includegraphics[width=\linewidth]{revision/results/figures/stat_grid_iqp_sel_55_repro.pdf}
  \caption{Log-return distribution diagnostics --- IQP:SEL 55p (2000ep
- repro), seed~42. Six-panel layout per \S A.11 intro. Real (blue) vs.\
- generated (orange).}
+ repro), seed~42. Real (blue) vs.\ generated (orange). Panel layout
+ (identical across all nine \S A.11 figures): top-left PDF
+ histograms (50 bins, overlaid); top-middle CDF histograms (100
+ bins); top-right Q--Q vs.\ standard normal (deviation from the red
+ reference line indicates non-Gaussianity); bottom-left moments bar
+ chart (mean, std, skewness, Fisher excess kurtosis; std at ddof=0;
+ kurtosis as \texttt{scipy.stats.kurtosis} default); bottom-middle
+ distance metrics (EMD on raw samples; Jensen--Shannon on shared-bin
+ histograms; $|\Delta H|$); bottom-right Shannon entropy comparison
+ (50-bin histograms, $+10^{-12}$ per-bin floor).}
  \label{fig:stat_grid_iqp_sel_55_repro}
 \end{figure*}
 
@@ -1452,7 +1388,7 @@ visualization-protocol value: it uses a different DTW implementation
 and band/skip-edge protocol than the canonical fastdtw-based LR-DTW
 reported in main-text \S 4.2 (which is computed under the matched-budget
 windowed-evaluation protocol per
-\protect\path{revision/core/eval.py::compute_dtw}). Numerical DTW
+the \texttt{compute\_dtw} entry point of C3). Numerical DTW
 distances in these figures are NOT directly comparable to the headline
 LR-DTW values; the figures are intended to illustrate alignment
 quality (warping-path shape, band utilization, anchor cost) rather
@@ -1515,31 +1451,6 @@ than to re-derive the headline metric.
  degenerate-generation regime characterised in main-text \S 4.1.}
  \label{fig:dtw_alignment_atlas}
 \end{figure*}
-
-\subsection{Critic Network Architecture Details}
-
-The Critic model is a convolutional neural network that processes sequential data to distinguish between real and generated data from the quantum generator. The network follows the WGAN-GP architecture~\cite{gulrajani2017improved} with specific adaptations for time series data.
-
-% source: revision/results/total_adversarial_param_budget.json#shared_critic_n_params (=250881)
-% source: revision/results/classical_architectures.json#models.shared_critic.total_params (=250881)
-The critic network has a total of 250881 trainable parameters. This same
-critic was used for all WGAN-GP generators (quantum and classical) under the
-matched-budget protocol defined in main-text Section~3.1; the only component
-that varies between the quantum and classical entrants is the generator,
-which isolates the effect of the quantum circuit on the generated
-distribution.
-
-The critic is a standard WGAN-GP 1D-CNN: three Conv1D blocks with
-LeakyReLU activations followed by a flatten-and-dense head with dropout
-and an unbounded scalar output, consistent with the
-gradient-penalty WGAN formulation \cite{gulrajani2017improved,
-arjovsky17a}. The full per-layer specification (filter counts, kernel
-sizes, activation slope, dropout rate, and dense width) is recorded in
-the released artifact corpus at
-\texttt{revision/docs/methods\_full.md} and
-\texttt{revision/results/classical\_architectures.json}; both are
-provenance-verified and tracked in the matched-budget reproducibility
-bundle.
 
 \subsection{Quantum Hardware Robustness Sensitivity}
 \label{sec:robustness_sensitivity}
