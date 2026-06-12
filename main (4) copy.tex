@@ -860,9 +860,8 @@ Figures~\ref{fig:cross_model_dtw_dualscale} and
 Figure~\ref{fig:cross_model_acf_overlay} reads R6;
 Figure~\ref{fig:param_efficiency_pareto} reads R7 with parameter counts
 from R8. The WGAN sample-space convention and the $\times 10$ inverse
-correction are applied at the \texttt{samples.npy} load boundary via
-helper C1 (see supp \S A.7); all script entry points are documented in
-D4.
+correction are applied at the sample-load boundary via helper C1 (see
+supp \S A.7); all script entry points are documented in D4.
 
 \section{Concluding Remarks}
 
@@ -907,7 +906,7 @@ The first-round submission (origin tag v1.2.4) was prepared under an
 inference pipeline that under-scaled the WGAN-trained samples by a factor
 of $10$ in the rescaled $[-1, +1]$ window space (see supp \S A.7 for the
 technical disclosure). The corrected inference pipeline, applied uniformly
-at the \texttt{samples.npy} load boundary across every paper-cited
+at the sample-load boundary across every paper-cited
 consumer, shifts the WGAN cluster's distance metrics in the direction of
 higher (i.e., worse) values, by construction, since the bug attenuated
 WGAN-vs-real distances and the correction restores them. Three properties
@@ -935,10 +934,9 @@ advantages it.
 \textbf{(iii) Direction and magnitude are inherited from the bug.} The
 $10\times$ correction is the inverse of the documented $\times 0.1$ at
 the WGAN training/sample-export sites; both the factor and the gated
-subset are reproducible from the code comment at
-\texttt{archive/qgan\_pennylane\_SEL.py} and the Pitfall~3 note in C5
-(line~28). We did not select the magnitude
-or direction of the correction \emph{post hoc}.
+subset are reproducible from the archived reference notebook and the
+Pitfall~3 note in C5. We did not select the magnitude or direction of
+the correction \emph{post hoc}.
 
 The corrected pipeline inverts the v1.2.4 reading on three of the four
 matched-budget metrics (preserves directionally on LR-DTW; flips OD-EMD

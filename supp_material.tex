@@ -846,9 +846,8 @@ step on two grounds: (i) it does not improve OD-scale fidelity over
 Pipeline~B; (ii) it directly addresses reviewer concern R1-M3, which
 flagged that the Lambert~$W$ step over-Gaussianizes the input
 distribution and could trivialise the generative task. Full per-seed
-metrics and the ablation summary are in
-\path{revision/results/transform_ablation/metrics.csv} and
-\texttt{summary.md}.
+metrics and the ablation summary are released with the artifact set
+(R12 and R13).
 
 \begin{figure*}[!htbp]
  \centering
@@ -869,26 +868,23 @@ WGAN-trained generators in this study (quantum IQP:SEL plus V1/V2/V3,
 classical wgan\_mlp/cnn/lstm) are trained and saved with their
 $[-1, +1]$ generator outputs multiplied by $0.1$ at the
 sample-export site. This convention is inherited from an earlier
-reference notebook
-(\protect\path{archive/qgan_pennylane_SEL.py}; the relevant scaling
-block carries the explicit code comment ``Real data is roughly in
-$[-0.08, 0.09]$, so scale by $\sim 0.1$''), where it served to
-magnitude-match the quantum generator's $[-1, +1]$ output to
-unstandardized log-returns. The same $\times 0.1$ is retained at the
-WGAN training/sample-export sites in the present pipeline so that the
-on-disk \texttt{samples.npy} bundles under
-R15 paths remain byte-stable
-across runs and consistent with every saved checkpoint; modifying the
-training-side scaling would invalidate every checkpoint and break
-reproducibility against the released artifact set. The on-disk
-WGAN-trained samples are therefore stored in $[-0.1, +0.1]$ space.
+archived reference notebook, where the relevant scaling block carries
+the explicit code comment ``Real data is roughly in $[-0.08, 0.09]$,
+so scale by $\sim 0.1$''. The scaling there served to magnitude-match
+the quantum generator's $[-1, +1]$ output to unstandardized log-returns.
+The same $\times 0.1$ is retained at the WGAN training/sample-export
+sites in the present pipeline so that the on-disk WGAN sample bundles
+remain byte-stable across runs and consistent with every saved
+checkpoint; modifying the training-side scaling would invalidate every
+checkpoint and break reproducibility against the released artifact set.
+The on-disk WGAN-trained samples are therefore stored in
+$[-0.1, +0.1]$ space.
 
 The downstream inverse formula
 $r_{\text{norm}} = ((s + 1)/2)\,(r_{\max} - r_{\min}) + r_{\min}$
 assumes $s \in [-1, +1]$, so every paper-cited consumer applies a
-$\times 10$ correction at the \texttt{samples.npy} load boundary
-via a shared helper module (C1)
-before invoking the inverse formula. The correction is inference-only
+$\times 10$ correction at the sample-load boundary via a shared
+helper module (C1) before invoking the inverse formula. The correction is inference-only
 and is gated by \texttt{model\_kind in \_WGAN\_KINDS}, where
 \texttt{\_WGAN\_KINDS} is the set of the seven WGAN-trained generators
 plus the headline-row labels emitted by the canonical headline path.
@@ -1231,8 +1227,8 @@ windows. See also the residual-drift disclosure in \S A.7.
  (777 points, real blue vs.\ generated orange); middle = OD
  reconstruction on linear scale (778 points); bottom = OD
  reconstruction on log scale (778 points). Sample construction:
- contiguous 777-point log-delta sequence from each model's
- \texttt{samples.npy} (with $\times 10$ WGAN sample-space correction
+ contiguous 777-point log-delta sequence from each model's released
+ sample bundle (with $\times 10$ WGAN sample-space correction
  per \S A.7 applied at the load boundary), un-rescaled then
  un-standardised via the saved $r_{\min}, r_{\max}, \mu, \sigma$;
  OD reconstructed by anchoring at $\text{OD}_{\text{real}}[0]$ and
@@ -1256,7 +1252,7 @@ moments, distance metrics, Shannon entropy comparison) is identical
 across all nine figures and is detailed in the caption of
 Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Sample construction
 matches the \S A.10 protocol (777 contiguous log-deltas from each
-model's \texttt{samples.npy} with the $\times 10$ WGAN sample-space
+model's released sample bundle with the $\times 10$ WGAN sample-space
 correction from \S A.7 applied at the load boundary). The panels
 reflect the generator output distribution including any residual mean
 bias, and are visualisations of distributional fidelity at the
