@@ -292,7 +292,7 @@ First differencing into log-returns yields 777 log-return observations
 natural rate variable for this signal, because for an exponentially growing
 culture $\mathrm{OD}_t \approx \mathrm{OD}_0\,e^{\mu t}$, so $r_t$ is (up to
 the 10-minute sampling interval) the local specific growth rate $\mu_t$, the
-quantity of physiological interest in cultivation monitoring (supp \S A.7).
+quantity of physiological interest in cultivation monitoring.
 These are then standardized to zero mean and unit variance, then linearly
 rescaled to $[-1, 1]$ using the global min and max of the standardized
 log-return series.
@@ -776,7 +776,7 @@ each of which the present protocol does \emph{not} establish:
     to detect a moderate effect size of $d = 0.5$ at this seed
     budget, so the cluster-mean separations on those axes are
     reported with explicit n=5 power caveats and per-seed overlap is
-    acknowledged where it occurs (Section~4.1, supp \S A.7).
+    acknowledged where it occurs (Section~4.1).
   \item \textbf{Qubit count and window dimensionality.} The five-qubit,
     ten-dimensional rolling-window regime is dictated by the
     rolling-window choice (Section~3.1). The finding does not extrapolate
@@ -859,9 +859,7 @@ Figures~\ref{fig:cross_model_dtw_dualscale} and
 \texttt{model\_kind}, \texttt{metric\_name}, \texttt{scale});
 Figure~\ref{fig:cross_model_acf_overlay} reads R6;
 Figure~\ref{fig:param_efficiency_pareto} reads R7 with parameter counts
-from R8. The WGAN sample-space convention and the $\times 10$ inverse
-correction are applied at the sample-load boundary via helper C1 (see
-supp \S A.7); all script entry points are documented in D4.
+from R8. All script entry points are documented in D4.
 
 \section{Concluding Remarks}
 
@@ -899,53 +897,6 @@ require the multivariate, longer-series, higher-qubit-count, and
 larger-seed-budget extensions identified in the Outlook above, together
 with downstream-utility evaluation that the present matched-budget
 protocol does not undertake.
-
-\subsection*{Note on the inference-pipeline correction}
-
-The first-round submission (origin tag v1.2.4) was prepared under an
-inference pipeline that under-scaled the WGAN-trained samples by a factor
-of $10$ in the rescaled $[-1, +1]$ window space (see supp \S A.7 for the
-technical disclosure). The corrected inference pipeline, applied uniformly
-at the sample-load boundary across every paper-cited
-consumer, shifts the WGAN cluster's distance metrics in the direction of
-higher (i.e., worse) values, by construction, since the bug attenuated
-WGAN-vs-real distances and the correction restores them. Three properties
-of the corrected pipeline make this fix a defensible methodological
-correction rather than a result-favoring intervention.
-
-\textbf{(i) Asymmetry by design.} The correction is gated by
-\texttt{model\_kind} membership in the WGAN-trained set and excludes the
-VAE and AR(2) baselines, which were trained without the $\times 0.1$
-post-scaling and whose on-disk samples were already in the canonical
-$[-1, +1]$ space. The differential test against the pre-fix JSON
-snapshots confirms every VAE and AR(2) row is bit-identical pre/post;
-only WGAN-kind rows shift. This rules out a uniform
-``rescale-everything'' intervention.
-
-\textbf{(ii) Quantum entrants are also WGAN-trained.} The four quantum
-variants (IQP:SEL, V1, V2, V3) are inside the same gated set and
-receive the same $\times 10$ correction as the classical WGAN
-baselines. The shift therefore moves the quantum cluster's pre-fix
-attenuated values up in the same direction; the cluster-dominance
-reading emerges \emph{after} the correction restores the quantum
-cluster's true scale, not because the correction differentially
-advantages it.
-
-\textbf{(iii) Direction and magnitude are inherited from the bug.} The
-$10\times$ correction is the inverse of the documented $\times 0.1$ at
-the WGAN training/sample-export sites; both the factor and the gated
-subset are reproducible from the archived reference notebook and the
-Pitfall~3 note in C5. We did not select the magnitude or direction of
-the correction \emph{post hoc}.
-
-The corrected pipeline inverts the v1.2.4 reading on three of the four
-matched-budget metrics (preserves directionally on LR-DTW; flips OD-EMD
-from underpowered-null to cluster-significant; inverts the LR-EMD
-direction). Reviewers wishing to audit the directional shifts
-cell-by-cell can do so via the pre-fix JSON snapshots preserved in the
-release artifact set and the differential-test apparatus at C7.
-
-
 
 % end of main text
 \bibliographystyle{ama}

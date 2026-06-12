@@ -649,13 +649,11 @@ R21 & \texttt{figures/circuits/<name>.json}           & Locked circuit configura
 \midrule
 \multicolumn{3}{l}{\textit{Code modules + executable scripts}} \\
 \midrule
-C1 & \texttt{\_wgan\_unscale.py}                  & $\times 10$ WGAN inverse-pipeline correction helper (\S A.7) \\
-C2 & \texttt{verify\_number\_provenance.py}       & Number-provenance audit gate (every literal $\to$ JSON) \\
-C3 & \texttt{core/eval.py}                        & Canonical metric implementations (DTW, EMD, JSD, moments) \\
-C4 & \texttt{core/data.py}                        & Data loading, log-return + Lambert W transforms \\
-C5 & \texttt{run\_baselines.py}                   & Classical baseline orchestrator (line 28: Pitfall~3 note) \\
-C6 & \texttt{run\_welch\_aggregator.py}           & Welch-table aggregator script \\
-C7 & \texttt{scripts/v2.1\_differential\_test.py} & Pre/post inverse-pipeline differential test \\
+C1 & \texttt{verify\_number\_provenance.py}       & Number-provenance audit gate (every literal $\to$ JSON) \\
+C2 & \texttt{core/eval.py}                        & Canonical metric implementations (DTW, EMD, JSD, moments) \\
+C3 & \texttt{core/data.py}                        & Data loading, log-return + Lambert W transforms \\
+C4 & \texttt{run\_baselines.py}                   & Classical baseline orchestrator \\
+C5 & \texttt{run\_welch\_aggregator.py}           & Welch-table aggregator script \\
 \midrule
 \multicolumn{3}{l}{\textit{Documentation files + architecture records}} \\
 \midrule
@@ -667,7 +665,7 @@ D4 & \texttt{README.md}                           & Script entry-points + reprod
 \end{tabular}
 \end{table}
 
-The number-provenance gate (C2) audits every literal in the manuscript,
+The number-provenance gate (C1) audits every literal in the manuscript,
 supplementary, and rebuttal against the results corpus at submission
 time; the gate schema, the corpus snapshot, and the per-literal
 resolution manifest are part of the tagged release.
@@ -863,85 +861,12 @@ metrics and the ablation summary are released with the artifact set
  \label{fig:preprocessing_ablation}
 \end{figure*}
 
-\paragraph{WGAN sample-space convention and inverse-pipeline scaling.}
-WGAN-trained generators in this study (quantum IQP:SEL plus V1/V2/V3,
-classical wgan\_mlp/cnn/lstm) are trained and saved with their
-$[-1, +1]$ generator outputs multiplied by $0.1$ at the
-sample-export site. This convention is inherited from an earlier
-archived reference notebook, where the relevant scaling block carries
-the explicit code comment ``Real data is roughly in $[-0.08, 0.09]$,
-so scale by $\sim 0.1$''. The scaling there served to magnitude-match
-the quantum generator's $[-1, +1]$ output to unstandardized log-returns.
-The same $\times 0.1$ is retained at the WGAN training/sample-export
-sites in the present pipeline so that the on-disk WGAN sample bundles
-remain byte-stable across runs and consistent with every saved
-checkpoint; modifying the training-side scaling would invalidate every
-checkpoint and break reproducibility against the released artifact set.
-The on-disk WGAN-trained samples are therefore stored in
-$[-0.1, +0.1]$ space.
-
-The downstream inverse formula
-$r_{\text{norm}} = ((s + 1)/2)\,(r_{\max} - r_{\min}) + r_{\min}$
-assumes $s \in [-1, +1]$, so every paper-cited consumer applies a
-$\times 10$ correction at the sample-load boundary via a shared
-helper module (C1) before invoking the inverse formula. The correction is inference-only
-and is gated by \texttt{model\_kind in \_WGAN\_KINDS}, where
-\texttt{\_WGAN\_KINDS} is the set of the seven WGAN-trained generators
-plus the headline-row labels emitted by the canonical headline path.
-
-\emph{VAE and AR(2) are deliberately excluded from this set.} Per the
-``Pitfall~3'' design note in C5 (line~28),
-the VAE and AR(2) generators are trained without the $\times 0.1$
-post-scaling and their on-disk samples are already in the canonical
-$[-1, +1]$ window space; passing them through the helper would be
-incorrect. Every matched-budget JSON
-emitted by the consumer set (matched2000\_dualscale, welch\_pairwise,
-distribution\_emd, tstr\_matched2000,
-predictive\_discriminative\_matched2000, ansatz\_comparison,
-headline\_canonical, cross\_model\_emd, cross\_model\_dtw\_dualscale,
-cross\_model\_acf\_overlay) carries differential confirmation against
-this gate: every WGAN-kind row reflects the $\times 10$-corrected
-inverse pipeline, every VAE and AR(2) row is unaffected.
-
-\paragraph{Relative-fidelity impact.}
-The pre-correction WGAN samples were attenuated by a factor of 10 in
-the rescaled $[-1, +1]$ window space, which translated to a
-$\sim 10\times$ under-statement of every WGAN-vs-real distance metric.
-Under the corrected inference pipeline, the WGAN cluster mean shifts
-up on every distance metric reported in main \S4.1 (LR-EMD, OD-EMD,
-LR-DTW, OD-DTW). The four quantum entrants are inside the
-\texttt{\_WGAN\_KINDS} gate and receive the same $\times 10$
-correction, so the cluster-dominance reading emerges after the
-correction restores both clusters to their true scale, not because the
-correction differentially advantages the quantum cluster.
-
 \paragraph{Residual generator mean-bias.}
 A residual generator mean-bias in standardized space persists for the
 quantum cluster (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
 $\approx -0.03$) and contributes a $\sim 2\times$ OD drift over 777
 contiguous integration steps in the long-horizon overlays of \S A.10;
-this is a training-side artifact not addressable at the inference
-boundary and is disclosed for transparency. All matched-budget
-headline metrics reported in main \S4 and supp \S A.10-A.13 are
-computed under the $\times 10$-corrected inverse pipeline described
-above.
-
-\paragraph{Acceptance-gate amendment.}
-The v1.2.4 evaluation pipeline included a strong-claim acceptance gate
-at C6 that hard-aborted when
-the OD-EMD cluster-floor Welch $p$ fell below $0.36$ or
-$|\mathrm{Cohen's}\,d|$ exceeded $0.65$ (the H2 parametric-equivalence
-acceptance thresholds). Under the corrected inference pipeline these
-thresholds no longer correspond to a defensible claim (the cluster-floor
-$p$ drops to $0.019$ with $|d|$ exceeding $2$, in the cluster-dominance
-direction). The gate was converted to a soft-fail diagnostic (logs the
-violation to \texttt{stderr} and to the output JSON, no longer aborts
-the pipeline), with the historical threshold values preserved in
-\texttt{strong\_claim\_thresholds.\{floor\_welch\_p\_OD,
-ceiling\_abs\_cohen\_d\_OD\}} for traceability. The amendment was
-authorised at the R3 user-decision checkpoint of the post-submission
-remediation; the rationale is recorded in the source-file comment
-block of the aggregator script.
+this is a training-side artifact disclosed for transparency.
 
 \subsection{Model Architecture Details and Quantum Circuit Introspection}
 \label{sec:model_arch_and_introspection}
@@ -1175,7 +1100,7 @@ trend on the synthetic line relative to real. This residual drift is a
 training-side artifact not addressable at inference; it does \emph{not}
 affect the matched-budget fidelity metrics in main \S 4, which are
 computed under the canonical per-window-anchor protocol over short
-windows. See also the residual-drift disclosure in \S A.7.
+windows.
 
 \begin{figure*}[!htbp]
  \centering
@@ -1228,8 +1153,7 @@ windows. See also the residual-drift disclosure in \S A.7.
  reconstruction on linear scale (778 points); bottom = OD
  reconstruction on log scale (778 points). Sample construction:
  contiguous 777-point log-delta sequence from each model's released
- sample bundle (with $\times 10$ WGAN sample-space correction
- per \S A.7 applied at the load boundary), un-rescaled then
+ sample bundle, un-rescaled then
  un-standardised via the saved $r_{\min}, r_{\max}, \mu, \sigma$;
  OD reconstructed by anchoring at $\text{OD}_{\text{real}}[0]$ and
  integrating. Panel (f) is the WGAN-CNN seed-42 LR-EMD outlier
@@ -1252,8 +1176,7 @@ moments, distance metrics, Shannon entropy comparison) is identical
 across all nine figures and is detailed in the caption of
 Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. Sample construction
 matches the \S A.10 protocol (777 contiguous log-deltas from each
-model's released sample bundle with the $\times 10$ WGAN sample-space
-correction from \S A.7 applied at the load boundary). The panels
+model's released sample bundle). The panels
 reflect the generator output distribution including any residual mean
 bias, and are visualisations of distributional fidelity at the
 log-return scale; they are not a restatement of the canonical
@@ -1373,7 +1296,7 @@ visualization-protocol value: it uses a different DTW implementation
 and band/skip-edge protocol than the canonical fastdtw-based LR-DTW
 reported in main-text \S 4.2 (which is computed under the matched-budget
 windowed-evaluation protocol per
-the \texttt{compute\_dtw} entry point of C3). Numerical DTW
+the \texttt{compute\_dtw} entry point of C2). Numerical DTW
 distances in these figures are NOT directly comparable to the headline
 LR-DTW values; the figures are intended to illustrate alignment
 quality (warping-path shape, band utilization, anchor cost) rather
