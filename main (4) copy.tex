@@ -96,13 +96,12 @@ Quantum Generative Adversarial Networks (QGANs) embed Parameterized Quantum Circ
 
 The principal contributions of this work are:
 
-- Matched-Parameter Comparison Protocol: A parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against size-matched classical baselines on a data-scarce bioprocess task.
-
-- QWGAN-GP for Process Data Synthesis: A hybrid QWGAN-GP architecture, with a Parameterized Quantum Circuit generator and a classical critic, evaluated on a laboratory-scale photobioreactor cultivation.
-
-- Matched-Budget Empirical Finding: Under the matched protocol, the quantum cluster dominates the parameter-matched classical WGAN cluster on all four matched-budget fidelity metrics --- log-return and optical-density temporal alignment (LR-DTW, OD-DTW), and log-return and optical-density single-step marginals (LR-EMD, OD-EMD) --- with Welch significance on both optical-density axes; specific values are reported in Section~4.1 and Table~\ref{tbl:cross_model_comparison}, with explicit n=5 power caveats and per-seed-vs-per-model scoping preserved throughout.
-
-- Reproducible Open-Science Artifact: We release the code, dataset, and matched-budget reproduction script under an open licence to enable independent verification and future studies of quantum generators for bioprocess time series.
+\begin{itemize}[nosep, leftmargin=*]
+  \item \textbf{Matched-Parameter Comparison Protocol:} A parameter-matched, matched-epoch, multi-seed protocol for comparing a PQC generator against size-matched classical baselines on a data-scarce bioprocess task.
+  \item \textbf{QWGAN-GP for Process Data Synthesis:} A hybrid QWGAN-GP architecture, with a Parameterized Quantum Circuit generator and a classical critic, evaluated on a laboratory-scale photobioreactor cultivation.
+  \item \textbf{Matched-Budget Empirical Finding:} Under the matched protocol, the quantum cluster dominates the parameter-matched classical WGAN cluster on all four matched-budget fidelity metrics --- log-return and optical-density temporal alignment (LR-DTW, OD-DTW), and log-return and optical-density single-step marginals (LR-EMD, OD-EMD) --- with Welch significance on both optical-density axes; specific values are reported in Section~4.1 and Table~\ref{tbl:cross_model_comparison}, with explicit n=5 power caveats and per-seed-vs-per-model scoping preserved throughout.
+  \item \textbf{Reproducible Open-Science Artifact:} We release the code, dataset, and matched-budget reproduction script under an open licence to enable independent verification and future studies of quantum generators for bioprocess time series.
+\end{itemize}
 
 A decision-tree triage workflow is also outlined in the Outlook as an organising concept for future work; it is not implemented or evaluated here and is not an empirical contribution of this study.
 
