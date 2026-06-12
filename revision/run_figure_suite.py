@@ -1303,19 +1303,24 @@ def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
             means.append(float(np.mean(finals)))
             # ddof=1 sample std (Plan 14-13 H-2 remediation)
             stds.append(float(np.std(finals, ddof=1)))
-    fig, ax = plt.subplots(figsize=(9, 5))
+    fig, ax = plt.subplots(figsize=(11, 6.5))
     x = np.arange(len(present))
-    ax.bar(x, means, yerr=stds, capsize=4,
+    ax.bar(x, means, yerr=stds, capsize=5,
            color=[MODEL_COLORS.get(m, "#0072B2") for m in present],
            alpha=0.85)
     ax.set_xticks(x)
     ax.set_xticklabels([MODEL_LABELS.get(m, m) for m in present],
-                       rotation=30, ha="right", fontsize=8)
+                       rotation=30, ha="right", fontsize=11)
+    ax.set_yscale("log")
     ax.set_ylabel(
-        "final-eval EMD (OD scale, mean ± sample std over 5 seeds)"
+        "OD-EMD (mean $\\pm$ sample std, 5 seeds; log scale)",
+        fontsize=12,
     )
-    ax.set_title("Cross-model final-eval EMD (OD scale, 2000ep matched budget)")
-    # FROZEN headline reference line — distinctly labelled (D-14-10).
+    ax.set_title(
+        "Cross-model OD-EMD (2000ep matched budget)",
+        fontsize=13,
+    )
+    ax.tick_params(axis="y", labelsize=10)
     headline = _load_json(repo / HEADLINE_REL, "frozen headline")
     od_emd = next(
         (r["value"] for r in headline["rows"]
@@ -1324,9 +1329,16 @@ def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
     )
     if od_emd is not None:
         ax.axhline(od_emd, color=HEADLINE_COLOR, linestyle="--",
-                   linewidth=1.8, label=HEADLINE_LABEL)
-    ax.legend(frameon=False, fontsize=8)
-    ax.grid(True, alpha=0.3, axis="y")
+                   linewidth=2.0, label=HEADLINE_LABEL)
+    for i, m in enumerate(present):
+        ax.annotate(
+            f"{means[i]:.3f}",
+            (x[i], means[i]),
+            xytext=(0, 6), textcoords="offset points",
+            ha="center", fontsize=9, color="#222222",
+        )
+    ax.legend(frameon=False, fontsize=10, loc="upper left")
+    ax.grid(True, alpha=0.3, axis="y", which="both")
     fig.tight_layout()
     companion = {
         "figure": "cross_model_emd",
@@ -2564,7 +2576,7 @@ def render_param_efficiency_pareto(repo: Path,
             f"missing from matched2000_dualscale.json."
         )
 
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.6))
+    fig, axes = plt.subplots(1, 2, figsize=(15, 7.0))
     panel_specs = [
         (axes[0], "OD",        "OD_emd_mean",        "OD_emd_std"),
         (axes[1], "log_return", "log_return_emd_mean", "log_return_emd_std"),
@@ -2574,57 +2586,51 @@ def render_param_efficiency_pareto(repo: Path,
             ax.errorbar(
                 rec["log10_params"], rec[mean_key],
                 yerr=rec[std_key],
-                fmt=rec["marker"], color=rec["color"], markersize=9,
-                markeredgecolor="white", markeredgewidth=0.8,
-                capsize=3, ecolor=rec["color"], elinewidth=0.8,
+                fmt=rec["marker"], color=rec["color"], markersize=13,
+                markeredgecolor="white", markeredgewidth=1.0,
+                capsize=4, ecolor=rec["color"], elinewidth=1.0,
                 alpha=0.92, zorder=4,
             )
             ax.annotate(
                 MODEL_LABELS.get(m, m),
                 (rec["log10_params"], rec[mean_key]),
-                xytext=(6, 4), textcoords="offset points",
-                fontsize=7, color="#222222", alpha=0.9,
+                xytext=(8, 6), textcoords="offset points",
+                fontsize=10, color="#222222", alpha=0.95,
             )
-        # Frozen-headline diamond (D-14-10: distinct marker shape +
-        # distinct color vs the iqp_sel_55_repro circle at the same x).
         head_y = float((head_od if scale_label == "OD" else head_lr)["mean"])
-        ax.scatter([head_x], [head_y], marker="D", s=140,
+        ax.scatter([head_x], [head_y], marker="D", s=200,
                    color=HEADLINE_COLOR, edgecolor="white",
-                   linewidths=1.2, zorder=10, label=HEADLINE_LABEL)
-        ax.set_xlabel("log10(parameter_count)")
-        ax.set_ylabel(f"{scale_label} EMD (mean ± std, 5 seeds)")
-        ax.set_title(
-            f"{scale_label} scale — lower-left = better param-efficiency"
-        )
+                   linewidths=1.5, zorder=10, label=HEADLINE_LABEL)
+        ax.set_xlabel("log10(parameter count)", fontsize=12)
+        ax.set_ylabel(f"{scale_label} EMD (mean $\\pm$ std, 5 seeds)",
+                      fontsize=12)
+        ax.set_title(f"{scale_label} scale", fontsize=13)
+        ax.tick_params(axis="both", labelsize=10)
         ax.grid(True, alpha=0.3)
         ax.legend(
             handles=[
                 plt.Line2D([], [], linestyle="", marker="o",
-                           color="#0072B2", markersize=8,
+                           color="#0072B2", markersize=10,
                            label="adversarial-quantum"),
                 plt.Line2D([], [], linestyle="", marker="s",
-                           color="#D55E00", markersize=8,
+                           color="#D55E00", markersize=10,
                            label="adversarial-classical"),
                 plt.Line2D([], [], linestyle="", marker="^",
-                           color="#882255", markersize=8,
+                           color="#882255", markersize=10,
                            label="non-adversarial"),
                 plt.Line2D([], [], linestyle="", marker="D",
-                           color=HEADLINE_COLOR, markersize=10,
+                           color=HEADLINE_COLOR, markersize=12,
                            markeredgecolor="white",
                            label=HEADLINE_LABEL),
             ],
-            frameon=False, fontsize=7, loc="upper right",
+            frameon=False, fontsize=10, loc="upper right",
         )
 
     fig.suptitle(
-        "Parameter-efficiency Pareto — log10(params) × EMD, "
-        "OD vs log_return. Frozen-checkpoint headline (epoch 1969, 55p) "
-        "is the DISTINCT diamond at log10(55) — different marker shape "
-        "AND color AND y from the iqp_sel_55_repro circle at the same x "
-        "(D-14-10).",
-        fontsize=10,
+        "Parameter-efficiency Pareto: log10(params) vs EMD",
+        fontsize=14,
     )
-    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
 
     companion = {
         "figure": "param_efficiency_pareto",
