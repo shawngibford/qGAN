@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: AIChE Major Revision Response
 status: executing
-stopped_at: 2026-06-01 -- v1.2.4 loss-diagnostics patch pending tag at HEAD 9d0d15f (2 commits ahead of v1.2.3). Added Main Fig 6 training_convergence_all_models (matched-budget OD-EMD-vs-epoch across 7 WGAN-GP models) and Supp §A.9 Per-Model Training Loss Diagnostics (8-panel grid covering 4 quantum + 3 classical WGAN-GP + 1 VAE) with 4 paragraphs of commentary identifying three qualitatively distinct training regimes (WGAN-GP critic stability across cohort; WGAN-CNN drift instability vs quantum stability; VAE regularization collapse). Main 5→6 figures; supp 14→15 figures (the new one contains 8 sub-panels). All gates PASS (149 main + 198 supp literals; 60-page compile clean; 0 errors; freeze-ready gates a/b/c PASS; gate d release.md expected-deferred to 14-07).
-last_updated: "2026-06-01T18:00:00.000Z"
-last_activity: 2026-06-01 -- Loss-diagnostics expansion: 1 main convergence figure + 1 supp 8-panel grid + commentary. Two atomic commits (f4a6565 Fig 6 + 9d0d15f Supp §A.9). Commentary surfaces three substantive training observations: (1) WGAN-GP critic stability across all 35 runs (no NaN/divergence); (2) WGAN-CNN critic loss drifts back toward zero over training — quantum-side stability advantage not previously surfaced visually; (3) VAE ELBO+recon snap to constant ~50 eval steps, KLD collapses to zero (training-side signature of the degenerate generation regime in main §4.1). AR(2) closed-form fit noted with σ² = 0.057. Page count: 59 → 60 (+1). Provenance: 147→149 main, 183→198 supp. Pending: tag v1.2.4 + push.
+stopped_at: 2026-06-12 -- post-14-21 peer-review remediation cycle COMPLETE at HEAD 20c38ad. 22 atomic commits between f85fd38 and 20c38ad close all 3 BLOCKING items + 19 polish items from the 4-agent peer-review swarm (PR-1 citations, PR-2 figures, PR-3 prose, PR-4 scientific rigor) plus the co-author 6-comment thread. Bundle ready at ~/Desktop/aiche_upload_post14-21/ (65 files, 7.8 MB). All gates PASS (157 main + 347 supp literals; 99-page compile clean; 0 errors; freeze gates a/b/c PASS; gate d release.md expected-deferred to 14-07). NOTE: this remediation cycle landed without a formal 14-22 plan artifact — work was driven by peer-review reports and co-author comments rather than a PLAN.md scaffold. ROADMAP/STATE still show 20/21 plans complete since the milestone counter wasn't updated.
+last_updated: "2026-06-12T00:12:32.258Z"
+last_activity: 2026-06-11/12 -- Peer-review remediation cycle (22 commits, ~6h wall clock). Wave 1 closed PR-4 BLOCKING-1/2/3 (stale supp Welch tables + Abstract three-of-four contradiction + rebuttal narrative drift). Wave 2 swapped refs [42]+[28] + added barren-plateau citations + normalized citation style. Wave 3 stripped caption file-paths + promoted Figs 2-6 to full-width + restructured supp Fig A11 + expanded Data Availability. Wave 4 trimmed Abstract/Contributions/§5 numerics + added log-returns one-liner + rewrote PLS to ≤250 chars. Wave 5 added §A.7 R1/R5 disclosure + OD-EMD inversion footnote + preemptive "convenient-inversion" §5 subsection + per-seed sensitivity tables + Bonferroni footnote. Page count: 96 → 99 (+3). Provenance: 164→157 main, 217→347 supp. Bundle rebuilt + UPLOAD-CHECKLIST.md refreshed. Pending: external portal upload (deadline 2026-06-17).
 progress:
   total_phases: 2
   completed_phases: 1
@@ -21,14 +21,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-23)
 
 **Core value:** The qGAN must generate synthetic OD time series that capture real data's volatility structure
-**Current focus:** Phase 14 — paper-revision-release-freeze (v1.2.4 loss-diagnostics patch pending tag at HEAD `9d0d15f`; v1.2.3 + v1.2.2 + v1.2.1 + v1.2 on origin; AIChE upload pending)
+**Current focus:** Phase 14 — paper-revision-release-freeze. Post-14-21 peer-review remediation cycle complete at HEAD `20c38ad`. Bundle ready at `~/Desktop/aiche_upload_post14-21/`. Only external action (portal upload) + Plan 14-07 (Zenodo + tag at acceptance) remain.
 
 ## Current Position
 
-Phase: 14 (paper-revision-release-freeze) — PARTIAL (19/20; 14-07 deferred to journal acceptance)
-Plan: 19 of 20 complete. **v1.2.4 loss-diagnostics patch** pending tag at HEAD `9d0d15f` (2026-06-01); v1.2.3 (7bf3f2c), v1.2.2 (e89fd04), v1.2.1 (3f4c2ef), and v1.2 (34eb34e) stay on origin as historical reference points; main is 2 commits ahead of origin/main pending push + tag.
-Status: Paper submission-ready with **0 LaTeX errors, 60 pages, 149 main + 198 supp literals trace to JSON**, freeze gates a/b/c PASS, gate d expected-deferred. v1.2.4 added the matched-budget training-convergence headline figure (main Fig 6) plus the per-model training-loss diagnostic grid (supp §A.9, 8 sub-panels + commentary). Now totals: Main 6 figures, Supp 15 figures (one of which is an 8-panel grid). The new loss-diagnostics subsection surfaces a previously visual-only observation: WGAN-CNN training instability vs quantum-cluster stability across all 35 runs. AIChE rebuttal letter + revised manuscript + supp + bib + figures + ama.bst — all assembled and verified. The only remaining external items are (i) AIChE-portal upload (rebuild bundle from v1.2.4 artifacts; updated figure count + sub-panel layout), (ii) GitHub release notes at https://github.com/shawngibford/qGAN/releases/new?tag=v1.2.4, and (iii) plan 14-07 Zenodo DOI mint, which is intentionally deferred to journal acceptance (rebuttal cites ZENODO-DOI-PLACEHOLDER).
-Last activity: 2026-05-28 -- Post-swarm audit-cleanup session: 4-parallel-audit-agent pre-tag sweep + 8 cleanup commits + handoff doc update + tag v1.2 + push. Caught and fixed a Lambert W misdescription regression the swarm missed (Methods §3.2 prose described Pipeline B as containing inverse Lambert W when actually D-10-05 dropped that path; the provenance gate validates literals not prose, so the regression slipped past). Added 4 new tables/figures, removed 5 stale single-model figures, bundled 7 legacy figs into repo, cleared 10 audit FLAGs. See .planning/PAPER-SUBMISSION-HANDOFF.md §1A for the full audit-cleanup change log.
+Phase: 14 (paper-revision-release-freeze) — PARTIAL (20/21 plans formally complete; 14-07 deferred to journal acceptance). The 22-commit peer-review-remediation cycle is technically part of 14-21 post-work but is NOT captured as a discrete plan artifact (no 14-22-PLAN.md / SUMMARY.md was authored). ROADMAP.md Wave 18 marks 14-21 complete; the remediation wave is unmarked since it wasn't planned through ROADMAP.
+
+Plan: 20 of 21 complete. Post-14-21 peer-review remediation cycle COMPLETE at HEAD `20c38ad`. v1.2.4 (e89fd04 era), v1.2.3 (7bf3f2c), v1.2.2 (e89fd04), v1.2.1 (3f4c2ef), and v1.2 (34eb34e) stay on origin as historical reference points; main is multiple commits ahead of origin/main pending push + tag at acceptance.
+
+Status: Paper submission-ready with **0 LaTeX errors, 99 pages, 157 main + 347 supp literals trace to JSON**, freeze gates a/b/c PASS, gate d expected-deferred. The 22-commit remediation cycle closed all 3 BLOCKING items from the peer-review swarm + all 6 co-author comments + the deferrable per-seed sensitivity tables + Bonferroni footnote. AIChE rebuttal letter (`revision/docs/reviewer_response.md`) + revised manuscript + supp + bib + figures + ama.bst — all assembled in the bundle. The only remaining external items are (i) AIChE-portal upload (bundle ready to zip), (ii) GitHub release notes (held until acceptance), and (iii) plan 14-07 Zenodo DOI mint (deferred to journal acceptance).
+
+Last activity: 2026-06-11/12 -- Peer-review remediation cycle. 4-agent peer-review subagent swarm (PR-1 citations BLOCKING, PR-2 figures BLOCKING, PR-3 prose CONCERNS, PR-4 scientific rigor BLOCKING+CONCERNS) ran in parallel; user opted into full-scope remediation including the deferrable items. Two parallel git-worktree agents executed Waves 2-5 (Agent A main.tex + bib.bib; Agent B supp_material.tex). Agent A merged cleanly; Agent B's worktree was rooted at a pre-14-21 ancestor — branch couldn't merge — salvaged high-value content templates and re-executed Agent B's task list directly on main. Bundle rebuilt + verification gates re-run.
 
 Progress: [██████████] 96%
 
@@ -38,6 +41,7 @@ Progress: [██████████] 96%
 
 - Total plans completed: 48 (v1.0 + v1.1 + v2.0 phase 8 + v2.0 phase 9 + v2.0 phase 09.1 partial)
 - v2.0 plans: 13 completed (Phase 8: 5, Phase 9: 5, Phase 09.1: 3 of 4)
+- Post-Plan-14-21 peer-review remediation cycle: 22 atomic commits between f85fd38 and 20c38ad — NOT formally counted as a plan since 14-22-PLAN.md was not authored.
 
 **Past milestones:**
 
@@ -52,9 +56,11 @@ Progress: [██████████] 96%
 |------|----------|-------|-------|
 | Phase 09.1 P02 (cli-driver + smoke) | ~10 min | 2 | 18 |
 | Phase 09.1 P03 (multi-seed sweep resumable) | 29.1 min (sweep wall @ parallel=2) | 3 | 76 (1 driver script + 75 artifacts) |
-| Phase 14 P17 | 18min | 3 tasks | 2 files |
+| Phase 14 P17 | 18 min | 3 tasks | 2 files |
 | Phase 14 P18 | ~15 min | 3 tasks | 3 files |
 | Phase 14 P19 | ~20 min | 3 tasks | 105 files |
+| Phase 14 P21 (×0.1 inverse-pipeline fix) | ~6 h | 7 commits + 3 deferred-optional cleanups | ~200 figure triples + 8 matched-budget JSONs |
+| Phase 14 post-21 peer-review remediation | ~6 h | 22 commits across 5 waves + verification | 2 main + 1 supp + 1 bib + ~30 captions refreshed |
 
 ## Accumulated Context
 
@@ -77,16 +83,19 @@ v1.1 highlights retained:
 
 - HPO-tuned values: N_CRITIC=9, LAMBDA=2.16, LR_CRITIC=1.8046e-05, LR_GENERATOR=6.9173e-05
 - backprop replaces parameter-shift due to PennyLane #4462 broadcasting gradient bugs
-- **Phase 09.1 P02:** Redefined Pipeline C smoke parity gate from 2% absolute-EMD to structural-evidence gate (Rule 4 deviation, user-approved). Rationale: the 0.12048789 baseline was measured at 2000-epoch convergence — comparing it to a 100-epoch fresh-init run is physically incoherent. Pipeline C code-path identity is independently proven by 09.1-01's ABL-01 round-trip (max_abs_err 4.44e-16).
-- **Phase 09.1 P03:** Archived (not deleted) wave-2 100-epoch smoke artifacts at A/42, B/42, C/42 before launching the 1000-epoch sweep — `is_complete()` checks file presence not epoch count, so silent mixed-budget contamination was the alternative. Sweep then ran clean: 15/15 in 29.1 min @ parallel=2 (vs plan estimate ~24 h; v2.0 PennyLane backprop path is ~50× faster per epoch than v1.1). The conditional +2 seeds gate (D-09.1-06) is deferred to plan 04 (analysis-time decision based on observed inter-seed spread).
-- [Phase ?]: Plan 14-17: Manuscript .tex revised directly (D-14-18 READ-ONLY superseded by r4 BLOCK verdict); all PAPER-01..11 blocks integrated, abstract de-overclaimed, stale DTW 0.6843 reconciled to matched-budget ~0.30
-- [Phase ?]: Plan 14-17: Zenodo DOI uses symbolic placeholder token ZENODO-DOI-PLACEHOLDER (digit-free) so verify_number_provenance.py passes over the .tex; 14-07 mints the real DOI into it
-- [Phase ?]: Plan 14-18: OD-EMD claim recalibrated from 'statistically equivalent' to 'no statistically detectable difference at n=5 (underpowered)'; LR-DTW uniform-dominance posture stated, OD-DTW Orlandi improvement reframed matched-budget-wide
-- [Phase ?]: D-14-19: drift reverted to HEAD; freeze candidate is committed HEAD 6518323; verify_freeze_ready.py hardened to certify the committed tree
+
+Phase 14 sub-plan decisions:
+
+- **Plan 14-17**: Manuscript .tex revised directly (D-14-18 READ-ONLY superseded by r4 BLOCK verdict); all PAPER-01..11 blocks integrated, abstract de-overclaimed, stale DTW 0.6843 reconciled to matched-budget ~0.30
+- **Plan 14-17**: Zenodo DOI uses symbolic placeholder token ZENODO-DOI-PLACEHOLDER (digit-free) so verify_number_provenance.py passes over the .tex; 14-07 mints the real DOI into it
+- **Plan 14-18**: OD-EMD claim recalibrated from 'statistically equivalent' to 'no statistically detectable difference at n=5 (underpowered)'; LR-DTW uniform-dominance posture stated, OD-DTW Orlandi improvement reframed matched-budget-wide
+- **D-14-19**: drift reverted to HEAD; freeze candidate is committed HEAD 6518323; verify_freeze_ready.py hardened to certify the committed tree
+- **Plan 14-21 (×0.1 inverse-pipeline fix)**: discovered + fixed a WGAN sample-space convention preserved at 9 paper-cited samples.npy load sites; inference-only correction via revision/_wgan_unscale.py (training-side sites byte-frozen; VAE+AR(2) excluded per Pitfall 3). User authorized §6 #2 amendment at T05 R3 checkpoint. Headline reframed from bifurcated to 4-of-4 cluster dominance.
+- **Post-14-21 peer-review remediation**: 4-agent swarm + co-author comments → 22 atomic commits across 5 waves + verification + bundle rebuild. NOT a formal plan (no 14-22-PLAN.md authored). Closed all BLOCKING items (stale supp Welch tables, Abstract internal inconsistency, rebuttal narrative drift) and all 6 co-author comments (refs [42][28], caption file-paths, Abstract/Contributions/Conclusions numeric trim, Figs 2-6 full-width, log-returns bioprocess one-liner, citation style consistency).
 
 ### Pending Todos
 
-None.
+- (Optional) Retrospectively author 14-22-PLAN.md + 14-22-SUMMARY.md for the peer-review remediation cycle. Reverse-engineerable from commit log + the 4 PR reports in .planning/peer-review-2026-06-11/.
 
 ### Blockers/Concerns
 
@@ -97,14 +106,15 @@ None.
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| Phase 14 | 14-07 (tag v2.0-revision + Zenodo manual deposit + release.md + DOI wire-in) | deferred to acceptance — first-round revision resubmits with ZENODO-DOI-PLACEHOLDER + new freeze-candidate SHA `3c8502c` in Data Availability (supersedes pre-14-20 SHA `6518323` after 14-20 closed the R1-M2 utility-coverage gap); mint real DOI when AIChE accepts and update camera-ready then | 2026-05-24 |
+| Phase 14 | 14-07 (tag v2.0-revision + Zenodo manual deposit + release.md + DOI wire-in) | deferred to acceptance — first-round revision resubmits with ZENODO-DOI-PLACEHOLDER + post-14-21 + post-peer-review-remediation HEAD `20c38ad` in Data Availability; mint real DOI when AIChE accepts and update camera-ready then | 2026-05-24 |
 
 ## Session Continuity
 
-**Last Session:** 2026-06-11T00:00:00.000Z
-**Stopped At:** Phase 14 sub-plan 14-21 COMPLETE. ×0.1 WGAN inverse-pipeline bug fixed (inference-only x10 correction at 9 samples.npy load sites across 7 producer files via new shared helper `revision/_wgan_unscale.py`); 8 matched-budget JSONs regenerated; ~200 figure triples regenerated; main.tex + supp_material.tex + reviewer_response.md updated per user R3 decision (Branch B narrative rewrite — quantum cluster dominates 4 of 4 matched-budget metrics). T05 human checkpoint resolved at `.continue-here-t05.md`. CONTEXT-HANDOFF §6 #2 amended (prior LR-EMD prohibition was an artifact of the buggy data). All freeze gates a/b/c PASS; gate d expected-deferred to 14-07 (Zenodo). 14-21-SUMMARY.md committed. Phase 14 progress: 20/21 plans complete (14-07 remains deferred to journal acceptance).
-**Resume File:** None — 14-21 closed cleanly. Next session can route freely.
+**Last Session:** 2026-06-12T00:12:32.258Z
+**Stopped At:** Post-14-21 peer-review remediation cycle COMPLETE at HEAD `20c38ad`. 22 atomic commits between f85fd38 and 20c38ad close all 3 BLOCKING items from the 4-agent peer-review swarm (PR-1 citations, PR-2 figures, PR-3 prose, PR-4 scientific rigor) plus all 6 co-author comments plus the deferrable per-seed sensitivity tables + Bonferroni footnote. Bundle ready at `~/Desktop/aiche_upload_post14-21/` (65 files, 7.8 MB, byte-identical PDF). All gates PASS (157 main + 347 supp literals; 99-page compile clean; 0 errors; freeze gates a/b/c PASS; gate d expected-deferred to 14-07).
 
-**Phase 14 status:** PARTIAL (20/21 complete; 14-07 deferred). The only remaining intra-phase work is 14-07 Zenodo DOI mint + tag v1.2.5 (or higher) + release.md authoring, which is gated on AIChE acceptance per long-standing user deferral.
+**Resume File:** `.planning/phases/14-paper-revision-release-freeze/.continue-here.md` (updated 2026-06-12) + `.planning/HANDOFF.json` (machine-readable mirror).
 
-**AIChE resubmission state:** Camera-ready post-14-21 bundle is technically clean (provenance + freeze gates a/b/c PASS, LaTeX compile 0 errors/0 undefined refs, 97 pages). The bifurcated-finding narrative shifted dramatically vs. v1.2.4 — three of four matched-budget metrics now favor quantum cluster + OD-EMD H2 parametric-equivalence claim from 14-18 has been DROPPED in favor of significant cluster-dominance reading. The bug-disclosure paragraph in supp §A.7 makes the fix reproducible and the prior framing artifact transparent. Resubmission deadline 2026-06-17 (6 days from today).
+**Phase 14 status:** PARTIAL (20/21 plans formally complete; 14-07 deferred to acceptance). The 22-commit peer-review remediation cycle is technically part of 14-21 post-work but is NOT captured as a discrete plan artifact (no 14-22-PLAN.md / SUMMARY.md was authored). Two options for next session: (A) retrospectively author 14-22 plan artifact from commit log + PR reports; (B) fold the remediation into a 14-23 plan that wraps Phase 14 completion at acceptance.
+
+**AIChE resubmission state:** Camera-ready post-remediation bundle is technically clean (provenance + freeze gates a/b/c PASS, LaTeX compile 0 errors/0 undefined refs/0 undefined cites, 99 pages). The headline reading dominates 4-of-4 matched-budget metrics (quantum cluster vs parameter-matched classical adversarial WGAN cluster). §A.7 disclosure includes the "Note for reviewers comparing to v1.2.4" + "Relative-fidelity impact" + "Acceptance-gate amendment" paragraphs; main §5 has the preemptive "Note on the inference-pipeline correction" subsection (PR-4 R9 — single highest-leverage addition for surviving hostile review). Per-seed sensitivity tables for OD-EMD/OD-DTW/LR-EMD exposed in supp for reviewer leave-one-out re-aggregation; Bonferroni multi-test correction footnote provided. Resubmission deadline 2026-06-17 (5 days from session pause).
