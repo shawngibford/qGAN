@@ -205,6 +205,15 @@ This optimization balances statistical fidelity from empirical data distribution
 
 \subsubsection{Integration with Process Models}
 
+The mechanistic component $M(G(z))$ in the proposed objective above
+would, in any implementation, take the standard
+(bio)chemical-process balance / constraint / constitutive form
+sketched in Fig.~\ref{fig:mech_rep} \cite{mansouri2025models}, with
+the adversarially-trained generator $G(z)$ replacing the
+empirical-data term and the physics term acting as a soft regulariser
+\cite{rice2020overfittingadversariallyrobustdeep, hermann2025hybrid}.
+The full system of equations is standard textbook material and is not
+reproduced here.
 
 \begin{figure}[ht]
  \centering
@@ -212,39 +221,6 @@ This optimization balances statistical fidelity from empirical data distribution
  \caption{Mechanistic representation of (bio)chemical processes. Reprinted with permission from Elsevier. \cite{mansouri2025models}}
  \label{fig:mech_rep}
 \end{figure}
-
-The mechanistic representation involves several key equation types:
-
-\textbf{Balance Equations:}
-\begin{equation}
- D = f(x, u, d, \theta, t)
- \label{eq:balance}
-\end{equation}
-
-\textbf{Constraint Equations:}
-\begin{align}
- 0 &= g_1(x, y) \label{eq:constraint1} \\
- 0 &= g_2(x, y, d) - u \label{eq:constraint2}
-\end{align}
-
-\textbf{Constitutive Equations:}
-\begin{equation}
- 0 = g_3(x, y, c) - \theta
- \label{eq:constitutive}
-\end{equation}
-
-\noindent where:
-\begin{itemize}[nosep, leftmargin=*]
- \item $c$: vector of model parameters
- \item $d$: vector of specified variables
- \item $t$: independent variable (time)
- \item $u$: vector of design variables
- \item $x$: vector of process variables
- \item $y$: vector of measured variables
- \item $\theta$: vector of physico-chemical properties
-\end{itemize}
-
-This structure extends physics-informed neural networks (PINNs) paradigm by incorporating adversarial training for synthetic data augmentation in data-limited scenarios. This connection underscores the Hybrid-GAN's utility in addressing small data challenges, where pure data-driven models fail due to insufficient training samples, by infusing prior scientific knowledge to produce robust, generalizable predictive models.
 
 \subsubsection{Comparison with Other Modeling Approaches}
 
@@ -275,12 +251,8 @@ Hybrid-GAN (Proposed) & \textbf{\ding{51}}& \textbf{\ding{51}}& \textbf{\ding{51
 
 This table is an \emph{aspirational} qualitative comparison: the ``Hybrid-GAN (Proposed)'' row reflects expected properties of the proposed extension and was \emph{not} experimentally validated in this study. It is provided to motivate future work, not as a demonstrated result. If a measured comparison cannot be provided, the row (or the table) may be removed at the editor's discretion.
 
-\subsubsection{Expected Regularization Properties}
 
-In principle, the physics term $M(G(z))$ would impose mechanistic constraints that reduce overfitting \cite{rice2020overfittingadversariallyrobustdeep}, while sensor measurements ($y$) would constrain the latent space to physically feasible dynamics \cite{hermann2025hybrid}. These properties remain to be validated empirically.
-
-
-\subsection{Additional Validation Metrics Discussion} 
+\subsection{Additional Validation Metrics Discussion}
 
 \subsubsection{Dynamic Time Warping (DTW) Implementation}
 
@@ -1011,16 +983,6 @@ authorised at the R3 user-decision checkpoint of the post-submission
 remediation; the rationale is recorded in the source-file comment
 block of the aggregator script.
 
-\subsubsection{Rolling Window Implementation}
-
-Using the rolling window technique~\cite{bergmeir2012rolling}, we generated overlapping subsequences of the original data to capture temporal patterns and dependencies. This depends on two parameters:
-\begin{itemize}[nosep, leftmargin=*]
- \item \textbf{Stride ($s$):} The gap between the starts of subsequences (set to 2)
- \item \textbf{Subsequence length ($m$):} The length of each window (set to 10)
-\end{itemize}
-
-The window length ($m$) is set longer than ($s$) to guarantee enough overlap. According to Orlandi et al.~\cite{orlandi2024enhancing}, these values optimize for balanced overlap and computational efficiency. This approach is essential for capturing the temporal dependencies that characterize bioprocess dynamics, where events at one time point influence future states.
-
 \subsection{Quantum Circuit Introspection}
 \label{sec:quantum_introspection}
 
@@ -1090,30 +1052,26 @@ panels surface three qualitatively distinct training regimes.
 
 \textbf{WGAN-GP critic stability across the cohort.} For all 7 WGAN-GP
 generators (4 quantum + 3 classical adversarial), the critic loss
-descends from its initialization value of $\sim\!+2$ to a stable
-small-magnitude negative band within $\sim\!100$ eval steps. The
-generator loss correspondingly rises from $\sim\!0$ and oscillates within
-a bounded range, with no NaN, no divergence, and no critic saturation
-across any of the 35 individual runs (7 models $\times$ 5 seeds).
+descends from $\sim\!+2$ at initialisation to a stable small-magnitude
+negative band within $\sim\!100$ eval steps; the generator loss
+oscillates within a bounded range, with no NaN, no divergence, and no
+critic saturation across any of the 35 runs (7 models $\times$ 5 seeds).
 The IQP:SEL panel (Figure~\ref{fig:per_model_loss_grid_a}) is
-representative: critic loss settles around $-0.65$, generator loss
-oscillates between $0.1$ and $1.2$ --- the dynamic
-equilibrium characteristic of healthy WGAN-GP training.
+representative: critic loss settles near $-0.65$, generator loss
+oscillates between $0.1$ and $1.2$.
 
 \textbf{WGAN-CNN training instability (quantum--classical contrast).}
 The WGAN-CNN panel (Figure~\ref{fig:per_model_loss_grid_f}) shows a
-qualitatively different signature: the critic loss bottoms out near
-$-3.0$ by eval step $\sim\!50$ but then drifts monotonically back
-toward $-1.2$ over the remainder of training, indicating the
-critic progressively loses discriminative power against the WGAN-CNN
-generator. The 4 quantum and the other 2 classical adversarial
-generators do not exhibit this drift. This training-side instability
-is consistent with the seed-42 OD-EMD outlier reported in main \S4.1
-(Section~4.1, paragraph beginning ``On the optical-density single-step
-marginal'') and with the dip visible in
-Figure~\ref{fig:training_convergence_all_models}: WGAN-CNN at the
-matched-budget contract is intermittently fragile on this dataset
-while the quantum-cluster training is stable across all 5 seeds.
+qualitatively different signature: the critic loss bottoms near $-3.0$
+by eval step $\sim\!50$ and then drifts back toward $-1.2$ over the
+remainder of training --- the critic progressively loses discriminative
+power against the WGAN-CNN generator. The 4 quantum and 2 other
+classical adversarial generators do not exhibit this drift. The
+signature is consistent with the seed-42 OD-EMD outlier reported in
+main \S4.1 and with the dip in
+Figure~\ref{fig:training_convergence_all_models}: WGAN-CNN is
+intermittently fragile at the matched-budget contract while the quantum
+cluster is stable across all 5 seeds.
 
 \textbf{VAE convergence pattern (regularization collapse).} The VAE
 panel (Figure~\ref{fig:per_model_loss_grid_h}) shows ELBO and
@@ -1123,10 +1081,9 @@ divergence term collapses essentially to zero in the same window
 and never recovers. This regularization-term collapse is the
 training-side signature of the degenerate generation regime
 characterized in main \S4.1: the encoder finds a near-zero-KL
-solution (posterior matched to the prior) and the decoder learns a
-representation that produces real-matching one-step marginals while
-losing the temporal structure that the lag-1 ACF $-0.648$ exposes
-at evaluation time.
+solution (posterior matched to the prior) and the decoder produces
+real-matching one-step marginals while losing the temporal
+structure exposed by the lag-1 ACF $-0.648$ at evaluation time.
 
 \textbf{AR(2): closed-form fit.} AR(2) is not included in the loss
 grid because it is fit in closed form via \texttt{numpy.linalg.lstsq}
@@ -1476,14 +1433,14 @@ seeds). Each panel grid is single-seed (seed~42) and uses the
 
 \subsection{Per-Model DTW Alignment}
 
-Figures~\ref{fig:dtw_alignment_iqp_sel_55_repro}--\ref{fig:dtw_alignment_ar}
-provide per-model DTW alignment visualizations: each plot shows the
-real log-delta sequence on the top axis (777 points), the generated
-log-delta sequence on the left axis (777 points, rotated), and the
-accumulated DTW warping-cost matrix as a heatmap in the centre with the
-optimal warping path drawn in red. The Sakoe-Chiba band is visible as
-the diagonal corridor; cells outside the band are excluded from the
-search.
+Figure~\ref{fig:dtw_alignment_atlas} provides per-model DTW alignment
+visualisations across all nine matched-budget generators: each subpanel
+shows the real log-delta sequence on the top axis (777 points), the
+generated log-delta sequence on the left axis (777 points, rotated),
+and the accumulated DTW warping-cost matrix as a heatmap in the centre
+with the optimal warping path drawn in red. The Sakoe--Chiba band is
+visible as the diagonal corridor; cells outside the band are excluded
+from the search.
 
 \textbf{Visualization protocol (differs from main-text \S 4.2).} The
 cost matrix and warping path are computed via
@@ -1503,81 +1460,60 @@ than to re-derive the headline metric.
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_iqp_sel_55_repro.pdf}
- \caption{DTW alignment --- IQP:SEL 55p (2000ep repro), seed~42.
- Top: real log-delta series. Left: generated log-delta series.
- Centre: accumulated DTW cost matrix (\texttt{dtaidistance},
- \texttt{window=500}, \texttt{psi=2}). Optimal warping path in red.
- Distance value at top-left is a visualization-protocol value; see
- \S A.12 intro.}
- \label{fig:dtw_alignment_iqp_sel_55_repro}
-\end{figure*}
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_iqp_sel_55_repro.pdf}
+   \caption{IQP:SEL (55p, Q)}\label{fig:dtw_alignment_atlas_a}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_V1.pdf}
+   \caption{V1 (75p, Q)}\label{fig:dtw_alignment_atlas_b}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_V2.pdf}
+   \caption{V2 (135p, Q)}\label{fig:dtw_alignment_atlas_c}
+ \end{subfigure}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V1.pdf}
- \caption{DTW alignment --- Quantum V1 (75p), seed~42. Panels as in
- Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
- \label{fig:dtw_alignment_V1}
-\end{figure*}
+ \vspace{4pt}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V2.pdf}
- \caption{DTW alignment --- Quantum V2 (135p), seed~42. Panels as in
- Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
- \label{fig:dtw_alignment_V2}
-\end{figure*}
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_V3.pdf}
+   \caption{V3 (75p, Q, linear entangler)}\label{fig:dtw_alignment_atlas_d}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_wgan_mlp.pdf}
+   \caption{WGAN-MLP (74p)}\label{fig:dtw_alignment_atlas_e}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_wgan_cnn.pdf}
+   \caption{WGAN-CNN (73p)}\label{fig:dtw_alignment_atlas_f}
+ \end{subfigure}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_V3.pdf}
- \caption{DTW alignment --- Quantum V3 (75p, linear entangler),
- seed~42. Panels as in
- Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
- \label{fig:dtw_alignment_V3}
-\end{figure*}
+ \vspace{4pt}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_mlp.pdf}
- \caption{DTW alignment --- WGAN-GP (MLP, 74p), seed~42. Panels as in
- Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
- \label{fig:dtw_alignment_wgan_mlp}
-\end{figure*}
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_wgan_lstm.pdf}
+   \caption{WGAN-LSTM (78p)}\label{fig:dtw_alignment_atlas_g}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_vae.pdf}
+   \caption{VAE (562p)}\label{fig:dtw_alignment_atlas_h}
+ \end{subfigure}\hfill
+ \begin{subfigure}{0.32\linewidth}
+   \includegraphics[width=\linewidth]{revision/results/figures/dtw_alignment_ar.pdf}
+   \caption{AR(2) (3p)}\label{fig:dtw_alignment_atlas_i}
+ \end{subfigure}
 
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_cnn.pdf}
- \caption{DTW alignment --- WGAN-GP (CNN, 73p), seed~42 (the LR-EMD
- outlier seed disclosed in main-text \S 4.1). Panels as in
- Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
- \label{fig:dtw_alignment_wgan_cnn}
-\end{figure*}
-
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_wgan_lstm.pdf}
- \caption{DTW alignment --- WGAN-GP (LSTM, 78p), seed~42. Panels as in
- Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
- \label{fig:dtw_alignment_wgan_lstm}
-\end{figure*}
-
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_vae.pdf}
- \caption{DTW alignment --- VAE (562p, degenerate generation regime;
- see main-text \S 4.1), seed~42. Panels as in
- Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
- \label{fig:dtw_alignment_vae}
-\end{figure*}
-
-\begin{figure*}[!htbp]
- \centering
- \includegraphics[width=0.85\linewidth]{revision/results/figures/dtw_alignment_ar.pdf}
- \caption{DTW alignment --- AR(2) closed-form baseline, seed~42.
- Panels as in Figure~\ref{fig:dtw_alignment_iqp_sel_55_repro}.}
- \label{fig:dtw_alignment_ar}
+ \caption{Per-model DTW alignment atlas, seed~42, 2000ep matched
+ budget. Each panel: top axis = real log-delta series; left axis =
+ generated log-delta series; centre heatmap = accumulated DTW cost
+ matrix (\texttt{dtaidistance}, \texttt{window=500}, \texttt{psi=2});
+ optimal warping path in red. Distance values displayed in each
+ panel are visualisation-protocol values (see section intro) and are
+ NOT directly comparable to the headline fastdtw-based LR-DTW
+ reported in main-text \S 4.2. Panel (f) is the WGAN-CNN seed-42
+ LR-EMD outlier disclosed in main-text \S 4.1; panel (h) is the VAE
+ degenerate-generation regime characterised in main-text \S 4.1.}
+ \label{fig:dtw_alignment_atlas}
 \end{figure*}
 
 \subsection{Critic Network Architecture Details}
@@ -1593,32 +1529,17 @@ that varies between the quantum and classical entrants is the generator,
 which isolates the effect of the quantum circuit on the generated
 distribution.
 
-\textbf{Architecture Specifications:}
-
-\textbf{Convolutional Layers:}
-\begin{itemize}[nosep, leftmargin=*]
- \item Layer 1: 64 filters, kernel size 3, stride 1
- \item Layer 2: 128 filters, kernel size 3, stride 1
- \item Layer 3: 128 filters, kernel size 3, stride 1
-\end{itemize}
-
-The increasing filter count allows extraction of more complex features and produces detailed feature maps. The first convolutional layer is designed to handle input data shaped as $(10, 1)$, where the dimension of 10 represents the length of subsequences created through the rolling window approach~\cite{bergmeir2012rolling}, ensuring the network properly processes the temporal structure of the input data.
-
-\textbf{Activation Functions:}
-
-Each convolutional layer is followed by a LeakyReLU activation function ($\alpha = 0.1$), which addresses the vanishing gradient issue that can cause neurons to become inactive and enables the network to learn more complex patterns through its nonlinear properties~\cite{gulrajani2017improved}.
-
-\textbf{Dense Layers:}
-
-Following the three convolutional layers, the data undergoes flattening to convert the multidimensional feature maps into a one-dimensional vector suitable for dense layer processing. A fully connected layer with 32 neurons is then applied with LeakyReLU activation to capture complex data relationships.
-
-\textbf{Regularization:}
-
-To improve generalization and reduce overfitting, a dropout layer randomly deactivates 20\% of neurons during training.
-
-\textbf{Output Layer:}
-
-The final output layer contains a single neuron that produces an unbounded scalar value, where higher values indicate the input resembles real data and lower values suggest generated data. This unbounded output design aligns with the use of Wasserstein distance as the cost function~\cite{arjovsky17a}, providing more meaningful gradients during training compared to the original GAN formulation~\cite{goodfellow2014generativeadversarialnetworks}.
+The critic is a standard WGAN-GP 1D-CNN: three Conv1D blocks with
+LeakyReLU activations followed by a flatten-and-dense head with dropout
+and an unbounded scalar output, consistent with the
+gradient-penalty WGAN formulation \cite{gulrajani2017improved,
+arjovsky17a}. The full per-layer specification (filter counts, kernel
+sizes, activation slope, dropout rate, and dense width) is recorded in
+the released artifact corpus at
+\texttt{revision/docs/methods\_full.md} and
+\texttt{revision/results/classical\_architectures.json}; both are
+provenance-verified and tracked in the matched-budget reproducibility
+bundle.
 
 \subsection{Quantum Hardware Robustness Sensitivity}
 \label{sec:robustness_sensitivity}
