@@ -280,7 +280,7 @@ isolating the effect of the quantum circuit.
 
 \subsection{Photobioreactor Experimental Setup}
 
-Time-series data were collected from a 20-liter photobioreactor (LUCY\textregistered, Synoxis Algae) designed for laboratory- and pilot-scale cultivation of microalgae; the system is also available in a larger 300-liter configuration. The 20-liter unit used in this study is shown schematically in Supplementary Figure~A6 (Figure~\ref{fig:lucy}). The system comprises six vertical borosilicate glass tubes (6~cm OD, 120~cm length) connected in parallel, with SALT technology (spiral air lift tubular circulation) for gentle mixing, controlled aeration, and programmable lighting managed by an integrated automated controller.  
+Time-series data were collected from a 20-liter photobioreactor (LUCY\textregistered, Synoxis Algae) designed for laboratory- and pilot-scale cultivation of microalgae; the system is also available in a larger 300-liter configuration. The 20-liter unit used in this study is shown schematically in Supplementary Figure~A7 (Figure~\ref{fig:lucy}). The system comprises six vertical borosilicate glass tubes (6~cm OD, 120~cm length) connected in parallel, with SALT technology (spiral air lift tubular circulation) for gentle mixing, controlled aeration, and programmable lighting managed by an integrated automated controller.  
 
 The system continuously monitors pH, temperature, optical density, dissolved oxygen, and pressure via feedback control loops, with data logged at 10-minute intervals by an internal data acquisition system. The OD sensor operates at 880~nm and reports values in arbitrary units based on logarithmic attenuation, calibrated against fresh culture medium.
 
@@ -551,12 +551,12 @@ than as two independent metric outcomes.
   \includegraphics[width=\linewidth]{revision/results/figures/cross_model_emd.pdf}
   \caption{Cross-model OD-EMD (final-eval mean $\pm$ sample standard
   deviation, n=5 seeds). The horizontal reference line marks the
-  frozen-headline OD-EMD reference ($0.0231$, from the
+  frozen-headline OD-EMD reference ($0.0224$, from the
   \texttt{frozen\_checkpoint\_epoch\_1969} aggregate; distinct from the
   \texttt{iqp\_sel\_55\_repro} 2000-epoch matched-budget reproduction).
   The wgan\_cnn marker is inflated by a single seed-42 outlier
-  (OD-EMD $=0.1587$, with the other four wgan\_cnn seeds between
-  $0.020$ and $0.034$). Visualises the quantum-vs-WGAN OD-EMD cluster
+  (OD-EMD $=3.4338$, with the other four wgan\_cnn seeds between
+  $0.080$ and $0.192$). Visualises the quantum-vs-WGAN OD-EMD cluster
   separation: at the matched 2000-epoch budget the quantum cluster mean
   is $\approx 0.0288$ and the WGAN cluster mean is $\approx 0.3312$,
   with the cluster-floor Welch $p = 0.019$ over the 12 quantum-vs-WGAN
@@ -579,7 +579,7 @@ is warped-aligned to the real series at low DTW cost despite
 carrying no real temporal information, so the small DTW does not
 reflect faithful temporal alignment.
 The lag-1 ACF $-0.648$, sharply different from the real-data
-$-0.064$, is the diagnostic that exposes the collapse: the VAE
+$-0.064$, is the diagnostic that exposes the degenerate regime: the VAE
 produces a strongly anti-correlated step-to-step structure that real
 log returns do not exhibit. We refer to this as a \emph{degenerate
 generation regime} (faithful one-step marginal, broken temporal
@@ -707,7 +707,7 @@ The per-model evaluation is reported in Section~4.1.
 
 Third, we have contributed to open science practices by making our code and datasets publicly available at \url{https://github.com/shawngibford/qgan}, facilitating independent verification and accelerating future advances in quantum-enhanced bioprocess engineering.
 
-Fourth, as an organising concept for future work (not as an empirical contribution of this paper), we outline a decision-tree triage workflow (Supplementary Figure~A5) for choosing between sensor-feasibility, mechanistic, data-driven, and quantum-synthetic options under varying data-availability constraints. The workflow is described in the Outlook below; it is not implemented or evaluated here.
+Fourth, as an organising concept for future work (not as an empirical contribution of this paper), we outline a decision-tree triage workflow (Supplementary Figure~A6) for choosing between sensor-feasibility, mechanistic, data-driven, and quantum-synthetic options under varying data-availability constraints. The workflow is described in the Outlook below; it is not implemented or evaluated here.
 
 \subsection{Theoretical and Practical Implications}
 
@@ -808,7 +808,7 @@ The corresponding hardware-validation, multivariate, and longer-series
 extensions are the natural targets for follow-up work and are not
 contributions of the present paper.
 
-\textbf{Decision-tree triage workflow.} The eight-stage sensor-feasibility / mechanistic / data-driven / quantum-synthetic workflow (Supplementary Figure~A5, decision-tree schematic) is an envisioned framework. It is presented here as an organising concept for future work and is not part of the empirical evaluation of this paper.
+\textbf{Decision-tree triage workflow.} The eight-stage sensor-feasibility / mechanistic / data-driven / quantum-synthetic workflow (Supplementary Figure~A6, decision-tree schematic) is an envisioned framework. It is presented here as an organising concept for future work and is not part of the empirical evaluation of this paper.
 
 \textbf{Hybrid-GAN-mechanistic structures.} A second proposed direction combines GANs with physics-informed mechanistic components for data-scarce environments \cite{mansouri2025models, nielsen2020hybrid, nazemzadeh2021integration, ehtesham2025dynamics}. This would couple first-principles parametric models with data-driven techniques \cite{sharma2022hybrid, O'Brien2021A} and could extend PINN-style training with an adversarial objective. The mathematical formulation, integration schematic, and comparative table are given in Supplementary Section~A.3 (Supplementary Figure~A2, Figure~A3, and Table~A2) as a \emph{proposed} architecture only; no Hybrid-GAN was trained or evaluated in this work.
 
@@ -847,7 +847,7 @@ single dataset answers in the affirmative against the classical WGAN
 adversarial cluster. The quantum generators exceed the parameter-matched
 classical WGAN adversarial baselines on every matched-budget metric
 measured: log-return temporal alignment (LR-DTW, per-seed dominance),
-log-return single-step marginal (LR-EMD, Welch-significant), optical-density
+log-return single-step marginal (LR-EMD, cluster-mean separation), optical-density
 temporal alignment (OD-DTW, Welch-significant), and optical-density
 single-step marginal (OD-EMD, Welch-significant); lag-1 autocorrelation
 closeness to the real reference corroborates the temporal-structure result
