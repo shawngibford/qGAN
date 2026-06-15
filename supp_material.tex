@@ -860,6 +860,33 @@ metrics and the ablation summary are released with the artifact set
  \label{fig:preprocessing_ablation}
 \end{figure*}
 
+\paragraph{Sample-space convention and inference-time correction.}
+All WGAN-trained generators in this study (the four quantum variants
+IQP:SEL, V1, V2, V3 and the three classical WGAN-GP baselines
+wgan\_mlp, wgan\_cnn, wgan\_lstm) export samples with their $[-1, +1]$
+generator outputs multiplied by $0.1$ at the save site; the on-disk
+\texttt{samples.npy} bundles are therefore stored in $[-0.1, +0.1]$
+space. This convention is inherited from an earlier reference
+implementation (the relevant code comment magnitude-matches the
+$[-1, +1]$ generator output to the empirical range of unstandardized
+log-returns, $[-0.08, 0.09]$). The convention is retained at the
+training/sample-export sites so that the released \texttt{samples.npy}
+bundles remain byte-stable across runs and consistent with every
+saved checkpoint; modifying the training-side scaling would invalidate
+every released artifact and require re-running every 2000-epoch run.
+The downstream inverse formula
+$r_{\text{norm}} = ((s+1)/2)(r_{\max}-r_{\min}) + r_{\min}$ assumes
+$s \in [-1, +1]$, so every evaluation script applies a $\times 10$
+correction at the \texttt{samples.npy} load boundary before invoking
+the inverse formula. The correction is inference-only, applied
+symmetrically across the quantum and classical WGAN-trained set, and
+gated by \texttt{model\_kind} membership in the WGAN-trained set. VAE
+and AR(2) are deliberately excluded: they are trained without the
+$\times 0.1$ sample-export step and their on-disk samples are already
+in the canonical $[-1, +1]$ space. Every matched-budget headline
+metric reported in \S 4 of the main text is computed under this
+$\times 10$-corrected inverse pipeline.
+
 \subsection{Model Architecture Details and Quantum Circuit Introspection}
 \label{sec:model_arch_and_introspection}
 
