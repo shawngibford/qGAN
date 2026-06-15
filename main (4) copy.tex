@@ -703,30 +703,7 @@ quantum circuit: three parameter-matched classical WGAN-GP baselines
 (\texttt{wgan\_mlp}: 74, \texttt{wgan\_cnn}: 73, \texttt{wgan\_lstm}: 78 parameters)
 are trained against the 55-135-parameter quantum entrants under a shared
 250881-parameter critic, with all other adversarial hyperparameters held fixed.
-The per-model evaluation is reported in Section~4.1;
-Figure~\ref{fig:param_efficiency_pareto} visualizes the parameter-efficiency
-frontier on both the OD and log-return scales.
-
-\begin{figure*}[!htbp]
-  \centering
-  \includegraphics[width=\linewidth]{revision/results/figures/param_efficiency_pareto.pdf}
-  \caption{Parameter-efficiency frontier: cross-model EMD vs.\
-  generator parameter count, on the OD scale (left) and log-return
-  scale (right). Markers: circle $=$ adversarial-quantum (4 variants,
-  55-135 parameters), square $=$ adversarial-classical (3 variants,
-  73-78 parameters), triangle $=$ non-adversarial (VAE 562p, AR(2)
-  3p). The frozen-headline reference (epoch-1969 checkpoint) is
-  plotted as a distinct diamond marker at the same 55-parameter $x$ as
-  the \texttt{iqp\_sel\_55\_repro} circle, with a distinct color and
-  lower $y$ reflecting the early-stopped best-of-checkpoint value
-  (\emph{not} merged with the 5-seed 2000-epoch reproduction).
-  Lower-left is better parameter efficiency. The shared
-  250881-parameter critic applies to all adversarial models alike and
-  is excluded from the $x$-axis (generator-only parameter count).
-  Per-figure data provenance is summarised in the Data Availability
-  section.}
-  \label{fig:param_efficiency_pareto}
-\end{figure*}
+The per-model evaluation is reported in Section~4.1.
 
 Third, we have contributed to open science practices by making our code and datasets publicly available at \url{https://github.com/shawngibford/qgan}, facilitating independent verification and accelerating future advances in quantum-enhanced bioprocess engineering.
 
@@ -852,14 +829,14 @@ Every figure and table in the main paper is regenerable from the released
 artifact set; all paths are enumerated in the supplementary artifact
 reference table (Table~\ref{tbl:artifact_pointers}). In short:
 Figure~\ref{fig:training_convergence_all_models} (training convergence)
-reads R14 with per-seed trajectories at R15;
+reads R13 with per-seed trajectories at R14;
 Figures~\ref{fig:cross_model_dtw_dualscale} and
 \ref{fig:cross_model_emd} plus Tables~\ref{tbl:eval_scale} and
 \ref{tbl:cross_model_comparison} read R1 (filtered by
 \texttt{model\_kind}, \texttt{metric\_name}, \texttt{scale});
 Figure~\ref{fig:cross_model_acf_overlay} reads R6;
-Figure~\ref{fig:param_efficiency_pareto} reads R7 with parameter counts
-from R8. All script entry points are documented in D4.
+parameter counts are recorded in R7. All script entry points are
+documented in D4.
 
 \section{Concluding Remarks}
 

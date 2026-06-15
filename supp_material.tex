@@ -622,30 +622,29 @@ released repository.}
 \midrule
 \multicolumn{3}{l}{\textit{Results aggregates (main paper figures + tables)}} \\
 \midrule
-R1  & \texttt{matched2000\_dualscale.json}            & Main Table 2 + Figs 3-6 aggregates; dual-scale per-model + per-seed values \\
+R1  & \texttt{matched2000\_dualscale.json}            & Main Table 2 + Figs 3-5 aggregates; dual-scale per-model + per-seed values \\
 R2  & \texttt{distribution\_emd.json}                 & Per-model distributional EMD on log-return + OD scales \\
 R3  & \texttt{welch\_pairwise.json}                   & Pairwise Welch $t$-tests on EMD (\S A.4) \\
 R4  & \texttt{cross\_model\_emd.json}                 & Fig 5 EMD overlay across all 9 models \\
 R5  & \texttt{cross\_model\_dtw\_dualscale.json}      & Fig 3 DTW dual-scale \\
 R6  & \texttt{cross\_model\_acf\_overlay.json}        & Fig 4 lag-1 ACF overlay \\
-R7  & \texttt{param\_efficiency\_pareto.json}         & Fig 6 parameter-efficiency Pareto \\
-R8  & \texttt{model\_info.json}                       & Master hyperparameter + metadata record \\
-R9  & \texttt{tstr\_matched2000.json}                 & TSTR cross-model utility (\S A.4) \\
-R10 & \texttt{shot\_noise\_sensitivity.json}          & Shot-noise sensitivity sweep (\S A.14) \\
-R11 & \texttt{noise\_model\_sensitivity.json}         & Depolarising + amplitude-damping noise sweep (\S A.14) \\
-R12 & \texttt{transform\_ablation/metrics.csv}        & Preprocessing-pipeline ablation metrics \\
-R13 & \texttt{transform\_ablation/tstr\_lite.json}    & Preprocessing-pipeline TSTR-lite \\
-R14 & \texttt{figures/training\_convergence\_all\_models.json} & In-loop OD-EMD convergence across all 7 WGAN-GP generators \\
+R7  & \texttt{model\_info.json}                       & Master hyperparameter + metadata record \\
+R8  & \texttt{tstr\_matched2000.json}                 & TSTR cross-model utility (\S A.4) \\
+R9  & \texttt{shot\_noise\_sensitivity.json}          & Shot-noise sensitivity sweep (\S A.14) \\
+R10 & \texttt{noise\_model\_sensitivity.json}         & Depolarising + amplitude-damping noise sweep (\S A.14) \\
+R11 & \texttt{transform\_ablation/metrics.csv}        & Preprocessing-pipeline ablation metrics \\
+R12 & \texttt{transform\_ablation/tstr\_lite.json}    & Preprocessing-pipeline TSTR-lite \\
+R13 & \texttt{figures/training\_convergence\_all\_models.json} & In-loop OD-EMD convergence across all 7 WGAN-GP generators \\
 \midrule
 \multicolumn{3}{l}{\textit{Per-model + per-seed JSONs}} \\
 \midrule
-R15 & \texttt{matched2000/runs/<model>/<seed>/metrics.json} & Per-seed training-loop trajectories \\
-R16 & \texttt{figures/loss\_<model>.json}             & Per-model loss-figure data + fit summaries \\
-R17 & \texttt{figures/reconstruction\_<model>.json}   & Per-model reconstruction-figure data \\
-R18 & \texttt{figures/training\_progression.json}     & Quantum circuit training-progression (\S A.8) \\
-R19 & \texttt{figures/entanglement\_trajectory.json}  & Quantum entanglement entropy over training (\S A.8) \\
-R20 & \texttt{figures/param\_trajectory.json}         & PQC parameter trajectories over training (\S A.8) \\
-R21 & \texttt{figures/circuits/<name>.json}           & Locked circuit configurations (per ansatz) \\
+R14 & \texttt{matched2000/runs/<model>/<seed>/metrics.json} & Per-seed training-loop trajectories \\
+R15 & \texttt{figures/loss\_<model>.json}             & Per-model loss-figure data + fit summaries \\
+R16 & \texttt{figures/reconstruction\_<model>.json}   & Per-model reconstruction-figure data \\
+R17 & \texttt{figures/training\_progression.json}     & Quantum circuit training-progression (\S A.8) \\
+R18 & \texttt{figures/entanglement\_trajectory.json}  & Quantum entanglement entropy over training (\S A.8) \\
+R19 & \texttt{figures/param\_trajectory.json}         & PQC parameter trajectories over training (\S A.8) \\
+R20 & \texttt{figures/circuits/<name>.json}           & Locked circuit configurations (per ansatz) \\
 \midrule
 \multicolumn{3}{l}{\textit{Code modules + executable scripts}} \\
 \midrule
@@ -845,7 +844,7 @@ Pipeline~B; (ii) it directly addresses reviewer concern R1-M3, which
 flagged that the Lambert~$W$ step over-Gaussianizes the input
 distribution and could trivialise the generative task. Full per-seed
 metrics and the ablation summary are released with the artifact set
-(R12 and R13).
+(R11 and R12).
 
 \begin{figure*}[!htbp]
  \centering
@@ -1004,7 +1003,7 @@ on the training log-return windows (residual variance
 $\hat{\sigma}^2 = 0.057$, sample mean $-0.003$, sample standard
 deviation $0.242$) and therefore has no epoch-wise loss trajectory.
 The fit-summary statistics are recorded in
-the \texttt{fit\_summary} block of R16 for AR(2).
+the \texttt{fit\_summary} block of R15 for AR(2).
 
 \textbf{No training pathology detected at the matched-budget contract.}
 Across all 9 generators (or 35 individual WGAN-GP runs), no run
