@@ -2576,7 +2576,22 @@ def render_param_efficiency_pareto(repo: Path,
             f"missing from matched2000_dualscale.json."
         )
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 7.0))
+    # Per-model annotation offsets (in points). Hand-tuned to avoid the
+    # mid-cluster pile-up at log10(params) ~ 1.85 in both panels.
+    ANNOTATION_OFFSETS = {
+        "iqp_sel_55_repro": (-14, -16),
+        "V1":               (-14,  14),
+        "V2":               ( 14,  10),
+        "V3":               ( 14, -14),
+        "wgan_mlp":         ( 12, -10),
+        "wgan_cnn":         ( 14,   8),
+        "wgan_lstm":        ( 14,   0),
+        "vae":              (-14,   8),
+        "ar":               (  8,  10),
+    }
+    HEADLINE_OFFSET = (14, -4)
+
+    fig, axes = plt.subplots(1, 2, figsize=(15, 8.0))
     panel_specs = [
         (axes[0], "OD",        "OD_emd_mean",        "OD_emd_std"),
         (axes[1], "log_return", "log_return_emd_mean", "log_return_emd_std"),
@@ -2591,16 +2606,24 @@ def render_param_efficiency_pareto(repo: Path,
                 capsize=4, ecolor=rec["color"], elinewidth=1.0,
                 alpha=0.92, zorder=4,
             )
+            off = ANNOTATION_OFFSETS.get(m, (8, 6))
+            ha = "left" if off[0] >= 0 else "right"
             ax.annotate(
                 MODEL_LABELS.get(m, m),
                 (rec["log10_params"], rec[mean_key]),
-                xytext=(8, 6), textcoords="offset points",
-                fontsize=10, color="#222222", alpha=0.95,
+                xytext=off, textcoords="offset points",
+                fontsize=10, color="#222222", alpha=0.95, ha=ha,
             )
         head_y = float((head_od if scale_label == "OD" else head_lr)["mean"])
         ax.scatter([head_x], [head_y], marker="D", s=200,
                    color=HEADLINE_COLOR, edgecolor="white",
                    linewidths=1.5, zorder=10, label=HEADLINE_LABEL)
+        ax.annotate(
+            HEADLINE_LABEL,
+            (head_x, head_y),
+            xytext=HEADLINE_OFFSET, textcoords="offset points",
+            fontsize=10, color="#222222", alpha=0.95, ha="left",
+        )
         ax.set_xlabel("log10(parameter count)", fontsize=12)
         ax.set_ylabel(f"{scale_label} EMD (log scale, mean over 5 seeds)",
                       fontsize=12)
@@ -2608,30 +2631,39 @@ def render_param_efficiency_pareto(repo: Path,
         ax.set_yscale("log")
         ax.tick_params(axis="both", labelsize=10)
         ax.grid(True, alpha=0.3, which="both")
-        ax.legend(
-            handles=[
-                plt.Line2D([], [], linestyle="", marker="o",
-                           color="#0072B2", markersize=10,
-                           label="adversarial-quantum"),
-                plt.Line2D([], [], linestyle="", marker="s",
-                           color="#D55E00", markersize=10,
-                           label="adversarial-classical"),
-                plt.Line2D([], [], linestyle="", marker="^",
-                           color="#882255", markersize=10,
-                           label="non-adversarial"),
-                plt.Line2D([], [], linestyle="", marker="D",
-                           color=HEADLINE_COLOR, markersize=12,
-                           markeredgecolor="white",
-                           label=HEADLINE_LABEL),
-            ],
-            frameon=False, fontsize=10, loc="upper right",
-        )
+        # Add x-margin so leftmost/rightmost annotations don't clip.
+        x_lo, x_hi = ax.get_xlim()
+        ax.set_xlim(x_lo - 0.15, x_hi + 0.25)
+
+    # Single fig-level legend below the suptitle, outside both panels.
+    legend_handles = [
+        plt.Line2D([], [], linestyle="", marker="o",
+                   color="#0072B2", markersize=10,
+                   label="adversarial-quantum"),
+        plt.Line2D([], [], linestyle="", marker="s",
+                   color="#D55E00", markersize=10,
+                   label="adversarial-classical"),
+        plt.Line2D([], [], linestyle="", marker="^",
+                   color="#882255", markersize=10,
+                   label="non-adversarial"),
+        plt.Line2D([], [], linestyle="", marker="D",
+                   color=HEADLINE_COLOR, markersize=12,
+                   markeredgecolor="white",
+                   label=HEADLINE_LABEL),
+    ]
+    fig.legend(
+        handles=legend_handles,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.94),
+        ncol=4, frameon=False, fontsize=11,
+    )
 
     fig.suptitle(
         "Parameter-efficiency Pareto: log10(params) vs EMD",
         fontsize=14,
+        y=0.99,
     )
-    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.tight_layout(rect=(0, 0, 1, 0.90))
 
     companion = {
         "figure": "param_efficiency_pareto",
