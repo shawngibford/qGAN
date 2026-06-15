@@ -753,16 +753,16 @@ basis recorded in D2. Under the
 matched-budget contract, the smaller 55-parameter IQP:SEL circuit was
 not outperformed in fidelity by any of V1-V3, motivating its selection
 as the reported configuration (see the headline LR-DTW dominance
-reported in main-text §4.2)
+reported in main-text §4.1)
 \cite{romero2019variationalquantumgeneratorsgenerative, Amin_2018}.
 
 
 \begin{figure*}
  \centering
  \includegraphics[width=0.75\linewidth]{bpm_qgan.drawio.png}
- \caption{Decision-tree triage schematic for bioprocess monitoring, outlined as future work in §4.5 Outlook of the main text. Not an empirical contribution of the present study.}\label{fig:qgan_schematic}
+ \caption{Decision-tree triage schematic for bioprocess monitoring, outlined as future work in the Outlook subsection of Section~4 in the main text. Not an empirical contribution of the present study.}\label{fig:qgan_schematic}
 \end{figure*}
-This figure illustrates the decision-tree triage workflow outlined as future work in Section~4.5 (Outlook) of the main text, sketching how sensor-feasibility, mechanistic, data-driven, and quantum-synthetic options could be organised under varying data-availability constraints. It is presented as an organising concept and is not evaluated empirically in this paper.
+This figure illustrates the decision-tree triage workflow outlined as future work in the Outlook subsection of Section~4 in the main text, sketching how sensor-feasibility, mechanistic, data-driven, and quantum-synthetic options could be organised under varying data-availability constraints. It is presented as an organising concept and is not evaluated empirically in this paper.
 \begin{figure*}
  \centering
  \includegraphics[width=1\linewidth]{lucy_diagram.jpg}
@@ -859,13 +859,6 @@ metrics and the ablation summary are released with the artifact set
  OD-scale metric; Pipeline~B was selected per decision D-10-05.}
  \label{fig:preprocessing_ablation}
 \end{figure*}
-
-\paragraph{Residual generator mean-bias.}
-A residual generator mean-bias in standardized space persists for the
-quantum cluster (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
-$\approx -0.03$) and contributes a $\sim 2\times$ OD drift over 777
-contiguous integration steps in the long-horizon overlays of \S A.10;
-this is a training-side artifact disclosed for transparency.
 
 \subsection{Model Architecture Details and Quantum Circuit Introspection}
 \label{sec:model_arch_and_introspection}
@@ -1083,7 +1076,7 @@ consists of three vertically stacked sub-plots (log-delta comparison,
 OD reconstruction on linear scale, OD reconstruction on log scale) per
 the protocol detailed in the umbrella caption. The visualisation
 protocol differs from the canonical matched-budget per-window
-evaluation of main-text \S 4.2: synthetic samples are reconstructed as
+evaluation of main-text \S 4.1: synthetic samples are reconstructed as
 a 777-point contiguous sequence anchored at $\text{OD}_{\text{real}}[0]$,
 rather than aggregated over the per-window random anchors that the
 fidelity metrics use.
@@ -1179,7 +1172,7 @@ model's released sample bundle). The panels
 reflect the generator output distribution including any residual mean
 bias, and are visualisations of distributional fidelity at the
 log-return scale; they are not a restatement of the canonical
-matched-budget fidelity metrics of main-text \S 4.2 (which use a
+matched-budget fidelity metrics of main-text \S 4.1 (which use a
 per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
@@ -1270,7 +1263,7 @@ per-window evaluation protocol aggregated across all five seeds).
  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. The visibly tightest
  amplitude/moment match in this collection is consistent with AR(2)'s
  leading LR-EMD ranking under the matched-budget contract reported
- in main-text \S 4.2.}
+ in main-text \S 4.1.}
  \label{fig:stat_grid_ar}
 \end{figure*}
 
@@ -1285,7 +1278,7 @@ with the optimal warping path drawn in red. The Sakoe-Chiba band is
 visible as the diagonal corridor; cells outside the band are excluded
 from the search.
 
-\textbf{Visualization protocol (differs from main-text \S 4.2).} The
+\textbf{Visualization protocol (differs from main-text \S 4.1).} The
 cost matrix and warping path are computed via
 \texttt{dtaidistance.dtw.warping\_paths(real, gen, window=500, psi=2)}
 followed by \texttt{dtaidistance.dtw.best\_path}, then rendered via
@@ -1293,7 +1286,7 @@ followed by \texttt{dtaidistance.dtw.best\_path}, then rendered via
 displayed numerical DTW distance is therefore a
 visualization-protocol value: it uses a different DTW implementation
 and band/skip-edge protocol than the canonical fastdtw-based LR-DTW
-reported in main-text \S 4.2 (which is computed under the matched-budget
+reported in main-text \S 4.1 (which is computed under the matched-budget
 windowed-evaluation protocol per
 the \texttt{compute\_dtw} entry point of C2). Numerical DTW
 distances in these figures are NOT directly comparable to the headline
@@ -1353,7 +1346,7 @@ than to re-derive the headline metric.
  optimal warping path in red. Distance values displayed in each
  panel are visualisation-protocol values (see section intro) and are
  NOT directly comparable to the headline fastdtw-based LR-DTW
- reported in main-text \S 4.2. Panel (f) is the WGAN-CNN seed-42
+ reported in main-text \S 4.1. Panel (f) is the WGAN-CNN seed-42
  OD-EMD outlier disclosed in main-text \S 4.1; panel (h) is the VAE
  degenerate-generation regime characterised in main-text \S 4.1.}
  \label{fig:dtw_alignment_atlas}
