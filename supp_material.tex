@@ -566,9 +566,9 @@ hidden$=32$) trained on synthetic windows from each of the 9
 matched-budget generators (Pipeline~B, 2000 epochs, 3 init seeds
 $\{40, 41, 42\}$).
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\columnwidth]{revision/results/figures/tstr_crossmodel_matched2000.pdf}
+ \includegraphics[width=\linewidth]{revision/results/figures/tstr_crossmodel_matched2000.pdf}
  \caption{TSTR cross-model utility evaluation: 1-step-ahead OD soft
  sensor (1-layer LSTM, hidden$=32$) trained on 19200 synthetic
  windows from each generator (Pipeline~B, 2000 epochs, 3 init seeds
@@ -588,7 +588,7 @@ $\{40, 41, 42\}$).
  data where soft-sensor utility depends on cross-channel
  conditional structure.}
  \label{fig:tstr_crossmodel_matched2000}
-\end{figure}
+\end{figure*}
 
 \subsection{Code and Data Availability}
 Complete code repository: \url{https://github.com/shawngibford/qgan}
@@ -613,10 +613,10 @@ modules + executable scripts under \texttt{revision/}; \textbf{D}-rows
 are documentation files. All paths relative to the project root in the
 released repository.}
 \label{tbl:artifact_pointers}
-\small
+\footnotesize
 \setlength{\tabcolsep}{4pt}
-\renewcommand{\arraystretch}{1.12}
-\begin{tabular}{@{}llp{6.3cm}@{}}
+\renewcommand{\arraystretch}{1.0}
+\begin{tabular}{@{}llp{6.0cm}@{}}
 \toprule
 \textbf{ID} & \textbf{Path} & \textbf{Purpose / contents} \\
 \midrule
@@ -1033,51 +1033,51 @@ known fragility at the matched-budget parameter count of 73.
 
 \begin{figure*}[!htbp]
  \centering
- \begin{subfigure}{0.48\linewidth}
+ \begin{subfigure}{0.42\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_iqp_sel_55_repro.pdf}
  \caption{IQP:SEL (55p, Q)}
  \label{fig:per_model_loss_grid_a}
  \end{subfigure}\hfill
- \begin{subfigure}{0.48\linewidth}
+ \begin{subfigure}{0.42\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_V1.pdf}
  \caption{V1 (75p, Q)}
  \label{fig:per_model_loss_grid_b}
  \end{subfigure}
 
- \vspace{4pt}
+ \vspace{2pt}
 
- \begin{subfigure}{0.48\linewidth}
+ \begin{subfigure}{0.42\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_V2.pdf}
  \caption{V2 (135p, Q)}
  \label{fig:per_model_loss_grid_c}
  \end{subfigure}\hfill
- \begin{subfigure}{0.48\linewidth}
+ \begin{subfigure}{0.42\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_V3.pdf}
  \caption{V3 (75p, Q)}
  \label{fig:per_model_loss_grid_d}
  \end{subfigure}
 
- \vspace{4pt}
+ \vspace{2pt}
 
- \begin{subfigure}{0.48\linewidth}
+ \begin{subfigure}{0.42\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_mlp.pdf}
  \caption{WGAN-MLP (74p, C)}
  \label{fig:per_model_loss_grid_e}
  \end{subfigure}\hfill
- \begin{subfigure}{0.48\linewidth}
+ \begin{subfigure}{0.42\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_cnn.pdf}
  \caption{WGAN-CNN (73p, C)}
  \label{fig:per_model_loss_grid_f}
  \end{subfigure}
 
- \vspace{4pt}
+ \vspace{2pt}
 
- \begin{subfigure}{0.48\linewidth}
+ \begin{subfigure}{0.42\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_wgan_lstm.pdf}
  \caption{WGAN-LSTM (78p, C)}
  \label{fig:per_model_loss_grid_g}
  \end{subfigure}\hfill
- \begin{subfigure}{0.48\linewidth}
+ \begin{subfigure}{0.42\linewidth}
  \includegraphics[width=\linewidth]{revision/results/figures/loss_vae.pdf}
  \caption{VAE (562p, ELBO+recon+KLD)}
  \label{fig:per_model_loss_grid_h}
@@ -1108,18 +1108,27 @@ a 777-point contiguous sequence anchored at $\text{OD}_{\text{real}}[0]$,
 rather than aggregated over the per-window random anchors that the
 fidelity metrics use.
 
-\paragraph{Residual generator mean-bias.}
-A residual generator mean-bias in standardized space persists for the
-quantum cluster (quantum mean $\approx 0$ vs.\ real Pipeline-B mean
-$\approx -0.03$) and, under the long-horizon overlay protocol used
-here (777 contiguous integration steps anchored at
-$\text{OD}_{\text{real}}[0]$), compounds into a $\sim\!2\times$ OD
-drift visible in the bottom panel of each subfigure as a slow positive
-trend on the synthetic line relative to real. This residual drift is a
-training-side artifact not addressable at inference; it does \emph{not}
-affect the matched-budget fidelity metrics in main \S 4, which are
-computed under the canonical per-window-anchor protocol over short
-windows.
+\paragraph{Mean-shift visualization protocol.}
+A residual generator mean-bias in standardized log-return space
+persists across the matched-budget cluster (raw per-step gen
+mean ranges from $-0.010$ to $0.137$ vs.\ real Pipeline-B mean
+$\approx 0.0025$). Under the long-horizon overlay protocol used
+here -- 777 contiguous integration steps anchored at
+$\text{OD}_{\text{real}}[0]$ -- this per-step bias compounds
+exponentially: V1/V2/V3 overshoot real OD by $\sim 8$-$12\times$;
+WGAN-CNN reaches $\sim\!10^{46}$. To prevent the compound-bias
+artifact from swamping the structural-fidelity signal
+(variance, autocorrelation, oscillation shape) that this atlas
+is intended to convey, the generated log-return sequence is
+\emph{mean-shifted} prior to cumulative integration: the gen
+mean is subtracted and the real mean is added, leaving the
+per-step variance, autocorrelation, and higher moments
+\emph{unchanged}. The exact shift is recorded per model in
+\texttt{drift\_correction} of the companion JSON. This
+visualization choice is local to this atlas; the headline
+matched-budget fidelity metrics reported in main-text \S 4.2
+(EMD, DTW, predictive/discriminative scores) are computed on
+un-corrected log-returns and are unaffected.
 
 \begin{figure*}[!htbp]
  \centering
@@ -1174,8 +1183,9 @@ windows.
  contiguous 777-point log-delta sequence from each model's released
  sample bundle, un-rescaled then
  un-standardised via the saved $r_{\min}, r_{\max}, \mu, \sigma$;
- OD reconstructed by anchoring at $\text{OD}_{\text{real}}[0]$ and
- integrating. Panel (f) is the WGAN-CNN seed-42 OD-EMD outlier
+ mean-shifted to the real log-return mean (see protocol paragraph
+ above); OD reconstructed by anchoring at $\text{OD}_{\text{real}}[0]$
+ and integrating. Panel (f) is the WGAN-CNN seed-42 OD-EMD outlier
  (OD-EMD $=3.4338$ vs.\ the other four seeds in $0.080$-$0.192$),
  disclosed at face value in main-text \S 4.1. Panel (h) is the VAE
  degenerate-generation regime characterised in main-text \S 4.1.

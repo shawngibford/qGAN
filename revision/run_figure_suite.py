@@ -862,14 +862,19 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
     r_norm_raw = ((flat + 1.0) / 2.0) * (r_max - r_min) + r_min
     gen_log_delta_raw = r_norm_raw * sigma + mu
 
-    # Plan 14-21 T01 — mean-match drift-correction band-aid REMOVED.
-    # The x0.1 inverse-pipeline bug was the true source of the OD overshoot
-    # that motivated this band-aid; with _unscale_wgan_samples applied
-    # above, generated log-deltas have real-matching amplitude and the
-    # mean-match no longer masks an upstream attenuation. A small residual
-    # mean offset remains (training-side artifact disclosed in supp
-    # methodology) but is left visible here.
-    gen_log_delta = gen_log_delta_raw
+    # Visualization-only mean-shift: subtract the generated log-return
+    # mean and add the real log-return mean before cumulative integration.
+    # The reconstruction is anchored at real_od[0] and integrates 777
+    # contiguous log-returns; any per-step mean bias compounds
+    # exponentially over that horizon (V1/V2/V3 ~8-12x, WGAN-CNN ~1e46),
+    # which would otherwise dominate the OD panels and swamp the
+    # structural-fidelity signal (variance, autocorrelation, oscillation
+    # shape) that this atlas is meant to convey. The shift is disclosed
+    # in the supp \S A.10 caption; matched-budget metrics in main \S 4.2
+    # use un-corrected log-returns and are unaffected by this choice.
+    gen_mean_raw = float(gen_log_delta_raw.mean())
+    real_mean = float(real_log_delta.mean())
+    gen_log_delta = gen_log_delta_raw - gen_mean_raw + real_mean
 
     # Recompute r_norm in standardized space for the inverse_logreturns
     # call (kept symmetric with the previous code path for downstream
@@ -958,15 +963,25 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
             f"truncate_{n_target}"
         ),
         "drift_correction": {
-            "applied": False,
+            "applied": True,
+            "method": "mean_shift_gen_to_real",
+            "gen_log_delta_mean_raw": gen_mean_raw,
+            "real_log_delta_mean": real_mean,
+            "shift_applied": real_mean - gen_mean_raw,
             "rationale": (
-                "Plan 14-21 T01 — the mean-match drift-correction band-aid "
-                "previously applied here was masking the x0.1 WGAN "
-                "inverse-pipeline bug. With _unscale_wgan_samples now applied "
-                "above (revision/_wgan_unscale), generated log-deltas have "
-                "real-matching amplitude; a small residual mean offset "
-                "remains (training-side artifact disclosed in supp "
-                "methodology) but is left visible."
+                "Visualization-only mean-shift: gen log-returns are shifted "
+                "so their mean equals the real log-return mean prior to "
+                "777-step cumulative integration anchored at real_od[0]. "
+                "Without this shift, per-step mean bias compounds "
+                "exponentially over the 777-step horizon (V1/V2/V3 produce "
+                "8-12x OD overshoot; WGAN-CNN explodes to ~1e46), which "
+                "dominates the OD panels and obscures the structural "
+                "fidelity signal (variance, autocorrelation, oscillation "
+                "shape) that this atlas is meant to convey. The shift is "
+                "disclosed in supp \\S A.10 caption; matched-budget "
+                "fidelity metrics in main \\S 4.2 use un-corrected "
+                "log-returns and are unaffected by this visualization "
+                "choice."
             ),
         },
         "anchor": "real_od[0]",

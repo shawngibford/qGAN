@@ -366,7 +366,7 @@ def render_preprocessing_pipeline_4panel(repo: Path, figures_dir: Path) -> list[
     fig.suptitle(
         "Preprocessing pipeline (Pipeline B) — four stages from raw OD "
         "to model-ready input",
-        fontsize=13, y=1.005,
+        fontsize=13,
     )
     companion = {
         "figure": "preprocessing_pipeline_4panel",
