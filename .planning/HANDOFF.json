@@ -1,85 +1,100 @@
 {
   "version": "1.0",
-  "timestamp": "2026-06-12T18:08:21.969Z",
+  "timestamp": "2026-06-16T14:28:22.694Z",
   "phase": "14",
   "phase_name": "paper-revision-release-freeze",
   "phase_dir": ".planning/phases/14-paper-revision-release-freeze",
   "plan": "14-21-post",
-  "task": "figure-size-clarification",
-  "total_tasks": "open-ended (section-walkthrough + figure-size-pass + optional Tier 3)",
-  "status": "paused_mid_clarification",
-  "context_summary": "Session-2 of post-14-21 work. Started as a /gsd:resume-work pickup of 9ba37f8 state. Discovered the 14-21-post bundle PDF was silently broken: 60 [?] citation placeholders + missing References section because ama.bst was never git-tracked. Fix sequence: (1) restored ama.bst (commit 76e0916) — bundle PDF rebuilt 99 -> 105 pages with citations rendered; (2) §1.4 Principal Contributions bullet rendering bug fixed (91702f3); (3) supp Tier 1 reduction (b13f38a) — 5 LOW-risk moves, 105 -> 95 pages; (4) supp Tier 2 + JSON pointer consolidation (543489b) — 6 structural moves + new artifact reference table at §A.5 with 33 IDs (R1-R21, C1-C7, D1-D4); 24 inline path references replaced with table IDs; 95 -> 84 pages. Total session reduction: 105 -> 84 pages (-21 pp, 20%). All gates PASS. Bundle ready and synced.\n\nPAUSED mid-clarification on user request 'we also need to make sure that all of the figures/plots in main all large enough to be seen and read properly, we should make them span both columns.' Asked an AskUserQuestion because all 6 main figures are ALREADY \\begin{figure*} (full-width). User interrupted to /gsd:pause-work. Three plausible scopes for the figure-size concern remain open: (a) Fig 1's fixed [height=7cm, width=17cm] should be normalised to \\linewidth (defensive); (b) the new supp 3x3 atlas figures (DTW + reconstruction at 0.32\\linewidth per panel) may need a 2-page spread fallback for legibility (would partially undo page savings); (c) a specific figure the user noticed looks small that needs to be identified.",
+  "task": "session-3-cleanup-complete",
+  "total_tasks": "open-ended (post-14-21 polish + co-author swarm + Tier 1/2 disclosures + cohesiveness + Fig A10 modernization)",
+  "status": "paused_ready_to_submit",
+  "context_summary": "Session-3 of post-14-21 work. Started as /gsd:resume-work from session-2 pause at b0deea2 (84-page paper, paused mid figure-size clarification). Resolved that clarification + ran the largest cleanup arc of the milestone: ~35 atomic fixes across BLOCK / Tier-1 / Tier-2 / cohesiveness passes, two 4-agent co-author audit swarms, one engineering pivot (x0.1 / x10 disclosure restoration), and one figure modernization (Fig A10). 14 atomic commits between 67a8630 and bec0e50. Page count trajectory: 84 (paused) -> 81 (current). Bundle synced at ~/Desktop/aiche_upload_post14-21/ at every commit boundary. Deadline 2026-06-17 (~1 day remaining).\n\nALL GATES PASS at HEAD bec0e50: 81-page compile clean, 0 LaTeX errors, 0 undefined refs/cites, main 164 + supp 338 literals trace to JSON, freeze gates a/b/c PASS, gate d release.md expected-deferred to 14-07. Bundle is ready to zip + upload to AIChE portal.\n\nNOT YET DONE: external portal upload (deadline 2026-06-17), GitHub release notes (held until acceptance), Plan 14-07 Zenodo DOI mint (deferred to journal acceptance).",
   "completed_tasks": [
-    {"id": 1, "name": "ama.bst track + PDF rebuild + 5-doc meta refresh (broken 99pp w/ 60 [?] -> clean 105pp)", "status": "done", "commit": "76e0916"},
-    {"id": 2, "name": "§1.4 Principal Contributions bullets: inline hyphens -> proper itemize", "status": "done", "commit": "91702f3"},
-    {"id": 3, "name": "Supp Tier 1 reduction: CUT-1L + CUT-2 + CUT-3 + TRIM-5 + MERGE-3 (DTW atlas)", "status": "done", "commit": "b13f38a"},
-    {"id": 4, "name": "Supp Tier 2: CUT-5 + MERGE-1 (recon atlas) + MERGE-5 + MERGE-6 + TRIM-4 + TRIM-6", "status": "done_in", "commit": "543489b"},
-    {"id": 5, "name": "JSON pointer consolidation: Table A3 artifact registry + 24 inline-pointer replacements", "status": "done_in", "commit": "543489b"}
+    {"id": 1, "name": "Resolved session-2 figure-size question (specific scope identified: cross_model_emd + param_efficiency_pareto)", "status": "done", "commit": "67a8630"},
+    {"id": 2, "name": "Fig 5 (cross_model_emd) regenerated with log y-axis + value annotations + bigger fonts", "status": "done", "commit": "67a8630"},
+    {"id": 3, "name": "Fig 6 (param_efficiency_pareto) modernized then removed entirely per user decision", "status": "done", "commits": "67a8630, fb39c5d, 6eb7632, b8e1059"},
+    {"id": 4, "name": "Reviewer-tagged footnotes removed (main + supp)", "status": "done", "commit": "67a8630"},
+    {"id": 5, "name": "Em-dashes (---) and en-dashes (--) normalized", "status": "done", "commit": "67a8630"},
+    {"id": 6, "name": "ZENODO-DOI-PLACEHOLDER replaced with 'deposited at Zenodo upon acceptance'", "status": "done", "commit": "67a8630"},
+    {"id": 7, "name": "Inline file paths stripped from prose", "status": "done", "commit": "c36cf45"},
+    {"id": 8, "name": "Section 5 inference-pipeline correction subsection (44 lines) deleted + all x10 references stripped per user decision", "status": "done", "commit": "f69a290"},
+    {"id": 9, "name": "Co-author swarm pass 1: 6 BLOCK fixes (LR-EMD Welch contradiction, WGAN-CNN 3.4338 vs 0.1587 mismatch, fig:circuit_atlas dangling ref, A5/A6/A7 renumber drift, frozen-headline 0.0224, exposes-the-collapse VAE risk)", "status": "done", "commit": "65dd1fb"},
+    {"id": 10, "name": "Two supp captions LR-EMD outlier -> OD-EMD outlier", "status": "done", "commit": "534088d"},
+    {"id": 11, "name": "5 Tier-1 FLAG fixes: per-model means qualifier; redundant sentence delete; R3 Welch pointer to Data Availability; 7 supp section-ref fixes; orphaned mean-bias paragraph delete", "status": "done", "commit": "aa8da58"},
+    {"id": 12, "name": "3 Tier-2 disclosures: HPO asymmetry paragraph; Abstract single-cultivation prefix; Bonferroni nuance in Abstract + Section 4.1", "status": "done", "commit": "238dc52"},
+    {"id": 13, "name": "Co-author swarm pass 2 (final regression): flagged Bonferroni propagation gaps + WGAN-CNN outlier headline issue + |d|>3 factual error + AR(2) framing gap + Section 4.4 missing scope bullets", "status": "done", "commits": "swarm-pass"},
+    {"id": 14, "name": "BLOCK + FLAG fix swarm (parallel agents): 11 fixes — robustness paragraph in Section 4.1; |d|>3 factual error corrected to |d|=2.34 in wgan_mlp pairings; Bonferroni propagation to 4 sites; supp Section 3.2->3.3; Section 4.4 +2 scope bullets; AR(2) Yule-Walker framing in Section 4.2 + Section 5; 'uniformly' replaced; Section 1.4 outlier hedge", "status": "done", "commit": "217e76d"},
+    {"id": 15, "name": "Cohesiveness sweep: 11 redundancy/seam cleanups (AR(2) trim, HPO bullet collapse + promotion to position 3, robustness paragraph exit heading, Bonferroni demotion, parallel cleanup in Section 5, metric re-list compress, single-cultivation strike, Abstract n=5 redundancy cut)", "status": "done", "commit": "b88555c"},
+    {"id": 16, "name": "Restored slimmed sample-space-convention disclosure in supp Data Transformation Details (without v1.2.4 comparison narrative)", "status": "done", "commit": "313cfd6"},
+    {"id": 17, "name": "Fig A10 (training_progression) regenerated with modern style: shared axes, real OD log-returns overlaid as gray fill, out-of-range counts annotated (Quantum 0; WGAN-MLP +26-38; WGAN-CNN +94-116; WGAN-LSTM +12-13)", "status": "done", "commit": "bec0e50"}
   ],
   "remaining_tasks": [
-    {"id": "FIG-CLARIFY", "name": "Resolve user's figure-size concern (which figures? all main are already figure*)", "status": "BLOCKED on user clarification", "blocking": true, "notes": "User said 'make figures span both columns' but all 6 main figures are already \\begin{figure*}. Need user to specify: (a) Fig 1 normalisation only, (b) supp atlas re-layout, (c) point to specific figure, or (d) something else."},
-    {"id": "FIG-1-NORMALISE", "name": "Normalise main Fig 1 (concept_diagram) [height=7cm, width=17cm] -> [width=\\linewidth]", "status": "deferred_optional", "blocking": false, "notes": "Defensive improvement. AIChE's text-width may not be exactly 17cm. Trivial fix once user confirms scope."},
-    {"id": "SUPP-ATLAS-RELAYOUT", "name": "Consider 2-page spread fallback for §A.10 reconstruction atlas + §A.12 DTW atlas if 0.32\\linewidth panels prove illegible at print", "status": "deferred_pending_visual_review", "blocking": false, "notes": "Agent A flagged MEDIUM risk on MERGE-1 (each reconstruction panel has 3 internal stacked sub-plots). 2-page spread would save ~5 pages instead of ~7, reducing total session saving to ~19 pp instead of 21. Requires visual confirmation against print PDF before deciding."},
-    {"id": "SECTION-WALKTHROUGH", "name": "Section-by-section walkthrough §2 -> §5 (paused before §2 Background)", "status": "in_progress", "blocking": false, "notes": "Tasks #5 (Abstract) and #6 (§1) completed. Tasks #7-#10 pending. Includes the deferred Orlandi-replication-as-future-work paragraph addition at §4.4 / Outlook (per joint decision from earlier this session)."},
-    {"id": "REFERENCES-REVIEW", "name": "References bibliography hygiene review (Task #12)", "status": "pending", "blocking": false, "notes": "62/64 cite keys used; 2 unused (Mugel2022, dimoudis2023utilizing) are pre-existing peer-review-swap leftovers — could be deleted for cleanliness."},
-    {"id": "TIER-3-OPTIONAL", "name": "Tier 3 supp reduction (~6-10 more pages) if needed: MERGE-2 stat_grid atlas + MERGE-4 §A.2 + CUT-4 Wasserstein + TRIM-1/2/3", "status": "deferred_optional", "blocking": false, "notes": "MEDIUM-HIGH risk on MERGE-2 (6-panel insets at small size). CUT-4 requires coordinated main.tex:145 edit. Only run if 84 pages is unacceptable."},
-    {"id": "14-07", "name": "Plan 14-07 — Zenodo DOI mint + tag v1.2.5+ + release.md authoring", "status": "deferred_to_acceptance", "blocking": false, "notes": "Long-standing deferral. Freeze gate (d) release.md expected-deferred until 14-07 lands. Triggered by AIChE journal acceptance."}
+    {"id": "EXT-1", "name": "Zip bundle and upload to AIChE portal", "status": "BLOCKED on user (external action)", "blocking": true, "notes": "Bundle at ~/Desktop/aiche_upload_post14-21/ (66+ files, 81-page PDF). Command: cd ~/Desktop && zip -r aiche_upload_post14-21.zip aiche_upload_post14-21/. Deadline 2026-06-17."},
+    {"id": "EXT-2", "name": "Compose cover letter in AIChE portal text box", "status": "BLOCKED on user (external action)", "blocking": true, "notes": "Cover letter composed in-portal. Key talking points in bundle's UPLOAD-CHECKLIST.md."},
+    {"id": "14-07", "name": "Plan 14-07 — Zenodo DOI mint + tag v1.2.5+ + release.md authoring", "status": "deferred_to_acceptance", "blocking": false, "notes": "Long-standing deferral. Triggered by AIChE journal acceptance. Updates manuscript Data Availability statement from current 'Zenodo upon acceptance' wording to the real DOI."}
   ],
   "blockers": [
-    {"description": "User clarification needed on figure-size concern before any figure edits can proceed", "type": "human_action", "workaround": "When resuming, re-pose the AskUserQuestion: (a) main Fig 1 normalisation only, (b) supp atlas relayout, (c) point to specific figure that looks small."}
+    {"description": "External: AIChE portal upload requires the user (cannot be done by Claude). Bundle is ready and synced.", "type": "human_action", "workaround": "Zip and upload before 2026-06-17 deadline."}
   ],
   "human_actions_pending": [
-    {"action": "Clarify which figures look small / which need a re-layout", "context": "All 6 main figures are already \\begin{figure*} (full-width). The user's request 'make figures span both columns' is technically already satisfied for main.tex. Likely scopes: (a) Fig 1 fixed 17cm -> \\linewidth, (b) the new 3x3 supp atlas figures (DTW + reconstruction) panels at 0.32\\linewidth may be too small at print size, (c) specific figure the user noticed. Needs disambiguation before any edits.", "blocking": true},
-    {"action": "Zip bundle and upload to AIChE portal", "context": "Bundle at ~/Desktop/aiche_upload_post14-21/ (65 files, 7.8 MB, 84-page PDF, citations + References section restored). Command: cd ~/Desktop && zip -r aiche_upload_post14-21.zip aiche_upload_post14-21/. Deadline 2026-06-17 (5 days from session pause).", "blocking": true},
-    {"action": "Compose cover letter on portal", "context": "Cover letter is composed in the portal's cover-letter text box. Key talking points in bundle's UPLOAD-CHECKLIST.md.", "blocking": true},
-    {"action": "Plan 14-07 Zenodo DOI mint + tag v1.2.5+ + release.md (at AIChE acceptance only)", "context": "Updates manuscript Data Availability statement from ZENODO-DOI-PLACEHOLDER to the real DOI. Long-standing user deferral.", "blocking": false}
+    {"action": "Zip the bundle: cd ~/Desktop && zip -r aiche_upload_post14-21.zip aiche_upload_post14-21/", "context": "Bundle at ~/Desktop/aiche_upload_post14-21/ (66 files). 81-page PDF. All gates green.", "blocking": true},
+    {"action": "Upload zip to AIChE submission portal (deadline 2026-06-17)", "context": "External portal action. Cover letter composed in-portal.", "blocking": true},
+    {"action": "Plan 14-07 Zenodo DOI mint at AIChE acceptance only", "context": "Updates manuscript Data Availability statement from current 'Zenodo upon acceptance' wording to the real DOI when AIChE accepts.", "blocking": false}
   ],
   "decisions": [
-    {"decision": "Orlandi replication is a follow-up paper, not this revision", "rationale": "Cost/benefit asymmetric under 5-day deadline. Three outcomes (A) Orlandi-works-quantum-still-wins requires headline restructure; (B) Orlandi-beats-quantum catastrophic to current claim; (C) Orlandi-fails-to-replicate creates high-conflict 'we couldn't replicate' subsection. Expected value negative under deadline. Strategic two-paper play instead: submit current paper as-is, do Orlandi replication study as a focused follow-up using the 2-3 months between submission and decision.", "phase": "14"},
-    {"decision": "Tier 1 + Tier 2 supp reduction executed; Tier 3 deferred to user discretion", "rationale": "User chose 'Tier 1 only (pilot)' originally, then 'proceed with tier 2'. Tier 1 + Tier 2 combined delivered 105 -> 84 pages (-21 pp). Tier 3's MERGE-2 stat_grid atlas (6-panel insets at small size) is MEDIUM-HIGH legibility risk, and CUT-4 Wasserstein collapse requires coordinated main.tex:145 edit. Hold for visual review of current state before running Tier 3.", "phase": "14"},
-    {"decision": "JSON pointer consolidation done as part of Tier 2 commit (not separate)", "rationale": "User requested 'remove all JSON pointers, put them into a table(s) in SI' alongside 'proceed with tier 2'. Built single artifact registry table at §A.5 with 33 IDs (R1-R21 results, C1-C7 code, D1-D4 docs). Replaced 24 inline \\texttt{revision/...} and \\protect\\path{...} references across main + supp with table IDs. Body prose now reads 'see helper C1' / 'via R16 fit-summary block' / etc. instead of inline path strings. The %source: gate-trace comments are PRESERVED (provenance gate v2.2 mechanism).", "phase": "14"},
-    {"decision": "DTW atlas (MERGE-3) used as pilot in Tier 1; pattern proven before MERGE-1 reconstruction in Tier 2", "rationale": "Agent A explicitly flagged MERGE-3 as the lowest-risk atlas pattern (heatmap + warping path downscales well). Validated 3x3 layout at 0.32\\linewidth before applying same pattern to MERGE-1 (reconstruction figures have internal 3-row stacked sub-plots — higher legibility risk).", "phase": "14"},
-    {"decision": "MERGE-2 stat_grid atlas NOT executed in Tier 2 (held for Tier 3)", "rationale": "Stat_grid figures each have 6 internal panels (PDF/CDF/QQ/moments/distances/entropy). A 3x3 atlas of these would yield 54 sub-sub-panels at ~40mm; Agent A flagged MEDIUM-HIGH legibility risk. Held until visual confirmation that Tier 2 atlases (DTW + reconstruction) renders cleanly at 0.32\\linewidth.", "phase": "14"},
-    {"decision": "Removed 2 stale bib entries (Mugel2022, dimoudis2023utilizing) deferred", "rationale": "Pre-existing peer-review-swap leftovers. Would clean up Tier 1 cite-hygiene but not user-visible. Deferred to Task #12 References review.", "phase": "14"}
+    {"decision": "Removed Section 5 'Note on the inference-pipeline correction' subsection + all main/supp x10 references", "rationale": "User explicit decision (mid-session). The 44-line subsection was the 'preemptive convenient-inversion Section 5 subsection (PR-4 R9)' from prior memory. Was the highest-leverage hostile-review defense per prior HANDOFF.json invariants. Trade-off accepted: defends against narrative-attack vectors no longer needed since rebuttal letter doesn't include v1.2.4-comparison.", "phase": "14"},
+    {"decision": "Removed Fig 6 (parameter-efficiency Pareto) entirely", "rationale": "User-affirmed assessment that Fig 6 was restating Table 2 + Fig 5 without adding new evidence; the 'Pareto frontier' framing actively misled (AR(2)/VAE as Pareto winners contradicted Section 4.1 narrative). Removed table row R7 + renumbered R8-R21 to R7-R20.", "phase": "14"},
+    {"decision": "Did NOT drop the WGAN-CNN seed-42 outlier", "rationale": "User asked if dropping it would 'fix everything'. Computation showed dropping it cleans up headline ranges (WGAN cluster mean 0.331 -> 0.110) and improves max |d| (2.34 -> 3.44), but does NOT improve the Bonferroni-corrected family-wise p (floor pair doesn't involve wgan_cnn). More importantly, post-hoc outlier removal without a pre-registered exclusion criterion is textbook p-hacking — would create a worse hostile-reviewer attack than the outlier itself. Chose robustness-check disclosure pattern instead.", "phase": "14"},
+    {"decision": "Restored slimmed sample-space-convention disclosure after user reconsideration", "rationale": "User asked why x0.1/x10 existed and got confused. Honest explanation: x0.1 is vestigial (early misconception from archive/qgan_pennylane_SEL.py trying to magnitude-match to unstandardized log-returns). Pragmatically kept for byte-stability of released samples.npy. x10 undoes it at load boundary. Restored in supp Data Transformation Details without v1.2.4 comparison narrative.", "phase": "14"},
+    {"decision": "Tier 2 disclosures (HPO asymmetry + single-cultivation + Bonferroni) — preempt hostile-reviewer attacks", "rationale": "Co-author swarm flagged 3 hostile-reviewer attack vectors: (a) WGAN may be underperforming due to quantum-tuned HPO not classical-optimal; (b) headline 'dominates' not adjacent to n=1-cultivation scope; (c) OD-EMD doesn't survive Bonferroni over 12 quantum-vs-WGAN pairs. All disclosed proactively rather than left silent.", "phase": "14"},
+    {"decision": "Cohesiveness sweep collapsed 11 redundancies/seams after Tier-2 disclosures", "rationale": "Tier-2 disclosure additions created hedge-heavy reading and seam awkwardnesses. Both audit agents independently flagged: AR(2) framing verbose in Section 4.2; HPO Section 4.4 bullet was a near-verbatim restatement of Section 3 paragraph (collapsed to cross-ref); Bonferroni propagated to 6 sites (verbal tic — shortened in Section 1.4 + Section 4.2); Section 4.1 5-line mid-sentence parenthetical broke Cohen's d arc (demoted to trailing sentence). No content cuts, only prose tightening.", "phase": "14"}
   ],
   "uncommitted_files": [],
   "files_already_committed_this_session": [
-    {"sha": "76e0916", "subject": "track ama.bst, rebuild PDF with citations resolved (99->105 pages)"},
-    {"sha": "91702f3", "subject": "convert §1.4 Principal Contributions from inline hyphens to proper LaTeX itemize bullets"},
-    {"sha": "b13f38a", "subject": "supp Tier 1 reduction — 105 -> 95 pages via 5 targeted moves"},
-    {"sha": "543489b", "subject": "supp Tier 2 + JSON pointer consolidation — 95 -> 84 pages"}
+    {"sha": "67a8630", "subject": "figure legibility + reviewer-footnote removal + dash + Zenodo cleanup"},
+    {"sha": "fb39c5d", "subject": "log y-axis on Pareto panels to separate clustered EMD values"},
+    {"sha": "c36cf45", "subject": "remove inline file-path strings from body prose"},
+    {"sha": "f69a290", "subject": "remove inference-pipeline correction subsection and all x10 references"},
+    {"sha": "6eb7632", "subject": "Fig 6 — move legend out, anti-collide cluster labels"},
+    {"sha": "b8e1059", "subject": "drop Fig 6 (parameter-efficiency Pareto)"},
+    {"sha": "65dd1fb", "subject": "apply 6 BLOCK fixes from final co-author swarm review"},
+    {"sha": "534088d", "subject": "relabel two supp captions WGAN-CNN seed-42 LR-EMD -> OD-EMD outlier"},
+    {"sha": "aa8da58", "subject": "apply 5 Tier-1 FLAG fixes from co-author swarm review"},
+    {"sha": "238dc52", "subject": "apply Tier-2 disclosures — HPO asymmetry, single-cultivation scope, Bonferroni"},
+    {"sha": "217e76d", "subject": "swarm-pass — robustness paragraph + Bonferroni propagation + AR(2) framing + Section 4.4 scope bullets + factual corrections"},
+    {"sha": "b88555c", "subject": "cohesiveness sweep — collapse redundancies, smooth seams"},
+    {"sha": "313cfd6", "subject": "restore slimmed sample-space-convention disclosure"},
+    {"sha": "bec0e50", "subject": "regenerate Fig A10 (training_progression) — modern style + real reference overlay"}
   ],
-  "next_action": "On resume: (1) Re-pose the figure-size clarification question to the user (which figures look small? all main are already figure*; likely scope is Fig 1 normalisation, supp atlas relayout, or specific-figure identification). (2) After clarification, execute the chosen scope. (3) THEN resume the section-by-section walkthrough (§2 Background is next per Tasks #7). (4) Don't forget the Orlandi-future-work paragraph at §4.4 / Outlook (deferred from §1.3 review per joint decision). (5) Reference review at Task #12 includes the 2 unused bib entry cleanup option.",
-  "context_notes": "Session ran ~3-4 hours wall clock. Pattern from earlier discovered-and-fixed bug: meta-document freeze gates (verify_freeze_ready.py) certified the post-14-21 PDF as 'clean' because the gates check git cleanliness + gitignore + provenance-md-trace + tag-scope — but DO NOT visually render the PDF. The PDF had 60 [?] markers and no References section, and the gates passed it. STATE.md / HANDOFF.json / ROADMAP.md / .continue-here.md (previous version) all claimed '99 pages, 0 undefined refs/cites' which was provably false. Resolution: track ama.bst going forward + the broken state was caught during a regular session by the user noticing [?] visually. NEXT-SESSION ANTI-PATTERN: trust user 'I see [?] in the PDF' over gate output that says 'clean compile'.",
+  "next_action": "On resume: paper is submission-ready at HEAD bec0e50. (1) Zip bundle: cd ~/Desktop && zip -r aiche_upload_post14-21.zip aiche_upload_post14-21/. (2) Upload to AIChE portal before 2026-06-17 deadline. (3) After AIChE acceptance: run Plan 14-07 (Zenodo DOI mint + tag v1.2.5+ + release.md authoring + manuscript Data Availability update). NO FURTHER PAPER EDITS RECOMMENDED — the paper has been through 2 co-author audit swarms and is in the strongest defensible position the current evidence supports.",
+  "context_notes": "Session ran ~6+ hours wall clock. 14 atomic commits. The headline cluster-dominance claim survived intact across all edits but the hedging around it grew substantially: explicit single-cultivation scope, OD-EMD Bonferroni concession, HPO asymmetry disclosure, robustness check showing outlier-independence, AR(2) repositioned as non-adversarial reference, sample-space convention disclosed. Paper is more honest about caveats and harder to attack on statistical-rigor or scope grounds, but the empirical basis is still n=1 cultivation on a local Mac simulator. My honest probability estimate (delivered to user as final assessment): ~40% major-revision-then-accept, ~30% reject-with-resubmission, ~20% reject outright, ~10% accept with minor. The v2.1 follow-up (second cultivation + classical HPO sweep + clean the x0.1) is the paper that gets cited; this one earns the right to be reviewed.\n\nNEXT-SESSION ANTI-PATTERN (carried forward from session-2): trust user 'I see [?] in the PDF' over gate output that says 'clean compile'. The freeze gates do NOT visually render the PDF. Session-3 added a parallel anti-pattern: a 'clean compile' does not catch figure aesthetic regressions or inconsistent styling. Fig A10 was compile-clean but visually atrocious until regenerated this session.",
   "load_bearing_invariants": [
-    "Hard prohibitions §6 #1 (VAE = degenerate generation NEVER posterior/variance collapse), §6 #3 (real lag-1 ACF reference = -0.0641), §6 #4 (Pipeline B has NO Lambert W) remain in force.",
-    "§6 #2 (the LR-DTW-only / no-LR-EMD-claim prohibition) remains AMENDED per T05 R3 from 14-21 — quantum dominates LR-EMD by ~15x on per-model means under corrected pipeline. Constraint: do not over-claim per-SEED LR-EMD dominance.",
-    "Training-time x0.1 sites byte-frozen (run_matched2000.py:281, core/training.py:347/381/416, run_baselines.py:205). The 14-21 fix is INFERENCE-ONLY at samples.npy load boundary via _wgan_unscale.py (now referenced as C1 in artifact table).",
-    "_WGAN_KINDS set in _wgan_unscale.py is the single source of truth for model_kind gating; VAE + AR(2) deliberately excluded per Pitfall 3.",
-    "revision/core/ byte-frozen (D-14-22). 14-21 helper module at revision/_wgan_unscale.py (now C1).",
+    "Headline cluster-dominance claim: quantum WGAN-GP cluster dominates parameter-matched classical adversarial WGAN cluster on all 4 matched-budget metrics (LR-DTW per-seed, OD-DTW Bonferroni-significant, LR-EMD cluster-mean, OD-EMD cluster-mean uncorrected only).",
+    "Hard prohibitions Section 6 #1 (VAE = degenerate generation NEVER posterior/variance collapse), Section 6 #3 (real lag-1 ACF reference = -0.0641), Section 6 #4 (Pipeline B has NO Lambert W) remain in force.",
+    "Section 6 #2 (the LR-DTW-only / no-LR-EMD-claim prohibition) remains AMENDED per T05 R3 from 14-21 — quantum dominates LR-EMD by ~15x on per-model means. Constraint: do not over-claim per-SEED LR-EMD dominance.",
+    "Training-time x0.1 sites byte-frozen (run_matched2000.py:281, core/training.py:347/381/416, run_baselines.py:205). The inference-time x10 correction is at samples.npy load boundary via _wgan_unscale.py (now disclosed in supp Data Transformation Details — slimmed version without v1.2.4 comparison framing).",
+    "_WGAN_KINDS set in _wgan_unscale.py is the single source of truth for model_kind gating; VAE + AR(2) deliberately excluded.",
+    "revision/core/ byte-frozen (D-14-22). Helper module at revision/_wgan_unscale.py.",
     "Tags v1.2 through v1.2.4 on origin must NOT be rewritten. New work caps at v1.2.5+ (Plan 14-07 cuts the tag at AIChE acceptance).",
     "Plan 14-07 (Zenodo DOI + tag + release.md) intentionally deferred to AIChE acceptance.",
-    "ama.bst MUST stay tracked in git (caught and fixed this session — was never tracked before, broke citation rendering silently).",
-    "The %source: gate-trace comments in §A.8 critic paragraph (250881 literal) MUST be preserved verbatim. They are the provenance gate v2.2 resolution mechanism.",
-    "All load-bearing §A.4 statistical tables (Welch, per-seed sensitivity, Bonferroni) + §A.7 hostile-review-defense paragraphs (R1/R5 disclosure, ×0.1 inverse-pipeline, residual-drift) remain untouched through Tier 1 + Tier 2 + JSON consolidation."
+    "ama.bst MUST stay tracked in git (session-2 fix; was previously untracked and broke bibtex citation rendering silently).",
+    "The %source: gate-trace comments in Section A.8 critic paragraph (250881 literal) MUST be preserved verbatim. They are the provenance gate v2.2 resolution mechanism.",
+    "Robustness paragraph in Section 4.1 documents: cluster-floor pair (V2 vs wgan_mlp; Welch p=0.0188) does NOT depend on wgan_cnn seed-42 outlier. Headline holds with or without exclusion. Explicit 'no pre-registered exclusion criterion' disclosure protects against post-hoc-outlier-removal accusation.",
+    "Fig A10 (training_progression) regeneration: figure code at revision/run_introspect_figures.py:render_training_progression. Now loads real OD log-returns from data.csv on render. If data.csv path changes, the figure load will break — pinned via _find_repo_root()."
   ],
   "summary_artifact_path": null,
   "state_artifact_path": ".planning/STATE.md",
   "roadmap_artifact_path": ".planning/ROADMAP.md",
   "bundle_state": {
     "path": "~/Desktop/aiche_upload_post14-21/",
-    "files": 65,
-    "size_mb": 7.8,
-    "pdf_pages": 84,
-    "pdf_bytes": 3884857,
-    "compile_status": "0 errors, 0 undefined refs, 0 undefined cites (verified at HEAD 543489b on 2026-06-12)",
+    "pdf_pages": 81,
+    "compile_status": "0 errors, 0 undefined refs, 0 undefined cites (verified at HEAD bec0e50 on 2026-06-16)",
     "provenance_counts": {
-      "main": 157,
-      "supp": 343,
+      "main": 164,
+      "supp": 338,
       "paper_blocks_framing": 23,
       "paper_blocks_refs_methods": 49,
-      "reviewer_response": 178,
-      "methods_full": 133
+      "reviewer_response": 178
     },
     "freeze_gates": {
       "a_gitignore_archive": "PASS",
@@ -88,5 +103,10 @@
       "d_release_md": "expected-deferred to 14-07"
     },
     "deadline": "2026-06-17"
-  }
+  },
+  "anti_patterns_observed_this_session": [
+    {"pattern": "Compile-clean does not mean visual-clean", "description": "Fig A10 was rendering successfully (0 LaTeX errors) but was visually atrocious — inconsistent y-axis scales across rows, no real-data overlay despite caption claiming one, spike-like sparse bins. The freeze gates and provenance gates passed but the figure was a hostile-reviewer magnet. Caught only when user eyeballed the supp PDF on page 54.", "severity": "advisory", "prevention": "Before declaring a figure 'done', open the rendered PNG/PDF and look at it as a reviewer would. Don't trust gate output for visual quality."},
+    {"pattern": "Over-disclosure creates hedge-heavy reading", "description": "After Tier-2 swarm pass added HPO + Bonferroni + single-cultivation disclosures across 5+ sites each, the prose became verbal-tic-heavy. Required a dedicated cohesiveness sweep (11 fixes) to restore readability without losing scientific content. Reviewers can spot 'every claim is hedged twice' as a defensive overcompensation tell.", "severity": "advisory", "prevention": "After any disclosure-addition swarm, run a redundancy/cohesiveness audit before declaring done. Goal: each disclosure appears exactly once at the strongest layer (Abstract / Limitations / Section A) and is referenced everywhere else."},
+    {"pattern": "Post-hoc outlier removal would be p-hacking", "description": "Session attempted to ask 'can we drop the seed-42 outlier' as a path to restoring Bonferroni significance. Analysis showed this would: (a) NOT improve Bonferroni p (floor pair unchanged); (b) create a worse hostile-reviewer attack than the outlier itself; (c) violate textbook pre-registration requirements. Used robustness-check pattern instead.", "severity": "blocking", "prevention": "Any future 'should we drop X' question on outlier data must answer the 'where was the pre-registered exclusion criterion?' question first. If the answer is 'we noticed X after seeing the results', the answer to dropping is no."}
+  ]
 }
