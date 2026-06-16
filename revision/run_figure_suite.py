@@ -885,44 +885,63 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
     )
     gen_od = od_full.cpu().numpy().squeeze()  # length n_target + 1 = 778
 
-    fig, axes = plt.subplots(3, 1, figsize=(14, 9))
+    # Real-data scale references — clip generated traces to a sensible
+    # display window so the real-OD trajectory stays visible even when
+    # mean-bias compounding makes the reconstruction explode (e.g.,
+    # wgan_cnn seed-42 reaches 1e46).
+    real_max = float(real_od.max())
+    real_min = float(real_od[real_od > 0].min()) if (real_od > 0).any() else 1e-3
+    lin_ymax = real_max * 3.0
+    log_ymin = max(real_min / 10.0, 1e-3)
+    log_ymax = real_max * 100.0
+    gen_lin_max = float(np.nanmax(gen_od))
+    gen_lin_overflow = gen_lin_max > lin_ymax
+
+    fig, axes = plt.subplots(3, 1, figsize=(8, 8))
     t_ld = np.arange(n_target)
-    axes[0].plot(t_ld, gen_log_delta, color="#FFA500", linewidth=0.8,
-                 label="Generated Log Delta")
     axes[0].plot(t_ld, real_log_delta, color="#1F4FCC", linewidth=0.8,
-                 label="Original Log Delta", alpha=0.85)
-    axes[0].set_title(
-        f"Log Delta Comparison (all {n_target} points) — "
-        f"{MODEL_LABELS.get(model, model)}"
-    )
-    axes[0].set_xlabel("Time Index"); axes[0].set_ylabel("Log Delta Value")
-    axes[0].legend(loc="lower left", fontsize=9, frameon=False)
+                 label="Real", alpha=0.85)
+    axes[0].plot(t_ld, gen_log_delta, color="#D55E00", linewidth=0.8,
+                 label="Generated", alpha=0.85)
+    axes[0].set_title("Log-return trace", fontsize=11)
+    axes[0].set_xlabel("Time index", fontsize=9)
+    axes[0].set_ylabel("Log-return", fontsize=9)
+    axes[0].tick_params(labelsize=8)
+    axes[0].legend(loc="lower left", fontsize=8, frameon=False, ncol=2)
     axes[0].grid(True, alpha=0.3)
 
     t_od = np.arange(n_od)
-    axes[1].plot(t_od, gen_od, color="#FFA500", linewidth=1.1,
-                 label="Reconstructed OD")
-    axes[1].plot(t_od, real_od, color="#1F4FCC", linewidth=1.1,
-                 label="Original OD", alpha=0.85)
-    axes[1].set_title(
-        f"Optical Density Comparison — Linear Scale (all {n_od} points) — "
-        f"{MODEL_LABELS.get(model, model)}"
-    )
-    axes[1].set_xlabel("Time Index"); axes[1].set_ylabel("Optical Density")
-    axes[1].legend(loc="upper left", fontsize=9, frameon=False)
+    axes[1].plot(t_od, real_od, color="#1F4FCC", linewidth=1.2,
+                 label="Real", alpha=0.85)
+    axes[1].plot(t_od, gen_od, color="#D55E00", linewidth=1.2,
+                 label="Generated", alpha=0.85)
+    axes[1].set_ylim(0, lin_ymax)
+    axes[1].set_title("OD reconstruction (linear)", fontsize=11)
+    axes[1].set_xlabel("Time index", fontsize=9)
+    axes[1].set_ylabel("Optical density", fontsize=9)
+    axes[1].tick_params(labelsize=8)
+    axes[1].legend(loc="upper left", fontsize=8, frameon=False, ncol=2)
     axes[1].grid(True, alpha=0.3)
+    if gen_lin_overflow:
+        axes[1].annotate(
+            f"Generated peak {gen_lin_max:.2g} off-scale",
+            xy=(0.98, 0.95), xycoords="axes fraction",
+            ha="right", va="top", fontsize=8, color="#882255",
+            bbox=dict(boxstyle="round,pad=0.25", fc="white",
+                      ec="#882255", alpha=0.9),
+        )
 
-    axes[2].plot(t_od, gen_od, color="#FFA500", linewidth=1.1,
-                 label="Reconstructed OD")
-    axes[2].plot(t_od, real_od, color="#1F4FCC", linewidth=1.1,
-                 label="Original OD", alpha=0.85)
+    axes[2].plot(t_od, real_od, color="#1F4FCC", linewidth=1.2,
+                 label="Real", alpha=0.85)
+    axes[2].plot(t_od, gen_od, color="#D55E00", linewidth=1.2,
+                 label="Generated", alpha=0.85)
     axes[2].set_yscale("log")
-    axes[2].set_title(
-        f"Optical Density Comparison — Log Scale (all {n_od} points) — "
-        f"{MODEL_LABELS.get(model, model)}"
-    )
-    axes[2].set_xlabel("Time Index"); axes[2].set_ylabel("Optical Density (log scale)")
-    axes[2].legend(loc="upper left", fontsize=9, frameon=False)
+    axes[2].set_ylim(log_ymin, log_ymax)
+    axes[2].set_title("OD reconstruction (log scale)", fontsize=11)
+    axes[2].set_xlabel("Time index", fontsize=9)
+    axes[2].set_ylabel("Optical density", fontsize=9)
+    axes[2].tick_params(labelsize=8)
+    axes[2].legend(loc="upper left", fontsize=8, frameon=False, ncol=2)
     axes[2].grid(True, alpha=0.3, which="both")
 
     fig.tight_layout()
@@ -1158,9 +1177,8 @@ def render_dtw_alignment(model: str, real_log_delta: np.ndarray,
     fig, ax = _dtwvis.plot_warpingpaths(real, gen, paths, best_path)
     try:
         fig.suptitle(
-            f"DTW alignment — {MODEL_LABELS.get(model, model)} (seed 42, "
-            f"window={window}, psi={psi})",
-            fontsize=12, y=1.00,
+            f"{MODEL_LABELS.get(model, model)}",
+            fontsize=11, y=1.00,
         )
     except Exception:
         pass
@@ -1330,15 +1348,24 @@ def render_cross_model_emd(repo: Path, figures_dir: Path) -> list[Path]:
     if od_emd is not None:
         ax.axhline(od_emd, color=HEADLINE_COLOR, linestyle="--",
                    linewidth=2.0, label=HEADLINE_LABEL)
+    # Place value annotation ABOVE the error bar top so labels don't
+    # collide with the bar top or the upper whisker.
     for i, m in enumerate(present):
+        upper = means[i] + stds[i]
         ax.annotate(
             f"{means[i]:.3f}",
-            (x[i], means[i]),
-            xytext=(0, 6), textcoords="offset points",
-            ha="center", fontsize=9, color="#222222",
+            (x[i], upper),
+            xytext=(0, 8), textcoords="offset points",
+            ha="center", va="bottom",
+            fontsize=10, color="#222222",
+            fontweight="medium",
         )
     ax.legend(frameon=False, fontsize=10, loc="upper left")
     ax.grid(True, alpha=0.3, axis="y", which="both")
+    # Add headroom above the tallest error bar so annotations don't clip
+    # the axis on log scale.
+    cur_ymin, cur_ymax = ax.get_ylim()
+    ax.set_ylim(cur_ymin, cur_ymax * 1.6)
     fig.tight_layout()
     companion = {
         "figure": "cross_model_emd",
@@ -2138,9 +2165,9 @@ def render_tstr_crossmodel_matched2000(repo: Path,
 
     # 1×3 panels: R², MAE, RMSE. Single-pipeline (B) means single bar
     # per model in each panel.
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5.2))
+    fig, axes = plt.subplots(1, 3, figsize=(13, 6.5))
     metrics = [
-        ("r2", "R² (synth → real soft-sensor)"),
+        ("r2", "R$^2$"),
         ("mae", "MAE"),
         ("rmse", "RMSE"),
     ]
@@ -2170,44 +2197,37 @@ def render_tstr_crossmodel_matched2000(repo: Path,
         ax.set_xticks(x_base)
         ax.set_xticklabels(
             [MODEL_LABELS.get(m, m) for m in model_kinds],
-            rotation=30, ha="right", fontsize=8,
+            rotation=35, ha="right", fontsize=9,
         )
-        ax.set_ylabel(ylabel)
-        ax.set_title(f"TSTR (matched-budget, Pipeline B) — {ylabel}")
+        ax.set_ylabel(ylabel, fontsize=12)
+        ax.set_title(ylabel, fontsize=13)
         ax.grid(True, alpha=0.3, axis="y")
+        ax.tick_params(axis="y", labelsize=10)
         if metric == "r2":
             r2_vals = [per_mp[f"{m}|B"]["r2_mean"]
                        for m in model_kinds if f"{m}|B" in per_mp]
-            ymin = min(min(r2_vals + [real_only_r2 if not np.isnan(real_only_r2)
-                                      else 0.0]) - 0.5, -0.5)
-            ymax = max(max(r2_vals) + 0.2, 1.05)
-            ax.set_ylim(ymin, ymax)
+            # Sensible R^2 axis: focus on the 0..1 region where every
+            # generator lives. Real-only at R^2 = -13.35 is annotated as
+            # text rather than stretched to fit (would crush the bars).
+            ax.set_ylim(-0.05, 1.10)
             ax.axhline(0.0, color="#333333", linewidth=0.8, alpha=0.5)
             if not np.isnan(real_only_r2):
-                ax.axhline(
-                    real_only_r2, color="#882255", linewidth=1.2,
-                    linestyle="--", alpha=0.7,
-                    label=f"real-only (n=65) R²={real_only_r2:.2f}",
-                )
-                ax.legend(frameon=False, fontsize=8, loc="lower right")
-            if any(v < 0 for v in r2_vals):
                 ax.annotate(
-                    "R² < 0 ⇒ worse than predicting the mean",
+                    f"Real-only baseline (n=65 real windows): "
+                    f"R$^2$ = {real_only_r2:.2f}\n"
+                    f"(off-scale, well below 0)",
                     xy=(0.02, 0.04), xycoords="axes fraction",
-                    fontsize=8, color="#882255",
-                    bbox=dict(boxstyle="round,pad=0.25", fc="white",
-                              ec="#882255", alpha=0.85),
+                    fontsize=9, color="#882255",
+                    bbox=dict(boxstyle="round,pad=0.3", fc="white",
+                              ec="#882255", alpha=0.9),
                 )
 
     fig.suptitle(
-        "TSTR cross-model — matched-budget Pipeline B (2000 epochs, "
-        "9 trainable variants). TSTRLiteLSTM (1-layer, hidden=32) trained "
-        "on synthetic OD windows; tested on held-out real OD. Mean ± std "
-        "over 3 init seeds (40-42). Real-only baseline (n=65 real windows) "
-        "plotted as dashed reference line in R² panel.",
-        fontsize=10,
+        "TSTR cross-model utility (matched-budget Pipeline B, 2000 epochs)",
+        fontsize=13,
+        y=0.99,
     )
-    fig.tight_layout(rect=(0, 0, 1, 0.94))
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
 
     convergence_note = (
         "All 9 matched-budget generators (3-562 generator params, plus the "
@@ -2920,9 +2940,9 @@ def render_noise_robustness_quantum(repo: Path,
                     else "non_monotonic")
             monotonicity[f"{ch}|{p}"] = mono
 
-    # 1×2 panels: depolarizing | amplitude_damping. Two curves per panel
+    # 1x2 panels: depolarizing | amplitude_damping. Two curves per panel
     # (Pipeline A dashed, Pipeline B solid) with markers + error bars.
-    fig, axes = plt.subplots(1, 2, figsize=(13, 5.4))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6.0))
     for ax, ch in zip(axes, channels):
         for p in pipelines:
             curve = per_curve[f"{ch}|{p}"]
@@ -2933,36 +2953,28 @@ def render_noise_robustness_quantum(repo: Path,
             mk = "o" if p == "B" else "s"
             col = "#0072B2" if p == "B" else "#D55E00"
             ax.errorbar(xs, ys, yerr=es, marker=mk, linestyle=ls,
-                        color=col, capsize=3, markersize=7,
-                        markeredgecolor="white", markeredgewidth=0.6,
-                        elinewidth=0.8, linewidth=1.4,
+                        color=col, capsize=3, markersize=8,
+                        markeredgecolor="white", markeredgewidth=0.7,
+                        elinewidth=0.8, linewidth=1.6,
                         label=f"Pipeline {p}")
-            # Zero anchor (depol_0.0 / ampdamp_0.0) gets a distinct ring
-            # marker per the source JSON's zero_anchor_note.
             if curve and curve[0]["noise_level"] == 0.0:
                 ax.scatter([curve[0]["noise_level"]],
                            [curve[0]["emd_mean"]],
-                           s=130, facecolor="none", edgecolor=col,
+                           s=140, facecolor="none", edgecolor=col,
                            linewidths=1.4, zorder=8)
-        ax.set_xlabel(f"{ch} noise level")
-        ax.set_ylabel("OD EMD (mean ± std over 3 seeds)")
-        ax.set_title(
-            f"{ch.replace('_',' ').title()} — "
-            f"{'monotonic↑' if monotonicity[f'{ch}|A'] == 'monotonic_increase' and monotonicity[f'{ch}|B'] == 'monotonic_increase' else 'mixed'} "
-            f"(A: {monotonicity[f'{ch}|A']}, B: {monotonicity[f'{ch}|B']})"
-        )
+        ax.set_xlabel(f"{ch.replace('_', ' ')} noise level", fontsize=11)
+        ax.set_ylabel("OD EMD (mean $\\pm$ std, 3 seeds)", fontsize=11)
+        ax.set_title(ch.replace("_", " ").title(), fontsize=12)
         ax.grid(True, alpha=0.3)
-        ax.legend(frameon=False, fontsize=8)
+        ax.tick_params(labelsize=10)
+        ax.legend(frameon=False, fontsize=10, loc="center right")
 
     fig.suptitle(
-        "EMD vs noise level — depolarizing and amplitude-damping channels "
-        "inserted per-layer (after each entangling block). Mean over 3 "
-        "seeds (42-44); error bars = seed std. Open ring at noise_level "
-        "= 0.0 marks the zero anchor (same physical baseline per source "
-        "JSON's zero_anchor_note, kept as distinct rows per curve).",
-        fontsize=10,
+        "Noise-model sensitivity: OD-EMD vs per-layer noise level",
+        fontsize=13,
+        y=0.99,
     )
-    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
 
     companion = {
         "figure": "noise_robustness_quantum",
@@ -3061,7 +3073,7 @@ def render_shot_noise_robustness(repo: Path,
 
     # Single-panel figure: log-x shots, both pipelines on the same axes
     # with their analytic baselines as horizontal references.
-    fig, ax = plt.subplots(figsize=(10, 5.6))
+    fig, ax = plt.subplots(figsize=(9, 6.0))
     pipeline_styles = {
         "A": dict(color="#D55E00", linestyle="--", marker="s",
                   label_prefix="Pipeline A"),
@@ -3076,25 +3088,24 @@ def render_shot_noise_robustness(repo: Path,
         es = [c["emd_std"] for c in curve]
         ax.errorbar(xs, ys, yerr=es, marker=st["marker"],
                     linestyle=st["linestyle"], color=st["color"],
-                    markersize=8, markeredgecolor="white",
-                    markeredgewidth=0.6, capsize=3, linewidth=1.6,
+                    markersize=10, markeredgecolor="white",
+                    markeredgewidth=0.8, capsize=4, linewidth=1.8,
                     elinewidth=0.9,
                     label=f"{st['label_prefix']} (finite shots)")
-        # Horizontal analytic baseline reference (shots=∞ asymptote).
         ab = analytic_baseline[p]
         ax.axhline(ab["emd_mean"], color=st["color"], linestyle=":",
-                   linewidth=1.3, alpha=0.75,
-                   label=f"{st['label_prefix']} analytic (shots=∞)")
+                   linewidth=1.4, alpha=0.75,
+                   label=f"{st['label_prefix']} analytic (shots$\\to\\infty$)")
     ax.set_xscale("log")
-    ax.set_xlabel("shots (per Pauli measurement, log scale)")
-    ax.set_ylabel("OD EMD (mean ± std over 3 seeds)")
+    ax.set_xlabel("Shots per Pauli measurement (log scale)", fontsize=12)
+    ax.set_ylabel("OD EMD (mean $\\pm$ std, 3 seeds)", fontsize=12)
     ax.set_title(
-        "Shot-noise robustness — EMD vs shot count (log-x). Analytic-"
-        "statevector baseline (shots=∞) shown as horizontal reference "
-        "per pipeline. Mean over 3 seeds (42-44); error bars are seed std."
+        "Shot-noise robustness: OD-EMD vs finite-shot count",
+        fontsize=13,
     )
+    ax.tick_params(labelsize=10)
     ax.grid(True, alpha=0.3, which="both")
-    ax.legend(frameon=False, fontsize=8, loc="best")
+    ax.legend(frameon=False, fontsize=10, loc="center right")
     fig.tight_layout()
 
     companion = {
