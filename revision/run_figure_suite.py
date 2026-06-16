@@ -890,15 +890,19 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
     )
     gen_od = od_full.cpu().numpy().squeeze()  # length n_target + 1 = 778
 
-    # Real-data scale references — clip generated traces to a sensible
-    # display window so the real-OD trajectory stays visible even when
-    # mean-bias compounding makes the reconstruction explode (e.g.,
-    # wgan_cnn seed-42 reaches 1e46).
+    # Real-data scale references — anchor the display window to the
+    # biological OD range. With mean-shift applied above, the structural
+    # fidelity panels show the real trajectory at native scale; any
+    # generated overshoot beyond the real range is a genuine failure
+    # mode and triggers the off-scale annotation rather than silently
+    # inflating the y-axis to accommodate it. 10% linear headroom
+    # absorbs small stochastic overshoot (e.g. V3 at 1.07x real_max);
+    # 1-decade log headroom keeps the log panel readable.
     real_max = float(real_od.max())
     real_min = float(real_od[real_od > 0].min()) if (real_od > 0).any() else 1e-3
-    lin_ymax = real_max * 3.0
+    lin_ymax = real_max * 1.1
     log_ymin = max(real_min / 10.0, 1e-3)
-    log_ymax = real_max * 100.0
+    log_ymax = real_max * 10.0
     gen_lin_max = float(np.nanmax(gen_od))
     gen_lin_overflow = gen_lin_max > lin_ymax
 
