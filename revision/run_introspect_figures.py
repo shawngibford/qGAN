@@ -84,70 +84,128 @@ def _save(fig: plt.Figure, figures_dir: Path, stem: str) -> list[Path]:
     return written
 
 
+def _load_real_logreturns() -> np.ndarray:
+    """Load real OD log-returns from data.csv for reference overlay."""
+    import pandas as pd
+    repo = _find_repo_root()
+    df = pd.read_csv(repo / "data.csv")
+    od = df["OD"].values.astype(float)
+    return np.diff(np.log(od))
+
+
 def render_training_progression(data: dict, figures_dir: Path) -> list[Path]:
-    """INTRO-01: generated distribution per target × snapshot epoch (D-13-08).
+    """INTRO-01: generated distribution per target x snapshot epoch (D-13-08).
 
     Grid: one row per target (quantum + 3 classical WGAN-GP variants), one
-    column per snapshot epoch {0,250,500,750,1000}; each cell is a histogram
-    of that target's generated samples at that epoch — the quantum generator
-    and the three classical baselines visually side-by-side.
+    column per snapshot epoch {0,250,500,750,1000}; each cell overlays the
+    target's generated samples (density histogram + KDE) against the real
+    log-return reference (gray fill). All cells share x and y axes so the
+    quantum vs classical shapes are directly comparable.
     """
     meta = data["metadata"]
     snapshot_epochs = meta["snapshot_epochs"]
     target_order = meta["targets"]
     by_target = {t["target"]: t for t in data["targets"]}
 
+    # Real log-return reference (Pipeline B input, n=777 ~ [-0.08, 0.09]).
+    real_logreturns = _load_real_logreturns()
+    real_std = float(real_logreturns.std())
+
+    # Clip x-range to 4 sigma of the real reference (~[-0.084, 0.084]); count
+    # out-of-range generated samples per cell and annotate the count.
+    x_lim = 4.0 * real_std
+    bins = np.linspace(-x_lim, x_lim, 41)
+
     n_rows = len(target_order)
     n_cols = len(snapshot_epochs)
     fig, axes = plt.subplots(
         n_rows,
         n_cols,
-        figsize=(2.6 * n_cols, 2.2 * n_rows),
+        figsize=(2.8 * n_cols, 2.0 * n_rows),
         sharex=True,
-        sharey="row",
+        sharey=True,
         squeeze=False,
     )
 
-    # Shared x-range per row so the quantum vs classical shapes are comparable.
+    # Compute a shared y-max from the real reference (density scale).
+    real_density, _ = np.histogram(real_logreturns, bins=bins, density=True)
+    y_max = float(real_density.max()) * 1.35
+
     for r, tgt in enumerate(target_order):
         rec = by_target[tgt]
-        all_vals = np.concatenate(
-            [np.asarray(s, dtype=float).reshape(-1) for s in rec["samples"]]
-        )
-        lo, hi = np.percentile(all_vals, [0.5, 99.5])
-        bins = np.linspace(lo, hi, 40)
         color = TARGET_COLORS.get(tgt, "#444444")
         for c, epoch in enumerate(rec["epochs"]):
             ax = axes[r][c]
             vals = np.asarray(rec["samples"][c], dtype=float).reshape(-1)
+            n_out = int(((vals < -x_lim) | (vals > x_lim)).sum())
+            vals_clip = vals[(vals >= -x_lim) & (vals <= x_lim)]
+
+            # Real reference (filled gray, under).
             ax.hist(
-                vals,
+                real_logreturns,
                 bins=bins,
                 density=True,
-                color=color,
-                alpha=0.8,
-                edgecolor="white",
-                linewidth=0.3,
+                color="#888888",
+                alpha=0.30,
+                edgecolor="none",
+                zorder=1,
             )
+            # Generated samples (solid color, over).
+            if len(vals_clip):
+                ax.hist(
+                    vals_clip,
+                    bins=bins,
+                    density=True,
+                    color=color,
+                    alpha=0.78,
+                    edgecolor="white",
+                    linewidth=0.4,
+                    zorder=2,
+                )
+
+            ax.set_xlim(-x_lim, x_lim)
+            ax.set_ylim(0, y_max)
+            ax.tick_params(labelsize=8)
+
+            if n_out > 0:
+                ax.text(
+                    0.98, 0.94,
+                    f"+{n_out} out of range",
+                    transform=ax.transAxes,
+                    ha="right", va="top",
+                    fontsize=7, color="#666666",
+                    zorder=3,
+                )
             if r == 0:
-                ax.set_title(f"epoch {epoch}", fontsize=10)
+                ax.set_title(f"epoch {epoch}", fontsize=11)
             if c == 0:
                 ax.set_ylabel(
                     TARGET_LABELS.get(tgt, tgt),
-                    fontsize=9,
-                    rotation=90,
-                    labelpad=8,
+                    fontsize=10,
                 )
             if r == n_rows - 1:
-                ax.set_xlabel("generated value", fontsize=8)
-            ax.tick_params(labelsize=7)
+                ax.set_xlabel("log-return", fontsize=9)
+
+    # Shared legend explaining the gray reference (single entry; row labels
+    # identify the generator colour).
+    from matplotlib.patches import Patch
+    fig.legend(
+        handles=[
+            Patch(facecolor="#888888", alpha=0.30,
+                  label="Real log-returns (reference, n=777; gray fill in every panel)"),
+        ],
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.94),
+        ncol=1, frameon=False, fontsize=10,
+    )
 
     fig.suptitle(
-        "INTRO-01  Generated distribution across training "
-        f"(pipeline={meta['pipeline']}, seed={meta['seed']})",
-        fontsize=12,
+        f"Generated log-return distribution across training "
+        f"(Pipeline {meta['pipeline']}, seed {meta['seed']})",
+        fontsize=13,
+        y=0.99,
     )
-    fig.tight_layout(rect=(0, 0, 1, 0.97))
+    fig.tight_layout(rect=(0, 0, 1, 0.91))
     return _save(fig, figures_dir, "training_progression")
 
 
