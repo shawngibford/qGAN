@@ -1000,6 +1000,117 @@ def render_reconstruction_overlay(model: str, real_log_delta: np.ndarray,
     return _save(fig, figures_dir, f"reconstruction_{model}", companion)
 
 
+def render_unshifted_quad(real_log_delta: np.ndarray, real_od: np.ndarray,
+                          figures_dir: Path, repo: Path,
+                          models: tuple[str, ...] = (
+                              "iqp_sel_55_repro", "V1",
+                              "wgan_cnn", "wgan_lstm",
+                          )) -> list[Path]:
+    """Reviewer-facing companion to Fig A14: un-shifted OD reconstructions.
+
+    Shows what the per-model cumulative integration looks like WITHOUT
+    the mean-shift drift-correction applied in render_reconstruction_overlay.
+    Demonstrates that (a) the compound-bias artifact is not architecture-
+    specific (both quantum and classical models exhibit it) and (b) the
+    catastrophic cases fail in opposite directions (WGAN-CNN explodes,
+    WGAN-LSTM collapses), ruling out any "classical-models-bad" framing
+    of the artifact.
+
+    Log-OD scale only (linear would be useless for 1e46 / 1e-5 ranges).
+    Auto-scale per panel so each model's failure mode is visible.
+    """
+    real_max = float(real_od.max())
+    real_min = float(real_od[real_od > 0].min()) if (real_od > 0).any() else 1e-3
+    n_target = real_log_delta.shape[0]      # 777
+    n_od = real_od.shape[0]                 # 778
+    n_rows_needed = int(np.ceil(n_target / WINDOW_LENGTH))
+
+    fig, axes = plt.subplots(2, 2, figsize=(11, 7.5))
+    axes_flat = axes.flatten()
+    companion_per_model = {}
+
+    for ax, model in zip(axes_flat, models):
+        base = _run_dir(repo, model, PRIMARY_SEED)
+        samples_pm1 = np.load(_require(base / "samples.npy",
+                                       f"{model}/{PRIMARY_SEED} samples")).astype(np.float64)
+        samples_pm1 = _unscale_wgan_samples(samples_pm1, model)
+        inv = np.load(
+            _require(base / "inverse_kwargs.npz",
+                     f"{model}/{PRIMARY_SEED} inverse_kwargs"),
+            allow_pickle=True,
+        )
+        r_min = float(inv["r_min"]); r_max = float(inv["r_max"])
+        mu = float(inv["mu"]); sigma = float(inv["sigma"])
+
+        flat = samples_pm1[:n_rows_needed].reshape(-1)[:n_target]
+        r_norm_raw = ((flat + 1.0) / 2.0) * (r_max - r_min) + r_min
+        gen_log_delta_raw = r_norm_raw * sigma + mu
+        # NO mean-shift — this is the un-corrected pipeline
+        r_norm = (gen_log_delta_raw - mu) / sigma
+        od_anchor = float(real_od[0])
+        od_full = inverse_logreturns(
+            torch.tensor(r_norm).reshape(1, -1),
+            torch.tensor([od_anchor]),
+            torch.tensor(mu),
+            torch.tensor(sigma),
+        )
+        gen_od = od_full.cpu().numpy().squeeze()
+        # Clip to a finite display window — log axis can't render 0 or inf
+        gen_od_clipped = np.clip(gen_od, 1e-10, 1e50)
+
+        t_od = np.arange(n_od)
+        ax.plot(t_od, real_od, color="#1F4FCC", linewidth=1.4,
+                label="Real", alpha=0.85)
+        ax.plot(t_od, gen_od_clipped, color="#D55E00", linewidth=1.0,
+                label="Generated (un-shifted)", alpha=0.85)
+        ax.set_yscale("log")
+        ax.set_xlabel("Time index", fontsize=9)
+        ax.set_ylabel("OD (log scale)", fontsize=9)
+        ax.tick_params(labelsize=8)
+        ax.grid(True, alpha=0.3, which="both")
+        # Family + bias annotation
+        gen_mean_raw = float(gen_log_delta_raw.mean())
+        real_mean = float(real_log_delta.mean())
+        bias = gen_mean_raw - real_mean
+        compound = float(np.exp(777.0 * bias))
+        family = ("Q" if model in ("iqp_sel_55_repro", "V1", "V2", "V3")
+                  else "C")
+        label_name = MODEL_LABELS.get(model, model)
+        if compound > 1.0:
+            verdict = f"compound ~{compound:.1g}x overshoot"
+        else:
+            verdict = f"compound ~{compound:.1g}x undershoot"
+        ax.set_title(f"{label_name} [{family}] — per-step bias "
+                     f"{bias:+.4f}; {verdict}", fontsize=9)
+        ax.legend(loc="best", fontsize=7, frameon=False)
+
+        companion_per_model[model] = {
+            "family": family,
+            "gen_log_delta_mean_raw": gen_mean_raw,
+            "real_log_delta_mean": real_mean,
+            "per_step_bias": bias,
+            "compound_factor_777_steps": compound,
+            "gen_od_max_raw": float(np.nanmax(gen_od)),
+            "gen_od_min_raw": float(np.nanmin(gen_od)),
+        }
+
+    fig.tight_layout()
+    companion = {
+        "figure": "reconstruction_unshifted_quad",
+        "purpose": (
+            "Reviewer-facing companion to fig:reconstruction_atlas. "
+            "Shows the un-shifted (raw) cumulative reconstruction for "
+            "4 representative models, demonstrating that the compound "
+            "bias artifact is not architecture-specific and that the "
+            "catastrophic cases fail in opposite directions."
+        ),
+        "shift_applied": False,
+        "models_shown": list(models),
+        "per_model": companion_per_model,
+    }
+    return _save(fig, figures_dir, "reconstruction_unshifted_quad", companion)
+
+
 def render_logreturn_stat_grid(model: str, real_log_delta: np.ndarray,
                                gen_log_delta: np.ndarray,
                                figures_dir: Path) -> list[Path]:

@@ -1,0 +1,49 @@
+{
+ "figure": "reconstruction_unshifted_quad",
+ "purpose": "Reviewer-facing companion to fig:reconstruction_atlas. Shows the un-shifted (raw) cumulative reconstruction for 4 representative models, demonstrating that the compound bias artifact is not architecture-specific and that the catastrophic cases fail in opposite directions.",
+ "shift_applied": false,
+ "models_shown": [
+  "iqp_sel_55_repro",
+  "V1",
+  "wgan_cnn",
+  "wgan_lstm"
+ ],
+ "per_model": {
+  "iqp_sel_55_repro": {
+   "family": "Q",
+   "gen_log_delta_mean_raw": 0.00456887429611753,
+   "real_log_delta_mean": 0.0024491515941917896,
+   "per_step_bias": 0.0021197227019257407,
+   "compound_factor_777_steps": 5.191509690644279,
+   "gen_od_max_raw": 19.83881839746671,
+   "gen_od_min_raw": 0.5189133876034291
+  },
+  "V1": {
+   "family": "Q",
+   "gen_log_delta_mean_raw": 0.005629755407317862,
+   "real_log_delta_mean": 0.0024491515941917896,
+   "per_step_bias": 0.0031806038131260723,
+   "compound_factor_777_steps": 11.838171256025907,
+   "gen_od_max_raw": 44.6274472714041,
+   "gen_od_min_raw": 0.5420354173891095
+  },
+  "wgan_cnn": {
+   "family": "C",
+   "gen_log_delta_mean_raw": 0.13698085439826926,
+   "real_log_delta_mean": 0.0024491515941917896,
+   "per_step_bias": 0.13453170280407747,
+   "compound_factor_777_steps": 2.4962856673943534e+45,
+   "gen_od_max_raw": 1.0956421991621985e+46,
+   "gen_od_min_raw": 0.5500000162099641
+  },
+  "wgan_lstm": {
+   "family": "C",
+   "gen_log_delta_mean_raw": -0.00958044551413966,
+   "real_log_delta_mean": 0.0024491515941917896,
+   "per_step_bias": -0.01202959710833145,
+   "compound_factor_777_steps": 8.722697285275453e-05,
+   "gen_od_max_raw": 0.5857264756590741,
+   "gen_od_min_raw": 0.00031936046116958736
+  }
+ }
+}

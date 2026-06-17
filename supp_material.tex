@@ -1195,6 +1195,49 @@ un-corrected log-returns and are unaffected.
  \label{fig:reconstruction_atlas}
 \end{figure*}
 
+\paragraph{Un-shifted companion (reviewer-facing).}
+For transparency on the visualization choice made in
+Figure~\ref{fig:reconstruction_atlas}, Figure~\ref{fig:reconstruction_unshifted_quad}
+shows the \emph{un-shifted} cumulative reconstruction for four
+representative models: two quantum (IQP:SEL, V1) and two extreme
+classical (WGAN-CNN, WGAN-LSTM). The artifact is not
+architecture-specific -- IQP:SEL overshoots by ${\sim}5\times$ and
+V1 by ${\sim}12\times$ from per-step biases on the order of
+$0.002$-$0.003$ -- and the catastrophic classical cases fail in
+opposite directions (WGAN-CNN runs away to ${\sim}10^{46}$;
+WGAN-LSTM collapses to ${\sim}10^{-4}$), ruling out any
+``classical-models-fail-systematically'' framing of the artifact.
+The same JSON sidecar fields used to construct
+Figure~\ref{fig:reconstruction_atlas} (\texttt{gen\_log\_delta\_raw},
+\texttt{drift\_correction.gen\_log\_delta\_mean\_raw},
+\texttt{drift\_correction.shift\_applied}) are sufficient to
+reproduce the un-shifted view for any of the nine models.
+
+\begin{figure*}[!htbp]
+ \centering
+ \includegraphics[width=\linewidth]{revision/results/figures/reconstruction_unshifted_quad.pdf}
+ \caption{Un-shifted (raw) cumulative reconstructions for four
+ representative models. Each panel: log-OD scale, real (blue) vs.\
+ un-corrected generated (orange) over 778 points. Per-panel title
+ reports the per-step log-return bias and the compound factor at
+ step~777 (\texttt{exp(777} $\cdot$ \texttt{bias)}). Top row
+ (quantum) shows ${\sim}5$-$12\times$ overshoot from per-step biases
+ of ${\sim}0.002$-$0.003$ -- the same artifact
+ Figure~\ref{fig:reconstruction_atlas} mean-shifts away to isolate
+ structural fidelity. Bottom row shows the two classical models
+ with the largest absolute per-step bias: WGAN-CNN ($+0.135$,
+ compound ${\sim}10^{45}$, off the top of the panel) and WGAN-LSTM
+ ($-0.012$, compound ${\sim}10^{-4}$, collapsing toward zero).
+ The opposite-direction failure of these two classical models
+ demonstrates that the compound-bias artifact is not architecture-
+ specific and not directional; the mean-shift in
+ Figure~\ref{fig:reconstruction_atlas} removes it uniformly across
+ all nine matched-budget models. The companion JSON for this figure
+ records the per-step bias and compound factor per model in the
+ \texttt{per\_model} block.}
+ \label{fig:reconstruction_unshifted_quad}
+\end{figure*}
+
 \subsection{Per-Model Log-Return Distribution Diagnostics}
 
 Figures~\ref{fig:stat_grid_iqp_sel_55_repro}-\ref{fig:stat_grid_ar}
