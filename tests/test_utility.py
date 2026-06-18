@@ -75,6 +75,9 @@ def _find_repo_root() -> Path:
 REPO = _find_repo_root()
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
+SCRIPTS = REPO / "scripts"
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
 
 from run_utility import (  # noqa: E402
     EXPECTED_DATA_HASH,

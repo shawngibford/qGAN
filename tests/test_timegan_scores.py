@@ -15,10 +15,18 @@ H is locked to WINDOW_LENGTH=10 and used identically for both nets):
 Run: <main-repo>/qgan_env/bin/python -m pytest tests/test_timegan_scores.py
 or as a plain script:   ... tests/test_timegan_scores.py
 """
+import sys
+from pathlib import Path
+
 import numpy as np
 import torch
 
-import run_timegan_scores as m
+# scripts/ holds the runners; add it to sys.path so we can import them
+_SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+
+import run_timegan_scores as m  # noqa: E402
 
 
 def test_gru_nets_not_degenerate():
