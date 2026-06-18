@@ -109,3 +109,6 @@ paper/main.blg
 paper/main.out
 paper/main.toc
 paper/main.synctex.gz
+
+# GSD project planning (local-only)
+.planning/
