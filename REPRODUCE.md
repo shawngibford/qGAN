@@ -25,14 +25,14 @@ PyYAML, scipy, statsmodels, torch). Re-run on environment change.
 
 ## 2 — Checkout the manuscript-revision tag
 
-The repository will be frozen at the tag `v2.0-revision` when Plan 14-07
+The repository will be frozen at the tag `v3.0` when Plan 14-07
 (the only outstanding Phase 14 plan) lands the Zenodo DOI deposit. Until
 then, use the current `main` branch — every commit between the close of
-Plan 14-13 and the eventual `v2.0-revision` tag is part of the revision
+Plan 14-13 and the eventual `v3.0` tag is part of the revision
 package.
 
 ```bash
-git checkout v2.0-revision  # post-14-07; use `main` in the interim
+git checkout v3.0  # post-14-07; use `main` in the interim
 ```
 
 ## 3 — Regenerate the canonical artifacts (dependency order)
