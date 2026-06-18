@@ -598,7 +598,7 @@ seeds (42, 43, 44, 45, 46) and reported as mean $\pm$ standard deviation.
 > `window_length`=10, `window_stride`=2, `rolling_windows`=384,
 > `train_windows`=384, `val_windows`=0, `test_windows`=0, and the 5-element
 > `seed_set` [42, 43, 44, 45, 46]. To regenerate, re-run
-> `run_model_info.py`; `verify_number_provenance.py` proves
+> `scripts/run_model_info.py`; `scripts/verify_number_provenance.py` proves
 > every literal here resolves to `model_info.json`.
 
 ---
@@ -666,7 +666,7 @@ EMD, and the distributional moments are reported on both scales as above.
 > `moment_kurtosis`, `acf_lag1_mean` — each present on both
 > `scale = "log_return"` and `scale = "OD"`. No value is hand-typed or rounded
 > (full stored precision is used so the substring resolves);
-> `verify_number_provenance.py` proves every literal resolves to
+> `scripts/verify_number_provenance.py` proves every literal resolves to
 > `fidelity_dualscale.json`.
 
 ### PAPER-09 — Story-completeness figure citations (Plan 14-10)

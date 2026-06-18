@@ -59,7 +59,7 @@ if str(REPO) not in sys.path:
 from core.preprocessing import inverse_logreturns  # noqa: E402
 from core.data import load_and_preprocess, rolling_window  # noqa: E402
 from core import WINDOW_LENGTH  # noqa: E402  (== 10)
-from _wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
+from core._wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
 
 
 # ─────────────────────────────────────────────────────────────────────────────

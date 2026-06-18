@@ -18,7 +18,7 @@ that breaks figure reproducibility across Python invocations, (2) a
 silent metric-conflation in `render_cross_model_emd` where the bar chart
 plots "best-training-window EMD" (log-return-space, single-batch) but
 overlays the FROZEN-checkpoint headline reference line in OD-scale full-N_synth
-EMD — two non-comparable quantities on one axis — and (3) `run_methods_full.py`
+EMD — two non-comparable quantities on one axis — and (3) `scripts/run_methods_full.py`
 emits hardcoded line citations (`training.py:347` / `training.py:259-268`)
 into the methods JSON instead of computing them through `_first_lineno`,
 inviting the same drift the rest of the citation block is built to prevent.
@@ -397,7 +397,7 @@ extraction.
 **Problem:** Gate (a) appends to `.gitignore` and runs `git add -f`. A
 "verify" script should NOT mutate the working tree — operators expect
 verifiers to be observe-only. The self-heal pattern is documented but
-the script name (`verify_freeze_ready.py`) implies pure observation.
+the script name (`scripts/verify_freeze_ready.py`) implies pure observation.
 **Impact:** Surprise side effects; in CI, this leaves uncommitted
 .gitignore modifications. Operator may not notice and commit a
 spurious change.
@@ -634,7 +634,7 @@ catch a doc that cites one and renders the other.
 
 ## File-by-file notes
 
-**`run_recover_canonical.py`** — Sound. The decomposition arithmetic
+**`scripts/run_recover_canonical.py`** — Sound. The decomposition arithmetic
 gate (line 226-234), the shape gate (line 220-224), and the equivalence
 gate (line 286-389) all use the explicit-raise idiom. The repo-root +
 gitignored-checkpoint resolver is robust (handles main checkout + git
@@ -642,7 +642,7 @@ worktree). Only nitpick: `_provenance` reads `g_pg["lr"]` etc. unguarded
 — if `c_optimizer.state_dict()` is malformed, `KeyError` is raised
 without a clear message.
 
-**`run_canonical_headline.py`** — Mostly sound; the headline is
+**`scripts/run_canonical_headline.py`** — Mostly sound; the headline is
 properly gated by checkpoint sha256 equality, mu/sigma equality, shape
 equality, structural forward-pass equality, and explicit device/dtype
 manifest. **HI-1** (hardcoded DTW seed), **LO-6** (param dtype recorded
@@ -667,14 +667,14 @@ guardrail at line 169-177 correctly rejects `--parallel >= 3`. The
 sweep_status.json is rebuilt from scratch per write (line 261-264), so
 partial-writes are safe.
 
-**`run_model_info.py`** — The cross-artifact data_hash gate
+**`scripts/run_model_info.py`** — The cross-artifact data_hash gate
 is WEAKER than peer emitters (**HI-3**). The hardcoded `optimizer_betas`
 field for VAE/AR (**HI-2**) is a provenance lie. The `_dataset_block`
 derivation (line 355-391) is honest — every count is derived from
 data.csv + the locked window config, never hand-typed. The reconciliation
 note is correctly built FROM JSON only (no recompute).
 
-**`run_figure_suite.py`** — The biggest single source of
+**`scripts/run_figure_suite.py`** — The biggest single source of
 findings. CR-1 (non-deterministic seed), CR-2 (scale conflation), and
 MD-3 (hardcoded epoch). The Plan 14-10 figures (lines 1064-2214) are
 mostly defensive — loud-fail on missing input, distinct headline
@@ -691,23 +691,23 @@ distinct model_kind. **HI-5** (model_kinds list excludes headline) is
 the only finding here. The DTW recipe is verbatim with
 `run_dualscale_fidelity` so 1000ep/2000ep numbers reconcile.
 
-**`run_circuit_diagrams.py`** — Sound. The param-count
+**`scripts/run_circuit_diagrams.py`** — Sound. The param-count
 consistency gate (build_config_locks) collects ALL mismatches into a
 single explicit raise — operator sees every offending variant.
 qml.draw_mpl under torch.no_grad is the right render-only pattern.
 MD-8 (utcnow deprecation) is the only finding.
 
-**`run_classical_arch_extract.py`** — Sound. The drift gate
+**`scripts/run_classical_arch_extract.py`** — Sound. The drift gate
 against model_info.json IS implemented (line 303-328), with the
 functional-API docstring fallback for WGAN-MLP/CNN/LSTM (IN-3). The
 extractor never calls model fit / sample / checkpoint reload — pure
 introspection. MD-8 (utcnow) is the only nit.
 
-**`run_framework_versions.py`** — Trivial and correct. Pure
+**`scripts/run_framework_versions.py`** — Trivial and correct. Pure
 introspection over `importlib.metadata`. Handles
 `PackageNotFoundError` by emitting None. MD-8 (utcnow) applies.
 
-**`run_methods_full.py`** — **CR-3** (hardcoded line citations)
+**`scripts/run_methods_full.py`** — **CR-3** (hardcoded line citations)
 is the only critical defect. The text-only citation extraction
 (`_first_lineno` + `_citations`) is otherwise the right pattern. The
 dtype_params / dtype_samples split into TWO DISTINCT fields is good
@@ -717,13 +717,13 @@ number-provenance gate on numerals but rely on the gate's
 identifier-strip patterns. LO-2 (misleading docstring about yaml) is
 the only stylistic nit. MD-10 (no `RESULTS.mkdir`) applies.
 
-**`verify_freeze_ready.py`** — **HI-6** (glob depth mismatch
+**`scripts/verify_freeze_ready.py`** — **HI-6** (glob depth mismatch
 with verifier) and **MD-5** (verify script mutates working tree) are
 the meaningful findings. MD-6 (only *.pt/*.pth size-checked) is a
 hardening gap. The git subprocess wrapper ignores returncode/stderr —
 silent failure if git is unavailable or the repo is corrupt.
 
-**`verify_number_provenance.py`** — **CR-5** (false-positive
+**`scripts/verify_number_provenance.py`** — **CR-5** (false-positive
 resolution) is the dominant finding. The substring match + truncated-string
 float comparison admit broad false positives that materially weaken the
 "every number traces to a JSON" guarantee. The gate is the executable

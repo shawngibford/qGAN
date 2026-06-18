@@ -10,7 +10,7 @@
 >
 > Every numeric literal in this manifest resolves to one of the audited
 > `results/*.json` artifacts via the rglob in
-> `verify_number_provenance.py` (unmodified, D-14-16). The
+> `scripts/verify_number_provenance.py` (unmodified, D-14-16). The
 > manifest deliberately phrases counts as artifact-path enumerations
 > rather than tallies, to keep the gate clean without introducing any
 > hand-typed quantitative claim.
@@ -25,7 +25,7 @@
 
 | Artifact | Description | Provenance source |
 |---|---|---|
-| `run_circuit_diagrams.py` | Render-only circuit-diagram emitter (qml.draw_mpl style="pennylane") for all five production quantum circuits | `run_matched2000.py:118-122` (_QUANTUM_ANSATZ) + `core/__init__.py` + `core/models/quantum.py` |
+| `scripts/run_circuit_diagrams.py` | Render-only circuit-diagram emitter (qml.draw_mpl style="pennylane") for all five production quantum circuits | `run_matched2000.py:118-122` (_QUANTUM_ANSATZ) + `core/__init__.py` + `core/models/quantum.py` |
 | `results/default_75_config_lock.json` | Config lock for the byte-frozen v1.0/v1.1 baseline circuit | `core/__init__.py` + `core/models/quantum.py` (default_75 branch) |
 | `results/v1_config_lock.json` | Config lock for V1 matched-budget ansatz | `run_matched2000.py:118` |
 | `results/v2_config_lock.json` | Config lock for V2 matched-budget ansatz | `run_matched2000.py:120` |
@@ -43,7 +43,7 @@
 
 | Artifact | Description | Provenance source |
 |---|---|---|
-| `run_figure_suite.py` (extended) | Seven new render-* functions wired into main() after the 14-08 dual-scale block | 14-04 / 14-08 render-only contract reused |
+| `scripts/run_figure_suite.py` (extended) | Seven new render-* functions wired into main() after the 14-08 dual-scale block | 14-04 / 14-08 render-only contract reused |
 | `figures/training_convergence_all_models.{png,pdf,json}` | Nine-model EMD-vs-epoch trajectories with mean±std seed band + frozen-headline marker | Per-run `matched2000/runs/<model>/<seed>/metrics.json` + `headline_canonical.json` |
 | `figures/tstr_crossmodel.{png,pdf,json}` | Cross-model TSTR grouped bars (R², MAE, RMSE) for Pipelines A and B (LEGACY 1000-epoch — retained on disk for provenance, not cited in rebuttal post-Plan 14-20) | `results/tstr.json` |
 | `figures/tstr_crossmodel_matched2000.{png,pdf,json}` | Cross-model TSTR grouped bars on matched-budget Pipeline B (9 variants, 2000 epochs, real-only baseline as dashed reference) — Plan 14-20 | `results/tstr_matched2000.json` |
@@ -62,9 +62,9 @@
 
 | Artifact | Description | Provenance source |
 |---|---|---|
-| `run_classical_arch_extract.py` | Pure-introspection emitter walking `named_modules()` on each classical class; drift-gate against `model_info.json` parameter_count | `core/models/classical.py` + `core/models/nonadversarial.py` (introspection only) |
-| `run_framework_versions.py` | Pure-introspection emitter via `importlib.metadata.version(...)` | Installed `qgan_env` interpreter (pennylane, torch, numpy, scipy, matplotlib, PyYAML) |
-| `run_methods_full.py` | Pure aggregator — consumes audited JSONs + text-only file:line citations into byte-frozen `core/training.py`; cross-artifact `data_hash` gate | All inputs below |
+| `scripts/run_classical_arch_extract.py` | Pure-introspection emitter walking `named_modules()` on each classical class; drift-gate against `model_info.json` parameter_count | `core/models/classical.py` + `core/models/nonadversarial.py` (introspection only) |
+| `scripts/run_framework_versions.py` | Pure-introspection emitter via `importlib.metadata.version(...)` | Installed `qgan_env` interpreter (pennylane, torch, numpy, scipy, matplotlib, PyYAML) |
+| `scripts/run_methods_full.py` | Pure aggregator — consumes audited JSONs + text-only file:line citations into byte-frozen `core/training.py`; cross-artifact `data_hash` gate | All inputs below |
 | `results/classical_architectures.json` | Per-model layer-tree JSON for the classical baselines | `core/models/classical.py` + `core/models/nonadversarial.py` via `named_modules()` |
 | `results/framework_versions.json` | Pinned versions of the running `qgan_env` interpreter | `importlib.metadata.version(...)` |
 | `results/methods_full.json` | Paper-ready Methods aggregator JSON with five buckets (dataset / models / training / hardware-software / reproducibility) | `model_info.json` + five config-lock JSONs + `classical_architectures.json` + `framework_versions.json` + text-only greps of `core/training.py` |
@@ -95,7 +95,7 @@ for doc in \
     docs/methods_full.md \
     docs/circuit_atlas.md \
     docs/completeness_sweep_manifest.md; do
-  ./qgan_env/bin/python verify_number_provenance.py --target "$doc"
+  ./qgan_env/bin/python scripts/verify_number_provenance.py --target "$doc"
 done
 ```
 
@@ -144,22 +144,22 @@ gate) EXTENDED to include `training_time_device`.
 | `checkpoints/best_checkpoint.pt` | T1 | Tracked headline checkpoint (~6 MB, sha256 f7cceb52…) | METHODS-BLOCKER-2 |
 | `.gitignore` (exception line `!checkpoints/best_checkpoint.pt`) | T1 | Negation exception under Phase 14 plan 14-13 header | METHODS-BLOCKER-2 |
 | `docs/methods_full.md` §4.1 + §5.1 + §3.x + §2.i + §2.j + §2.k.x + §4.2 | T1+T3+T5+T6 | Surgical edits + new §3.x Metric conventions + Pareto critic-count §2.k.x + CR-4 disclosure §4.2 | METHODS-HIGH-1, H-3, CR-4 disclosure, M-2, M-3, M-4 |
-| `verify_number_provenance.py` (v2) | T2 | Gate v2 — boundary-strict resolution + ε-neighborhood + render-only exclusion + --manifest flag + narrower _ID_PATTERNS | CR-5, PROV-HIGH-1, PROV-MED-1, PROV-MED-2, PROV-MED-3 |
+| `scripts/verify_number_provenance.py` (v2) | T2 | Gate v2 — boundary-strict resolution + ε-neighborhood + render-only exclusion + --manifest flag + narrower _ID_PATTERNS | CR-5, PROV-HIGH-1, PROV-MED-1, PROV-MED-2, PROV-MED-3 |
 | `results/manuscript_apparatus_constants.json` | T2 | Audit artifact for LUCY apparatus constants (20L/300L/880mm/120/6/10) quoted from LaTeX | (v2-gate-side) |
 | `docs/reconciliation_note.md` | T3 | OD-scale rebuild via matched2000_dualscale.json#aggregates; metric-redefinition disclosure paragraph | C-1, PROV-CRIT-1, C-3 |
 | `results/reconciliation_deltas.json` | T3 | Derived (NEW-OLD) delta artifact for the v2 gate to resolve computed-delta literals | (v2-gate-side) |
 | `figures/cross_model_emd.{png,pdf,json}` | T3 | OD-scale rebuild, mean-over-seeds (NOT min-over-trajectory), headline reference on same scale, 'best EMD' framing dropped | CR-2, C-2 |
 | `results/matched2000_dualscale.json` | T3+T4 | ddof=0 → ddof=1 sample-std switch (statistics.pstdev → statistics.stdev); n alias populated alongside n_seeds; HEADLINE_MODEL_KIND included in model_kinds | H-2, HI-5, MED-4 |
 | `results/model_info.json` + `training_protocol.md` | T4 | optimizer_betas family-specific (HI-2); EXPECTED_DATA_HASH explicit-raise (HI-3); dtype renamed to dtype_samples with dtype_params alongside (PROV-HIGH-3/HIGH-3) | HI-2, HI-3, PROV-HIGH-2, PROV-HIGH-3, HIGH-3 |
-| `run_methods_full.py` (programmatic citations) + `methods_full.json` | T4 | _first_lineno / _citations[generator_to_compute_dtype, mps_dtype_block] replacing hardcoded training.py:347 + training.py:259-268 literals | CR-3 |
+| `scripts/run_methods_full.py` (programmatic citations) + `methods_full.json` | T4 | _first_lineno / _citations[generator_to_compute_dtype, mps_dtype_block] replacing hardcoded training.py:347 + training.py:259-268 literals | CR-3 |
 | `run_matched2000.py` (MPS-disable symmetric + training_time_device + _strict_accept extension + _finite_sanitize + topology from lock + _train_vae seeds) | T4 | CR-4 future-gate + HI-4 + HI-7 + HI-8 + D-14-13 extension | CR-4 future-gate, HI-4, HI-7, HI-8 |
-| `run_canonical_headline.py` (generation_seed threading) | T4 | DTW seed = generation_seed * 31 instead of hardcoded 42*31 | HI-1 |
-| `run_circuit_diagrams.py` + `run_classical_arch_extract.py` + `run_framework_versions.py` (data_hash) | T4 | data_hash = 91e447d4624e25b3 recorded in JSON outputs | HIGH-2, PROV-HIGH-2 |
-| `run_figure_suite.py` (lock-driven head_epoch + corrected axis label + _finite_sanitize + ddof=1) | T3+T4 | MD-3 lock-driven head_epoch + H-1 corrected axis label + HI-8 mirror + H-2 sample-std at 4 sites | H-1, MD-3 |
+| `scripts/run_canonical_headline.py` (generation_seed threading) | T4 | DTW seed = generation_seed * 31 instead of hardcoded 42*31 | HI-1 |
+| `scripts/run_circuit_diagrams.py` + `scripts/run_classical_arch_extract.py` + `scripts/run_framework_versions.py` (data_hash) | T4 | data_hash = 91e447d4624e25b3 recorded in JSON outputs | HIGH-2, PROV-HIGH-2 |
+| `scripts/run_figure_suite.py` (lock-driven head_epoch + corrected axis label + _finite_sanitize + ddof=1) | T3+T4 | MD-3 lock-driven head_epoch + H-1 corrected axis label + HI-8 mirror + H-2 sample-std at 4 sites | H-1, MD-3 |
 | `results/total_adversarial_param_budget.json` | T3 | Derived generator+critic totals (250881 + per-model) for methods_full.md §2.k.x | (H-3 derived) |
 | 9× `figures/timeseries_<model>.{png,pdf,json}` | T5 | SHA-256 deterministic seeding (Python string hash → hashlib.sha256(model.encode())); verified by two-pass byte-identity | CR-1 |
 | `docs/paper_blocks_framing.md:119` + `docs/paper_blocks_framing.md:520` | T5 | Phantom DTW 0.6843 removed from BEFORE quotation; misleading provenance footer removed | PROV-CRIT-2 doc-side |
-| `verify_freeze_ready.py` (rglob) | T5 | RESULTS_DIR.glob('*.json') → .rglob('*.json'); negation-self-heal writes !results/**/*.json | HI-6 |
+| `scripts/verify_freeze_ready.py` (rglob) | T5 | RESULTS_DIR.glob('*.json') → .rglob('*.json'); negation-self-heal writes !results/**/*.json | HI-6 |
 | `docs/reviewer_response.md` (CR-4 disclosure subsection) | T5 | Historical training-time device asymmetry disclosure (MPS at float32 vs CPU at float64) | CR-4 disclosure |
 | `docs/peer_review_remediation.md` (NEW) | T7 | Reviewer-facing finding-to-commit index mapping all 28 findings to commit SHA(s) | (manifest) |
 | `docs/completeness_sweep_manifest.md` (this section) | T7 | Updated artifact manifest with the Plan 14-13 section appended | (manifest) |
@@ -177,7 +177,7 @@ for doc in \
     docs/completeness_sweep_manifest.md \
     docs/training_protocol.md \
     docs/dataset_stats.md; do
-  ./qgan_env/bin/python verify_number_provenance.py --target "$doc"
+  ./qgan_env/bin/python scripts/verify_number_provenance.py --target "$doc"
 done
 ```
 
@@ -199,7 +199,7 @@ read-only) PRESERVED.
 
 | Artifact | Task | Description | Resolved finding(s) |
 |---|---|---|---|
-| `verify_number_provenance.py` (v2.1) | T1 | Boundary lookbehind class `(?<![\d.])` → `(?<![-\d.])` (one char); schema bumped to v2.1; macOS-version identifier strip added | R2-prov-HIGH-1 |
+| `scripts/verify_number_provenance.py` (v2.1) | T1 | Boundary lookbehind class `(?<![\d.])` → `(?<![-\d.])` (one char); schema bumped to v2.1; macOS-version identifier strip added | R2-prov-HIGH-1 |
 | `figures/_introspect_{quantum,wgan_cnn,wgan_lstm,wgan_mlp}.json` | T1 | `"render_only": true` added at top level (4 files) | R2-code-LOW-1 |
 | `results/noise_model_sensitivity.json` + `shot_noise_sensitivity.json` + `ansatz_comparison.json` | T1 | `"data_hash": "91e447d4624e25b3"` added at top level | R2-prov-MED-1 |
 | `run_matched2000.py` (training_time_device capture-before-.to(cpu)) | T2 | `_train_quantum`, `_train_wgan`, `_train_vae` capture `training_time_device` immediately after training and before .to(cpu); `_device_manifest` accepts optional pre-captured device kwarg; `_strict_accept` equality check unchanged | R2-code-HIGH-1 |
@@ -207,11 +207,11 @@ read-only) PRESERVED.
 | `docs/methods_full.md §2.i` | T3 | VAE-not-param-matched caveat appended (74 trainable params; WGAN-GP ~75k–135k; IQP:SEL 55) | R2-methods-MED-1 |
 | `docs/reconciliation_note.md` interpretation paragraph | T3 | Reworded to Welch t-test (p ≥ 0.37 for every model) + wgan_cnn -0.059 explicit + seed-42 outliers framing; table rows + 14-12 caveat + 14-13 disclosure preserved verbatim | (additive honesty correction) |
 | `docs/reviewer_response.md` R1-m4 row | T4 | Reworded to "pending under Plan 14-07" explicit DOI-pending wording | R2-methods-HIGH-1 |
-| `run_methods_full.py` (docstring slicer + CR-3 citation) | T4 | `1-80` → `1-69` at 3 sites in script + 3 sites in methods_full.md; CR-3 citation pattern re-pointed to `training.py:347` cast site | R2-code-MED-1, R2-code-MED-2 |
+| `scripts/run_methods_full.py` (docstring slicer + CR-3 citation) | T4 | `1-80` → `1-69` at 3 sites in script + 3 sites in methods_full.md; CR-3 citation pattern re-pointed to `training.py:347` cast site | R2-code-MED-1, R2-code-MED-2 |
 | `results/manuscript_apparatus_constants.json` | T4 | Restructured to per-unit subfields (`tube_outer_diameter_cm: 6`, `tube_length_cm: 120`, `data_logging_interval_min: 10`, `ir_led_wavelength_nm: 880`); old `apparatus_dimensions_mm` lump removed; schema bumped to v2 | R2-methods-MED-2 |
-| `requirements-pinned.txt` + `framework_versions.json` | T4 | `statsmodels==0.14.5` pin added; `run_framework_versions.py` PACKAGES extended; framework_versions.json re-emitted | R2-methods-LOW-1 |
+| `requirements-pinned.txt` + `framework_versions.json` | T4 | `statsmodels==0.14.5` pin added; `scripts/run_framework_versions.py` PACKAGES extended; framework_versions.json re-emitted | R2-methods-LOW-1 |
 | `REPRODUCE.md` (NEW, repo root) | T4 | One-stop reviewer entry-point linking to methods_full.md §5.2 + completeness_sweep_manifest.md | R2-methods-LOW-2 |
-| `verify_number_provenance.py` (`--differential-test`) | T5 | `__main__` differential-test assertion: positive `0.0001` does NOT resolve against JSON `-0.0001`; DOES resolve against `0.0001` | (regression test for R2-prov-HIGH-1) |
+| `scripts/verify_number_provenance.py` (`--differential-test`) | T5 | `__main__` differential-test assertion: positive `0.0001` does NOT resolve against JSON `-0.0001`; DOES resolve against `0.0001` | (regression test for R2-prov-HIGH-1) |
 | `docs/peer_review_remediation.md` (`## Gate v2.1 known limitations` + `## R2 follow-up sweep`) | T5 | r2 finding-to-commit index + ε-neighborhood limitation disclosed | R2-code-HIGH-2 (DISCLOSED) |
 | `docs/completeness_sweep_manifest.md` (this section) | T5 | Updated artifact manifest | (manifest) |
 
@@ -229,9 +229,9 @@ for doc in \
     docs/training_protocol.md \
     docs/dataset_stats.md \
     docs/peer_review_remediation.md; do
-  ./qgan_env/bin/python verify_number_provenance.py --target "$doc"
+  ./qgan_env/bin/python scripts/verify_number_provenance.py --target "$doc"
 done
-./qgan_env/bin/python verify_number_provenance.py --differential-test
+./qgan_env/bin/python scripts/verify_number_provenance.py --differential-test
 ```
 
 Every line exits 0 under the v2.1 schema as of Plan 14-14 close.
@@ -243,14 +243,14 @@ After Plan 14-14 lands, the only remaining open Phase 14 plan is still
 
 Wave 13 deliverables (per `.planning/phases/14-paper-revision-release-freeze/14-15-PLAN.md`):
 
-- **T1** — `run_distribution_emd.py` (NEW top-level emitter;
+- **T1** — `scripts/run_distribution_emd.py` (NEW top-level emitter;
   histogram-density 50-bin Wasserstein per the pre-v1.0 paper formulation
   reintroduced, `wasserstein_distance(bin_centers, bin_centers,
   real_hist_density, fake_hist_density)`); `results/distribution_emd.json`
   (NEW aggregator JSON; 9-model × 5-seed × 2-scale rows + 18 per-(model_kind,
   scale) aggregates with `ddof=1` sample std; corpus-consistent `data_hash =
   91e447d4624e25b3`).
-- **T2** — `run_model_info.py` updated to emit a new 3-column
+- **T2** — `scripts/run_model_info.py` updated to emit a new 3-column
   comparable-variants table in `reconciliation_note.md` (OD raw / log-return
   raw / 50-bin histogram-density EMD); existing OD-scale headline table
   preserved verbatim; C-3 disclosure paragraph extended (formulation citation
@@ -299,7 +299,7 @@ Wave 14 deliverables (per
   `pipeline-review-r3.md` §2); `results/matched2000_dualscale.json`
   re-emitted with corrected log-return-scale EMD aggregates and
   byte-identical OD-scale subset (SHA-256 over OD rows verified preserved).
-- T2: `run_distribution_emd.py` `compute_histogram_density_emd`
+- T2: `scripts/run_distribution_emd.py` `compute_histogram_density_emd`
   edit (R3-CR-1 fix variant: shared-edges-from-real + total-mass=1
   normalization + disclosed `fake_in_range_mass`) plus the R3-HI-1
   sister-fix (`_real_references` now returns `norm_log_delta` so the
@@ -311,7 +311,7 @@ Wave 14 deliverables (per
   weights internally — the `density=True` vs `density=False` distinction
   is numerically inert with shared edges; the fix's genuine contribution
   is the `fake_in_range_mass` disclosure stat.
-- T3: NEW top-level emitter `run_welch_aggregator.py` reads the
+- T3: NEW top-level emitter `scripts/run_welch_aggregator.py` reads the
   corrected per-seed `matched2000_dualscale.json` rows and emits
   `results/welch_pairwise.json` (schema
   `"welch-pairwise v1 (Phase 14 plan 14-16 W2)"`) with per-pair Welch t/p,
@@ -325,7 +325,7 @@ Wave 14 deliverables (per
   table citing `welch_pairwise.json` and a DTW addendum subsection.
 - T5: `docs/methods_full.md` extended with three Plan 14-16
   paragraphs (Log-return scale correction, Shared-edges formulation, DTW
-  historical context); `run_model_info.py` extended with an
+  historical context); `scripts/run_model_info.py` extended with an
   OD-scale DTW column and the C-3 disclosure extension;
   `docs/reconciliation_note.md` re-emitted with the corrected
   columns and a 4th DTW column.
@@ -341,7 +341,7 @@ Wave 14 deliverables (per
 
 Locked decisions preserved across the plan: D-14-22 (`core/`
 byte-freeze); D-14-13 (strict-accept gate); D-14-16
-(`verify_number_provenance.py` v2.1 byte-freeze); D-14-18
+(`scripts/verify_number_provenance.py` v2.1 byte-freeze); D-14-18
 (Overleaf-canonical LaTeX read-only).
 
 After Plan 14-16 lands, the only remaining open Phase 14 plan is still

@@ -37,7 +37,7 @@ metrics:
 
 # Phase 12 Plan 01: SENS-01/02 Inference Harness Summary
 
-Built `run_sensitivity.py` — the per-cell SENS-01 (shot-noise) /
+Built `scripts/run_sensitivity.py` — the per-cell SENS-01 (shot-noise) /
 SENS-02 (noise-channel) inference driver — and proved it byte-faithful to the
 frozen Phase 09.1/10 analytic reference via the analytic/B/42 smoke cell.
 
@@ -109,7 +109,7 @@ documented in the module docstring.
 `QuantumGenerator.generator_circuit` (quantum.py:122-171) as
 `noisy_generator_circuit` so per-layer channels can be inserted (the original
 ends with `qml.expval` returns and cannot have channels appended after the
-call). This copy lives in `run_sensitivity.py`, NOT `core/`, so it
+call). This copy lives in `scripts/run_sensitivity.py`, NOT `core/`, so it
 does NOT violate D-10-13. `git diff --stat core/` is empty across all
 three tasks. Documented in the function docstring as a deliberate noise-study
 duplication.
@@ -125,7 +125,7 @@ unchanged. Folded into the Task 2 commit (`8c7c05e`).
 
 ## Verification Status
 
-- `python run_sensitivity.py --help` exits 0; CLI exposes
+- `python scripts/run_sensitivity.py --help` exits 0; CLI exposes
   `--pipeline {A,B}`, `--seed`, `--condition` (11 choices incl. `ampdamp_0.01`).
 - `ast.parse` clean; no `multiprocessing`; no `diff_method="backprop"|"adjoint"`;
   no `shots=` kwarg on any `qml.device(` line.

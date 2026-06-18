@@ -22,10 +22,10 @@ All re-emitted JSONs were diffed against the git-committed versions snapshotted 
 | Emitter | Output JSON | Result |
 |---|---|---|
 | `run_matched2000_dualscale.py` | `matched2000_dualscale.json` | **BYTE-IDENTICAL** (2576 rows, 560 aggregates) |
-| `run_distribution_emd.py` | `distribution_emd.json` | **BYTE-IDENTICAL** (90 rows, 18 aggregates) |
-| `run_welch_aggregator.py` | `welch_pairwise.json` | **BYTE-IDENTICAL** (40 pairs) |
-| `run_model_info.py` | `model_info.json` | **BYTE-IDENTICAL** (10 model records); no doc drift |
-| `run_canonical_headline.py` | `headline_canonical.json` | **BYTE-IDENTICAL** (56 rows) |
+| `scripts/run_distribution_emd.py` | `distribution_emd.json` | **BYTE-IDENTICAL** (90 rows, 18 aggregates) |
+| `scripts/run_welch_aggregator.py` | `welch_pairwise.json` | **BYTE-IDENTICAL** (40 pairs) |
+| `scripts/run_model_info.py` | `model_info.json` | **BYTE-IDENTICAL** (10 model records); no doc drift |
+| `scripts/run_canonical_headline.py` | `headline_canonical.json` | **BYTE-IDENTICAL** (56 rows) |
 
 `git status --short results/` is **clean** after all 5 re-emits — zero
 working-tree drift. `git diff --stat core/` is **empty** (D-11-10 / D-14-22
@@ -39,7 +39,7 @@ reproduce the committed numbers exactly — no regression.
 
 ## 2. Number-provenance gate
 
-`verify_number_provenance.py` runs one `--target` doc at a time. Ran it over
+`scripts/verify_number_provenance.py` runs one `--target` doc at a time. Ran it over
 **all 10 docs** in `docs/`:
 
 | Doc | Literals | Result |
@@ -72,7 +72,7 @@ R2-prov-HIGH-1 sign-flip false-positive is correctly guarded.
 - **checkpoint SHA256:** `canonical_config_lock.json#checkpoint_sha256` =
   `f7cceb52285f753b9f5f697086f3042817761d37f3112a9b36dc580ebe03b082`. The actual
   SHA256 of `checkpoints/best_checkpoint.pt` matches exactly; the worktree
-  checkpoint is byte-identical to the main-repo copy. `run_canonical_headline.py`'s
+  checkpoint is byte-identical to the main-repo copy. `scripts/run_canonical_headline.py`'s
   in-process checkpoint-identity gate (T-14-14) passed.
 - `headline_canonical.json#checkpoint_emd` (0.083843...) equals
   `canonical_config_lock.json#checkpoint_emd` exactly — these are the training-time
@@ -119,8 +119,8 @@ documented `pip install -r requirements-pinned.txt` recipe in
 risk. Flagged only as informational: the headroom is small and the thresholds appear
 chosen to fit the data. Not a freeze blocker.
 
-### LOW-2 — `verify_freeze_ready.py` sweeps only 3 of the 10 provenance-bearing docs
-`verify_freeze_ready.py` (lines 65-67) runs the provenance gate over only
+### LOW-2 — `scripts/verify_freeze_ready.py` sweeps only 3 of the 10 provenance-bearing docs
+`scripts/verify_freeze_ready.py` (lines 65-67) runs the provenance gate over only
 `paper_blocks_framing.md`, `paper_blocks_refs_methods.md`, `reviewer_response.md`. The
 other 7 docs (methods_full, peer_review_remediation, reconciliation_note, etc.) also
 contain JSON-resolved literals (this reviewer verified all 10 pass manually). Not a

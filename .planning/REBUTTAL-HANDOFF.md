@@ -18,7 +18,7 @@ status: 3 of N reviewer comments drafted (R1-M1, R1-M2, R1-M4); resubmission pen
 - **Active SHA: `3c8502c` (content tree) / `8b87293` (with metadata)**.
 - Supersedes the pre-14-20 SHA `6518323` recorded in older docs.
 - Either SHA is valid for citation; they differ only in `.planning/` metadata.
-- `verify_freeze_ready.py` PASSes every gate against the active SHA *except* the `release.md` assertion, which is 14-07's deliverable by design (Plan 14-19 ordering guard).
+- `scripts/verify_freeze_ready.py` PASSes every gate against the active SHA *except* the `release.md` assertion, which is 14-07's deliverable by design (Plan 14-19 ordering guard).
 
 ### 1.3 Working tree
 
@@ -224,7 +224,7 @@ When ready to submit:
 
 - [ ] Assemble the rebuttal letter from R1-M1 / R1-M2 / R1-M4 drafts in this document + the R1-M3 / R1-m* / R2-* paragraphs (mostly cross-references to existing PAPER-* manuscript sections)
 - [ ] Cite the freeze candidate SHA `3c8502c` (or `8b87293`) in the Data Availability section of the manuscript
-- [ ] Confirm `verify_freeze_ready.py` PASSes every gate except `release.md` against the SHA you cite
+- [ ] Confirm `scripts/verify_freeze_ready.py` PASSes every gate except `release.md` against the SHA you cite
 - [ ] Confirm `git status --porcelain` is empty
 - [ ] Submit revision via AIChE Journal portal
 - [ ] After acceptance, run Plan 14-07 (Zenodo deposit + DOI + release.md + manuscript DOI wire-in) and submit camera-ready

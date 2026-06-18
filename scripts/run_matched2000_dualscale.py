@@ -96,7 +96,7 @@ from core.eval import (
     compute_moments,
 )
 from core.preprocessing import inverse_logreturns
-from _wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
+from core._wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
 
 # ── Constants ────────────────────────────────────────────────────────────────
 # The 9 matched-2000ep models (verified on disk). ALL are Pipeline-B (no

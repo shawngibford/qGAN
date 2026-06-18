@@ -18,8 +18,8 @@ Three hard technical realities shape planning. (1) **The checkpoint is ground tr
 |------------|-------------|----------------|-----------|
 | 55-param circuit reconstruction | `core/models/quantum.py` (config-selectable) | `best_checkpoint.pt` (ground-truth oracle) | D-14-01/02: checkpoint tensor layout drives a deterministic decomposition; added as NON-default circuit (core default stays byte-frozen) |
 | Matched-budget re-execution | `run_*.py` + `*_sweep.sh` (`xargs -P2`) | `results/*/sweep_status.json` | D-14-08/12/14: established resumable sweep pattern; tier-gated |
-| Number/figure provenance | `run_model_info.py` → `model_info.json` (NEW) | `core/eval` helpers | D-14-16: docs/table render FROM JSON; no hand-typed numbers |
-| Figure suite | NEW `revision/` figure module | `run_introspect_figures.py` pattern (PNG+PDF+JSON) | D-14-17: per-model + cross-model + analysis; ≥ canonical set |
+| Number/figure provenance | `scripts/run_model_info.py` → `model_info.json` (NEW) | `core/eval` helpers | D-14-16: docs/table render FROM JSON; no hand-typed numbers |
+| Figure suite | NEW `revision/` figure module | `scripts/run_introspect_figures.py` pattern (PNG+PDF+JSON) | D-14-17: per-model + cross-model + analysis; ≥ canonical set |
 | Manuscript edits | Revision package (copy-paste LaTeX blocks) | `.tex` files READ-ONLY | D-14-18: source is Overleaf-external; in-repo `.tex` never edited |
 | Reviewer traceability | `docs/reviewer_response.md` (NEW) | `QGAN_Review_Response_Plan.md.pdf` (comment IDs) | D-14-19: per-reviewer point-by-point rebuttal |
 | Release freeze + DOI | git tag `v2.0-revision` + **manual** Zenodo deposit | `docs/release.md` (NEW) | D-14-21/22: DOI minted LAST, over final numbers |
@@ -34,7 +34,7 @@ This phase introduces **no new runtime libraries**. The stack is the existing re
 | PyTorch | Load `best_checkpoint.pt`; introspect `params_pqc (55,)`, `mu`/`sigma`, optimizer `param_groups` | `torch.load(..., weights_only=False)` — checkpoint stores optimizer state objects `[VERIFIED: loaded this session]` |
 | PennyLane (`default.qubit`, `diff_method="backprop"`) | Re-execution backend | LOCKED by D-14-11 — NO `lightning.qubit` swap |
 | git | Tag `v2.0-revision`; archaeology on `qgan_pennylane.ipynb` | Repo has only `v1.0` tag today `[VERIFIED: git tag]` |
-| matplotlib | Figure suite (PNG + PDF @ dpi=150, `bbox_inches="tight"`) | Pattern in `run_introspect_figures.py` `[VERIFIED: read source]` |
+| matplotlib | Figure suite (PNG + PDF @ dpi=150, `bbox_inches="tight"`) | Pattern in `scripts/run_introspect_figures.py` `[VERIFIED: read source]` |
 
 ### Supporting (external services for INFRA-03)
 | Service | Purpose | When to Use |
@@ -187,7 +187,7 @@ mu, sigma = ck["mu"].item(), ck["sigma"].item()
 | Problem | Don't Build | Use Instead | Why |
 |---------|-------------|-------------|-----|
 | Resumable parallel sweep | Custom job runner | Existing `run_*.py` + `*_sweep.sh` `xargs -P2` + `sweep_status.json` (D-14-12/14) | Validated M-series thermal cap; skip-already-done semantics already exist; `--parallel ≥3` hard-rejected |
-| Figure rendering | New plotting framework | `run_introspect_figures.py` PNG+PDF+JSON pattern | Already enforces "every figure traceable to a reproducibility JSON" (success criterion 4) |
+| Figure rendering | New plotting framework | `scripts/run_introspect_figures.py` PNG+PDF+JSON pattern | Already enforces "every figure traceable to a reproducibility JSON" (success criterion 4) |
 | Eval metrics | Re-implement EMD/ACF/DTW/moments | `revision.core.eval` helpers ONLY (D-10-20) | Provenance rule: `baseline_comparison.json` records `metric_helpers: "revision.core.eval ONLY"` |
 | DOI minting / archiving | Tarball + DataCite by hand | Zenodo manual deposit (`prereserve_doi`) | Reviewer-named tool (R1-m4); concept DOI gives a stable "latest version" citation for free |
 | Config-equivalence check | Ad-hoc shape print | Phase-8 parity-check harness model | D-14-07 hard-assert; parity harness already proven (`results/parity_check.json`) |
@@ -313,7 +313,7 @@ git archive --format=tar.gz -o v2.0-revision.tar.gz v2.0-revision
    - What we know: `.gitignore` line 62 is `results/`; D-14-21 explicitly wants the JSON in the tag.
    - What's unclear: whether the pattern matches the nested `results/` path in this repo's git config.
    - Recommendation: First task in the release-freeze plan section runs `git check-ignore` + `git ls-files revision/results` and force-tracks if needed (Pitfall 4).
-   - **RESOLVED:** Plan 14-07 Task 1 (`verify_freeze_ready.py`) runs `git check-ignore` on each `results/*.json` and raises (explicit-raise gate) before tagging — the pre-tag provenance check is a hard block, not a manual review.
+   - **RESOLVED:** Plan 14-07 Task 1 (`scripts/verify_freeze_ready.py`) runs `git check-ignore` on each `results/*.json` and raises (explicit-raise gate) before tagging — the pre-tag provenance check is a hard block, not a manual review.
 
 2. **Where is `bib.bib`?**
    - What we know: `\bibliography{bib}` is referenced; no `*.bib` in repo root.
@@ -356,7 +356,7 @@ git archive --format=tar.gz -o v2.0-revision.tar.gz v2.0-revision
 ### Locked Decisions (verbatim references — full text in 14-CONTEXT.md `<decisions>`)
 - **D-14-01..07** Canonical recovery: 55-param IQP:SEL reverse-engineered from `best_checkpoint.pt` (ground truth, D-14-02); headline from frozen ckpt epoch 1969 NOT retrain (D-14-03); 55-param is the quantum entrant in EVERY cross-model comparison (D-14-04); reuse stored `mu`/`sigma` + fixed gen seed (D-14-05); pin native Phase-09.1 pipeline for headline (D-14-06); config-equivalence hard-assert before any sweep (D-14-07).
 - **D-14-08..14** Matched-budget: ALL models at 2000ep (D-14-08); full regeneration, zero mixed-budget caveats (D-14-09); V1/V2/V3 also 2000ep, headline vs reproduction reported distinctly (D-14-10); backend = `default.qubit`+`backprop`, NO `lightning.qubit` (D-14-11); `xargs -P2`, device/dtype manifest hard-assert (D-14-12); strict accept gate (D-14-13); run-to-completion, tiered T1/T2/T3 (D-14-14).
-- **D-14-15..17** One unified paper-ready table, every model a row (D-14-15); `run_model_info.py` → `model_info.json`, docs render FROM JSON (D-14-16); full figure suite, ≥ canonical set (D-14-17).
+- **D-14-15..17** One unified paper-ready table, every model a row (D-14-15); `scripts/run_model_info.py` → `model_info.json`, docs render FROM JSON (D-14-16); full figure suite, ≥ canonical set (D-14-17).
 - **D-14-18..20** `.tex` is read-only Overleaf reference; deliver copy-paste LaTeX blocks keyed to `\label`/anchor (D-14-18); `docs/reviewer_response.md` per-reviewer (D-14-19); final tone deferred, but **PAPER-02 no-overclaiming is a LOCKED reviewer requirement regardless of result direction** (D-14-20).
 - **D-14-21..23** Tag `v2.0-revision` scope (D-14-21); strict gated pipeline, release LAST, DOI mints only over final numbers (D-14-22); ROADMAP/REQUIREMENTS scope-reconciliation update flagged (D-14-23).
 
@@ -397,7 +397,7 @@ git archive --format=tar.gz -o v2.0-revision.tar.gz v2.0-revision
 - `main (4) copy.tex` — section/label/cite map (lines 58–304); `\bibliography{bib}`, `\bibliographystyle{ama}`, `natbib`
 - `supp_material.tex` — Hybrid-GAN/A3/decision-tree/log-return/Table-A2 locations
 - `QGAN_Review_Response_Plan.md.pdf` (pp.1–6) — full R1-M1..M5, R1-m1..m7, R2-1..6 itemized issues + proposed addressments
-- `core/models/quantum.py` (param formula `q + L·3q + 2q`), `core/__init__.py` (75-param default), `run_introspect_figures.py` (PNG+PDF+JSON pattern)
+- `core/models/quantum.py` (param formula `q + L·3q + 2q`), `core/__init__.py` (75-param default), `scripts/run_introspect_figures.py` (PNG+PDF+JSON pattern)
 - `results/baseline_comparison.json` (long-form schema + `data_hash` + `metric_helpers` D-10-20)
 - `.gitignore`, `git tag` (only `v1.0`), `git log -S NUM_LAYERS` (history shows NUM_LAYERS ∈ {2,3,4}), `ls Final Results.../` (16 figures)
 

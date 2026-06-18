@@ -49,7 +49,7 @@ completed: 2026-05-19
 
 # Phase 14 Plan 06: References / Methods / Typos LaTeX Blocks + Per-Reviewer Rebuttal Summary
 
-**Delivered `docs/paper_blocks_refs_methods.md` — cite-key/label/anchor-keyed, location-independent copy-paste LaTeX blocks for PAPER-06 (per-reference surgery + RETAINED-anchor note), PAPER-07 (Bernal et al. AIChE perspective), PAPER-08 (dataset-details Methods, render-from-JSON), PAPER-09 (per-metric evaluation-scale Methods table, render-from-JSON), PAPER-10 (Appendix A3 relabeled a proposed extension + the log-GAN vs Wasserstein discrepancy clarified + Table A2 caveated), and PAPER-11 (one keyed before→after block per R1-m7 typo/notation checklist item) — plus `docs/reviewer_response.md`, the AIChE per-reviewer point-by-point rebuttal mapping every comment ID (R1-M1..M5, R1-m1..m7, R2-1..6) to its verbatim concern, change, manuscript location, and a real `results/*` supporting artifact. Both files pass `verify_number_provenance.py` and the read-only `.tex` is byte-untouched (D-14-18).**
+**Delivered `docs/paper_blocks_refs_methods.md` — cite-key/label/anchor-keyed, location-independent copy-paste LaTeX blocks for PAPER-06 (per-reference surgery + RETAINED-anchor note), PAPER-07 (Bernal et al. AIChE perspective), PAPER-08 (dataset-details Methods, render-from-JSON), PAPER-09 (per-metric evaluation-scale Methods table, render-from-JSON), PAPER-10 (Appendix A3 relabeled a proposed extension + the log-GAN vs Wasserstein discrepancy clarified + Table A2 caveated), and PAPER-11 (one keyed before→after block per R1-m7 typo/notation checklist item) — plus `docs/reviewer_response.md`, the AIChE per-reviewer point-by-point rebuttal mapping every comment ID (R1-M1..M5, R1-m1..m7, R2-1..6) to its verbatim concern, change, manuscript location, and a real `results/*` supporting artifact. Both files pass `scripts/verify_number_provenance.py` and the read-only `.tex` is byte-untouched (D-14-18).**
 
 ## Performance
 
@@ -94,7 +94,7 @@ completed: 2026-05-19
 ### Auto-fixed Issues
 
 **1. [Rule 3 - Blocking] Number-provenance gate false-positive on `PAPER-11.N` document-structure labels**
-- **Found during:** Task 1 (running the plan's own `verify_number_provenance.py` acceptance gate).
+- **Found during:** Task 1 (running the plan's own `scripts/verify_number_provenance.py` acceptance gate).
 - **Issue:** The `### PAPER-11.3` … `### PAPER-11.11` subsection headers form bare decimal tokens (`11.3`, `11.7`, `11.8`, `11.10`, `11.11`) that the gate's identifier-strip patterns do not cover (it strips `D-14-NN`, `R1-MN`, plan ids, `.py:NN`, years-before-`)`, but not `PAPER-11.N`). Five of them did not coincidentally resolve to a JSON float, so the gate raised — blocking the plan's own acceptance criterion. This is the same class as 14-03 deviation #2 (acceptance gate tripping on documentation structure, not data).
 - **Fix:** Renamed every `### PAPER-11.N —` header to `### PAPER-11 / R1-m7 item N —` (and the one cross-reference) so the subsection labels are no longer bare decimal literals. No content, no fix, and no reviewer rationale changed; the gate's intent (every *data* number traces to JSON) is preserved and now independently true rather than coincidentally true.
 - **Files modified:** `docs/paper_blocks_refs_methods.md`
@@ -111,7 +111,7 @@ completed: 2026-05-19
 None — PAPER-08/09 render every number from `model_info.json` / `fidelity_dualscale.json` (exact stored values, `% source:` annotated); `reviewer_response.md` has a substantive change + a real existing artifact path in every comment-ID row (19/19 cited paths verified present). No placeholder, mock, or empty-data cell. PAPER-06.h's RETAINED note is an intentional, reviewer-confirmed no-op, not a stub.
 
 ## Threat Surface Scan
-No new network endpoints, auth paths, or external file-access patterns. All three plan trust boundaries are mitigated as specified: (T-14-13) JSON→Methods LaTeX block — PAPER-08/09 render from JSON with `% source:` annotations and exact stored values, `verify_number_provenance.py` PASS is a hard pass; (T-14-17) reviewer_response.md→artifact paths — every supporting-artifact cell points at a path verified to exist (19/19), no placeholder cells; (T-14-16) read-only .tex — `git diff --stat` on `main (4) copy.tex`/`supp_material.tex` is empty. No threat flags.
+No new network endpoints, auth paths, or external file-access patterns. All three plan trust boundaries are mitigated as specified: (T-14-13) JSON→Methods LaTeX block — PAPER-08/09 render from JSON with `% source:` annotations and exact stored values, `scripts/verify_number_provenance.py` PASS is a hard pass; (T-14-17) reviewer_response.md→artifact paths — every supporting-artifact cell points at a path verified to exist (19/19), no placeholder cells; (T-14-16) read-only .tex — `git diff --stat` on `main (4) copy.tex`/`supp_material.tex` is empty. No threat flags.
 
 ## Self-Check: PASSED
 - `docs/paper_blocks_refs_methods.md` — FOUND (PAPER-06/07/08/09/10/11 keyed blocks; Bernal; Lags; QWGAN-GP; biomanufacturing; @article/@book .bib entries; 11 `% source:` annotations)

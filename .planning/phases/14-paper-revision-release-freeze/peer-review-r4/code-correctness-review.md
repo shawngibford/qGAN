@@ -9,8 +9,8 @@ Last gate before the `v2.0-revision` Zenodo DOI freeze.
 The assigned git worktree is checked out at an OLD commit (`c82169c`, phase 8) far
 behind `main` (`8180a5e`); at that commit only `core/{data,eval,training}.py`
 exist. The named review targets (`run_matched2000_dualscale.py`,
-`run_distribution_emd.py`, `run_welch_aggregator.py`, `run_matched2000.py`,
-`verify_freeze_ready.py`, `verify_number_provenance.py`, `tests/`,
+`scripts/run_distribution_emd.py`, `scripts/run_welch_aggregator.py`, `run_matched2000.py`,
+`scripts/verify_freeze_ready.py`, `scripts/verify_number_provenance.py`, `tests/`,
 `core/preprocessing.py`, `core/models/`) are tracked in the
 main repo at a later commit but absent from the worktree HEAD. They were copied
 read-only into `/tmp/peer-review-r4/code/` (a permitted working directory) along
@@ -52,15 +52,15 @@ committed JSON artifacts:
 - `run_matched2000_dualscale.py`: 2576 rows / 560 aggregates re-emitted;
   **max aggregate-mean abs-diff vs committed = 0.0** (exact). R3-CR-2 anchor
   values reproduce (AR log_return EMD 0.00294158, V1 0.01497, etc.).
-- `run_welch_aggregator.py`: 40 pairs re-built; **max field abs-diff = 0.0**.
-- `run_distribution_emd.py`: 90 rows re-emitted; **max row-value abs-diff = 0.0**.
+- `scripts/run_welch_aggregator.py`: 40 pairs re-built; **max field abs-diff = 0.0**.
+- `scripts/run_distribution_emd.py`: 90 rows re-emitted; **max row-value abs-diff = 0.0**.
 
 No RNG leakage or non-determinism detected — the seeded `default_rng(seed*...)`
 draws are reproducible and the pipeline is bit-stable.
 
 ## Findings
 
-### LOW-1 — `verify_number_provenance.py` Pass-1 text-match is a known weak gate (disclosed)
+### LOW-1 — `scripts/verify_number_provenance.py` Pass-1 text-match is a known weak gate (disclosed)
 File: `verify_number_provenance.py:208-227`, `:254-267`
 The gate resolves a literal if it appears as a boundary-delimited substring in
 ANY `results/*.json` blob (the `<text-match>` path), and Pass 2's
@@ -74,7 +74,7 @@ JSONs they resolve against were independently confirmed byte-exact above. The
 v2.1 differential-test for the negative-sign lookbehind passes. No regression;
 documented item — flagged for completeness only.
 
-### LOW-2 — `run_distribution_emd.py` self-test uses bare `assert` (python -O strips it)
+### LOW-2 — `scripts/run_distribution_emd.py` self-test uses bare `assert` (python -O strips it)
 File: `run_distribution_emd.py:344-350`
 `emit()` self-tests via `assert self_emd == 0.0` / `assert self_fim == 1.0`.
 Every other gate in the codebase deliberately uses `raise AssertionError` for
@@ -137,7 +137,7 @@ this freeze.
   `except:`. The one `except Exception: pass` (`verify_number_provenance.py:226`)
   is a fallthrough inside a multi-pass resolver and does not swallow a metric
   error.
-- `verify_freeze_ready.py`: gate logic sound. Confirmed in the main repo: 0
+- `scripts/verify_freeze_ready.py`: gate logic sound. Confirmed in the main repo: 0
   gitignored result JSONs, 799 tracked `revision/results` paths, `qgan_env/` not
   tracked, `data.csv` tracked, largest tracked `.pt` ~6.0 MB (well below the
   25 MB `LARGE_CKPT_BYTES` threshold). All three invariants would pass.

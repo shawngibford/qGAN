@@ -68,7 +68,7 @@
 | CR-5 | CRITICAL | `verify_number_provenance.py:119` substring `if token in blob` | `dfde1ba` (T2) | Gate v2 boundary-strict regex `(?<![\d.])<token>(?![\d])`; ε-neighborhood float matching `abs(cval - val) <= 10**(-prec) / 2` |
 | HI-1 | HIGH | `run_canonical_headline.py:280` + `run_canonical_headline.py:334` hardcoded `42 * 31` DTW seed | `8c67891` (T4) | `generation_seed` threading; `dtw_seed = generation_seed * 31` |
 | HI-2 | HIGH | `run_model_info.py:158` hardcoded `optimizer_betas = [0.0, 0.9]` for non-WGAN families | `8c67891` (T4) | Family-specific: None for non-adversarial (VAE/AR); [0.0, 0.9] for WGAN families |
-| HI-3 | HIGH | `run_model_info.py` `data_hash` mutual-equality (no explicit-raise vs expected) | `8c67891` (T4) | `EXPECTED_DATA_HASH = "91e447d4624e25b3"` + explicit-raise on inequality |
+| HI-3 | HIGH | `scripts/run_model_info.py` `data_hash` mutual-equality (no explicit-raise vs expected) | `8c67891` (T4) | `EXPECTED_DATA_HASH = "91e447d4624e25b3"` + explicit-raise on inequality |
 | HI-4 | HIGH | `run_matched2000.py:344` hardcoded `topology = "range"` | `8c67891` (T4) | Topology read from `canonical_config_lock.json#decomposition.gate_layout.entangler` |
 | HI-5 | HIGH | `run_matched2000_dualscale.py` `model_kinds` excludes headline | `8c67891` (T4) | `MODEL_KINDS + [HEADLINE_MODEL_KIND]` in the emit; `headline_model_kind` top-level field unchanged |
 | HI-6 | HIGH | `verify_freeze_ready.py:82` + `verify_freeze_ready.py:116` `RESULTS_DIR.glob("*.json")` mismatching verifier's `.rglob` walk | `1a9925f` (T5) | `RESULTS_DIR.rglob("*.json")`; negation-self-heal writes `!results/**/*.json` |
@@ -102,8 +102,8 @@
 |---|---|---|---|---|
 | PROV-CRIT-1 | CRITICAL | `provenance-review.md:81` — `reconciliation_note.md` scale-collision (independent triangulation of math-review.md C-1) | `9fe3a0f` (T3) | Same fix as C-1 (NEW source switched to OD-scale aggregate mean) |
 | PROV-CRIT-2 | CRITICAL | `provenance-review.md:118` — `paper_blocks_framing.md:119` phantom DTW score `0.6843` passes v1 gate via substring coincidence | `dfde1ba` (T2, gate-side) + `1a9925f` (T5, doc-side) | Gate v2 boundary-strict regex eliminates substring; doc cleanup removes phantom literal + misleading footer |
-| PROV-HIGH-1 | HIGH | `verify_number_provenance.py` float-precision format-string equality false positives | `dfde1ba` (T2) | ε-neighborhood `abs(cval - val) <= 10**(-prec) / 2` |
-| PROV-HIGH-2 | HIGH | `data_hash` mutual-equality (no inequality-vs-expected gate) + missing in 3 emitters | `8c67891` (T4) | `EXPECTED_DATA_HASH` explicit-raise + `data_hash` recorded in `run_circuit_diagrams.py` + `run_classical_arch_extract.py` + `run_framework_versions.py` |
+| PROV-HIGH-1 | HIGH | `scripts/verify_number_provenance.py` float-precision format-string equality false positives | `dfde1ba` (T2) | ε-neighborhood `abs(cval - val) <= 10**(-prec) / 2` |
+| PROV-HIGH-2 | HIGH | `data_hash` mutual-equality (no inequality-vs-expected gate) + missing in 3 emitters | `8c67891` (T4) | `EXPECTED_DATA_HASH` explicit-raise + `data_hash` recorded in `scripts/run_circuit_diagrams.py` + `scripts/run_classical_arch_extract.py` + `scripts/run_framework_versions.py` |
 | PROV-HIGH-3 | HIGH | `training_protocol.md` row 34 `dtype` field conflates dtype_params vs dtype_samples | `8c67891` (T4) | dtype renamed to `dtype_samples`; `dtype_params` added alongside; `training_protocol.md` row 34 split into two rows |
 | PROV-MED-1 | MEDIUM | `_ID_PATTERNS` year strip too broad | `dfde1ba` (T2) | Narrower year regex `\b(?:19|20)\d{2}\b(?=\s*\))` (1900-2099, closing-paren lookahead) |
 | PROV-MED-2 | MEDIUM | `_ID_PATTERNS` file:line strip too broad (matches bare `:NNN` in prose) | `dfde1ba` (T2) | File-extension prefix required `(?:\.py|\.md|\.json|\.tex):\d+(?:-\d+)?\b` |
@@ -248,7 +248,7 @@ are closed in one atomic sweep before 14-07 Zenodo deposit).
 After Plan 14-14, the v2.1 gate runs against all 10 paper-facing docs;
 every one exits 0 under the v2.1 schema `"v2.1 (Phase 14 plan 14-14 —
 negative-sign-aware lookbehind)"`. The differential-test assertion
-(`./qgan_env/bin/python verify_number_provenance.py
+(`./qgan_env/bin/python scripts/verify_number_provenance.py
 --differential-test`) PASSES, confirming the v2 positive→negative
 sign-flip false positive is closed.
 
@@ -377,7 +377,7 @@ provenance).
 `log_delta` (real reference) against the standardized fake samples
 `r_norm` — a scale mismatch (raw vs standardized log-return space). The
 mismatch inflated every log-return EMD value and inverted the cross-model
-ranking. The bug was inherited from `run_dualscale_fidelity.py` since Plan
+ranking. The bug was inherited from `scripts/run_dualscale_fidelity.py` since Plan
 14-08.
 
 **Fix** (Plan 14-16 T1, Path A — un-standardize-fake per
@@ -419,7 +419,7 @@ quantum-vs-WGAN separation on this marginal-distribution metric.
 ### R3-CR-1: histogram-density EMD — investigated, found numerically inert
 
 **Synthesis claim.** `peer-review-r3/code-review-r3.md` §H3 flagged R3-CR-1
-as a CRITICAL structural bias: `run_distribution_emd.py` used
+as a CRITICAL structural bias: `scripts/run_distribution_emd.py` used
 `np.histogram(..., density=True)` for both real and fake, which (the
 synthesis argued) renormalizes each histogram independently and silently
 drops out-of-range fake mass, rewarding narrow-collapse distributions (VAE)
@@ -454,7 +454,7 @@ OD-scale EMD column.
 
 Per `code-review-r3.md` §H3, R3-HI-1 is a single finding naming both
 `run_matched2000_dualscale.py:368-372` (R3-CR-2) and
-`run_distribution_emd.py` `_real_references` + `_fake_log_return_flat` at
+`scripts/run_distribution_emd.py` `_real_references` + `_fake_log_return_flat` at
 `:144-169`. T2 Step E2 closes the sister site: `_real_references` now also
 returns `norm_log_delta = (log_delta - mu) / sigma`, and `_model_seed_rows`
 consumes the standardized real reference for the log-return-scale

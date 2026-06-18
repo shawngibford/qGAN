@@ -55,8 +55,8 @@ A fresh session opening this file should know:
 ### 1.2 Freeze state
 
 - **Active SHA**: `ab7086c` (v1.1). Supersedes `52f30b9` (v1.0-revision) for any new citation. v1.0-revision is preserved as the original first-round-resubmission tag.
-- **Freeze gate** (`./qgan_env/bin/python verify_freeze_ready.py`): PASS on every gate except gate D (`release.md`), which is the post-acceptance Zenodo deliverable. Same posture as v1.0-revision.
-- **Provenance gate** (`./qgan_env/bin/python verify_number_provenance.py`): PASS on the 3 reviewer-facing docs (paper_blocks_framing.md, paper_blocks_refs_methods.md, reviewer_response.md). Every numeric literal in those docs resolves to a JSON value under `results/`.
+- **Freeze gate** (`./qgan_env/bin/python scripts/verify_freeze_ready.py`): PASS on every gate except gate D (`release.md`), which is the post-acceptance Zenodo deliverable. Same posture as v1.0-revision.
+- **Provenance gate** (`./qgan_env/bin/python scripts/verify_number_provenance.py`): PASS on the 3 reviewer-facing docs (paper_blocks_framing.md, paper_blocks_refs_methods.md, reviewer_response.md). Every numeric literal in those docs resolves to a JSON value under `results/`.
 - **Working tree**: clean (post-v1.1).
 
 ### 1.3 What's NOT done — the gap this handoff covers
@@ -332,11 +332,11 @@ Each figure has same-stem PDF + PNG + JSON companion for traceability.
 
 ```bash
 # Provenance: every literal in reviewer-facing docs resolves to a JSON value
-./qgan_env/bin/python verify_number_provenance.py
+./qgan_env/bin/python scripts/verify_number_provenance.py
 
 # Freeze readiness: clean tree, gitignore, provenance, tag scope, release.md
 # Will FAIL on release.md (gate D) until acceptance — by design
-./qgan_env/bin/python verify_freeze_ready.py
+./qgan_env/bin/python scripts/verify_freeze_ready.py
 
 # Rendering (idempotent — no retraining)
 ./qgan_env/bin/python -m revision.render_missing_figures
@@ -353,7 +353,7 @@ Each figure has same-stem PDF + PNG + JSON companion for traceability.
 4. **List the gaps**: every paragraph that needs rewriting, with a one-line note on what needs to change.
 5. **Apply rewrites** as a sequence of small, atomic `Edit` operations — each one keyed to a specific anchor sentence — so a diff review is easy.
 6. **Insert the three new figures** per §2.3 with captions sourced from the verified numbers in §3.
-7. **Run the provenance gate** after every batch of edits: `./qgan_env/bin/python verify_number_provenance.py`. Any new literal must resolve.
+7. **Run the provenance gate** after every batch of edits: `./qgan_env/bin/python scripts/verify_number_provenance.py`. Any new literal must resolve.
 8. **Run the figure renderer** if any new figure or any figure-companion JSON needs to be regenerated.
 9. **Commit in atomic units** keyed to the rewrite areas (one commit per major section or per coherent edit batch). Use the conventional commit-message style from the project history (`fix(14): ...`, `docs(14): ...`, `refactor(14): ...`).
 10. **After all rewrites land**: tag the next release (`v1.2` or `v1.0-revision.final` — your call), push, update the GitHub release page.

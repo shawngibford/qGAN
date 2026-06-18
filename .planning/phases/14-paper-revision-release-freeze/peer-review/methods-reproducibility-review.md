@@ -96,7 +96,7 @@ Installed versions confirmed by running `./qgan_env/bin/python -c "import pennyl
 - (b) `dtype_params` vs `dtype_samples`: explanation matches code at the cited line numbers (training.py:259-268, 347; classical.py:78; critic.py:67) ✓.
 
 ### §7 Provenance footer — VERIFIED
-- Ran `./qgan_env/bin/python verify_number_provenance.py --target docs/methods_full.md` → **PASS — 57 distinct numeric literals all resolve to results/*.json**.
+- Ran `./qgan_env/bin/python scripts/verify_number_provenance.py --target docs/methods_full.md` → **PASS — 57 distinct numeric literals all resolve to results/*.json**.
 
 ---
 
@@ -135,9 +135,9 @@ git ls-files | grep best_checkpoint   # EMPTY — not tracked!
 ```
 **Status:** **BLOCKER-2**. The headline result (`iqp_sel_55_headline`, §2.a, "frozen-checkpoint paper headline") relies on `best_checkpoint.pt` which is .gitignored (verified via `.gitignore:37` `*.pt`, and via the explicit comments in `run_canonical_headline.py:34` and `run_recover_canonical.py:43`: "`best_checkpoint.pt` and `qgan_env` are .gitignored, so in a git…"). `run_canonical_headline.py:380-383` even asserts a hard sha256 lock on the checkpoint file. **A fresh clone cannot reproduce the headline number** because there is no committed source for the trained 1969-epoch checkpoint.
 
-**Mitigation in code:** `run_recover_canonical.py` exists and has logic to search for the checkpoint, but the file must come from outside the repo. The methods doc doesn't surface this — §2.a says "Checkpoint epoch | 1969 | `canonical_config_lock.json` checkpoint_epoch" without telling the reader the checkpoint file itself is not in version control.
+**Mitigation in code:** `scripts/run_recover_canonical.py` exists and has logic to search for the checkpoint, but the file must come from outside the repo. The methods doc doesn't surface this — §2.a says "Checkpoint epoch | 1969 | `canonical_config_lock.json` checkpoint_epoch" without telling the reader the checkpoint file itself is not in version control.
 
-**Fix:** either (a) commit `best_checkpoint.pt` via git-lfs / a release artifact and link from `methods_full.md §2.a`, OR (b) explicitly tell readers in §2.a that the headline can be regenerated via `run_canonical_headline.py` from `best_checkpoint.pt` which must be obtained separately (and add an external location e.g. Zenodo DOI or release asset URL).
+**Fix:** either (a) commit `best_checkpoint.pt` via git-lfs / a release artifact and link from `methods_full.md §2.a`, OR (b) explicitly tell readers in §2.a that the headline can be regenerated via `scripts/run_canonical_headline.py` from `best_checkpoint.pt` which must be obtained separately (and add an external location e.g. Zenodo DOI or release asset URL).
 
 ### Step 4 — Try to run a fresh 2000-epoch training
 ```

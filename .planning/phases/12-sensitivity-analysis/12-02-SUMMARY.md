@@ -48,8 +48,8 @@ per-cell bundles into the two headline manuscript deliverables
 
 ## What Was Built
 
-- **Task 1** (`9781f85`): `run_sensitivity_sweep.sh` — copied
-  near-verbatim from `run_baselines_sweep.sh` (485 lines). 11 conditions × 2
+- **Task 1** (`9781f85`): `scripts/run_sensitivity_sweep.sh` — copied
+  near-verbatim from `scripts/run_baselines_sweep.sh` (485 lines). 11 conditions × 2
   pipelines × 3 seeds = 66-cell worklist; atomic `sweep_status.json`
   (tmpfile + `os.fsync` + `os.rename` under `flock -x 9`); `--parallel`
   guardrail rejects values other than 1|2 (exit 3); `is_complete` gates re-run
@@ -57,13 +57,13 @@ per-cell bundles into the two headline manuscript deliverables
   selects system `python3` (PennyLane 0.44.0), does NOT prefer the project
   venv (0.43.0); the driver's import-time `assert qml.__version__=="0.44.0"`
   is the fail-loud backstop (T-12-05 / Pitfall 5 / RESEARCH Open Q1(a)).**
-- **Task 2** (`cc1b1f1`): executed `bash run_sensitivity_sweep.sh
+- **Task 2** (`cc1b1f1`): executed `bash scripts/run_sensitivity_sweep.sh
   --parallel 2`. 66/66 cells complete, 0 failed; 2 cells skipped-already-done
   (the pre-existing analytic/B/42 smoke cell + a depol_0.001/B/42 single-cell
   sanity run). **Sweep wall time: 8m 22s** (Success Criterion 4: under the
   10-min local-Mac budget).
 - **Task 3** (`d7e07d7`): added `aggregate()` + `--emit-rollup` mode to
-  `run_sensitivity.py` (no third driver file). Emitted
+  `scripts/run_sensitivity.py` (no third driver file). Emitted
   `shot_noise_sensitivity.json` (270 rows) and `noise_model_sensitivity.json`
   (720 rows).
 
@@ -168,7 +168,7 @@ no authentication gates.
   both pipelines, dual-scale, six-key contract intact, per-layer
   channel-insertion provenance.
 - `git diff --stat core/` empty (CORE_CLEAN) across all three tasks.
-- No third driver file created; aggregation lives in `run_sensitivity.py`.
+- No third driver file created; aggregation lives in `scripts/run_sensitivity.py`.
 
 ## Known Stubs
 

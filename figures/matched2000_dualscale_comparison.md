@@ -1,6 +1,6 @@
 # Matched-2000ep dual-scale comparison — copy-paste table
 
-Rendered ENTIRELY from `results/matched2000_dualscale.json` by `run_figure_suite.py` (`render_matched2000_dualscale_comparison_table`). Zero hand-typed numbers; every literal traces to that single JSON source of truth and passes `verify_number_provenance.py` unmodified.
+Rendered ENTIRELY from `results/matched2000_dualscale.json` by `scripts/run_figure_suite.py` (`render_matched2000_dualscale_comparison_table`). Zero hand-typed numbers; every literal traces to that single JSON source of truth and passes `scripts/verify_number_provenance.py` unmodified.
 
 Quantum entrants (IQP:SEL 55p + ansatz V1/V2/V3) vs classical baselines (WGAN-GP × 3, VAE, AR) at the matched 2000-epoch budget. The frozen-checkpoint headline is reported as a DISTINCT row (source = `frozen_checkpoint_epoch_1969`) and is never merged into the iqp_sel_55_repro reproduction row (D-14-10).
 
@@ -38,4 +38,4 @@ Aggregates are mean over the 5 matched-2000ep seeds (42-46) for the 9 sweep mode
 
 Source: `results/matched2000_dualscale.json` (schema: `matched-2000ep dual-scale rows[] + per-(model,scale,metric) seed-aggregate; frozen headline DISTINCT, D-14-10`).
 
-Every value above is `_fmt()` of an `aggregates[]` row from that JSON (see `run_figure_suite.py` `render_matched2000_dualscale_comparison_table`). The number-provenance gate (`verify_number_provenance.py --target figures/matched2000_dualscale_comparison.md`) auto-covers this doc because its `results/*.json` rglob includes the new dual-scale JSON without any verifier edit.
+Every value above is `_fmt()` of an `aggregates[]` row from that JSON (see `scripts/run_figure_suite.py` `render_matched2000_dualscale_comparison_table`). The number-provenance gate (`verify_number_provenance.py --target figures/matched2000_dualscale_comparison.md`) auto-covers this doc because its `results/*.json` rglob includes the new dual-scale JSON without any verifier edit.

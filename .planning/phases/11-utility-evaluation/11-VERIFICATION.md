@@ -84,12 +84,12 @@ None.
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `run_utility.py` | EVAL-01 TSTR + EVAL-04 augmentation driver | VERIFIED | 586 lines, >200 required. Contains inverse_logreturns import, load_and_preprocess import, reconstruct_od, TSTRLiteLSTM, train_eval_tstr. |
+| `scripts/run_utility.py` | EVAL-01 TSTR + EVAL-04 augmentation driver | VERIFIED | 586 lines, >200 required. Contains inverse_logreturns import, load_and_preprocess import, reconstruct_od, TSTRLiteLSTM, train_eval_tstr. |
 | `results/tstr.json` | TSTR R2/MAE/RMSE long-form rows + real_only_baseline anchor | VERIFIED | 38,413 bytes. Contains "real_only_baseline", data_hash=91e447d4624e25b3, 144 rows. |
 | `results/augmentation.json` | Orlandi-style mixing-ratio lift table | VERIFIED | 71,241 bytes. Contains "injection_ratio", all 5 ratio conditions. |
-| `run_timegan_scores.py` | EVAL-02/03 faithful TimeGAN GRU driver | VERIFIED | 472 lines, >200 required. Contains PredictiveGRU, DiscriminativeGRU, predictive_score, discriminative_score. |
+| `scripts/run_timegan_scores.py` | EVAL-02/03 faithful TimeGAN GRU driver | VERIFIED | 472 lines, >200 required. Contains PredictiveGRU, DiscriminativeGRU, predictive_score, discriminative_score. |
 | `results/predictive_discriminative.json` | predictive+discriminative rows, mean±std, TimeGAN citation metadata | VERIFIED | 27,644 bytes. Contains "jsyoon0823/TimeGAN", hidden_dim=10, univariate_adaptation. |
-| `run_dualscale_fidelity.py` | EVAL-05 scale-tagged fidelity re-emit driver | VERIFIED | Contains compute_emd import, inverse_logreturns import. CR-01 RESOLVED (11-06, 61c4eb4): hardcoded path removed; opt-in QGAN_CANONICAL_REPO resolver + fail-loud + single-root provenance assertion. |
+| `scripts/run_dualscale_fidelity.py` | EVAL-05 scale-tagged fidelity re-emit driver | VERIFIED | Contains compute_emd import, inverse_logreturns import. CR-01 RESOLVED (11-06, 61c4eb4): hardcoded path removed; opt-in QGAN_CANONICAL_REPO resolver + fail-loud + single-root provenance assertion. |
 | `results/fidelity_dualscale.json` | Dual-scale long-form fidelity rows with explicit scale field | VERIFIED | 660,559 bytes. Contains "log_return", both scale values, Pipeline-A explicit nulls. |
 | `tests/test_utility.py` | Cross-artifact scientific-integrity pytest suite | VERIFIED | 401 lines, >80 required. 10 test functions. All 13 parametrized tests PASS via system pytest. |
 
@@ -158,7 +158,7 @@ No TBD/FIXME/XXX debt markers found in any Phase-11 modified files.
 
 #### 1. Reproducibility of fidelity_dualscale.json on a different machine
 
-**Test:** On a machine other than `/Users/shawngibford/dev/phd/qGAN` (or after renaming/moving the repo), run `python run_dualscale_fidelity.py` without setting `QGAN_CANONICAL_REPO`. Observe whether the driver locates the frozen baseline run bundles under `results/baselines/runs/`.
+**Test:** On a machine other than `/Users/shawngibford/dev/phd/qGAN` (or after renaming/moving the repo), run `python scripts/run_dualscale_fidelity.py` without setting `QGAN_CANONICAL_REPO`. Observe whether the driver locates the frozen baseline run bundles under `results/baselines/runs/`.
 
 **Expected:** Driver should fail loudly with a `FileNotFoundError` (indicating the hardcoded fallback is gone) OR the in-tree path should resolve correctly if baselines are present. Currently, the 50 baseline `samples.npy` bundles are git-ignored and exist only at the canonical checkout path. The `_resolve_run_dir` fallback silently routes to the hardcoded path — on a different machine this fails with no guidance. The CR-01 fix from 11-REVIEW.md (replace hardcoded constant with `os.environ["QGAN_CANONICAL_REPO"]`) would make this explicit.
 
@@ -170,7 +170,7 @@ No TBD/FIXME/XXX debt markers found in any Phase-11 modified files.
 
 No blocking gaps found. All five ROADMAP Success Criteria are artifact-backed and verified by the executable test suite (22/22 tests pass). The cross-cutting constraints (data_hash invariant, core/ untouched) are confirmed.
 
-One reproducibility concern (CR-01: hardcoded absolute path in `run_dualscale_fidelity.py`) is documented as a WARNING by the code reviewer. It does not block the current phase goal — the produced artifacts are correct and verified on the development machine — but it affects future portability of the fidelity driver. It is flagged for human decision.
+One reproducibility concern (CR-01: hardcoded absolute path in `scripts/run_dualscale_fidelity.py`) is documented as a WARNING by the code reviewer. It does not block the current phase goal — the produced artifacts are correct and verified on the development machine — but it affects future portability of the fidelity driver. It is flagged for human decision.
 
 The DTW metric naming (`dtw_mean`, `dtw_median`, `dtw_std` rather than bare `dtw`) is a faithful extension of the plan's intent: the plan called for DTW to be reported; the driver reports three summary statistics of the DTW distribution, all at both OD and log_return scales. The test_utility.py suite accepts this (no bare `dtw` assertion; SC-4 checks for explicit `scale` on every row). This is a valid implementation choice, not a gap.
 

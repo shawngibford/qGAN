@@ -179,7 +179,7 @@ deposit + tag + DOI wiring + release.md) remains in Phase 14.
   - BibTeX volume fields (`volume = {567}`)
   - Bracketed bibliography refs (`[21]`, `[61]`, `[21]-[23]`)
 - **Fix:** Added precise strip patterns for each prose-identifier class (NOT a weakening of the data gate — each pattern is specifically scoped to legitimate prose identifier contexts).
-- **Files modified:** `verify_number_provenance.py`
+- **Files modified:** `scripts/verify_number_provenance.py`
 - **Commit:** `dfde1ba` (T2)
 
 **2. [Rule 3 — Blocking issue] Apparatus-constants JSON emit**
@@ -193,7 +193,7 @@ deposit + tag + DOI wiring + release.md) remains in Phase 14.
 - **Found during:** Task 3 (post-rebuild gate)
 - **Issue:** The 4 derived delta literals (`-0.000060`, `-0.001628`, `-0.058710`, `-0.001044`) in the rebuilt `reconciliation_note.md` did not resolve to any audited JSON (the rebuild reads OD-scale means from `matched2000_dualscale.json#aggregates`, but the deltas themselves are computed as NEW - OLD).
 - **Fix:** Emitted `results/reconciliation_deltas.json` as a structured artifact recording per-model `(old, new, delta)` tuples so the v2 gate resolves the delta literals via a legitimate JSON source.
-- **Files modified:** `run_model_info.py` (added emit), `results/reconciliation_deltas.json` (new)
+- **Files modified:** `scripts/run_model_info.py` (added emit), `results/reconciliation_deltas.json` (new)
 - **Commit:** `9fe3a0f` (T3)
 
 **4. [Rule 3 — Blocking issue] Total-adversarial-param-budget JSON emit**
@@ -240,7 +240,7 @@ shasum -a 256 checkpoints/best_checkpoint.pt
 # == canonical_config_lock.json#checkpoint_sha256
 
 for doc in docs/{paper_blocks_framing,paper_blocks_refs_methods,reviewer_response,reconciliation_note,methods_full,circuit_atlas,completeness_sweep_manifest,training_protocol,dataset_stats,peer_review_remediation}.md; do
-  ./qgan_env/bin/python verify_number_provenance.py --target "$doc"
+  ./qgan_env/bin/python scripts/verify_number_provenance.py --target "$doc"
 done
 # Verified: All 10 docs PASS under the v2 schema
 ```

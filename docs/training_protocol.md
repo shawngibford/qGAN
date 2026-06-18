@@ -1,6 +1,6 @@
 # Training Protocol — QWGAN-GP (matched 2000ep, 55-param IQP:SEL)
 
-> **Source of truth:** every numerical constant below is rendered FROM `results/model_info.json` by `run_model_info.py` — there are NO hand-typed numbers and NO `core/__init__.py:NN` line citations. Re-run the emitter to update; `verify_number_provenance.py` is the executable gate that proves every literal here resolves to a `results/*.json` value (success criterion 5).
+> **Source of truth:** every numerical constant below is rendered FROM `results/model_info.json` by `scripts/run_model_info.py` — there are NO hand-typed numbers and NO `core/__init__.py:NN` line citations. Re-run the emitter to update; `scripts/verify_number_provenance.py` is the executable gate that proves every literal here resolves to a `results/*.json` value (success criterion 5).
 
 This protocol describes the matched-budget 2000-epoch training run for the canonical 55-param IQP:SEL quantum generator (`source=matched2000_reproduction`) — the quantum entrant in every cross-model comparison (D-14-04). The frozen-checkpoint headline (`source=frozen_checkpoint_epoch_1969`) is a SEPARATE record in `model_info.json` (D-14-10).
 

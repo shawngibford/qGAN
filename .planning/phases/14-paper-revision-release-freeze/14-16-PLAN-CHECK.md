@@ -38,7 +38,7 @@ Agent 5's recommended-action section (line 823-829) bundles both into pre-tag ho
 
 ### Why this is a wrong-to-punt (not right-to-punt)
 
-1. **Same file already being edited.** T2 already opens `run_distribution_emd.py`. The sibling-call sites are at `:144-169`, ~30 lines below the `:94-141` block T2 replaces. The marginal cost is on the order of 20-40 lines of edit plus an analogous `fake_in_range_mass`-style disclosure stat for the log-return-scale rows.
+1. **Same file already being edited.** T2 already opens `scripts/run_distribution_emd.py`. The sibling-call sites are at `:144-169`, ~30 lines below the `:94-141` block T2 replaces. The marginal cost is on the order of 20-40 lines of edit plus an analogous `fake_in_range_mass`-style disclosure stat for the log-return-scale rows.
 
 2. **Manuscript ships with one corrected metric variant and one still-broken metric variant on the same JSON.** Post-T2, `distribution_emd.json` v2 carries:
    - OD-scale rows: correctly reformulated (R3-CR-1 fixed)
@@ -175,15 +175,15 @@ If skipped: when a reviewer asks "where did 0.014 come from?", the answer is `st
 
 **Plan section:** T3 `<files>` line 906.
 
-T3 modifies: `run_model_info.py`, `docs/reviewer_response.md`, `docs/methods_full.md`, `docs/reconciliation_note.md` — that's 1 Python emitter plus 3 paper-facing docs (4 files total). 14-13/14/15 historically split this kind of work across 2 tasks. The plan justifies the consolidation under "single coherent edit" but T3 spans:
+T3 modifies: `scripts/run_model_info.py`, `docs/reviewer_response.md`, `docs/methods_full.md`, `docs/reconciliation_note.md` — that's 1 Python emitter plus 3 paper-facing docs (4 files total). 14-13/14/15 historically split this kind of work across 2 tasks. The plan justifies the consolidation under "single coherent edit" but T3 spans:
 - R1-M1 rewrite + new subsection in `reviewer_response.md` (manual edits)
 - Two new paragraphs in `methods_full.md` (manual edits)
-- C-3 sentence extension in `reconciliation_note.md` (emitted via `run_model_info.py`?)
-- `run_model_info.py` table-emission update
+- C-3 sentence extension in `reconciliation_note.md` (emitted via `scripts/run_model_info.py`?)
+- `scripts/run_model_info.py` table-emission update
 
-The atomicity contract is at risk: if `run_model_info.py` edit lands but the manual reviewer_response.md edit fails or vice versa, the commit is incoherent. Compare with 14-15 which split similar work across separate tasks.
+The atomicity contract is at risk: if `scripts/run_model_info.py` edit lands but the manual reviewer_response.md edit fails or vice versa, the commit is incoherent. Compare with 14-15 which split similar work across separate tasks.
 
-**Recommendation (warning):** split T3 into T3a (`run_model_info.py` + `reconciliation_note.md` regeneration via emit) and T3b (manual edits to `reviewer_response.md` + `methods_full.md`). Each gets its own atomic commit. Total task count goes from 5 to 6 — still within the 2-3-target threshold per dimension when measured per-task-scope.
+**Recommendation (warning):** split T3 into T3a (`scripts/run_model_info.py` + `reconciliation_note.md` regeneration via emit) and T3b (manual edits to `reviewer_response.md` + `methods_full.md`). Each gets its own atomic commit. Total task count goes from 5 to 6 — still within the 2-3-target threshold per dimension when measured per-task-scope.
 
 This is a warning, not blocker, because the plan explicitly enumerates all edits step-by-step. But the failure mode (incoherent mid-task state) is real and the 14-13/14/15 precedent splits this.
 
@@ -226,7 +226,7 @@ T2 Step E2 (lines 863-955) applies `norm_log_delta = (log_delta - mu) / sigma` t
 - Generator parameter counts (74 / 73 / 78 / 562 / 3) are correct against `results/model_info.json` — verified.
 - The "10^4-10^5" old framing is fully removed (grep returns zero hits).
 - The strong-claim prose uses `73-562 generator parameters AND the full ~2.5x10^5-parameter adversarial budget (generator + 250,881-parameter shared critic)` — this is the honest framing.
-- **NEW BLOCKER:** The per-baseline equivalence table inserted by T4 (lines 1244-1250) hand-types `250,955` (wgan_mlp), `250,954` (wgan_cnn), `250,959` (wgan_lstm) as the WGAN adversarial totals. These values **do NOT exist in any JSON in the resolution corpus**. Inspection of `results/total_adversarial_param_budget.json` shows the WGAN entries carry only `shared_critic_n_params: 250881` — they do NOT have a pre-computed `total_adversarial_param_budget` field (only quantum models do: 250936, 250956, 251016). Combined with the v2.1 gate's `_NUM` regex `[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?` not handling commas, `250,955` tokenizes as TWO tokens (`250`, `955`); `955` has no JSON anchor; integer ε-tolerance is 0.5; the gate will FAIL to resolve these tokens. **T4's verify step `./qgan_env/bin/python verify_number_provenance.py --target docs/reviewer_response.md` will reject this output.**
+- **NEW BLOCKER:** The per-baseline equivalence table inserted by T4 (lines 1244-1250) hand-types `250,955` (wgan_mlp), `250,954` (wgan_cnn), `250,959` (wgan_lstm) as the WGAN adversarial totals. These values **do NOT exist in any JSON in the resolution corpus**. Inspection of `results/total_adversarial_param_budget.json` shows the WGAN entries carry only `shared_critic_n_params: 250881` — they do NOT have a pre-computed `total_adversarial_param_budget` field (only quantum models do: 250936, 250956, 251016). Combined with the v2.1 gate's `_NUM` regex `[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?` not handling commas, `250,955` tokenizes as TWO tokens (`250`, `955`); `955` has no JSON anchor; integer ε-tolerance is 0.5; the gate will FAIL to resolve these tokens. **T4's verify step `./qgan_env/bin/python scripts/verify_number_provenance.py --target docs/reviewer_response.md` will reject this output.**
 - Additional gate-resolution risk: `250,881` (cited twice in the T4 H2 prose) tokenizes as `250` + `881`; `881` has no JSON anchor (the corpus carries `250881` as a single token). Existing pre-14-16 docs cite `250881` without comma (see `methods_full.md:244`, `:250`, `:255`, `:435` and `reviewer_response.md:201`) — those resolve because they're a single token. The plan's introduction of the comma-separated form is a regression.
 
 **Fix path:** Either (a) drop the WGAN-total column from the T4 H2 table and replace with prose `"each WGAN adversarial budget = generator + 250881 (shared critic) per total_adversarial_param_budget.json#shared_critic_n_params"`, OR (b) extend T3's `welch_pairwise.json` schema (or extend `total_adversarial_param_budget.json`) to emit explicit `wgan_mlp_total: 250955`, `wgan_cnn_total: 250954`, `wgan_lstm_total: 250959` as JSON leaves so the gate can resolve them. And replace all `250,XXX` comma-separated literals in the doc body with `250XXX` no-comma form to match the existing audit-resolvable convention.
@@ -260,7 +260,7 @@ The PLAN's `<task>` definitions (T1-T7) are correctly numbered and scoped. Howev
 - **Line 44** (truth, R1-M1 / new H2): *"After T3, `docs/reviewer_response.md` R1-M1 row..."* — should read "After T4".
 - **Line 47** (truth, cross_model_emd re-render): *"After T4, `figures/cross_model_emd.{png,pdf,json}` is RE-RENDERED"* — figure re-render is T6, not T4.
 - **Line 49** (truth, v2.1 gate run on 10 docs): *"After T4, v2.1 gate runs PASSING against all 10 paper-facing docs"* — the 10-doc gate run is T6 (T4 runs only against reviewer_response.md).
-- **Line 74** (artifact `run_model_info.py`): *"Updated (Task 3) to surface the corrected aggregates"* — should be Task 5. Also contradicts T4 by suggesting "R1-M1 response rewrite + Parametric-efficiency subsection logic MAY live in this emitter" (T4 task-definition is a manual edit, not an emit).
+- **Line 74** (artifact `scripts/run_model_info.py`): *"Updated (Task 3) to surface the corrected aggregates"* — should be Task 5. Also contradicts T4 by suggesting "R1-M1 response rewrite + Parametric-efficiency subsection logic MAY live in this emitter" (T4 task-definition is a manual edit, not an emit).
 - **Line 83** (artifact `methods_full.md`): *"Re-emitted (Task 3)"* — should be Task 5.
 - **Line 92** (artifact `cross_model_emd.png`): *"Re-rendered (Task 4)"* — should be Task 6.
 - **Line 134** (key_link via): *"Task 4 re-renders the cross-model EMD bar figure"* — should be Task 6.
@@ -275,7 +275,7 @@ The PLAN's `<task>` definitions (T1-T7) are correctly numbered and scoped. Howev
 - **Comma-separated 250,881 form:** introduces tokenizer regression vs existing `250881` (no comma) usage in already-audit-passing docs — captured as Issue #2 BLOCKER above.
 - **Byte-freeze invariant assertions per task:**
   - D-14-22 (`core/` byte-freeze): asserted in **all 7 task verify gates** (T1 line 670, T2 1013, T3 1157, T4 1310, T5 1456, T6 1590, T7 1913). ✓
-  - D-14-16 (gate byte-freeze): asserted in T3, T4, T5, T7 verify gates. **T1, T2, T6 do not explicitly assert `git diff verify_number_provenance.py` is empty.** Minor coverage gap — T1 + T2 don't touch the gate (low risk); T6 runs the gate but doesn't assert it's unmodified post-run (defensible since `verify_number_provenance.py` is a read-only invocation). Not a blocker; flag as soft warning.
+  - D-14-16 (gate byte-freeze): asserted in T3, T4, T5, T7 verify gates. **T1, T2, T6 do not explicitly assert `git diff verify_number_provenance.py` is empty.** Minor coverage gap — T1 + T2 don't touch the gate (low risk); T6 runs the gate but doesn't assert it's unmodified post-run (defensible since `scripts/verify_number_provenance.py` is a read-only invocation). Not a blocker; flag as soft warning.
   - D-14-13, D-14-18: documented in contract_changes preamble; not per-task verify gates. Inherently preserved by no-LaTeX-edit and no-strict-accept-edit scopes.
 
 ### Summary of remaining issues

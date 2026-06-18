@@ -105,7 +105,7 @@ gate still passing.
     PASS (88 distinct numeric literals all resolve, exit 0).
   - `verify_number_provenance.py --target methods_full.md` → PASS
     (107 distinct numeric literals all resolve, exit 0).
-- `run_welch_aggregator.py` not run and not edited.
+- `scripts/run_welch_aggregator.py` not run and not edited.
 
 ## Verification
 

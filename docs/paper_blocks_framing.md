@@ -7,7 +7,7 @@
 > keyed to a `\label` or an anchor sentence plus its source-file line citation,
 > carries a one-line reviewer-comment rationale, and annotates every numeric
 > literal with its `results/*.json` source so the file passes
-> `verify_number_provenance.py`.
+> `scripts/verify_number_provenance.py`.
 >
 > **Result-direction note (D-14-20).** The matched-2000ep sweep
 > (`results/model_info.json`, `docs/reconciliation_note.md`)
@@ -495,7 +495,7 @@ circuit.
 > config-lock JSONs (`canonical_config_lock.json`,
 > `default_75_config_lock.json`, `v1_config_lock.json`,
 > `v2_config_lock.json`, `v3_config_lock.json`) and is gated by
-> `verify_number_provenance.py` unmodified.
+> `scripts/verify_number_provenance.py` unmodified.
 
 ---
 
@@ -505,7 +505,7 @@ Every numeric literal in this file resolves to a `results/*.json`
 value at its stated precision, enforced by:
 
 ```
-./qgan_env/bin/python verify_number_provenance.py \
+./qgan_env/bin/python scripts/verify_number_provenance.py \
     --target docs/paper_blocks_framing.md
 ```
 

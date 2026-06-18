@@ -44,9 +44,9 @@ were re-trained — generators were not touched.
 
 ### Code changes
 
-- `run_utility.py` — `MODEL_KINDS` replaced with the matched-budget 9-list (`iqp_sel_55_repro`, `V1`, `V2`, `V3`, `wgan_mlp`, `wgan_cnn`, `wgan_lstm`, `vae`, `ar`); `PIPELINES = ["B"]`; `_run_base()` collapsed to single matched2000-routed branch; `_assert_data_hash_invariant()` adjusted to iterate all 45 cells (no quantum-by-construction shortcut — all matched-budget configs carry `91e447d4624e25b3` directly); `reconstruct_od()` raises `NotImplementedError` for Pipeline A in matched-budget driver mode; output filenames retargeted to `*_matched2000.json` siblings.
-- `run_timegan_scores.py` — identical shape of edits.
-- `run_figure_suite.py` — new sibling renderer `render_tstr_crossmodel_matched2000()` added (no special-case "quantum" label collapse; four quantum variants labeled explicitly via `MODEL_LABELS`; single Pipeline-B panel; real-only baseline plotted as dashed reference; negative-R² treatment retained for safety).
+- `scripts/run_utility.py` — `MODEL_KINDS` replaced with the matched-budget 9-list (`iqp_sel_55_repro`, `V1`, `V2`, `V3`, `wgan_mlp`, `wgan_cnn`, `wgan_lstm`, `vae`, `ar`); `PIPELINES = ["B"]`; `_run_base()` collapsed to single matched2000-routed branch; `_assert_data_hash_invariant()` adjusted to iterate all 45 cells (no quantum-by-construction shortcut — all matched-budget configs carry `91e447d4624e25b3` directly); `reconstruct_od()` raises `NotImplementedError` for Pipeline A in matched-budget driver mode; output filenames retargeted to `*_matched2000.json` siblings.
+- `scripts/run_timegan_scores.py` — identical shape of edits.
+- `scripts/run_figure_suite.py` — new sibling renderer `render_tstr_crossmodel_matched2000()` added (no special-case "quantum" label collapse; four quantum variants labeled explicitly via `MODEL_LABELS`; single Pipeline-B panel; real-only baseline plotted as dashed reference; negative-R² treatment retained for safety).
 
 ### Doc updates
 
@@ -108,11 +108,11 @@ addressed under R1-M1.
 | Provenance gate — `paper_blocks_refs_methods.md` | PASS (49 literals, unchanged from pre-14-20) |
 | Provenance gate — `reconciliation_note.md` | PASS (67 literals, unchanged from pre-14-20) |
 | Provenance gate — `peer_review_remediation.md` | PASS (105 literals, unchanged from pre-14-20) |
-| `verify_freeze_ready.py` (a) gitignore + archive scope | PASS (905 tracked paths under revision/results, no provenance JSON gitignored) |
-| `verify_freeze_ready.py` (b) provenance over paper-blocks files | PASS (3/3) |
-| `verify_freeze_ready.py` (c) tag-scope | PASS (qgan_env/ not tracked, data.csv tracked, no checkpoint > 26 MB) |
-| `verify_freeze_ready.py` (0) clean working tree | PASS (`git status --porcelain` empty) |
-| `verify_freeze_ready.py` (d) release.md exists | EXPECTED FAIL — release.md is 14-07's deliverable (Plan 14-19 ordering guard) |
+| `scripts/verify_freeze_ready.py` (a) gitignore + archive scope | PASS (905 tracked paths under revision/results, no provenance JSON gitignored) |
+| `scripts/verify_freeze_ready.py` (b) provenance over paper-blocks files | PASS (3/3) |
+| `scripts/verify_freeze_ready.py` (c) tag-scope | PASS (qgan_env/ not tracked, data.csv tracked, no checkpoint > 26 MB) |
+| `scripts/verify_freeze_ready.py` (0) clean working tree | PASS (`git status --porcelain` empty) |
+| `scripts/verify_freeze_ready.py` (d) release.md exists | EXPECTED FAIL — release.md is 14-07's deliverable (Plan 14-19 ordering guard) |
 | `git status --porcelain` empty after all Task 1–4 commits | PASS |
 
 ## Freeze candidate
@@ -121,7 +121,7 @@ addressed under R1-M1.
 
 **Post-14-20 (NEW):** `3c8502c76f1ad2395f9c66d0feb851e4479466df` (this plan's final Task 3 commit; Task 4 commits the SUMMARY + STATE.md update on top).
 
-`verify_freeze_ready.py` PASSes every gate against `3c8502c` except gate (d) `release.md`, which is 14-07's deliverable and is the intended ordering guard from Plan 14-19. When 14-07 finally runs (at journal acceptance), the tag `v2.0-revision` must be cut from the post-14-20 SHA — `3c8502c` for the certified tree, or the Task-4 SUMMARY commit on top of it if the SUMMARY is part of the cited tree.
+`scripts/verify_freeze_ready.py` PASSes every gate against `3c8502c` except gate (d) `release.md`, which is 14-07's deliverable and is the intended ordering guard from Plan 14-19. When 14-07 finally runs (at journal acceptance), the tag `v2.0-revision` must be cut from the post-14-20 SHA — `3c8502c` for the certified tree, or the Task-4 SUMMARY commit on top of it if the SUMMARY is part of the cited tree.
 
 STATE.md `Deferred Items` row for 14-07 has been updated to record `3c8502c`
 as the active freeze-candidate reference; pre-14-20 SHA `6518323` is no longer

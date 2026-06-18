@@ -65,7 +65,7 @@ completed: 2026-05-22
 - Resolved the stale headline DTW 0.6843 at all 3 occurrences (one removed via PAPER-02b, two labelled as a frozen pre-v1.0 checkpoint with matched-budget ~0.30 stated alongside) and re-anchored the Orlandi ~6.5x comparison to the matched-budget value
 - Added a Zenodo DOI placeholder string in both Data Availability sections for plan 14-07
 - Fixed PAPER-11 notation/typo/LUCY defects: unified return notation on `r_t`, removed the malformed mid-sentence `\label{fig:lucy}`, fixed the 20L/300L mismatch, corrected the LUCY caption to `\textregistered`/20L
-- Ran `verify_number_provenance.py` over both `.tex` files: PASS (45 distinct literals in main, 19 in supp — all resolve to `results/*.json`)
+- Ran `scripts/verify_number_provenance.py` over both `.tex` files: PASS (45 distinct literals in main, 19 in supp — all resolve to `results/*.json`)
 
 ## Task Commits
 
@@ -95,11 +95,11 @@ Each task was committed atomically:
 - **Issue:** The PAPER-03 block (Task 1) introduces the locked 55-parameter circuit (`canonical_config_lock.json` `param_count`=55), but `main (4) copy.tex` §3.1 still read "contains 45 trainable parameters" and `supp_material.tex` §A.6 still read "Total parameters: 45 (5 ... 30 ... 10 ...)". This created an internal contradiction within the same manuscript — the new Circuit Design Rationale states 55 while two other locations state 45.
 - **Fix:** Updated the main-text count to "55 trainable parameters" and the supplementary decomposition to "55 (5 for IQP encoding, 45 for the three strongly entangling layers, 5 for measurement-preparation rotations)", consistent with `canonical_config_lock.json` (`num_qubits`=5, `num_layers`=3, `param_count`=55).
 - **Files modified:** `main (4) copy.tex`, `supp_material.tex`
-- **Verification:** `verify_number_provenance.py` PASSes — the literal 55 resolves to `canonical_config_lock.json`/`model_info.json`; no remaining 45 in a parameter-count context.
+- **Verification:** `scripts/verify_number_provenance.py` PASSes — the literal 55 resolves to `canonical_config_lock.json`/`model_info.json`; no remaining 45 in a parameter-count context.
 - **Committed in:** `f644b9e` (Task 3 commit)
 
 **2. [Rule 3 - Blocking] Symbolic DOI placeholder to keep the provenance gate green**
-- **Found during:** Task 3 (running `verify_number_provenance.py` over the `.tex`)
+- **Found during:** Task 3 (running `scripts/verify_number_provenance.py` over the `.tex`)
 - **Issue:** The literal placeholder `10.5281/zenodo.XXXXXX` introduced `10.5281` as a numeric literal that does not resolve to any `results/*.json` value; the gate flagged it (the only unresolved literal in either file).
 - **Fix:** Replaced the literal-prefix placeholder with a fully symbolic token `ZENODO-DOI-PLACEHOLDER` in both Data Availability sections. The token is digit-free, gate-clean, and a clear substitution anchor for plan 14-07.
 - **Files modified:** `main (4) copy.tex`, `supp_material.tex`
@@ -113,7 +113,7 @@ Each task was committed atomically:
 
 ## Number-Provenance Gate Result (Task 3, WARNING 5 resolution)
 
-`verify_number_provenance.py` **accepts a `.tex` `--target`** (its `--help` documents "regenerated doc or paper LaTeX-blocks file"). It was run over both manuscript files after all Task 1-3 edits:
+`scripts/verify_number_provenance.py` **accepts a `.tex` `--target`** (its `--help` documents "regenerated doc or paper LaTeX-blocks file"). It was run over both manuscript files after all Task 1-3 edits:
 
 - `main (4) copy.tex`: **PASS** — 45 distinct numeric literals all resolve to `results/*.json` (schema v2.1).
 - `supp_material.tex`: **PASS** — 19 distinct numeric literals all resolve to `results/*.json` (schema v2.1).

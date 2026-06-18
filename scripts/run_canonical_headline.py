@@ -228,7 +228,7 @@ def _reconstruct_od_from_samples(samples_pm1, mu: float, sigma: float,
     import torch
 
     from core.preprocessing import inverse_logreturns
-    from _wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
+    from core._wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
 
     samples_pm1 = np.asarray(samples_pm1, dtype=np.float64)
     # Plan 14-21 T01 — Option B: keep the documented `* 0.1` at

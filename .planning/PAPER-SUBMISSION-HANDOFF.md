@@ -169,17 +169,17 @@ supp_material.tex:
 ```bash
 cd /Users/shawngibford/dev/phd/qGAN
 
-./qgan_env/bin/python verify_number_provenance.py --target "main (4) copy.tex"
+./qgan_env/bin/python scripts/verify_number_provenance.py --target "main (4) copy.tex"
 # Expect: PASS — 143 distinct numeric literal(s) (was 122 pre-audit; +21 from Table 2 cells)
 
-./qgan_env/bin/python verify_number_provenance.py --target "supp_material.tex"
+./qgan_env/bin/python scripts/verify_number_provenance.py --target "supp_material.tex"
 # Expect: PASS — 156 distinct numeric literal(s) (was 26 pre-audit;
 # +25 from per-seed dominance table, +93 from Welch tables, +11 from ablation prose, +1 from Welch caption scope tag)
 
-./qgan_env/bin/python verify_number_provenance.py --differential-test
+./qgan_env/bin/python scripts/verify_number_provenance.py --differential-test
 # Expect: v2.1 differential test PASSED
 
-./qgan_env/bin/python verify_freeze_ready.py
+./qgan_env/bin/python scripts/verify_freeze_ready.py
 # Expect: all gates PASS except (d) release.md (plan 14-07's deliverable, deferred to acceptance)
 
 # Compile (no TEXINPUTS needed — all 11 figures are in the repo)

@@ -66,7 +66,7 @@ from core.data import load_and_preprocess, rolling_window
 # core.eval — REUSE UNCHANGED (D-10-20). Import only; never edited.
 from core.eval import full_metric_suite
 from core.preprocessing import inverse_logreturns
-from _wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
+from core._wgan_unscale import _unscale_wgan_samples  # Plan 14-21 T01
 
 # ── ARCH-02 ansatz variant registry ─────────────────────────────────────────
 # V1 is REUSED from the 09.1/10 transform_ablation Pipeline-B runs (D-13-01, no

@@ -81,7 +81,7 @@ completed: 2026-05-20
 
 # Phase 14 Plan 10: Full-Story Render-Only Figure Suite Summary
 
-**Added 7 render-only figures to `run_figure_suite.py` that complete the manuscript's full narrative arc — consuming three previously-unconsumed audited paper-facing JSONs (`tstr.json`, `noise_model_sensitivity.json`, `shot_noise_sensitivity.json`) and four previously-absent head-to-head views over already-computed artifacts (cross-model training convergence, failure-mode triage grid, parameter-efficiency Pareto, per-model seed variance). Every figure is render-only over audited JSON (no retraining, no resampling, no checkpoint reload, no new metric recomputation); the frozen-checkpoint headline is visually distinct from `iqp_sel_55_repro` on every figure where both could appear (D-14-10) — diamond + HEADLINE_COLOR + horizontal/row-spanning dashed reference lines, never merged into the reproduction series; negative R² in `tstr_crossmodel` is plotted honestly (no clamp / abs / rescale) with a dynamically-built reviewer-facing caption_note. `core/` stays byte-frozen (D-14-22), `verify_number_provenance.py` stays byte-frozen (D-14-16), and the 7 new companion JSONs are auto-rglob'd into the gate's resolution corpus without any verifier edit.**
+**Added 7 render-only figures to `scripts/run_figure_suite.py` that complete the manuscript's full narrative arc — consuming three previously-unconsumed audited paper-facing JSONs (`tstr.json`, `noise_model_sensitivity.json`, `shot_noise_sensitivity.json`) and four previously-absent head-to-head views over already-computed artifacts (cross-model training convergence, failure-mode triage grid, parameter-efficiency Pareto, per-model seed variance). Every figure is render-only over audited JSON (no retraining, no resampling, no checkpoint reload, no new metric recomputation); the frozen-checkpoint headline is visually distinct from `iqp_sel_55_repro` on every figure where both could appear (D-14-10) — diamond + HEADLINE_COLOR + horizontal/row-spanning dashed reference lines, never merged into the reproduction series; negative R² in `tstr_crossmodel` is plotted honestly (no clamp / abs / rescale) with a dynamically-built reviewer-facing caption_note. `core/` stays byte-frozen (D-14-22), `scripts/verify_number_provenance.py` stays byte-frozen (D-14-16), and the 7 new companion JSONs are auto-rglob'd into the gate's resolution corpus without any verifier edit.**
 
 ## Performance
 
@@ -170,7 +170,7 @@ All seven `<verify>` blocks ran clean. The contract greps:
 | 6 | `ac31814` | `noise_robustness_quantum` | +280 |
 | 7 | `ea09265` | `shot_noise_robustness` | +199 |
 
-Net delta on `run_figure_suite.py`: **+1189 lines** (7 new render functions + 2 new module-level constants + 7 main() wiring lines).
+Net delta on `scripts/run_figure_suite.py`: **+1189 lines** (7 new render functions + 2 new module-level constants + 7 main() wiring lines).
 
 ## Threat Surface Scan
 
@@ -182,7 +182,7 @@ No new threat surface introduced beyond what the plan's `<threat_model>` (T-14-2
 - T-14-28 (negative R² clamped or rescaled): mitigated — raw negative `r2_mean` values appear verbatim in `tstr_crossmodel.json`'s `per_model_pipeline` block; caption_note carries explicit reviewer-facing R²<0 explanation
 - T-14-29 (`core/` edit slips in): mitigated — `git diff --stat core/` empty after every task's verify
 - T-14-30 (metric recomputation inside render functions): mitigated — verify greps confirm no `.fit/train_/sample/checkpoint` patterns added; only numpy aggregations
-- T-14-31 (`verify_number_provenance.py` modified): mitigated — gate is byte-frozen across all 7 task verifies; new companions land under `figures/` and are auto-rglob'd by the existing gate
+- T-14-31 (`scripts/verify_number_provenance.py` modified): mitigated — gate is byte-frozen across all 7 task verifies; new companions land under `figures/` and are auto-rglob'd by the existing gate
 - T-14-32 (figure ↔ data provenance for new figures): mitigated — every companion JSON records `source_artifact(s)` and `render_only: true`
 
 ## Self-Check: PASSED
@@ -195,6 +195,6 @@ No new threat surface introduced beyond what the plan's `<threat_model>` (T-14-2
 - `figures/noise_robustness_quantum.{png,pdf,json}` — FOUND
 - `figures/shot_noise_robustness.{png,pdf,json}` — FOUND
 - All 7 commit hashes `bfdd93d / bf4664d / 57265bb / 1b63460 / 0c8cf68 / ac31814 / ea09265` present in `git log --oneline`
-- `run_figure_suite.py` modified (+1189 lines, 7 new render_* functions wired into main())
+- `scripts/run_figure_suite.py` modified (+1189 lines, 7 new render_* functions wired into main())
 - `core/` byte-frozen (D-14-22): `git diff --stat core/` empty
-- `verify_number_provenance.py` byte-frozen (D-14-16): `git diff --stat verify_number_provenance.py` empty
+- `scripts/verify_number_provenance.py` byte-frozen (D-14-16): `git diff --stat verify_number_provenance.py` empty

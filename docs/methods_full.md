@@ -11,7 +11,7 @@
 > `results/framework_versions.json`.
 >
 > Gate (executable success-criterion-5):
-> `./qgan_env/bin/python verify_number_provenance.py --target docs/methods_full.md`.
+> `./qgan_env/bin/python scripts/verify_number_provenance.py --target docs/methods_full.md`.
 > LaTeX equation strings are rendered verbatim from
 > `methods_full.json.buckets.2_models.<model>.training_objective.equation_latex*`;
 > never authored inline. The two documented manuscript contradictions
@@ -183,7 +183,7 @@ Training objective: WGAN-GP (same equations as § 2.a).
 | **Total** | **562 params** | `classical_architectures.json` models.vae.total_params / `model_info.json` parameter_count |
 
 Training objective: **ELBO** (variational autoencoder). The ELBO training
-loop lives in `run_baselines.py` (D-10-13) — **not** in
+loop lives in `scripts/run_baselines.py` (D-10-13) — **not** in
 `core/training.py` (which is WGAN-GP only).
 
 ```latex
@@ -464,7 +464,7 @@ matched-budget generator.
 ### §3.y — Utility-oriented evaluation at matched-budget Pipeline B (Plan 14-20)
 
 The TimeGAN-convention utility battery requested by R1-M2 is implemented
-in `run_utility.py` and `run_timegan_scores.py`. As of
+in `scripts/run_utility.py` and `scripts/run_timegan_scores.py`. As of
 Plan 14-20 (post-rebuttal-prep regime-alignment), the battery consumes
 the matched-budget Pipeline B artefacts at
 `results/matched2000/runs/<model_kind>/<seed>/` (2000 epochs,
@@ -475,10 +475,10 @@ R1-M2 utility analysis — a single matched-budget evidence base.
 
 | Metric | Driver | Output | TimeGAN convention |
 |---|---|---|---|
-| TSTR R²/MAE/RMSE | `run_utility.py` `run_tstr` | `results/tstr_matched2000.json` | 1-layer LSTM (hidden=32) soft sensor trained on pooled synthetic OD windows, evaluated on held-out real OD windows (n_eval_real = 320, n_train_synth = 19200 = 5 seeds × 3840) |
-| Predictive score | `run_timegan_scores.py` | `results/predictive_discriminative_matched2000.json` `scores[*].predictive_*` | Canonical Yoon et al. predictive_metrics.py (post-hoc one-step-ahead forecast objective, normalized error) |
-| Discriminative score | `run_timegan_scores.py` | `results/predictive_discriminative_matched2000.json` `scores[*].discriminative_*` | Canonical Yoon et al. discriminative_metrics.py — `discriminative_score = |classifier_accuracy − 0.5|`, lower is better, 0.0 optimal (synthetic at chance from real), 0.5 worst (classifier perfectly separates). Univariate-input adaptation: `hidden_dim = 10` per D-11-04 (the canonical `int(dim/2)` produces a degenerate zero-width GRU when dim = 1; see RESEARCH Pitfall 1 / Assumptions-Log A1) |
-| Augmentation lift | `run_utility.py` `run_augmentation` | `results/augmentation_matched2000.json` | Orlandi-style: same soft sensor trained on n_real ∈ {65} ∪ {65 + k × n_synth} for injection ratios k ∈ {+25%, +50%, +100%}; lift reported as Δr2/Δmae/Δrmse vs real-only baseline (D-11-06/07) |
+| TSTR R²/MAE/RMSE | `scripts/run_utility.py` `run_tstr` | `results/tstr_matched2000.json` | 1-layer LSTM (hidden=32) soft sensor trained on pooled synthetic OD windows, evaluated on held-out real OD windows (n_eval_real = 320, n_train_synth = 19200 = 5 seeds × 3840) |
+| Predictive score | `scripts/run_timegan_scores.py` | `results/predictive_discriminative_matched2000.json` `scores[*].predictive_*` | Canonical Yoon et al. predictive_metrics.py (post-hoc one-step-ahead forecast objective, normalized error) |
+| Discriminative score | `scripts/run_timegan_scores.py` | `results/predictive_discriminative_matched2000.json` `scores[*].discriminative_*` | Canonical Yoon et al. discriminative_metrics.py — `discriminative_score = |classifier_accuracy − 0.5|`, lower is better, 0.0 optimal (synthetic at chance from real), 0.5 worst (classifier perfectly separates). Univariate-input adaptation: `hidden_dim = 10` per D-11-04 (the canonical `int(dim/2)` produces a degenerate zero-width GRU when dim = 1; see RESEARCH Pitfall 1 / Assumptions-Log A1) |
+| Augmentation lift | `scripts/run_utility.py` `run_augmentation` | `results/augmentation_matched2000.json` | Orlandi-style: same soft sensor trained on n_real ∈ {65} ∪ {65 + k × n_synth} for injection ratios k ∈ {+25%, +50%, +100%}; lift reported as Δr2/Δmae/Δrmse vs real-only baseline (D-11-06/07) |
 
 **data_hash invariance gate (Plan 14-20).** The matched-budget driver
 mode asserts `91e447d4624e25b3` against `_compute_data_hash(csv_path)`
@@ -714,10 +714,10 @@ rows in any future revision table — see § 4 of this document.
   `results/classical_architectures.json`,
   `results/framework_versions.json`.
 - Gate command:
-  `./qgan_env/bin/python verify_number_provenance.py --target docs/methods_full.md`.
+  `./qgan_env/bin/python scripts/verify_number_provenance.py --target docs/methods_full.md`.
 - LaTeX equation strings are rendered verbatim from
   `results/methods_full.json` (never authored inline in this
   document).
 - The `rerun_command_template` block in § 5.2 is sliced verbatim from
   `run_matched2000.py:1-69` (module docstring) by
-  `run_methods_full.py` — never paraphrased.
+  `scripts/run_methods_full.py` — never paraphrased.

@@ -48,7 +48,7 @@ block — exists **only in the uncommitted working tree**. The committed
 - Working-tree `.gitignore` diff adds both `results/` AND the two negations
   `!results/` + `!results/**/*.json`.
 
-Why this is dangerous: `verify_freeze_ready.py` **PASSED** when I ran it, but it
+Why this is dangerous: `scripts/verify_freeze_ready.py` **PASSED** when I ran it, but it
 ran against the *working tree* `.gitignore` (which has the negations). Its
 gate-(a) "self-heal" appends the negation and `git add -f`s the JSON — but those
 edits are in the working tree and **uncommitted**. The 261 `results/*.json`
@@ -59,7 +59,7 @@ same commit**, every untracked `results/*` file becomes ignored.
 
 Required fix: commit the working-tree `.gitignore` **as a single atomic change**
 (the `results/` line and both `!results/` negations together), then
-re-run `verify_freeze_ready.py` and `git check-ignore results/*.json`
+re-run `scripts/verify_freeze_ready.py` and `git check-ignore results/*.json`
 against the committed state, and confirm `git archive <tagcandidate> | tar -t`
 still contains `results/*.json`. Do NOT tag until check-ignore is
 verified against the COMMITTED `.gitignore`.
@@ -87,7 +87,7 @@ revert the change deliberately — not freeze it by accident.
 The 14-07 plan `must_haves.artifacts` requires `docs/release.md`
 (min 30 lines) recording tag SHA, reserved version + concept DOI, the
 check-ignore result, and reproduce steps. `ls docs/` confirms the file
-is **absent** (no tracked copy, no untracked copy). `verify_freeze_ready.py`
+is **absent** (no tracked copy, no untracked copy). `scripts/verify_freeze_ready.py`
 does NOT check for it, so the gate passing does not cover this. The release
 record mandated by the plan does not yet exist.
 
@@ -125,7 +125,7 @@ these `.tex` files must be committed (note the literal space in the filename
 separately on Zenodo, document that decision in `release.md`. Either way this is
 an unresolved scope gap.
 
-### HIGH-3 — `verify_freeze_ready.py` validates the working tree, not the tag candidate
+### HIGH-3 — `scripts/verify_freeze_ready.py` validates the working tree, not the tag candidate
 
 The gate is correct in logic but operates on the live working tree: gate-(a)
 self-heals `.gitignore` and `git add -f`s files into the index, gate-(b) reads
@@ -145,7 +145,7 @@ working tree like the current one.
 `results/transform_ablation/{runs,_smoke_100ep_archive}/**/checkpoint.pt`
 — 18 tracked `*.pt` files at ~2,011,893 bytes each. They are tracked despite the
 `.gitignore *.pt` rule because they were `git add -f`'d by an earlier wave;
-tracked files override `.gitignore`. `verify_freeze_ready.py` deliberately
+tracked files override `.gitignore`. `scripts/verify_freeze_ready.py` deliberately
 tolerates them (all below the 25 MB `LARGE_CKPT_BYTES` threshold) and the
 destructive-git prohibition means this plan won't delete them. Net effect: the
 DOI archive carries ~42 MB of checkpoints (these 18 + the 6 MB
@@ -213,8 +213,8 @@ samples are a published artifact; if so commit, else leave out.
 | LICENSE at HEAD | PRESENT — PASS (working-tree deletion uncommitted — see CRITICAL re: pre-freeze commit) |
 | Committed secrets / ZENODO_TOKEN | NONE found — PASS |
 | `.tex` manuscripts tracked | NONE — FAIL vs D-14-21 (HIGH-2) |
-| `verify_freeze_ready.py` exists | YES (9.7 KB, well-formed, `raise AssertionError` idiom) — PASS |
-| `verify_freeze_ready.py` run result | exit 0, all three gates pass — PASS (but validates working tree, not tag — HIGH-3) |
+| `scripts/verify_freeze_ready.py` exists | YES (9.7 KB, well-formed, `raise AssertionError` idiom) — PASS |
+| `scripts/verify_freeze_ready.py` run result | exit 0, all three gates pass — PASS (but validates working tree, not tag — HIGH-3) |
 | `docs/release.md` exists | NO — FAIL (CRITICAL-3) |
 | Tag `v2.0-revision` exists | NO — not yet cut (expected; this is the gate before cutting) |
 
@@ -232,7 +232,7 @@ samples are a published artifact; if so commit, else leave out.
 4. Commit `results/baselines/runs/` metrics/config artifacts (HIGH-1).
 5. Decide and act on `.tex` manuscript inclusion (HIGH-2).
 6. Author and commit `docs/release.md` (CRITICAL-3).
-7. Re-run `python verify_freeze_ready.py` against the now-clean,
+7. Re-run `python scripts/verify_freeze_ready.py` against the now-clean,
    committed tree; confirm `git status --porcelain` is empty (HIGH-3).
 8. Verify `git check-ignore results/*.json` is empty against the
    committed `.gitignore`, then cut `git tag -a v2.0-revision`.

@@ -54,9 +54,9 @@ Pre-v1.0 50-bin histogram-density Wasserstein EMD reintroduced as a third compar
 
 | Task | Tag | Commit | Files |
 |---|---|---|---|
-| T1 | feat: dist-emd aggregator | `76430fd` | `run_distribution_emd.py` (NEW), `results/distribution_emd.json` (NEW) |
-| T2 | feat: 3-column comparable table | `abf41c0` | `run_model_info.py`, `docs/reconciliation_note.md` |
-| T3 | feat: qq_overlay figure | `36657ba` | `run_figure_suite.py`, `figures/qq_overlay.{png,pdf,json}` (NEW), 9 per-model `qq_<model>.json` (additive `caption_note`) |
+| T1 | feat: dist-emd aggregator | `76430fd` | `scripts/run_distribution_emd.py` (NEW), `results/distribution_emd.json` (NEW) |
+| T2 | feat: 3-column comparable table | `abf41c0` | `scripts/run_model_info.py`, `docs/reconciliation_note.md` |
+| T3 | feat: qq_overlay figure | `36657ba` | `scripts/run_figure_suite.py`, `figures/qq_overlay.{png,pdf,json}` (NEW), 9 per-model `qq_<model>.json` (additive `caption_note`) |
 | T4 | docs: reviewer-comms | `3a06894` | `docs/reviewer_response.md`, `docs/methods_full.md`, `docs/peer_review_remediation.md` |
 | T5 | docs: SUMMARY + sweep manifest | (this commit) | `docs/completeness_sweep_manifest.md`, `.planning/phases/14-paper-revision-release-freeze/14-15-SUMMARY.md` |
 
@@ -82,7 +82,7 @@ After this plan completes, **Phase 14 incomplete plans = `[14-07]`** only (Zenod
 
 ## Verification (10-point checklist)
 
-1. ✅ `run_distribution_emd.py` exists and is executable; emits `distribution_emd.json` with 9-model × 5-seed rows + per-(model, scale) aggregates (90 rows, 18 aggregates, `n=5` per aggregate, `headline_present=false` because `iqp_sel_55_headline/samples.npy` is not on disk in this corpus).
+1. ✅ `scripts/run_distribution_emd.py` exists and is executable; emits `distribution_emd.json` with 9-model × 5-seed rows + per-(model, scale) aggregates (90 rows, 18 aggregates, `n=5` per aggregate, `headline_present=false` because `iqp_sel_55_headline/samples.npy` is not on disk in this corpus).
 2. ✅ `distribution_emd.json` schema includes `metric_formulation` (the 50-bin density Wasserstein description: `scipy.stats.wasserstein_distance(bin_centers, bin_centers, real_hist_density, fake_hist_density) over 50-bin histograms (np.histogram(..., density=True))`), `data_hash: "91e447d4624e25b3"`, and `n: 5` aggregates.
 3. ✅ `reconciliation_note.md` carries BOTH the existing OLD/NEW OD-scale headline table (preserved verbatim from 14-13/14-14) AND the new 3-column comparable-variants table (`## EMD comparable across metric variants (matched 2000ep budget)`); the cross-reference paragraph (`**Cross-reference (Plan 14-15).**`) between them is present.
 4. ✅ The metric-redefinition disclosure paragraph in `reconciliation_note.md` is extended with the histogram-density acknowledgment sentence (the matched-2000ep histogram-density EMD on OD scale is computed on the SAME real-data slice and SAME 50-bin convention as the deprecated v1.0-pre metric, commensurate with the pre-v1.0 paper headline ~0.0015 for the first time since the v1.0 raw-sample switch).
@@ -113,7 +113,7 @@ Schema string in every PASS message: `'v2.1 (Phase 14 plan 14-14 — negative-si
 ## Self-Check: PASS
 
 - ✅ All 5 task commits exist in `git log --oneline` (76430fd, abf41c0, 36657ba, 3a06894 + this T5 commit).
-- ✅ `run_distribution_emd.py` exists (NEW top-level emitter).
+- ✅ `scripts/run_distribution_emd.py` exists (NEW top-level emitter).
 - ✅ `results/distribution_emd.json` exists with 90 rows + 18 aggregates.
 - ✅ `figures/qq_overlay.{png,pdf,json}` exist (`render_only: false`).
 - ✅ 9 per-model `qq_<model>.json` carry the additive `caption_note` field.

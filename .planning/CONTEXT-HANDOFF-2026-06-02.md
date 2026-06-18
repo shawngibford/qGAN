@@ -112,12 +112,12 @@ Plus the A2-sentinel regex prohibitions: "deployable framework", "industrial bio
 cd /Users/shawngibford/dev/phd/qGAN
 
 # Provenance gate (numeric literals → JSON)
-./qgan_env/bin/python verify_number_provenance.py --target "main (4) copy.tex"
-./qgan_env/bin/python verify_number_provenance.py --target "supp_material.tex"
-./qgan_env/bin/python verify_number_provenance.py --differential-test
+./qgan_env/bin/python scripts/verify_number_provenance.py --target "main (4) copy.tex"
+./qgan_env/bin/python scripts/verify_number_provenance.py --target "supp_material.tex"
+./qgan_env/bin/python scripts/verify_number_provenance.py --differential-test
 
 # Freeze gates a/b/c (gate d expected-deferred to 14-07)
-./qgan_env/bin/python verify_freeze_ready.py
+./qgan_env/bin/python scripts/verify_freeze_ready.py
 # (gate d failure is OK; flag any OTHER failure)
 
 # Clean compile — CRITICAL: grep '^! ' for actual errors, don't trust exit code alone

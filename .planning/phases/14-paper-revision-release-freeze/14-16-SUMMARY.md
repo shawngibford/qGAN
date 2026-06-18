@@ -64,10 +64,10 @@ which survive the corrections.
 | Task | Tag | Commit | Files |
 |---|---|---|---|
 | T1 | feat: R3-CR-2 LR-EMD scale fix | `5e37f9f` | `run_matched2000_dualscale.py`, `results/matched2000_dualscale.json` |
-| T2 | feat: R3-CR-1 + R3-HI-1 (dist-emd v2) | `088a49f` | `run_distribution_emd.py`, `results/distribution_emd.json` |
-| T3 | feat: welch_pairwise.json aggregator | `32209da` | `run_welch_aggregator.py` (NEW), `results/welch_pairwise.json` (NEW) |
+| T2 | feat: R3-CR-1 + R3-HI-1 (dist-emd v2) | `088a49f` | `scripts/run_distribution_emd.py`, `results/distribution_emd.json` |
+| T3 | feat: welch_pairwise.json aggregator | `32209da` | `scripts/run_welch_aggregator.py` (NEW), `results/welch_pairwise.json` (NEW) |
 | T4 | docs: reviewer_response.md Path A H2 | `028ef42` | `docs/reviewer_response.md` |
-| T5 | docs: methods_full + reconciliation_note | `4eccc07` | `run_model_info.py`, `docs/methods_full.md`, `docs/reconciliation_note.md` |
+| T5 | docs: methods_full + reconciliation_note | `4eccc07` | `scripts/run_model_info.py`, `docs/methods_full.md`, `docs/reconciliation_note.md` |
 | T6 | docs: figure verification + gate sweep | `61c69cb` | `figures/qq_overlay.json` |
 | T7 | docs: SUMMARY + remediation + manifest | (this commit) | `docs/peer_review_remediation.md`, `docs/completeness_sweep_manifest.md`, `.planning/.../14-16-SUMMARY.md` |
 
@@ -127,18 +127,18 @@ ROADMAP progress row flips to `14/16 | In Progress` post-merge.
 
 1. ✅ `run_matched2000_dualscale.py` `_log_return_rows` carries the R3-CR-2 fix (`trans_flat_raw = trans_flat * sigma + mu` un-standardize-fake).
 2. ✅ `matched2000_dualscale.json` re-emitted; OD-scale subset BYTE-IDENTICAL (SHA-256 `560489fa3b44...` preserved); corrected LR-EMD aggregates match `pipeline-review-r3.md` §2 anchors exactly (ar 0.00294 … vae 0.01583).
-3. ✅ `run_distribution_emd.py` `compute_histogram_density_emd` carries the R3-CR-1 fix (shared-edges + total-mass=1 + `fake_in_range_mass`); returns 2-tuple; SCHEMA bumped to v2.
+3. ✅ `scripts/run_distribution_emd.py` `compute_histogram_density_emd` carries the R3-CR-1 fix (shared-edges + total-mass=1 + `fake_in_range_mass`); returns 2-tuple; SCHEMA bumped to v2.
 4. ✅ `_real_references` carries the R3-HI-1 sister-fix — returns `norm_log_delta`; `_model_seed_rows` consumes the standardized reference for the log-return path.
 5. ✅ `distribution_emd.json` re-emitted under schema v2 with `fake_in_range_mass` per row + `fake_in_range_mass_mean` per aggregate.
-6. ✅ `run_welch_aggregator.py` (NEW) emits `welch_pairwise.json` with 40 quantum-classical pairs; OD-EMD strong-claim thresholds (floor Welch p 0.36, ceiling |d| 0.65) enforced before write; computed OD floor p = 0.3652, ceiling |d| = 0.6442.
+6. ✅ `scripts/run_welch_aggregator.py` (NEW) emits `welch_pairwise.json` with 40 quantum-classical pairs; OD-EMD strong-claim thresholds (floor Welch p 0.36, ceiling |d| 0.65) enforced before write; computed OD floor p = 0.3652, ceiling |d| = 0.6442.
 7. ✅ `welch_pairwise.json` `strong_claim_thresholds` block carries only OD-EMD thresholds (Path A); LR-EMD thresholds absent; `notes` field documents the r3-process retraction.
 8. ✅ `reviewer_response.md` R1-M1 row preserved verbatim; new `## Parametric-efficiency equivalence (post-r3 corrected metrics)` H2 with Path A strong claim + `### DTW addendum (Plan 14-16)`; withdrawn LR-EMD-vs-WGAN literals absent.
 9. ✅ `methods_full.md` §3.x gains three Plan 14-16 paragraphs (Log-return scale correction, Shared-edges formulation, DTW historical context).
-10. ✅ `reconciliation_note.md` re-emitted via `run_model_info.py`: OD column byte-stable; columns 2+3 regenerated from corrected JSONs; C-3 disclosure extended; 4th DTW column added.
+10. ✅ `reconciliation_note.md` re-emitted via `scripts/run_model_info.py`: OD column byte-stable; columns 2+3 regenerated from corrected JSONs; C-3 disclosure extended; 4th DTW column added.
 11. ✅ `cross_model_emd` confirmed OD-only and byte-stable (no re-render needed); `qq_overlay.json` carries `plan_14_16_verification` field; CR-1 determinism confirmed.
 12. ✅ `peer_review_remediation.md` carries `## Plan 14-16 — r3 forensic remediation` (with r3-process retraction subsection) + `## Plan 14-16 — DTW phantom asymmetry`; existing 14-13/14-14/14-15 sections preserved verbatim.
 13. ✅ `completeness_sweep_manifest.md` carries `## Plan 14-16` section; existing per-plan sections preserved verbatim.
-14. ✅ `core/` byte-untouched across all 7 tasks (D-14-22 preserved); `verify_number_provenance.py` byte-untouched (D-14-16 preserved).
+14. ✅ `core/` byte-untouched across all 7 tasks (D-14-22 preserved); `scripts/verify_number_provenance.py` byte-untouched (D-14-16 preserved).
 
 ## v2.1 number-provenance gate status (all 10 paper-facing docs)
 
@@ -160,7 +160,7 @@ Schema string in every PASS message: `'v2.1 (Phase 14 plan 14-14 — negative-si
 ## Self-Check: PASS
 
 - ✅ All 7 task commits exist in `git log --oneline` (5e37f9f, 088a49f, 32209da, 028ef42, 4eccc07, 61c69cb + this T7 commit).
-- ✅ `run_welch_aggregator.py` + `results/welch_pairwise.json` exist (NEW).
+- ✅ `scripts/run_welch_aggregator.py` + `results/welch_pairwise.json` exist (NEW).
 - ✅ `matched2000_dualscale.json` OD subset byte-identical; LR-EMD corrected.
 - ✅ `distribution_emd.json` schema v2 with `fake_in_range_mass`.
 - ✅ `reviewer_response.md` carries the Path A `## Parametric-efficiency equivalence` H2 + DTW addendum.
@@ -168,4 +168,4 @@ Schema string in every PASS message: `'v2.1 (Phase 14 plan 14-14 — negative-si
 - ✅ `peer_review_remediation.md` + `completeness_sweep_manifest.md` carry the Plan 14-16 sections.
 - ✅ This SUMMARY exists with Self-Check PASS and the `14-07`-only final-state declaration.
 - ✅ v2.1 gate PASSES on all 10 paper-facing docs.
-- ✅ `core/` + `verify_number_provenance.py` byte-untouched (D-14-22 + D-14-16 preserved).
+- ✅ `core/` + `scripts/verify_number_provenance.py` byte-untouched (D-14-22 + D-14-16 preserved).

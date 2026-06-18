@@ -25,7 +25,7 @@ introspection figures, (f) reports the full training protocol and dataset
 statistics rendered from JSON, (g) reframes the hypothesis and tones down
 overclaiming, and (h) freezes the repository with a citable DOI. Every
 quantitative claim is traceable to a `results/*.json` artifact via
-`verify_number_provenance.py`.
+`scripts/verify_number_provenance.py`.
 
 ---
 
@@ -71,7 +71,7 @@ quantitative claim is traceable to a `results/*.json` artifact via
 
 Every numeric claim in the revised manuscript is rendered from a
 `results/*.json` artifact and gated by
-`verify_number_provenance.py` (success criterion 5, D-14-16). Numbers
+`scripts/verify_number_provenance.py` (success criterion 5, D-14-16). Numbers
 that changed between the original submission (unfair 1000-epoch / 75-parameter
 regime) and the resubmission (matched 2000-epoch / 55-parameter regime) are
 recorded with their old/new basis in `docs/reconciliation_note.md`.
@@ -124,12 +124,12 @@ the atlas resolves to one of the five config-lock JSONs
 `results/default_75_config_lock.json`,
 `results/v1_config_lock.json`, `results/v2_config_lock.json`,
 `results/v3_config_lock.json`) and is gated by
-`verify_number_provenance.py` unmodified.
+`scripts/verify_number_provenance.py` unmodified.
 
 ### R1-M2 — Utility-oriented evaluation — matched-budget re-run (Plan 14-20)
 
 The TimeGAN-convention utility battery is implemented in
-`run_utility.py` + `run_timegan_scores.py` and, as of
+`scripts/run_utility.py` + `scripts/run_timegan_scores.py` and, as of
 Plan 14-20, consumes the matched-budget Pipeline B artefacts at
 `results/matched2000/runs/` (2000 epochs, 9 trainable
 model_kinds × 5 generator seeds = 45 cells, evaluated with 3 init seeds
@@ -276,7 +276,7 @@ explicitly addressed in §6 (Plan 14-11).
 
 Plans 14-09 / 14-10 / 14-11 collectively added the following new audited
 JSONs to the `results/*.json` rglob corpus of
-`verify_number_provenance.py` (gate unmodified, D-14-16):
+`scripts/verify_number_provenance.py` (gate unmodified, D-14-16):
 `default_75_config_lock.json`, `v1_config_lock.json`, `v2_config_lock.json`,
 `v3_config_lock.json` (Plan 14-09); 7 figure companion JSONs (Plan 14-10);
 `classical_architectures.json`, `framework_versions.json`, `methods_full.json`

@@ -40,28 +40,28 @@ git checkout v2.0-revision  # post-14-07; use `main` in the interim
 ```bash
 # Headline metric — single frozen-checkpoint evaluation on the audited
 # dataset hash; outputs results/headline_canonical.json.
-./qgan_env/bin/python run_canonical_headline.py
+./qgan_env/bin/python scripts/run_canonical_headline.py
 
 # Matched-budget dualscale sweep — aggregate mean/std across seeds 42-46
 # at the matched 2000-epoch budget; outputs
 # results/matched2000_dualscale.json#aggregates (the source of
 # truth for the EMD OD-scale reconciliation table).
-./qgan_env/bin/python run_matched2000_dualscale.py
+./qgan_env/bin/python scripts/run_matched2000_dualscale.py
 
 # Methods doc + companion JSON — re-emit
 # docs/methods_full.md from the live model_info.json,
 # classical_architectures.json, circuit_diagrams.json,
 # framework_versions.json, and the verbatim run_matched2000.py module
 # docstring (lines 1-69).
-./qgan_env/bin/python run_methods_full.py
+./qgan_env/bin/python scripts/run_methods_full.py
 
 # Figure suite — regenerate the figure PDFs/PNGs consumed by the
 # manuscript.
-./qgan_env/bin/python run_figure_suite.py
+./qgan_env/bin/python scripts/run_figure_suite.py
 
 # Provenance gate v2.1 — verify every numeric literal in the methods doc
 # resolves to a results/*.json artifact at the stated precision.
-./qgan_env/bin/python verify_number_provenance.py \
+./qgan_env/bin/python scripts/verify_number_provenance.py \
     --target docs/methods_full.md
 ```
 

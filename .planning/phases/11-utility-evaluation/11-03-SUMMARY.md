@@ -34,7 +34,7 @@ key-files:
 
 key-decisions:
   - "Rule 3: run-dir resolver falls back to canonical primary checkout for git-ignored baseline artifacts absent from worktree (D-11-08 forbids regeneration)"
-  - "Rule 3: sys.path bootstrap added so the documented bare-script invocation (python run_dualscale_fidelity.py) works"
+  - "Rule 3: sys.path bootstrap added so the documented bare-script invocation (python scripts/run_dualscale_fidelity.py) works"
   - "Real log_return EMD reference = d_real['log_delta'] (exact array _build_baseline_notebook.py:290 uses) so numbers reconcile with baseline_comparison.json"
   - "Pipeline A log_return rows emitted as explicit value:null + scale_na_reason (rectangular schema, T-11-08/T-11-09)"
 
@@ -62,7 +62,7 @@ completed: 2026-05-18
 - **Files modified:** 2 (1 driver created, 1 JSON artifact emitted)
 
 ## Accomplishments
-- `run_dualscale_fidelity.py` (521 lines) — CLI driver patterned on `run_baselines.py`, with verbatim `reconstruct_od` + 50-baseline-config data_hash assert (Pitfall 4: no quantum grep).
+- `scripts/run_dualscale_fidelity.py` (521 lines) — CLI driver patterned on `scripts/run_baselines.py`, with verbatim `reconstruct_od` + 50-baseline-config data_hash assert (Pitfall 4: no quantum grep).
 - `results/fidelity_dualscale.json` — 3360 rows; every row carries an explicit `scale ∈ {OD, log_return}`; full 6 model_kinds × 2 pipelines × 5 seeds OD coverage (60 runs).
 - Pipeline-B `log_return`-scale EMD reconciles with `baseline_comparison.json`'s `scale="transformed"` rows with zero numeric drift (verified across quantum/wgan_mlp/vae × seeds 42,46).
 - Pipeline-A `log_return` rows emitted as explicit `value: null` + `scale_na_reason` (840 null rows = rectangular schema, no silent omission — T-11-08/T-11-09).
@@ -76,7 +76,7 @@ Each task was committed atomically:
 2. **Task 2: Scale-tagged metric loop + write fidelity_dualscale.json** - `c24a972` (feat)
 
 ## Files Created/Modified
-- `run_dualscale_fidelity.py` - EVAL-05 scale-tagged fidelity re-emit driver; verbatim `reconstruct_od`, run-dir resolver with canonical-checkout fallback, `emit_rows` scale-tagging loop reusing `revision.core.eval` helpers unchanged.
+- `scripts/run_dualscale_fidelity.py` - EVAL-05 scale-tagged fidelity re-emit driver; verbatim `reconstruct_od`, run-dir resolver with canonical-checkout fallback, `emit_rows` scale-tagging loop reusing `revision.core.eval` helpers unchanged.
 - `results/fidelity_dualscale.json` - 3360 long-form dual-scale rows `{model_kind, pipeline, seed, metric_name, scale, value[, scale_na_reason]}`; top-level `schema`, `model_kinds`, `pipelines`, `seeds`, `data_hash`, `data_hash_verification`, `metric_helpers`, `rows`.
 
 ## Decisions Made
@@ -97,10 +97,10 @@ Each task was committed atomically:
 
 **2. [Rule 3 - Blocking] sys.path bootstrap for bare-script invocation**
 - **Found during:** Task 2 (driver end-to-end run)
-- **Issue:** `python run_dualscale_fidelity.py` (the documented invocation) does not put the repo root on `sys.path`, so `from revision.core import ...` raised `ModuleNotFoundError`. The plan's verify command worked only because it injected `sys.path.insert(0,'.')`.
+- **Issue:** `python scripts/run_dualscale_fidelity.py` (the documented invocation) does not put the repo root on `sys.path`, so `from revision.core import ...` raised `ModuleNotFoundError`. The plan's verify command worked only because it injected `sys.path.insert(0,'.')`.
 - **Fix:** Added `_bootstrap_repo_on_path()` (walks up to the dir holding `core/preprocessing.py`, prepends to `sys.path`) — the same bootstrap the notebook generators use — called before the `revision.*` imports.
 - **Files modified:** run_dualscale_fidelity.py
-- **Verification:** `./qgan_env/bin/python run_dualscale_fidelity.py` runs end-to-end (~3:51, under 10-min budget); 3360 rows emitted.
+- **Verification:** `./qgan_env/bin/python scripts/run_dualscale_fidelity.py` runs end-to-end (~3:51, under 10-min budget); 3360 rows emitted.
 - **Committed in:** c24a972 (Task 2 commit)
 
 ---

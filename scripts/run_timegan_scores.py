@@ -73,7 +73,7 @@ if str(REPO) not in sys.path:
 from core.preprocessing import inverse_logreturns  # noqa: E402
 from core.data import load_and_preprocess, rolling_window  # noqa: E402
 from core import WINDOW_LENGTH  # noqa: E402
-from _wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
+from core._wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
 
 # Matched-budget driver mode (14-20): 9 trainable model_kinds × 1 pipeline (B)
 # × 5 seeds = 45 frozen cells under results/matched2000/runs/<mk>/<seed>/.

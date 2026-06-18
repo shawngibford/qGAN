@@ -25,7 +25,7 @@ across two independent failure domains:
 2. **The working tree is dirty and the freeze gate is structurally weak.** The
    `.gitignore` protections for the provenance backbone exist only uncommitted;
    `real.csv`/`fake.csv` have drifted on every row; the mandated `release.md` does not
-   exist; `verify_freeze_ready.py` validates the dirty working tree rather than the tag
+   exist; `scripts/verify_freeze_ready.py` validates the dirty working tree rather than the tag
    candidate.
 
 Separately, the surviving **OD-EMD "parametric-efficiency equivalence" claim is
@@ -87,7 +87,7 @@ working-tree hygiene, and claim wording, not the science pipeline.
 | H4 | 5 (H-3) | Orlandi-reference DTW comparison is anchored to the stale, non-reproducible 0.6843 |
 | H5 | 3 (HIGH-1) | Review worktrees were provisioned at stale commits; the DOI must be minted from current HEAD `8180a5e` (verified freeze-candidate state) |
 | H6 | 6 (HIGH-1) | `results/baselines/runs/` (47 MB, 250 files) is untracked — classical-baseline comparison numbers cannot be reproduced from the deposit; commit at least the metrics.json/config.yaml |
-| H7 | 6 (HIGH-3) | `verify_freeze_ready.py` validates the live (dirty) working tree, not the committed tag candidate — a green run does not certify the tag |
+| H7 | 6 (HIGH-3) | `scripts/verify_freeze_ready.py` validates the live (dirty) working tree, not the committed tag candidate — a green run does not certify the tag |
 
 ### MEDIUM (12)
 
@@ -153,7 +153,7 @@ ships license-less.
 12. Decide `.tex` tracking; `git add` + commit the revised `.tex` files and `bib.bib`.
 13. Author and commit `docs/release.md` per the 14-07 spec.
 14. Fix `requirements-pinned.txt`: add `fastdtw`, pin `pandas<3.0`.
-15. Re-run `verify_freeze_ready.py` against the now-clean **committed** tree; confirm
+15. Re-run `scripts/verify_freeze_ready.py` against the now-clean **committed** tree; confirm
     `git status --porcelain` is empty; verify `git check-ignore results/*.json`
     against the committed `.gitignore`; then cut `git tag v2.0-revision` from HEAD and
     confirm `git archive` contains `results/*.json`, `data.csv`, `LICENSE`.

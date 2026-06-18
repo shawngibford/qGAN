@@ -95,7 +95,7 @@ finding-to-commit table. Coverage:
 ## Verification (12-point checklist, end of T5)
 
 1. ✅ v2.1 gate PASSES on all 10 paper-facing docs.
-2. ✅ Differential test (`./qgan_env/bin/python verify_number_provenance.py --differential-test`) PASSES.
+2. ✅ Differential test (`./qgan_env/bin/python scripts/verify_number_provenance.py --differential-test`) PASSES.
 3. ✅ `training_time_device` captured pre-.to(cpu) in `_train_quantum`, `_train_wgan`, `_train_vae`; `_device_manifest` accepts `training_time_device` kw-only; backward-compat fallback preserved.
 4. ✅ `methods_full.md §3.x.d` carries the corrected β_eff = 2.5 derivation citing `run_baselines.py:315-319`; `§2.i` carries the VAE-not-param-matched caveat.
 5. ✅ `reconciliation_note.md` interpretation paragraph carries Welch t-test (p ≥ 0.37) + wgan_cnn -0.059 + seed-42 outliers framing; table rows + 14-12 caveat + 14-13 disclosure preserved verbatim.
@@ -133,8 +133,8 @@ All schemas read `'v2.1 (Phase 14 plan 14-14 — negative-sign-aware lookbehind)
 
 - **Found during:** Task 1 verify (`verify_number_provenance.py --target docs/methods_full.md` failed with `26.0` unresolved).
 - **Issue:** The doc renders the platform identifier `macOS-26.0.1-arm64-arm-64bit` verbatim. The numeric extractor pulls `26.0` from the doc and prior to v2.1 it incidentally matched the same `26.0` substring inside the JSON's platform string (because the v2 lookbehind `(?<![\d.])` did not exclude `-`, so the `s-` in `macOS-` did not block the match). Under v2.1 the lookbehind correctly rejects this incidental match — exactly the kind of false positive the upgrade was designed to surface — but the platform string is a legitimate single OS-identifier token that should not be split into component digits.
-- **Fix:** Extended `_ID_PATTERNS` in `verify_number_provenance.py` with `r"macOS-\d+(?:\.\d+)*-[\w-]+"` to strip the platform identifier as a single token (consistent with the existing strips for D-14-13, arXiv IDs, etc.).
-- **Files modified:** `verify_number_provenance.py`
+- **Fix:** Extended `_ID_PATTERNS` in `scripts/verify_number_provenance.py` with `r"macOS-\d+(?:\.\d+)*-[\w-]+"` to strip the platform identifier as a single token (consistent with the existing strips for D-14-13, arXiv IDs, etc.).
+- **Files modified:** `scripts/verify_number_provenance.py`
 - **Commit:** `8e0867b`
 
 **2. [Rule 1 - Bug] Plan's T3 automated verify block was too strict on the historical 0.4 reference**

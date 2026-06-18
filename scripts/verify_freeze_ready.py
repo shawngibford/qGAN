@@ -63,7 +63,7 @@ from pathlib import Path
 
 # Repo-root resolver (run_multiseed_rollup.py idiom): this file lives at
 # <repo>/verify_freeze_ready.py.
-REPO_ROOT = Path(__file__).resolve().parent
+REPO_ROOT = Path(__file__).resolve().parent.parent
 RESULTS_DIR = REPO_ROOT / "results"
 GITIGNORE = REPO_ROOT / ".gitignore"
 
@@ -205,7 +205,7 @@ def gate_a_gitignore_archive() -> None:
 
 def gate_b_number_provenance() -> None:
     """(b) Every paper-blocks file must pass the number-provenance gate."""
-    gate = REPO_ROOT / "verify_number_provenance.py"
+    gate = REPO_ROOT / "scripts" / "verify_number_provenance.py"
     if not gate.exists():
         raise AssertionError(
             f"number-provenance gate missing: {gate} — cannot certify the "

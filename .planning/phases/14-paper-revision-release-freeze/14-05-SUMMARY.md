@@ -115,7 +115,7 @@ completed: 2026-05-19
 - **Pre-existing env-only test failure (out-of-scope, NOT re-logged):** the Phase-10 `samples.npy`-missing `test_utility.py` failure recorded by 14-01 in `deferred-items.md` is unrelated to this docs-only plan (no test run, no code path touched). No fix attempted (correct per scope-boundary rule).
 
 ## Next Phase Readiness
-- **Claim-calibration + circuit-rationale core delivered:** PAPER-01..05 are copy-paste LaTeX blocks keyed to `\label`/anchor + line citation + reviewer rationale, every number JSON-traceable, gate-PASS. Downstream 14-06/14-07 (remaining PAPER requirements, reviewer-response doc, release freeze) can cite/extend this file directly; it is gated by the same `verify_number_provenance.py` used in 14-03.
+- **Claim-calibration + circuit-rationale core delivered:** PAPER-01..05 are copy-paste LaTeX blocks keyed to `\label`/anchor + line citation + reviewer rationale, every number JSON-traceable, gate-PASS. Downstream 14-06/14-07 (remaining PAPER requirements, reviewer-response doc, release freeze) can cite/extend this file directly; it is gated by the same `scripts/verify_number_provenance.py` used in 14-03.
 - **D-14-18 invariant intact:** no `.tex` edited (untracked in worktree → empty diff by construction); blocks are external Overleaf copy-paste targets.
 - **D-14-20 honoured:** PAPER-02 de-overclaiming applied unconditionally; the matched-budget non-superiority result is stated honestly throughout (PAPER-01b/02b/02c/02d/03).
 - **No blockers.** Pure documentation authoring — no training, no re-run; the matched2000 sweep + headline + figure suite remain byte-frozen (14-01..04 invariants intact).
@@ -125,7 +125,7 @@ None — every numeric literal in `paper_blocks_framing.md` resolves to a real `
 
 ## Threat Surface Scan
 No new network endpoints, auth paths, or external file-access patterns. Both plan trust boundaries are mitigated as specified:
-- **2000ep JSON → LaTeX block (T-14-13):** every numeric literal annotated with its JSON source; `verify_number_provenance.py` explicit-raise gate is a hard pass criterion — full-file exit 0, 23 literals resolved. Non-resolving rounded means were deliberately kept out of the manuscript body.
+- **2000ep JSON → LaTeX block (T-14-13):** every numeric literal annotated with its JSON source; `scripts/verify_number_provenance.py` explicit-raise gate is a hard pass criterion — full-file exit 0, 23 literals resolved. Non-resolving rounded means were deliberately kept out of the manuscript body.
 - **revision package → in-repo .tex (T-14-16):** the `.tex` files are untracked in the worktree; `git diff --stat -- "main (4) copy.tex" supp_material.tex` is empty by construction — no accidental edit possible (D-14-18).
 - **T-14-15 (overclaim reintroduction):** PAPER-02 LOCKED before→after blocks present for each named overclaim phrase, grep-verified.
 - **T-14-SC (package installs):** none in this plan (documented no-op).

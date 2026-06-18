@@ -2,7 +2,7 @@
 
 > **Source of truth:** every numeric literal in this doc resolves to one of the five
 > config-lock JSONs under `results/` (canonical, default_75, v1, v2, v3).
-> Re-run `run_circuit_diagrams.py` to (re)generate the locks AND the figures
+> Re-run `scripts/run_circuit_diagrams.py` to (re)generate the locks AND the figures
 > together; `verify_number_provenance.py --target docs/circuit_atlas.md`
 > is the executable gate that proves every literal here resolves to a
 > `results/*.json` value (success criterion 5). All five circuit diagrams are
@@ -175,7 +175,7 @@ final_rotation), and the rows above cover the cross-product the manuscript repor
   - `results/v1_config_lock.json`
   - `results/v2_config_lock.json`
   - `results/v3_config_lock.json`
-- All five circuit diagrams were emitted by `run_circuit_diagrams.py`
+- All five circuit diagrams were emitted by `scripts/run_circuit_diagrams.py`
   using `qml.draw_mpl(qnode, style="pennylane")` — never a bespoke matplotlib
   gate drawing.
-- Gated by `./qgan_env/bin/python verify_number_provenance.py --target docs/circuit_atlas.md`.
+- Gated by `./qgan_env/bin/python scripts/verify_number_provenance.py --target docs/circuit_atlas.md`.

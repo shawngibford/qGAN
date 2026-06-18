@@ -81,7 +81,7 @@ from core.eval import (  # noqa: E402
     compute_moments,
 )
 from core.preprocessing import inverse_logreturns  # noqa: E402
-from _wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
+from core._wgan_unscale import _unscale_wgan_samples  # noqa: E402  Plan 14-21 T01
 
 # ---------------------------------------------------------------------------
 # Constants (verbatim with the canonical peer drivers)

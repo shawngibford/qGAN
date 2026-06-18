@@ -30,7 +30,7 @@ artifacts, not back-fits. D-14-22 (`core/` byte-freeze) is
 returns zero bytes. But the gate v2 rewrite still admits some false
 positives, the `training_time_device` field captures the
 post-sample-generation device (not training-time), and the f-string emit
-in `run_methods_full.py` now cites the wrong line number for the
+in `scripts/run_methods_full.py` now cites the wrong line number for the
 generator `*0.1` cast.
 
 ## Methodology
@@ -39,7 +39,7 @@ I read all 7 remediation commits via `git show <sha>`, then re-read the
 final state of each modified file, then ran the gate against every
 paper-facing doc (`methods_full.md`, `reconciliation_note.md`,
 `paper_blocks_framing.md`), enabled `--manifest` to inspect which JSON
-key each numeric literal resolved to, and ran `verify_freeze_ready.py`
+key each numeric literal resolved to, and ran `scripts/verify_freeze_ready.py`
 end-to-end. I also ran a battery of regex edge-case tests against the
 gate v2's `_resolves` boundary regex and `_ID_PATTERNS` strip patterns.
 I verified the checkpoint sha256 against the lock JSON
@@ -281,7 +281,7 @@ freeze gate only enforces 3.
 
 **Recommended fix:** Extend `PAPER_BLOCKS` to cover all 9 docs, or
 extract a `PROVENANCE_GATED_DOCS` list that both 14-13 SUMMARY's
-verify section and `verify_freeze_ready.py` import from.
+verify section and `scripts/verify_freeze_ready.py` import from.
 
 #### R2-MED-4: `_ID_PATTERNS` `line ~?N` strip can swallow legitimate data
 **File:** `verify_number_provenance.py:114`
@@ -358,7 +358,7 @@ bucket_3 = {
     ...
 }
 ```
-The HI-2 fix in `run_model_info.py` correctly sets `optimizer_betas =
+The HI-2 fix in `scripts/run_model_info.py` correctly sets `optimizer_betas =
 None` for VAE/AR, but `methods_full.json#buckets.3_training.optimizer_betas`
 unconditionally pulls from the WGAN repro entry. Since bucket_3 is
 documented as the WGAN-GP training protocol, this is internally
@@ -446,7 +446,7 @@ and 7 LOW/INFO. I spot-checked the resolution claims:
 | **HI-3** data_hash gate mutual-equality only | **RESOLVED** | `EXPECTED_DATA_HASH = "91e447d4624e25b3"` + explicit-raise added to `run_model_info.py:740`. Gate now enforces equality to the literal. |
 | **HI-4** hardcoded topology | **RESOLVED** | Reads `decomp.get("gate_layout", {}).get("entangler", "range")` with a `"range"` fallback default — safe. |
 | **HI-5** `model_kinds` excludes headline | **RESOLVED** | `MODEL_KINDS + [HEADLINE_MODEL_KIND]` in the dualscale emitter. |
-| **HI-6** freeze gate glob vs verifier rglob | **RESOLVED** | `verify_freeze_ready.py` now uses `RESULTS_DIR.rglob("*.json")` consistently. Negation written as `!results/**/*.json`. |
+| **HI-6** freeze gate glob vs verifier rglob | **RESOLVED** | `scripts/verify_freeze_ready.py` now uses `RESULTS_DIR.rglob("*.json")` consistently. Negation written as `!results/**/*.json`. |
 | **HI-7** `_train_vae` lacks np/random seed | **RESOLVED (defensive)** | Both seeds added. Functionally no current change (see R2-MED-5) but defense-in-depth is good. |
 | **HI-8** `default=float` NaN/Inf serialization | **RESOLVED** | `_finite_sanitize` + `_dumps_finite` with 5% threshold. Minor latent footgun with numpy arrays (R2-MED-2). |
 | **HI-9** subprocess re-spawn in sweep harness | **NOT ADDRESSED** | Original review flagged this as performance-only. The 14-13 sweep did not touch the sweep harness. Acceptable. |
@@ -476,10 +476,10 @@ counted as "addressed with reservations," not "closed."
 2. **The data_hash explicit-raise pattern is exemplary.** Adding
    `EXPECTED_DATA_HASH = "91e447d4624e25b3"` at module top and a
    loud-failing comparison is exactly the right idiom for dataset
-   integrity. The fix is symmetric across `run_model_info.py`,
+   integrity. The fix is symmetric across `scripts/run_model_info.py`,
    `run_matched2000_dualscale.py`, and the new emitters
-   (`run_circuit_diagrams.py`, `run_classical_arch_extract.py`,
-   `run_framework_versions.py`).
+   (`scripts/run_circuit_diagrams.py`, `scripts/run_classical_arch_extract.py`,
+   `scripts/run_framework_versions.py`).
 
 3. **Gate v2 is meaningfully tighter than v1.** The
    `(?<![\d.])token(?![\d])` boundary regex eliminates the entire class

@@ -44,7 +44,7 @@ W1 (Main-Reframer) inspects the current title against the §4.1 prohibition on "
 
 ## Cross-Cutting Constraints (every agent)
 
-1. **Numeric literals**: every value in the .tex must trace to a JSON cell in `results/`. The provenance gate (`verify_number_provenance.py`) enforces this. Writers must include a `json_source` reference in their return for every new literal.
+1. **Numeric literals**: every value in the .tex must trace to a JSON cell in `results/`. The provenance gate (`scripts/verify_number_provenance.py`) enforces this. Writers must include a `json_source` reference in their return for every new literal.
 2. **Prohibition list (§4.1)**: 8 hard rules. A2 enforces deterministically. Hard-blocking phrases:
    - "posterior collapse" (VAE characterization)
    - "4×10⁻⁴" / `4 \times 10^{-4}` (the withdrawn VAE std)

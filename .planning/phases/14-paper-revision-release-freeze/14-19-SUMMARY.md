@@ -41,7 +41,7 @@ metrics:
 
 # Phase 14 Plan 19: Pre-Freeze Working-Tree Hygiene & Hardened Freeze Gate Summary
 
-Established a clean, deliberately-committed `v2.0-revision` tag-candidate tree and hardened `verify_freeze_ready.py` to certify the committed tree rather than a dirty working tree — closing SYNTHESIS C4, C5, C6, H5, H6, H7, M4, M10, M11, M12 so plan 14-07 can cut the tag and mint the Zenodo DOI against a trustworthy tree at a known commit.
+Established a clean, deliberately-committed `v2.0-revision` tag-candidate tree and hardened `scripts/verify_freeze_ready.py` to certify the committed tree rather than a dirty working tree — closing SYNTHESIS C4, C5, C6, H5, H6, H7, M4, M10, M11, M12 so plan 14-07 can cut the tag and mint the Zenodo DOI against a trustworthy tree at a known commit.
 
 ## Freeze Candidate
 
@@ -49,7 +49,7 @@ Established a clean, deliberately-committed `v2.0-revision` tag-candidate tree a
 
 This is the post-14-19 committed HEAD — the commit that contains all of 14-17 (manuscript revision), 14-18 (claims recalibration) and 14-19 (hygiene + hardened gate). **Plan 14-07 MUST cut `v2.0-revision` from THIS exact commit** — not from `8180a5e`, not from `7aa3c58`, and not from any review worktree commit (SYNTHESIS H5 / Agent 3 HIGH-1: the review worktrees were provisioned at stale commits; the DOI must be minted from the current verified freeze-candidate HEAD).
 
-`./qgan_env/bin/python verify_freeze_ready.py` was run against this committed HEAD and confirms it evaluates the committed tree:
+`./qgan_env/bin/python scripts/verify_freeze_ready.py` was run against this committed HEAD and confirms it evaluates the committed tree:
 
 - `(0)` clean-tree OK — `git status --porcelain` is empty
 - `(a)` gitignore/archive OK — `git check-ignore` empty; 899 tracked paths under `revision/results`
@@ -100,10 +100,10 @@ The hardened gate's `gate_zero_clean_tree()` requires `git status --porcelain` t
 ### Auto-fixed / Adjusted Items
 
 **1. [Rule 3 - Blocking] Removed the gate's self-heal block**
-- **Found during:** Task 3 — hardening `verify_freeze_ready.py`.
+- **Found during:** Task 3 — hardening `scripts/verify_freeze_ready.py`.
 - **Issue:** The plan said to harden the gate to assert a clean working tree, but the existing `gate_a_gitignore_archive()` contained a self-heal block that appends to `.gitignore` and runs `git add -f`. A self-heal that mutates the working tree directly contradicts the new clean-tree assertion (a green run would have just dirtied the tree).
 - **Fix:** Removed the self-heal block; the gate now reads the committed `HEAD:.gitignore`, verifies the negation is present, and fails hard if any provenance JSON is ignored. The atomic `.gitignore` commit in Task 2 makes self-heal unnecessary.
-- **Files modified:** `verify_freeze_ready.py`
+- **Files modified:** `scripts/verify_freeze_ready.py`
 - **Commit:** `6518323`
 
 **2. [Plan-anticipated] .tex files not re-committed**
@@ -127,7 +127,7 @@ No tag was cut, no Zenodo deposit performed, `core/` untouched (byte-frozen D-11
 - `requirements-pinned.txt` contains `fastdtw` + `pandas<3.0` — FOUND
 - Committed `.gitignore` contains `!results/`; `git check-ignore` empty for provenance JSON — VERIFIED
 - 50 `metrics.json` + 50 `config.yaml` tracked under `results/baselines/runs/` — FOUND
-- `verify_freeze_ready.py` asserts `status --porcelain` + `release.md`, reads committed tree — FOUND
+- `scripts/verify_freeze_ready.py` asserts `status --porcelain` + `release.md`, reads committed tree — FOUND
 - Commits `b22107d`, `4592bfb`, `6518323` exist — FOUND
 - `git status --porcelain` empty — VERIFIED
 - Hardened gate run against `6518323`: gates 0/a/b/c PASS, gate d fails as designed — VERIFIED

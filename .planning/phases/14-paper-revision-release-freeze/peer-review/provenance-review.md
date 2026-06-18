@@ -1,7 +1,7 @@
 # Provenance / Numerical-Claims Peer Review
 
 **Reviewer role:** numerical-claims / provenance auditor (independent of the 14-12 executor).
-**Method:** ran `verify_number_provenance.py` end-to-end on all 9 paper-facing docs; spot-checked 10 random load-bearing literals against their claimed source JSONs; audited gate internals (`_NUM`, `_ID_PATTERNS`, `_ALLOW`, `_json_blobs` rglob); checked `data_hash` consistency across paper-facing JSONs; checked cross-artifact field consistency; checked headline-vs-repro conflation; checked R²<0 honesty; investigated the reconciliation_note.md failure.
+**Method:** ran `scripts/verify_number_provenance.py` end-to-end on all 9 paper-facing docs; spot-checked 10 random load-bearing literals against their claimed source JSONs; audited gate internals (`_NUM`, `_ID_PATTERNS`, `_ALLOW`, `_json_blobs` rglob); checked `data_hash` consistency across paper-facing JSONs; checked cross-artifact field consistency; checked headline-vs-repro conflation; checked R²<0 honesty; investigated the reconciliation_note.md failure.
 
 **Bottom line.** The provenance gate is *mostly* faithful and the high-volume paper-facing numbers (methods_full, training_protocol, dataset_stats, circuit_atlas, paper_blocks_framing/refs_methods, reviewer_response) resolve correctly to source JSON fields at the right precision. **However, three substantive issues exist:** (1) `reconciliation_note.md` mixes scales — its "NEW (2000ep)" column is on a different scale than its "OLD (1000ep)" column, making every delta in that table meaningless; (2) the gate has at least two latent false-positive resolution paths that already triggered on paper-facing literals; (3) data_hash invariant is enforced inconsistently — most paper-facing JSONs lack the field, including all five config-lock JSONs and every figure companion JSON.
 
@@ -40,13 +40,13 @@ Two of the four deltas are rounded inconsistently with the subtraction (last-dig
 
 ### §2.b — Gate failure mode
 
-The gate (`verify_number_provenance.py`) doesn't compute or recognize arithmetic derivations — it only checks substring-presence or float-precision presence in the JSON corpus. Two of these derived deltas (`+0.116935`, `+0.093946`) silently **pass via the float-precision path**, because they happen to round-match unrelated numbers (`0.116934599…` and `0.093946342…`) elsewhere in the corpus. The two that fail (`+0.127413`, `-0.011286`) are unlucky enough to have no coincidental match.
+The gate (`scripts/verify_number_provenance.py`) doesn't compute or recognize arithmetic derivations — it only checks substring-presence or float-precision presence in the JSON corpus. Two of these derived deltas (`+0.116935`, `+0.093946`) silently **pass via the float-precision path**, because they happen to round-match unrelated numbers (`0.116934599…` and `0.093946342…`) elsewhere in the corpus. The two that fail (`+0.127413`, `-0.011286`) are unlucky enough to have no coincidental match.
 
 ### §2.c — Resolution options
 
 Both are arithmetically correct subtractions (modulo the last-digit rounding for the wgan_mlp and wgan_lstm cells — see §3-CRIT-1 for a deeper concern). Two routes:
 
-- **(a) Add audited delta fields.** Emit a new JSON `results/reconciliation_deltas.json` with explicit `delta` fields computed from the same source numbers; the gate would then resolve them by substring match. Re-run `run_model_info.py` or a dedicated `run_reconciliation.py` emitter. This is the cleaner option but adds an artifact.
+- **(a) Add audited delta fields.** Emit a new JSON `results/reconciliation_deltas.json` with explicit `delta` fields computed from the same source numbers; the gate would then resolve them by substring match. Re-run `scripts/run_model_info.py` or a dedicated `scripts/run_reconciliation.py` emitter. This is the cleaner option but adds an artifact.
 - **(b) Document the limitation.** Leave as-is; record that the gate cannot recognize arithmetic derivations and the reconciliation_note.md FAIL is expected. This is what `completeness_sweep_manifest.md:105` already does.
 
 **Recommendation:** Option (b) does NOT discharge the deeper §3-CRIT-1 problem (the reconciliation table is wrong-scale on the NEW column). Fix the table first; the gate failure will resolve itself once the table is restated correctly against either `matched2000_dualscale.json` aggregates or the (existing) `multiseed_summary.json` rollup mechanism.

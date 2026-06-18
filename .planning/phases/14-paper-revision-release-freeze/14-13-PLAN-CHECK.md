@@ -91,7 +91,7 @@ These are two different strings; check 3's grep target won't appear in the emitt
 | 2 | Cross-task dependencies — T2 before T7; T3 before T7 | PASS (T3 depends on T2's v2 gate; T7 reruns the gate against T3/T4/T5 emits) |
 | 3 | Atomic commit boundaries — file edits per task non-overlapping | PASS (methods_full.md edited in T1+T3+T5+T6 but at distinct sections §4.1+§5.1 / §2.k / CR-4 disclosure / §3.x+§2.i+§2.j) |
 | 4 | `core/` byte-freeze preserved | PASS (every task's verify block asserts `[ -z "$(git diff --stat core/)" ]`) |
-| 5 | D-14-16 lift scope — Task 2 is the only task editing `verify_number_provenance.py` | PASS |
+| 5 | D-14-16 lift scope — Task 2 is the only task editing `scripts/verify_number_provenance.py` | PASS |
 | 6 | File:line citations — 100% accurate spot-check | PASS (`run_methods_full.py:466-468`, `verify_number_provenance.py:119`, `run_figure_suite.py:382`, `run_figure_suite.py:1117`, `run_figure_suite.py:1146`, `run_figure_suite.py:620-654`, `run_matched2000.py:344`, `run_matched2000.py:434-492`, `run_matched2000_dualscale.py:522`, `eval.py:25-36`, `verify_freeze_ready.py:82,116`, `run_canonical_headline.py:280,334` — all verified live) |
 | 7 | Verification section actionability | PASS-WITH-FIXES (12 checks runnable, but check 3 has caption-string mismatch — M-CHK-1) |
 | 8 | Resume-after-clear flow — foreground-executor requirement | PASS (line 1607–1610 explicitly cites the canonical reference) |

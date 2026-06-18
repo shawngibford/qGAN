@@ -1,6 +1,6 @@
 # Dataset Statistics — Single-Campaign LUCY Photobioreactor
 
-> **Source of truth:** every count below is rendered FROM `results/model_info.json` (the `dataset` block, DERIVED from `data.csv` + the locked window config) by `run_model_info.py`. NO hand-typed numbers; `verify_number_provenance.py` is the executable gate.
+> **Source of truth:** every count below is rendered FROM `results/model_info.json` (the `dataset` block, DERIVED from `data.csv` + the locked window config) by `scripts/run_model_info.py`. NO hand-typed numbers; `scripts/verify_number_provenance.py` is the executable gate.
 
 This document characterizes the single-campaign dataset that backs all v2.0 evaluation work. Counts are derived from live data.csv inspection + the locked rolling-window config — never hand-typed.
 
