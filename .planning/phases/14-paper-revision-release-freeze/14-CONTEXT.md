@@ -248,7 +248,7 @@ Outlook only.
 
 ### Manuscript (READ-ONLY — never edit in-repo)
 - `main (4) copy.tex` — manuscript main source (note literal spaces in filename)
-- `supp_material.tex` — supplementary material source
+- `paper/supp_material.tex` — supplementary material source
 
 ### Execution patterns
 - `run_ansatz_sweep.sh`, `run_baselines_sweep.sh`,

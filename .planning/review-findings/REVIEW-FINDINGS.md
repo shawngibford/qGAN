@@ -1,7 +1,7 @@
 # 4-Agent Audit — Synthesized Findings
 
 **Audit target:** HEAD `50658a6` (v1.2.1)
-**Files audited:** `main (4) copy.tex`, `supp_material.tex` + all 11 figure files + revision/ code
+**Files audited:** `main (4) copy.tex`, `paper/supp_material.tex` + all 11 figure files + revision/ code
 **Audit date:** 2026-05-28
 **Agents:** 1 (text↔evidence) · 2 (cross-section) · 3 (figures↔captions) · 4 (prose↔code)
 

@@ -1,6 +1,6 @@
 # PR-1 — Citation Audit Report
 
-**Reviewer role:** adversarial. Manuscript: `main (4) copy.tex` + `supp_material.tex` (AMA / `ama.bst`, numerical brackets, citation-order numbering).
+**Reviewer role:** adversarial. Manuscript: `main (4) copy.tex` + `paper/supp_material.tex` (AMA / `paper/ama.bst`, numerical brackets, citation-order numbering).
 
 ## Verdict
 **BLOCKING.** Two coauthor-flagged miscitations confirmed; both are factually wrong and survive the [R1-m1] R&R fix the source comments claim was applied. Additional BLOCK-level finding: DTW is introduced in the supplement with a citation to an anomaly-detection paper that doesn't discuss DTW at all. Citation style is inconsistent in three independent dimensions (before/after period, grouped/separate brackets, ~ vs space, comma/semicolon spacing). Two missing canonical references that any AIChE reviewer with the field will demand: Gulrajani-correct attribution is fine, but **Sakoe & Chiba 1978** (or Berndt & Clifford 1994) for DTW and a **TimeGAN / COT-GAN / TTS-GAN benchmarking reference set** to anchor the time-series-GAN landscape are absent.
@@ -103,7 +103,7 @@ The trailing-comma-before-cite-then-next-word pattern (`, \cite{X} word,`) is no
 
 ### NIT findings (defer to camera-ready)
 
-**N1. main:70 four un-grouped consecutive `\cite{}` calls.** `\cite{A} \cite{B} \cite{C} \cite{D}` should be `\cite{A,B,C,D}`. Same pattern at main:78 (`\cite{shariatifar2025digital} \cite{exploring_hernndezromero_2025}`). AMA `ama.bst` will collapse and sort these correctly, but the source-level inconsistency is a flag.
+**N1. main:70 four un-grouped consecutive `\cite{}` calls.** `\cite{A} \cite{B} \cite{C} \cite{D}` should be `\cite{A,B,C,D}`. Same pattern at main:78 (`\cite{shariatifar2025digital} \cite{exploring_hernndezromero_2025}`). AMA `paper/ama.bst` will collapse and sort these correctly, but the source-level inconsistency is a flag.
 
 **N2. main:177 inline TeX comment leaks intent.** The "% [41] removed: it was adaptive rolling-median anomaly detection..." comment exists *in the source file* the journal will receive if you submit the .tex. Strip all `% ... R1-m1 / R2-m1 ...` revision notes before submission — they are internal scaffolding that reveals the R&R process to reviewers and risks signaling that fixes were partial. (Also present at supp:151: "% [55]-[57],[59] (VQE / option-pricing / QAOA / adversarial-robustness) removed: ...")
 
@@ -113,7 +113,7 @@ The trailing-comma-before-cite-then-next-word pattern (`, \cite{X} word,`) is no
 
 ## C4 — Citation style consistency
 
-**Dominant style:** numerical AMA brackets via `\cite{}`, placed **after** the closing period (`...sentence. \cite{key}`). This is the count winner across §1, §2, §3. AMA `ama.bst` will render as `[N]` superscript-or-bracket numerical.
+**Dominant style:** numerical AMA brackets via `\cite{}`, placed **after** the closing period (`...sentence. \cite{key}`). This is the count winner across §1, §2, §3. AMA `paper/ama.bst` will render as `[N]` superscript-or-bracket numerical.
 
 **Deviation taxonomy + line numbers:**
 

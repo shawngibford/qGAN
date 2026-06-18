@@ -1,6 +1,6 @@
 # Agent 5 — Manuscript Consistency Review (Peer Review r4)
 
-**Scope:** Cross-check `main (4) copy.tex` + `supp_material.tex` against JSON-backed
+**Scope:** Cross-check `main (4) copy.tex` + `paper/supp_material.tex` against JSON-backed
 evidence in `results/` and the paper-block docs in `docs/`.
 **Date:** 2026-05-21. **Target freeze:** git tag `v2.0-revision` → irreversible Zenodo DOI.
 
@@ -119,7 +119,7 @@ the v2.0 release is built on.
 
 **C-3 — The manuscript `.tex` files are NOT git-tracked.**
 `git ls-files --error-unmatch 'main (4) copy.tex'` → "did not match any file(s)
-known to git"; same for `supp_material.tex`. They appear only as untracked (`??`)
+known to git"; same for `paper/supp_material.tex`. They appear only as untracked (`??`)
 in `git status`. **If the repo is frozen at tag `v2.0-revision` by committing
 tracked files, the manuscript will not be in the tagged tree at all** — or, if
 `git add`-ed at the last moment, the pre-revision version gets frozen (see C-2).
@@ -180,7 +180,7 @@ broken/duplicate-label reference. PAPER-05c flags it. Not applied.
 **L-1 — Figure references rely on commented-out `\ref` targets.** Numerous
 `%~\ref{...}` comment-outs (`main:82, 117, 166, 261, 287`; "Figure A1/A2/A4/A5",
 "Table A1/A2" hand-typed instead). Cross-references are hand-typed letter+number
-strings, bypassing LaTeX's auto-numbering. `supp_material.tex` figures are
+strings, bypassing LaTeX's auto-numbering. `paper/supp_material.tex` figures are
 A-prefixed; if any supp float is added/removed the hand-typed "Figure A4" etc.
 silently goes stale. Functional but fragile; not provenance-gated.
 
@@ -195,7 +195,7 @@ tree (`dtwd.png`, `pdf.png`, `cdf.png`, `qq.png`, `acf.png`, `quantum_circuit.pn
 
 **L-3 — `\bibliography{bib}` (`main:304`)** — the `bib` source file was not
 located in the repo root; if it is not part of the frozen tree the manuscript
-will not compile from the DOI snapshot. Recommend verifying `bib.bib` is present
+will not compile from the DOI snapshot. Recommend verifying `paper/bib.bib` is present
 and tracked.
 
 ---
@@ -234,7 +234,7 @@ manuscript integration step was never executed.
 ### Required before freeze
 
 1. Apply ALL paper_blocks revisions (PAPER-01..11) to `main (4) copy.tex` and
-   `supp_material.tex`, especially the LOCKED PAPER-02 de-overclaiming set.
+   `paper/supp_material.tex`, especially the LOCKED PAPER-02 de-overclaiming set.
 2. Resolve the 0.6843 headline: either replace it with the matched-budget DTW
    (~0.30 quantum cluster) sourced from `matched2000_dualscale.json`, or label
    it explicitly as "frozen pre-v1.0 checkpoint" with the matched-budget number
@@ -243,7 +243,7 @@ manuscript integration step was never executed.
    unlabeled 0.6843 must NOT be frozen.
 3. Add a Zenodo DOI placeholder to the Data Availability section so plan 14-07's
    minted DOI has a destination.
-4. `git add` and commit the revised `.tex` files (and `bib.bib`) so they are in
+4. `git add` and commit the revised `.tex` files (and `paper/bib.bib`) so they are in
    the `v2.0-revision` tagged tree.
 
 None of this can be done from this read-only worktree; it must be done in the

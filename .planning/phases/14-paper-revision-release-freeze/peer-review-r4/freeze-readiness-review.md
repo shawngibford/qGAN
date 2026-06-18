@@ -22,7 +22,7 @@ Tags present: `v1.0` only — **`v2.0-revision` has NOT been cut yet.**
 2. **Any committed secrets?** — NO. `git grep` over the full HEAD tree for
    `ZENODO_TOKEN`, `ghp_*`, `AKIA*`, `Bearer`, private-key headers, and
    `password=` found nothing. No `.env` file is tracked. The untracked LaTeX
-   manuscripts (`main (4) copy.tex`, `supp_material.tex`) and `docs/`
+   manuscripts (`main (4) copy.tex`, `paper/supp_material.tex`) and `docs/`
    are also clean. The 14-07 requirement that `ZENODO_TOKEN` never be committed
    is currently satisfied.
 
@@ -116,7 +116,7 @@ whether to commit metrics+config only or the full runs. **At minimum, commit the
 
 `git ls-files '*.tex'` returns zero results. D-14-21 (quoted in the 14-07 plan
 interfaces) states the tag "includes `revision/` ... + `.tex` reference files".
-The manuscripts `main (4) copy.tex` and `supp_material.tex` are present only as
+The manuscripts `main (4) copy.tex` and `paper/supp_material.tex` are present only as
 untracked working-tree files. The plan's Task 3 also treats `main (4) copy.tex`
 line 292 as the anchor for the reserved-DOI Data Availability edit. If the
 intent is for the DOI deposit to be self-contained with the manuscript source,

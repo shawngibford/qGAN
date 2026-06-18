@@ -35,7 +35,7 @@
 > `results/distribution_emd.json`, `results/welch_pairwise.json`,
 > `results/lr_dtw_dominance_gap.json`. Audit trail:
 > `.planning/phases/14-paper-revision-release-freeze/14-21-SUMMARY.md`
-> and `supp_material.tex` §A.7 disclosure paragraph. The historical
+> and `paper/supp_material.tex` §A.7 disclosure paragraph. The historical
 > Plan 14-13/14-15/14-16 sections below are preserved verbatim as the
 > audit-trail record of how each peer-review finding was processed at
 > the time it was filed.
@@ -324,7 +324,7 @@ retraction below).
 > quantum second (~0.0040-0.0050), VAE third (~0.0158), and the WGAN
 > cluster substantially worse (~0.024-0.129). See
 > `.planning/phases/14-paper-revision-release-freeze/14-21-SUMMARY.md`,
-> `supp_material.tex` §A.7, and the regenerated
+> `paper/supp_material.tex` §A.7, and the regenerated
 > `results/matched2000_dualscale.json` LR scale aggregates for
 > the current matched-budget ranking. The "What changed", "What we
 > retract", "What is preserved", and "Why this discovery is a

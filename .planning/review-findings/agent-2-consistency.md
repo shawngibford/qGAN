@@ -1,7 +1,7 @@
 # Agent 2 — Cross-Section Consistency Findings
 
 **Audit target:** HEAD `50658a6` (v1.2.1)
-**Files audited:** `main (4) copy.tex`, `supp_material.tex`
+**Files audited:** `main (4) copy.tex`, `paper/supp_material.tex`
 **Scope:** Cross-section agreement on numbers, scope hedges, orderings, comparator-set scope, future-work tense.
 
 ## Summary

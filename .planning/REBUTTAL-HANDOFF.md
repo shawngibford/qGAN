@@ -216,7 +216,7 @@ What worked, in order of importance:
 - **`docs/reviewer_response.md`** is the in-repo provenance trail; its R1-M2 section was rewritten by Plan 14-20 to match the matched-budget data — verbatim-consistent with the R1-M2 draft above.
 - **`docs/methods_full.md` §3.y** documents the matched-budget utility protocol with full per-variant numbers and the data_hash invariance.
 - **`docs/completeness_sweep_manifest.md`** is the artefact-inventory ledger; matched-budget rows added by 14-20.
-- **Manuscript files** `main (4) copy.tex` + `supp_material.tex` carry the PAPER-* blocks integrated by Plan 14-17; abstract is de-overclaimed; circuit-design subsection + Outlook subsection added.
+- **Manuscript files** `main (4) copy.tex` + `paper/supp_material.tex` carry the PAPER-* blocks integrated by Plan 14-17; abstract is de-overclaimed; circuit-design subsection + Outlook subsection added.
 
 ## 7. Resubmission packaging checklist
 

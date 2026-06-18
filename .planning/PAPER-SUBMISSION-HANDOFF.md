@@ -15,8 +15,8 @@
 | Repo | `/Users/shawngibford/dev/phd/qGAN/` |
 | Branch | `main`, 18 commits ahead of `origin/main` |
 | Manuscript | `main (4) copy.tex` (filename has literal space + paren — quote in shell) |
-| Supplement | `supp_material.tex` |
-| Bibliography | `bib.bib` (59 entries; `yoon2019TimeGAN` re-typed as @inproceedings with pages added) |
+| Supplement | `paper/supp_material.tex` |
+| Bibliography | `paper/bib.bib` (59 entries; `yoon2019TimeGAN` re-typed as @inproceedings with pages added) |
 | Last commit | `a4cfc1a chore(paper-rewrite): bundle 7 legacy figures into repo + clear 10 audit FLAGs` |
 | Tag | `v1.2` (local, not yet pushed) |
 | Provenance gate | v2.2, PASS — **143 main + 156 supp** literals all resolve to `results/*.json` |
@@ -223,7 +223,7 @@ git push origin v1.2
 **GitHub release notes**: at `https://github.com/shawngibford/qgan/releases`. Suggested release-notes headlines: matched-budget cross-model evaluation; bifurcated finding (exceed on LR-DTW + lag-1 ACF, match on OD-EMD, fall short on LR-EMD); Pipeline B preprocessing finalized (Lambert W dropped per D-10-05 / R1-M3); statistical evidence — Table 2 + per-seed dominance + 40-pair Welch tests.
 
 **AIChE submission portal**:
-- Upload `main (4) copy.tex`, `supp_material.tex`, `bib.bib`, `ama.bst` (bibliography style file lives at `~/Documents/main_qgan/ama.bst` — copy alongside the .tex), and all **11 figure files** listed above.
+- Upload `main (4) copy.tex`, `paper/supp_material.tex`, `paper/bib.bib`, `paper/ama.bst` (bibliography style file lives at `~/Documents/main_qgan/ama.bst` — copy alongside the .tex), and all **11 figure files** listed above.
 - Compile is `pdflatex + bibtex + pdflatex × 2` (no special env needed — all paths repo-relative).
 - Total upload: 4 source files + 11 figures = 15 files.
 
@@ -304,7 +304,7 @@ Additional prohibitions enforced by the A2 sentinel regex sweep:
 | Origin/main is 18 commits behind local | Local main has swarm + audit-cleanup work; tag v1.2 also local | `git push origin main && git push origin v1.2` when ready |
 | AIChE portal upload | Compile verified clean without TEXINPUTS | Upload 15 files per §2.4 |
 | GitHub release notes | n/a | Update at `https://github.com/shawngibford/qgan/releases` after push (suggested copy in §2.4) |
-| `ama.bst` bibliography style | Lives at `~/Documents/main_qgan/ama.bst`, not git-tracked | Copy alongside the .tex for AIChE submission (or upload to portal as a 16th file) |
+| `paper/ama.bst` bibliography style | Lives at `~/Documents/main_qgan/ama.bst`, not git-tracked | Copy alongside the .tex for AIChE submission (or upload to portal as a 16th file) |
 | Plan 14-07 (Zenodo DOI mint) | Deferred to journal acceptance per `project_phase14_zenodo_blocker` memory | Mint Zenodo DOI at acceptance; rebuttal currently cites `ZENODO-DOI-PLACEHOLDER` |
 | Phase 13 verification debt | 6 `human_needed` items in `.planning/phases/13-architecture-introspection/13-VERIFICATION.md` | Orthogonal to submission; address before/after at your discretion |
 | Word-document rebuttal sync (if AIChE requires it) | Rebuttal letter is in `.planning/REBUTTAL-HANDOFF.md` | If portal wants it, convert to .docx at upload |

@@ -67,7 +67,7 @@
 | Bring .tex into repo and edit directly | Self-contained, edits .tex in repo | |
 | Markdown working draft + response doc | Avoids LaTeX tooling | |
 
-**User's choice:** Option 1, but user adds `main (4) copy.tex` + `supp_material.tex` as READ-ONLY reference — "do not directly edit them."
+**User's choice:** Option 1, but user adds `main (4) copy.tex` + `paper/supp_material.tex` as READ-ONLY reference — "do not directly edit them."
 **Notes:** Both files confirmed present at repo root.
 
 ---

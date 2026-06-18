@@ -549,7 +549,7 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
         "OD-EMD delta column).** A WGAN sample-space convention preserved at "
         "9 paper-cited `samples.npy` load sites was undone via the shared "
         "inference-only helper `_wgan_unscale.py` (see "
-        "`supp_material.tex` §A.7 disclosure paragraph and "
+        "`paper/supp_material.tex` §A.7 disclosure paragraph and "
         "`14-21-SUMMARY.md` for the full audit trail). The correction is "
         "gated by the `_WGAN_KINDS` set so VAE and AR(2) samples are passed "
         "through untouched (the differential test on every regenerated JSON "

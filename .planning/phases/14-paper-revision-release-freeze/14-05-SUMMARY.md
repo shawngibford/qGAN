@@ -95,9 +95,9 @@ completed: 2026-05-19
 ### Auto-fixed Issues
 
 **1. [Rule 3 - Blocking] Reference `.tex` / review PDF absent in worktree (untracked in main checkout)**
-- **Found during:** Task 1 (read_first step — `main (4) copy.tex`, `supp_material.tex`, `QGAN_Review_Response_Plan.md.pdf` not present in the worktree).
+- **Found during:** Task 1 (read_first step — `main (4) copy.tex`, `paper/supp_material.tex`, `QGAN_Review_Response_Plan.md.pdf` not present in the worktree).
 - **Issue:** The plan's `read_first` lists the three reference files as READ-ONLY inputs. They are **untracked** in the main checkout (visible in the start-of-conversation git status), so they do not propagate to a git worktree — identical class to the gitignored `qgan_env`/`best_checkpoint.pt` resolved by 14-01/02/03/04.
-- **Fix:** Read the `.tex` anchors directly from the main checkout (`/Users/shawngibford/dev/phd/qGAN/main (4) copy.tex` / `supp_material.tex`) as the READ-ONLY Overleaf-canonical reference. This is the *intended* D-14-18 posture: the `.tex` is external to the repo and must never be edited; the worktree `git diff --stat` is empty by construction, so the T-14-16 mitigation holds trivially. The reviewer-memo sub-points (R1-M3/M5, R2-1/2/3/5a/5b) were taken from the RESEARCH "Phase Requirements" table + `14-RESEARCH.md` decisions (the PDF's verbatim itemisation is mirrored there) — the PDF binary itself was not required to author the one-line rationales.
+- **Fix:** Read the `.tex` anchors directly from the main checkout (`/Users/shawngibford/dev/phd/qGAN/main (4) copy.tex` / `paper/supp_material.tex`) as the READ-ONLY Overleaf-canonical reference. This is the *intended* D-14-18 posture: the `.tex` is external to the repo and must never be edited; the worktree `git diff --stat` is empty by construction, so the T-14-16 mitigation holds trivially. The reviewer-memo sub-points (R1-M3/M5, R2-1/2/3/5a/5b) were taken from the RESEARCH "Phase Requirements" table + `14-RESEARCH.md` decisions (the PDF's verbatim itemisation is mirrored there) — the PDF binary itself was not required to author the one-line rationales.
 - **Files modified:** none (read-only access only).
 - **Committed in:** n/a (no functional change; the .tex/PDF are not repo artifacts).
 

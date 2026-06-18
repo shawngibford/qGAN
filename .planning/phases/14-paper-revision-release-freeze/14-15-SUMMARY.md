@@ -38,7 +38,7 @@ decisions:
   - D-14-22 (`core/` byte-freeze) PRESERVED across all 5 tasks — histogram-density EMD lives in top-level emitter, not core
   - D-14-13 (strict-accept gate) PRESERVED — new distribution-EMD column is informational only, not gated
   - D-14-16 (gate v2.1 byte-freeze) PRESERVED — no edit to verify_number_provenance.py; new JSONs auto-walked by existing _json_blobs walker
-  - D-14-18 (Overleaf-canonical LaTeX read-only) PRESERVED — no edits to `main (4) copy.tex` / `supp_material.tex`
+  - D-14-18 (Overleaf-canonical LaTeX read-only) PRESERVED — no edits to `main (4) copy.tex` / `paper/supp_material.tex`
   - paper_blocks_framing.md SKIPPED — no natural insertion point in PAPER-01 LaTeX-replacement framing block
   - 50-bin histogram-density formulation FIXED across the plan: `wasserstein_distance(bin_centers, bin_centers, real_hist_density, fake_hist_density)`
 metrics:

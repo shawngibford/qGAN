@@ -208,4 +208,4 @@ Captions on Figs A8, A9, A10, A39, A40 contain internal Phase/task IDs ("Phase 1
 - Supplement: `/Users/shawngibford/dev/phd/qGAN/supp_material.tex`
 - Compiled PDF inspected: `/Users/shawngibford/dev/phd/qGAN/main (4) copy.pdf` (pages 11, 17–20, 25)
 - Existing main-paper Data Availability: `main (4) copy.tex` lines 870–871
-- Existing supp Data Availability (§A.5): `supp_material.tex` lines 509–514 — primary expansion target
+- Existing supp Data Availability (§A.5): `paper/supp_material.tex` lines 509–514 — primary expansion target

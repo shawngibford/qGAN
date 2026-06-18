@@ -1,8 +1,8 @@
 # REF.md — Reference Surgery Action List (R1-m1)
 
 Reviewer R1-m1 flagged 11 misplaced / weak references. The sentence-level
-fixes were applied to `main.tex` and `supp_material.tex` by Plan
-14-17. The `.bib` file (`bib.bib`) lives **Overleaf-side, not in this
+fixes were applied to `paper/main.tex` and `paper/supp_material.tex` by Plan
+14-17. The `.bib` file (`paper/bib.bib`) lives **Overleaf-side, not in this
 repo**, so the bibliography-entry additions and removals listed below have
 to be applied manually in Overleaf before resubmission.
 
@@ -11,7 +11,7 @@ rewrites are in `docs/paper_blocks_refs_methods.md` §PAPER-06.
 
 ---
 
-## 1. ADD these `.bib` entries (3 new — paste into `bib.bib`)
+## 1. ADD these `.bib` entries (3 new — paste into `paper/bib.bib`)
 
 ```bibtex
 @article{havlicek2019supervised,
@@ -40,7 +40,7 @@ rewrites are in `docs/paper_blocks_refs_methods.md` §PAPER-06.
 
 The Bernal et al. AIChE perspective (`bernal2022perspectives`) is already
 cited in the manuscript at three locations (R1-m6 / R2-M2). If it is not
-yet in `bib.bib`, add this fourth entry as well:
+yet in `paper/bib.bib`, add this fourth entry as well:
 
 ```bibtex
 @article{bernal2022perspectives,
@@ -83,14 +83,14 @@ check Overleaf with Ctrl-F to confirm no other `\cite{<key>}` exists.
 
 The renumbering after the removals above will of course shift the bracket
 numbers — but the underlying `.cite{}` keys for these anchor references
-must remain in `bib.bib` and continue to be cited from the same sentences
+must remain in `paper/bib.bib` and continue to be cited from the same sentences
 they currently are.
 
 ---
 
 ## 4. Manuscript-side sentence rewrites — VERIFY present in Overleaf
 
-These were applied to `main.tex` and `supp_material.tex` in this
+These were applied to `paper/main.tex` and `paper/supp_material.tex` in this
 repo by Plan 14-17 (commit `e7e6329`). Before resubmitting, sync these to
 the Overleaf project and confirm the following:
 

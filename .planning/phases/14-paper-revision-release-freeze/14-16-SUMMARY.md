@@ -40,7 +40,7 @@ decisions:
   - D-14-22 (`core/` byte-freeze) PRESERVED across all 7 tasks — all fixes live in top-level emitters
   - D-14-13 (strict-accept gate) PRESERVED — no edit to gate semantics
   - D-14-16 (gate v2.1 byte-freeze) PRESERVED — no edit to verify_number_provenance.py; corrected JSONs auto-walked
-  - D-14-18 (Overleaf-canonical LaTeX read-only) PRESERVED — no edits to `main (4) copy.tex` / `supp_material.tex`
+  - D-14-18 (Overleaf-canonical LaTeX read-only) PRESERVED — no edits to `main (4) copy.tex` / `paper/supp_material.tex`
   - Path A (user decision after executor checkpoint) — LR-EMD-vs-WGAN strong claim withdrawn; OD-EMD equivalence + DTW dominance retained
   - R3-CR-2 fix recipe — un-standardize-fake per pipeline-review-r3.md §2 (NOT standardize-real)
 metrics:

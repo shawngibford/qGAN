@@ -111,7 +111,7 @@ working-tree hygiene, and claim wording, not the science pipeline.
 Gate-v2 weak-match class (can only false-PASS, non-material — Agent 2); bare `assert` in
 run_distribution_emd.py self-test (Agent 2); MWU computed but unused (Agent 1 B6);
 `data_hash` hardcoded not computed (Agent 1 B7); fragile hand-typed figure refs / verify
-`\includegraphics` targets resolve (Agent 5 L-1/L-2); confirm `bib.bib` is tracked
+`\includegraphics` targets resolve (Agent 5 L-1/L-2); confirm `paper/bib.bib` is tracked
 (Agent 5 L-3); ` *.csv` leading-space in .gitignore (Agent 6 L-1); untracked junk to
 exclude — `qgan_pennylane copy.ipynb`, `datasets.zip`, `amp`, the PDF, `.claude/`
 (Agent 6 L-2). **Plus:** `LICENSE` is deleted in the working tree (uncommitted) — present
@@ -123,7 +123,7 @@ ships license-less.
 ## REMEDIATION PLAN (ordered) — feed into a 14-07 prep / gap-fix cycle
 
 **Manuscript track (resolves C2, C3, H2, H3, H4, M6–M9):**
-1. Apply all PAPER-01..11 paper_blocks revisions to `main (4) copy.tex` + `supp_material.tex`
+1. Apply all PAPER-01..11 paper_blocks revisions to `main (4) copy.tex` + `paper/supp_material.tex`
    — especially the LOCKED (D-14-20) PAPER-02 de-overclaiming set and the Path A reframe.
 2. Resolve the 0.6843 DTW headline: replace with the matched-budget DTW (~0.30 quantum
    cluster, sourced from `matched2000_dualscale.json`), or label it explicitly as the
@@ -150,7 +150,7 @@ ships license-less.
 10. Commit the `.gitignore` change as ONE atomic commit (the `results/` line AND both
     `!results/` negations together); fix the ` *.csv` leading space.
 11. Commit `results/baselines/runs/` metrics.json + config.yaml artifacts.
-12. Decide `.tex` tracking; `git add` + commit the revised `.tex` files and `bib.bib`.
+12. Decide `.tex` tracking; `git add` + commit the revised `.tex` files and `paper/bib.bib`.
 13. Author and commit `docs/release.md` per the 14-07 spec.
 14. Fix `requirements-pinned.txt`: add `fastdtw`, pin `pandas<3.0`.
 15. Re-run `scripts/verify_freeze_ready.py` against the now-clean **committed** tree; confirm

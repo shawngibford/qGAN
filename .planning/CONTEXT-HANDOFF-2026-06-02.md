@@ -163,8 +163,8 @@ docs(state): record v1.2.4 loss-diagnostics patch
 | Artifact | Path |
 |---|---|
 | Main manuscript | `main (4) copy.tex` |
-| Supplement (`\input`-ed) | `supp_material.tex` |
-| Bibliography | `bib.bib` (59 entries) |
+| Supplement (`\input`-ed) | `paper/supp_material.tex` |
+| Bibliography | `paper/bib.bib` (59 entries) |
 | Bib style | `~/Documents/main_qgan/ama.bst` (external, not git-tracked) |
 | Compiled PDF | `main (4) copy.pdf` (recompile if timestamp older than HEAD commit) |
 | Submission handoff | `.planning/PAPER-SUBMISSION-HANDOFF.md` |

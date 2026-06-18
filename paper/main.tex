@@ -6,6 +6,7 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
 \usepackage{graphicx}
+\graphicspath{{../figures/}}
 \usepackage{epstopdf}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -62,7 +63,7 @@ On a small bioprocess dataset, a quantum generator reproduced both the per-step 
 
 \begin{figure*}
     \centering
-    \includegraphics[height = 7cm, width = 17cm]{figures/concept_diagram.png}
+    \includegraphics[height = 7cm, width = 17cm]{concept_diagram.png}
     \caption{Conceptual diagram of how we envision using quantum generative AI within industrial bioprocess engineering.}
     \label{fig:concept_diagram}
 \end{figure*}
@@ -217,7 +218,7 @@ read accordingly.
 
 \begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\linewidth]{figures/training_convergence_all_models.pdf}
+  \includegraphics[width=\linewidth]{training_convergence_all_models.pdf}
   \caption{Matched-budget training convergence: OD-scale in-loop EMD
   versus training epoch (log-$y$) for the 7 WGAN-GP generators
   (4 quantum + 3 classical adversarial). Curves are 5-seed mean
@@ -475,7 +476,7 @@ at low DTW cost without carrying real temporal information.
 
 \begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\linewidth]{figures/cross_model_dtw_dualscale.pdf}
+  \includegraphics[width=\linewidth]{cross_model_dtw_dualscale.pdf}
   \caption{DTW distance under matched 2000-epoch training (n=5 seeds;
   mean $\pm$ sample standard deviation). Left: optical-density (OD)
   scale, on which the quantum cluster (V2$=0.33$, V1$=0.35$,
@@ -544,7 +545,7 @@ than as two independent metric outcomes.
 
 \begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\linewidth]{figures/cross_model_acf_overlay.pdf}
+  \includegraphics[width=\linewidth]{cross_model_acf_overlay.pdf}
   \caption{Log-return autocorrelation function (lags 0-9) across all
   nine generators (n=5 seeds; per-model mean), with the real-data ACF
   shown as a dashed reference (lag-1 $= -0.064$, matched-pipeline).
@@ -561,7 +562,7 @@ than as two independent metric outcomes.
 
 \begin{figure*}[!htbp]
   \centering
-  \includegraphics[width=\linewidth]{figures/cross_model_emd.pdf}
+  \includegraphics[width=\linewidth]{cross_model_emd.pdf}
   \caption{Cross-model OD-EMD (final-eval mean $\pm$ sample standard
   deviation, n=5 seeds). The horizontal reference line marks the
   frozen-headline OD-EMD reference ($0.0224$, from the

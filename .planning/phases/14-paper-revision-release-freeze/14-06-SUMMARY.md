@@ -104,14 +104,14 @@ completed: 2026-05-19
 
 ## Issues Encountered
 - **`qgan_env` absent in worktree:** identical to 14-03/14-04 — `qgan_env` is gitignored and lives in the main checkout. Resolved with the established `ln -s /…/qGAN/qgan_env qgan_env` symlink (confirmed gitignored via `git check-ignore`; never committed). The provenance gate runs under this interpreter.
-- **`.tex`/`.pdf` not git-tracked in the worktree:** `main (4) copy.tex`, `supp_material.tex`, `QGAN_Review_Response_Plan.md.pdf` are untracked in the worktree (they live in the main checkout). They were READ-ONLY (Read tool only); `git diff --stat -- "main (4) copy.tex" supp_material.tex` is empty, so D-14-18 is satisfied byte-exactly. The blocks were authored against the verbatim content read from the main-checkout copies.
+- **`.tex`/`.pdf` not git-tracked in the worktree:** `main (4) copy.tex`, `paper/supp_material.tex`, `QGAN_Review_Response_Plan.md.pdf` are untracked in the worktree (they live in the main checkout). They were READ-ONLY (Read tool only); `git diff --stat -- "main (4) copy.tex" supp_material.tex` is empty, so D-14-18 is satisfied byte-exactly. The blocks were authored against the verbatim content read from the main-checkout copies.
 - **`grep TODO|TBD` header false-positive:** the only `TODO`/`TBD` occurrence is the header prose describing the no-placeholder discipline ("no `TODO`/`TBD`/placeholder cells"), not a table cell. Verified: zero `TODO|TBD|placeholder|FIXME|XXX` in any `| ... |` table row. The plan's acceptance criterion (no placeholder/TODO *cells*) is satisfied.
 
 ## Known Stubs
 None — PAPER-08/09 render every number from `model_info.json` / `fidelity_dualscale.json` (exact stored values, `% source:` annotated); `reviewer_response.md` has a substantive change + a real existing artifact path in every comment-ID row (19/19 cited paths verified present). No placeholder, mock, or empty-data cell. PAPER-06.h's RETAINED note is an intentional, reviewer-confirmed no-op, not a stub.
 
 ## Threat Surface Scan
-No new network endpoints, auth paths, or external file-access patterns. All three plan trust boundaries are mitigated as specified: (T-14-13) JSON→Methods LaTeX block — PAPER-08/09 render from JSON with `% source:` annotations and exact stored values, `scripts/verify_number_provenance.py` PASS is a hard pass; (T-14-17) reviewer_response.md→artifact paths — every supporting-artifact cell points at a path verified to exist (19/19), no placeholder cells; (T-14-16) read-only .tex — `git diff --stat` on `main (4) copy.tex`/`supp_material.tex` is empty. No threat flags.
+No new network endpoints, auth paths, or external file-access patterns. All three plan trust boundaries are mitigated as specified: (T-14-13) JSON→Methods LaTeX block — PAPER-08/09 render from JSON with `% source:` annotations and exact stored values, `scripts/verify_number_provenance.py` PASS is a hard pass; (T-14-17) reviewer_response.md→artifact paths — every supporting-artifact cell points at a path verified to exist (19/19), no placeholder cells; (T-14-16) read-only .tex — `git diff --stat` on `main (4) copy.tex`/`paper/supp_material.tex` is empty. No threat flags.
 
 ## Self-Check: PASSED
 - `docs/paper_blocks_refs_methods.md` — FOUND (PAPER-06/07/08/09/10/11 keyed blocks; Bernal; Lags; QWGAN-GP; biomanufacturing; @article/@book .bib entries; 11 `% source:` annotations)

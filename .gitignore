@@ -99,3 +99,13 @@ results/baselines/runs/**/*.pt
 *.synctex.gz
 /main (4) copy.pdf
 /supp_material.pdf
+
+# LaTeX build transients under paper/
+paper/main.aux
+paper/main.log
+paper/main.fls
+paper/main.fdb_latexmk
+paper/main.blg
+paper/main.out
+paper/main.toc
+paper/main.synctex.gz

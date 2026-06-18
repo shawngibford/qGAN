@@ -77,7 +77,7 @@ Every gate except `(d)` passes against `6518323`. The `(d)` failure is by design
 
 ### Task 3: Revised .tex Confirmation + Hardened Gate (commit `6518323`)
 
-- **.tex tracking** — `main (4) copy.tex` and `supp_material.tex` are already git-tracked (committed by plan 14-17). Confirmed `git show HEAD:"main (4) copy.tex"` contains the 14-17 `Circuit Design Rationale` marker. The unchanged `.tex` files were NOT re-committed — Task 3(a) is satisfied by 14-17's commit.
+- **.tex tracking** — `main (4) copy.tex` and `paper/supp_material.tex` are already git-tracked (committed by plan 14-17). Confirmed `git show HEAD:"main (4) copy.tex"` contains the 14-17 `Circuit Design Rationale` marker. The unchanged `.tex` files were NOT re-committed — Task 3(a) is satisfied by 14-17's commit.
 - **verify_freeze_ready.py hardened** — added `gate_zero_clean_tree()` asserting `git status --porcelain` is empty; added `gate_d_release_md()` asserting `docs/release.md` exists; `_check_ignored_json()` now reads `git ls-files` (committed tree) and `gate_a_gitignore_archive()` reads `HEAD:.gitignore`. The self-heal block was **removed** — self-healing mutates `.gitignore` and would dirty the tree, contradicting gate 0; the gate now fails hard. All assertions use the explicit `raise AssertionError` idiom (`python -O`-proof). The pre-existing gate (b)/(c) explicit-raise checks are semantically unchanged.
 
 ### Planning Docs (commit `4592bfb`)

@@ -10,7 +10,7 @@ requires:
     provides: paper_blocks_framing.md / paper_blocks_refs_methods.md PAPER-01..11 LaTeX blocks, reconciliation_note.md matched-budget DTW, methods_full.md DTW historical framing
 provides:
   - Revised `main (4) copy.tex` with all PAPER-01..11 framing/de-overclaiming/methods blocks integrated
-  - Revised `supp_material.tex` with PAPER-04/05b/06g/10 blocks, r_t notation, 20L LUCY caption
+  - Revised `paper/supp_material.tex` with PAPER-04/05b/06g/10 blocks, r_t notation, 20L LUCY caption
   - De-overclaimed abstract (no "high fidelity" / "strong performance")
   - Stale DTW 0.6843 headline reconciled to matched-budget OD-DTW ~0.30
   - Zenodo DOI placeholder (ZENODO-DOI-PLACEHOLDER) for plan 14-07 to mint into
@@ -48,7 +48,7 @@ completed: 2026-05-22
 
 # Phase 14 Plan 17: Manuscript Revision Integration Summary
 
-**Integrated all PAPER-01..11 r1/r2/r3 revision blocks into `main (4) copy.tex` and `supp_material.tex`, de-overclaimed the abstract, reconciled the stale DTW 0.6843 headline to the matched-budget ~0.30 evidence, and added a Zenodo DOI placeholder — making the manuscript consistent with the certified JSON evidence base before the 14-07 freeze.**
+**Integrated all PAPER-01..11 r1/r2/r3 revision blocks into `main (4) copy.tex` and `paper/supp_material.tex`, de-overclaimed the abstract, reconciled the stale DTW 0.6843 headline to the matched-budget ~0.30 evidence, and added a Zenodo DOI placeholder — making the manuscript consistent with the certified JSON evidence base before the 14-07 freeze.**
 
 ## Performance
 
@@ -56,7 +56,7 @@ completed: 2026-05-22
 - **Started:** 2026-05-22T05:00:00Z (approx)
 - **Completed:** 2026-05-22T05:18:00Z (approx)
 - **Tasks:** 3
-- **Files modified:** 2 (`main (4) copy.tex`, `supp_material.tex`)
+- **Files modified:** 2 (`main (4) copy.tex`, `paper/supp_material.tex`)
 
 ## Accomplishments
 - Applied every PAPER-01..05 framing + LOCKED (D-14-20) de-overclaiming block: falsifiable central question, softened quantum-necessity transition, Key Contributions / Theoretical Implications / Concluding Remarks reframes, new Circuit Design Rationale and Outlook subsections
@@ -79,7 +79,7 @@ Each task was committed atomically:
 
 ## Files Created/Modified
 - `main (4) copy.tex` - Revised main manuscript: PAPER-01..03/05a/06..09/11 blocks, de-overclaimed abstract, Circuit Design Rationale + Outlook subsections, Dataset-and-preprocessing + Evaluation-scale Methods material, matched-budget DTW headline, Zenodo DOI placeholder, r_t notation, fixed LUCY label
-- `supp_material.tex` - Revised supplementary: PAPER-04 growth-rate log-return justification, PAPER-05b/10c Table A2 aspirational caveat, PAPER-06g VQE/QAOA ref removal, PAPER-10a/b Hybrid-GAN "Proposed Extension" relabel + log-GAN-vs-Wasserstein clarification, labelled 0.6843 historical reference, 20L LUCY caption, 55-param decomposition, Zenodo DOI placeholder
+- `paper/supp_material.tex` - Revised supplementary: PAPER-04 growth-rate log-return justification, PAPER-05b/10c Table A2 aspirational caveat, PAPER-06g VQE/QAOA ref removal, PAPER-10a/b Hybrid-GAN "Proposed Extension" relabel + log-GAN-vs-Wasserstein clarification, labelled 0.6843 historical reference, 20L LUCY caption, 55-param decomposition, Zenodo DOI placeholder
 - `.planning/phases/14-paper-revision-release-freeze/14-17-SUMMARY.md` - This summary
 
 ## Decisions Made
@@ -92,9 +92,9 @@ Each task was committed atomically:
 
 **1. [Rule 1 - Bug] Corrected stale 45-parameter circuit count to the locked 55**
 - **Found during:** Task 3 (provenance-check + internal-consistency review)
-- **Issue:** The PAPER-03 block (Task 1) introduces the locked 55-parameter circuit (`canonical_config_lock.json` `param_count`=55), but `main (4) copy.tex` §3.1 still read "contains 45 trainable parameters" and `supp_material.tex` §A.6 still read "Total parameters: 45 (5 ... 30 ... 10 ...)". This created an internal contradiction within the same manuscript — the new Circuit Design Rationale states 55 while two other locations state 45.
+- **Issue:** The PAPER-03 block (Task 1) introduces the locked 55-parameter circuit (`canonical_config_lock.json` `param_count`=55), but `main (4) copy.tex` §3.1 still read "contains 45 trainable parameters" and `paper/supp_material.tex` §A.6 still read "Total parameters: 45 (5 ... 30 ... 10 ...)". This created an internal contradiction within the same manuscript — the new Circuit Design Rationale states 55 while two other locations state 45.
 - **Fix:** Updated the main-text count to "55 trainable parameters" and the supplementary decomposition to "55 (5 for IQP encoding, 45 for the three strongly entangling layers, 5 for measurement-preparation rotations)", consistent with `canonical_config_lock.json` (`num_qubits`=5, `num_layers`=3, `param_count`=55).
-- **Files modified:** `main (4) copy.tex`, `supp_material.tex`
+- **Files modified:** `main (4) copy.tex`, `paper/supp_material.tex`
 - **Verification:** `scripts/verify_number_provenance.py` PASSes — the literal 55 resolves to `canonical_config_lock.json`/`model_info.json`; no remaining 45 in a parameter-count context.
 - **Committed in:** `f644b9e` (Task 3 commit)
 
@@ -102,8 +102,8 @@ Each task was committed atomically:
 - **Found during:** Task 3 (running `scripts/verify_number_provenance.py` over the `.tex`)
 - **Issue:** The literal placeholder `10.5281/zenodo.XXXXXX` introduced `10.5281` as a numeric literal that does not resolve to any `results/*.json` value; the gate flagged it (the only unresolved literal in either file).
 - **Fix:** Replaced the literal-prefix placeholder with a fully symbolic token `ZENODO-DOI-PLACEHOLDER` in both Data Availability sections. The token is digit-free, gate-clean, and a clear substitution anchor for plan 14-07.
-- **Files modified:** `main (4) copy.tex`, `supp_material.tex`
-- **Verification:** `verify_number_provenance.py --target "main (4) copy.tex"` and `--target supp_material.tex` both exit 0 / PASS.
+- **Files modified:** `main (4) copy.tex`, `paper/supp_material.tex`
+- **Verification:** `verify_number_provenance.py --target "main (4) copy.tex"` and `--target paper/supp_material.tex` both exit 0 / PASS.
 - **Committed in:** `f644b9e` (Task 3 commit)
 
 ---
@@ -116,7 +116,7 @@ Each task was committed atomically:
 `scripts/verify_number_provenance.py` **accepts a `.tex` `--target`** (its `--help` documents "regenerated doc or paper LaTeX-blocks file"). It was run over both manuscript files after all Task 1-3 edits:
 
 - `main (4) copy.tex`: **PASS** — 45 distinct numeric literals all resolve to `results/*.json` (schema v2.1).
-- `supp_material.tex`: **PASS** — 19 distinct numeric literals all resolve to `results/*.json` (schema v2.1).
+- `paper/supp_material.tex`: **PASS** — 19 distinct numeric literals all resolve to `results/*.json` (schema v2.1).
 
 The `.tex` numbers are therefore NOT gate-exempt by silence. The numeric literals introduced by Tasks 1-3 resolve as follows:
 - PAPER-03 structural numbers (`5` qubits, `3` layers, `55` params, `2` observables, `10` window, `75`/`135` ansatz params, `4`/`8` depths, `2000` epochs) → `canonical_config_lock.json` / `model_info.json` / `ansatz_comparison.json`.
@@ -128,7 +128,7 @@ The `.tex` numbers are therefore NOT gate-exempt by silence. The numeric literal
 - The Task 3 `<verify>` block's `! grep -qi "Dry Biomass"` clause is case-insensitive and therefore also matches the correctly-lowercased "dry biomass". The acceptance criterion (the capitalized proper-noun form "Dry Biomass" is gone) is met — confirmed with a case-sensitive `grep -c 'Dry Biomass'` returning 0. The over-broad `-i` flag in the plan's verification command is a plan-authoring artifact, not a manuscript defect.
 
 ## Overleaf-Side Follow-up (not blocking the .tex integration)
-The `.bib` file (`bib.bib`) is not in the repo working tree. The following `.bib`-entry additions from PAPER-06/07/11 are recorded as Overleaf-side actions and do NOT block this plan or 14-07:
+The `.bib` file (`paper/bib.bib`) is not in the repo working tree. The following `.bib`-entry additions from PAPER-06/07/11 are recorded as Overleaf-side actions and do NOT block this plan or 14-07:
 - Add `@article{esteban2017realvaluedmedicaltimeseries}` verification (classical RCGAN), `@article{havlicek2019supervised}`, `@article{schuld2019quantum}`, `@book{rasmussen2006gaussian}`, `@article{bernal2022perspectives}`.
 - PAPER-11 item 7/8: `.bib` title typo "Approac"→"Approach" and [51] title-capitalization standardization.
 - PAPER-11 item 1/11: regenerated high-DPI ACF/result figures (`figures/*.pdf`) replace the Overleaf-embedded bitmaps; the "Laas"→"Lags" x-axis label and Figure 2-6 enlargement are figure-asset swaps, not `.tex` text edits.
@@ -143,7 +143,7 @@ The `.bib` file (`bib.bib`) is not in the repo working tree. The following `.bib
 
 - `14-17-SUMMARY.md` — FOUND
 - `main (4) copy.tex` — FOUND
-- `supp_material.tex` — FOUND
+- `paper/supp_material.tex` — FOUND
 - Commit `c06acc2` (Task 1) — FOUND
 - Commit `e7e6329` (Task 2) — FOUND
 - Commit `f644b9e` (Task 3) — FOUND

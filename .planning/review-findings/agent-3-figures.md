@@ -1,7 +1,7 @@
 # Agent 3 — Figure↔Caption Correspondence Findings
 
 **Audit target:** HEAD `50658a6` (v1.2.1)
-**Files audited:** `main (4) copy.tex`, `supp_material.tex`, all 11 figure files + 4 sidecar `.json` metadata files
+**Files audited:** `main (4) copy.tex`, `paper/supp_material.tex`, all 11 figure files + 4 sidecar `.json` metadata files
 **Scope:** Figure-to-caption correspondence, source-data attribution accuracy, stale-figure detection, prose↔caption consistency.
 
 ## Summary

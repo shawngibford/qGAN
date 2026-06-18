@@ -1,7 +1,7 @@
 # Paper Framing & Claim-Calibration LaTeX Blocks (PAPER-01..05)
 
 > **Generated for Phase 14 Plan 05.** Copy-paste LaTeX blocks for the
-> manuscript (Overleaf-canonical `main.tex` / `supp_material.tex`).
+> manuscript (Overleaf-canonical `paper/main.tex` / `paper/supp_material.tex`).
 > The in-repo `.tex` files are **READ-ONLY** (D-14-18) — they are an external
 > Overleaf reference and are never edited by this repository. Each block is
 > keyed to a `\label` or an anchor sentence plus its source-file line citation,
@@ -41,7 +41,7 @@ necessity).
 
 ## PAPER-01a — Reframed central question (Section 1.4, anchor)
 
-- **Target:** `main.tex`
+- **Target:** `paper/main.tex`
 - **`\subsection{Quantum Generative Adversarial Networks}`**, anchor sentence
   at `main:92` (Section 1.4; the QGAN "more compactly than classical
   generators" sentence).
@@ -64,7 +64,7 @@ Quantum Generative Adversarial Networks (QGANs) embed Parameterized Quantum Circ
 
 ## PAPER-01b — Soften the quantum-necessity transition (Section 2.4)
 
-- **Target:** `main.tex`
+- **Target:** `paper/main.tex`
 - **`\subsection{Quantum Machine Learning and QGANs}`**, anchor span
   `main:146-151` (Section 2.4; the "exponentially more compactly" /
   "potentially enabling richer distributions" transition).
@@ -98,7 +98,7 @@ removed or softened wherever they occur.
 
 ## PAPER-02a — "exponentially more compactly" (Section 2.4)
 
-- **Target:** `main.tex`, anchor at `main:151`.
+- **Target:** `paper/main.tex`, anchor at `main:151`.
 - This is the same anchor as PAPER-01b. The PAPER-01b AFTER block already
   removes "exponentially more compactly than classical generators" and the
   "richer distributions with fewer parameters" claim — **apply PAPER-01b's
@@ -109,7 +109,7 @@ removed or softened wherever they occur.
 
 ## PAPER-02b — "high fidelity ... industrial bioprocesses" (Key Contributions)
 
-- **Target:** `main.tex`
+- **Target:** `paper/main.tex`
 - **`\subsection{Key Contributions and Findings}`**, anchor sentence at
   `main:266` (the "high fidelity ... underlying dynamics of industrial
   bioprocesses" sentence).
@@ -147,7 +147,7 @@ Third, our empirical validation on a single real-world photobioreactor cultivati
 
 ## PAPER-02c — "industrial bioprocess engineering" (Concluding Remarks)
 
-- **Target:** `main.tex`
+- **Target:** `paper/main.tex`
 - **`\section{Concluding Remarks}`**, anchor sentence at `main:296`.
 - **BEFORE** (`main:296`):
 
@@ -168,7 +168,7 @@ This research investigates quantum-enhanced generative adversarial networks as o
 
 ## PAPER-02d — Named overclaim phrases: "computational advantages" / "exponential representational compactness" / "reduced mode collapse"
 
-- **Target:** `main.tex`
+- **Target:** `paper/main.tex`
 - **`\subsection{Theoretical and Practical Implications}`**, anchor span
   `main:276` (the "quantum computational advantages" / "potentially offering
   computational advantages over classical approaches" sentence).
@@ -213,7 +213,7 @@ Addresses reviewer memo **R1-M3** (the log-return transform is justified by a
 finance citation and "quantitative analysis" language; it must be justified in
 bioprocess terms).
 
-- **Target:** `supp_material.tex`
+- **Target:** `paper/supp_material.tex`
 - **`\subsection{Data Transformation Details}`**, anchor at `supp:352`;
   finance-framed rationale span `supp:358-365`.
 - **BEFORE** (`supp:354` and `supp:358-365`):
@@ -266,7 +266,7 @@ material and Table A2 are proposed/aspirational, not results). Also fixes the
 
 ## PAPER-05a — New explicit "Outlook" section; demote decision-tree + Hybrid-GAN out of contributions
 
-- **Target:** `main.tex`
+- **Target:** `paper/main.tex`
 - Main-text future-work anchor at `main:286`
   (`\textbf{Future Work: Hybrid-GAN-Mechanistic Structures.}`); the
   decision-tree first-contribution claim at `main:261` (Figure A5,
@@ -307,7 +307,7 @@ The directions below are \emph{proposed extensions} that were not implemented or
 
 ## PAPER-05b — Caveat Supplementary Table A2 (`tbl:various_approaches`) as aspirational
 
-- **Target:** `supp_material.tex`
+- **Target:** `paper/supp_material.tex`
 - **`\label{tbl:various_approaches}`** at `supp:226`; the "Hybrid-GAN
   (Proposed)" row at `supp:242`; trailing sentence at `supp:248`.
 - **BEFORE** (caption `supp:225` and closing sentence `supp:248`):
@@ -332,9 +332,9 @@ This table is a qualitative literature-based overview; the ``Hybrid-GAN (Propose
 
 ## PAPER-05c — Fix the 20L/300L LUCY mismatch and the malformed `\label{fig:lucy}`
 
-- **Target:** `main.tex` `main:178` (the malformed mid-sentence
+- **Target:** `paper/main.tex` `main:178` (the malformed mid-sentence
   `\label{fig:lucy}` with "the 300L configuration of the 20L version") and
-  `supp_material.tex` caption `supp:346` ("Schematic of the 300L LUCY").
+  `paper/supp_material.tex` caption `supp:346` ("Schematic of the 300L LUCY").
 - **BEFORE** (`main:178`):
 
 ```latex
@@ -387,7 +387,7 @@ Addresses reviewer memo **R2-5b**: the manuscript must justify the circuit
 design — (1) why 5 qubits, (2) the ansatz expressibility–trainability
 tradeoff, (3) why a classical critic with a quantum generator. New
 `\subsection{Circuit Design Rationale}` to be inserted **immediately after**
-`\subsection{QWGAN-GP Architecture Overview}` (`main.tex`, the
+`\subsection{QWGAN-GP Architecture Overview}` (`paper/main.tex`, the
 subsection beginning at `main:155`).
 
 Every numeric literal below is annotated with its `results/*.json`
@@ -403,7 +403,7 @@ direction the matched-budget sweep actually fell (more depth/parameters did
 `docs/reconciliation_note.md`); no rounded EMD mean is hand-typed
 into the manuscript body, in keeping with the number-provenance contract.
 
-- **Target:** `main.tex`, insert after `main:155`
+- **Target:** `paper/main.tex`, insert after `main:155`
   (`\subsection{QWGAN-GP Architecture Overview}`).
 - **AFTER** (new subsection, copy-paste ready):
 

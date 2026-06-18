@@ -18,7 +18,7 @@
 
 - **Prose location (main):** `main (4) copy.tex` line 291
 - **Prose quote:** "*Pipeline~C* (Pipeline~B followed by an inverse Lambert~$W$ heavy-tail correction, the v1.1 published pipeline)"
-- **Prose location (supp):** `supp_material.tex` lines 581 + 604
+- **Prose location (supp):** `paper/supp_material.tex` lines 581 + 604
 - **Prose quote (supp 581):** "*Pipeline~C* (Pipeline~B followed by inverse Lambert~$W$)"
 - **Prose quote (supp 604):** "C: Pipeline~B followed by inverse Lambert~$W$, dropped"
 - **Code location:** `core/data.py:269-282` (`load_and_preprocess` — Pipeline C path used by `run_ablation.py:154-164`)
@@ -53,7 +53,7 @@
 
 ### N-1: Supp figure 6 caption "Four-stage preprocessing pipeline" counts raw OD as a stage
 
-- **Prose location:** `supp_material.tex` line 531
+- **Prose location:** `paper/supp_material.tex` line 531
 - **Prose quote:** "Four-stage preprocessing pipeline (Pipeline~B, native): raw OD ($n=778$), log-returns ..., standardized ..., and linearly rescaled to $[-1, 1]$"
 - **Code location:** `run_ablation.py:134-152` (Pipeline B branch)
 - **Code reality:** Pipeline B in code has **three transformations** applied to raw OD: `forward_logreturns` (which combines diff + standardize in a single function — `preprocessing.py:42-59`) followed by linear rescale to [-1, 1] (`run_ablation.py:139`). The supp counts raw OD as "stage 1" to reach four panels.

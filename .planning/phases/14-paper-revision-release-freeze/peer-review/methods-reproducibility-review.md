@@ -233,7 +233,7 @@ AR(p) order: JSON says `order_p=2`; code (`run_baselines.py:387`) instantiates `
 
 The companion `docs/paper_blocks_refs_methods.md` cites `\cite{wang2018esrganenhancedsuperresolutiongenerative, akkem2024comprehensive}` and `\cite{yoon2019TimeGAN}` for GAN/VAE generally but does NOT cite Gulrajani 2017 for WGAN-GP or Kingma & Welling 2013 for ELBO.
 
-The actual paper LaTeX (`supp_material.tex` and `main (4) copy.tex`) DOES cite `\cite{gulrajani2017improved}`, `\cite{arjovsky17a}`, `\cite{Arjovsky2017}` (lines 78, 83, 85, 106, 405, 420 in supp_material.tex; line 131 in main). So WGAN-GP citation is in the paper. **Missing: Kingma & Welling 2013 (VAE), and a foundational AR(p) reference (Box-Jenkins 1970 / Hamilton 1994).**
+The actual paper LaTeX (`paper/supp_material.tex` and `main (4) copy.tex`) DOES cite `\cite{gulrajani2017improved}`, `\cite{arjovsky17a}`, `\cite{Arjovsky2017}` (lines 78, 83, 85, 106, 405, 420 in supp_material.tex; line 131 in main). So WGAN-GP citation is in the paper. **Missing: Kingma & Welling 2013 (VAE), and a foundational AR(p) reference (Box-Jenkins 1970 / Hamilton 1994).**
 
 **Recommendation:** add `\cite{kingma2013auto}` to wherever VAE is introduced in the paper, and `\cite{hamilton1994time}` or `\cite{box2015time}` for AR(p). (These are LOW — they live in the LaTeX paper, not in methods_full.md.)
 

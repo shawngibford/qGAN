@@ -31,7 +31,7 @@ successor: .planning/PAPER-SUBMISSION-HANDOFF.md (Wave 8 / post-swarm / submissi
 A fresh session opening this file should know:
 
 1. **The work**: AIChE Journal submission aic-4719598 ("Quantum WGAN-GP for synthetic bioprocess time series"), in major revision (R1). 3-week extension granted on 2026-05-27; new deadline ≈ 2026-06-17. **Not withdrawing.**
-2. **The remaining task**: Rewrite `main (4) copy.tex` and `supp_material.tex` so the *claims in the prose match the matched-budget evidence* that the revision actually produced. The rebuttal letter is already submitted; the manuscript itself still carries some residual framing that the rewrite needs to close.
+2. **The remaining task**: Rewrite `main (4) copy.tex` and `paper/supp_material.tex` so the *claims in the prose match the matched-budget evidence* that the revision actually produced. The rebuttal letter is already submitted; the manuscript itself still carries some residual framing that the rewrite needs to close.
 3. **The freeze tags**: `v1.0-revision` (commit `52f30b9`) and `v1.1` (commit `ab7086c`, current) on `https://github.com/shawngibford/qGAN`. Cite v1.1 in the Data Availability statement.
 4. **The non-negotiables**: Three corrections discovered during rebuttal drafting that the rewrite must respect:
    - **VAE is a degenerate generation regime, NOT posterior collapse.** Log-return std is 0.0186 (≈ real 0.0217), not 4×10⁻⁴. The anomaly is the lag-1 ACF (−0.648 vs real −0.064).
@@ -47,9 +47,9 @@ A fresh session opening this file should know:
 - **Phase 14 plans 14-01 through 14-20** complete (one plan 14-07 deferred to acceptance — Zenodo deposit).
 - **Matched-budget protocol** executed end-to-end: 9 generators × 5 seeds × 2000 epochs × Pipeline B (log-returns); same critic across all WGAN-GP runs; same data; same hyperparameters; only the generator varies.
 - **R3 forensic peer review** surfaced two metric bugs in earlier evaluation code; both fixed at root cause (Plan 14-16). The discovery process produced false intermediate claims (notably the VAE "posterior collapse std=0.0004" characterization) that have since been corrected.
-- **Manuscript-side PAPER-01..11 keyed blocks** integrated via Plan 14-17 (commit `e7e6329` lineage) into `main (4) copy.tex` and `supp_material.tex`. These cover: de-overclaimed abstract, Circuit Design Rationale §3.1, log-return justification §A.7, Outlook §4.5, Hybrid-GAN relabel §A.3, Supp Table A2 aspirational caveat, 20 L/300 L LUCY fix, `r_t` notation unified, R1-m7 typo checklist.
+- **Manuscript-side PAPER-01..11 keyed blocks** integrated via Plan 14-17 (commit `e7e6329` lineage) into `main (4) copy.tex` and `paper/supp_material.tex`. These cover: de-overclaimed abstract, Circuit Design Rationale §3.1, log-return justification §A.7, Outlook §4.5, Hybrid-GAN relabel §A.3, Supp Table A2 aspirational caveat, 20 L/300 L LUCY fix, `r_t` notation unified, R1-m7 typo checklist.
 - **Rebuttal letter** assembled and submitted by the user from drafts in `.planning/REBUTTAL-HANDOFF.md` (14+ reviewer comments answered).
-- **bib.bib cleaned and aligned (2026-05-27)**: 59 entries, every cited key has exactly one bib entry, every bib entry is cited at least once. 4 new entries added (havlicek2019supervised, schuld2019quantum, rasmussen2006gaussian, bernal2022perspectives); 5 R1-m1-flagged obsolete keys removed; 17 pre-existing orphan keys removed. `bib.bib` is at the repo root.
+- **bib.bib cleaned and aligned (2026-05-27)**: 59 entries, every cited key has exactly one bib entry, every bib entry is cited at least once. 4 new entries added (havlicek2019supervised, schuld2019quantum, rasmussen2006gaussian, bernal2022perspectives); 5 R1-m1-flagged obsolete keys removed; 17 pre-existing orphan keys removed. `paper/bib.bib` is at the repo root.
 - **GitHub release `v1.1`** published at `ab7086c` (https://github.com/shawngibford/qGAN/releases/tag/v1.1). Three new figures shipped with this release: `cross_model_dtw_dualscale`, `cross_model_acf_overlay`, `preprocessing_pipeline_4panel`.
 
 ### 1.2 Freeze state
@@ -292,8 +292,8 @@ Both shot-noise and noise-channel sweeps use n=3 seeds (NOT n=1 — earlier draf
 | File | Role |
 |---|---|
 | `main (4) copy.tex` | Main manuscript — primary target for rewrite |
-| `supp_material.tex` | Supplementary — secondary target for rewrite |
-| `bib.bib` | Cleaned + aligned bibliography (59 entries, compile-clean) |
+| `paper/supp_material.tex` | Supplementary — secondary target for rewrite |
+| `paper/bib.bib` | Cleaned + aligned bibliography (59 entries, compile-clean) |
 | `REF.md` | R1-m1 reference surgery record |
 | `docs/methods_full.md` | Full methods document — every Methods-section claim traces from here |
 | `docs/reviewer_response.md` | Reviewer-facing rebuttal text, per-comment |
@@ -349,7 +349,7 @@ Each figure has same-stem PDF + PNG + JSON companion for traceability.
 
 1. **Open this file** (`.planning/PAPER-REWRITE-HANDOFF.md`). Read sections 1–3.
 2. **End-to-end read of `main (4) copy.tex`** with a critical eye for residual over-claims (use §4.1 prohibition list as the checklist).
-3. **End-to-end read of `supp_material.tex`** with the same checklist.
+3. **End-to-end read of `paper/supp_material.tex`** with the same checklist.
 4. **List the gaps**: every paragraph that needs rewriting, with a one-line note on what needs to change.
 5. **Apply rewrites** as a sequence of small, atomic `Edit` operations — each one keyed to a specific anchor sentence — so a diff review is easy.
 6. **Insert the three new figures** per §2.3 with captions sourced from the verified numbers in §3.

@@ -416,13 +416,13 @@ Dynamic Time Warping (DTW) is computed by the byte-frozen emitter at
 are persisted in `matched2000_dualscale.json` since Plan 14-11, and
 per-(model_kind, scale) aggregates (mean ± std, n=5 seeds per cell, ddof=1)
 are in `matched2000_dualscale.json#aggregates` under `metric_name='dtw_mean'`.
-The manuscript headline DTW=0.6843 at `main.tex:190` +
-`main.tex:266` + `supp_material.tex:290` originates from a
+The manuscript headline DTW=0.6843 at `paper/main.tex:190` +
+`paper/main.tex:266` + `paper/supp_material.tex:290` originates from a
 pre-v1.0 best-case iqp_sel_55 evaluation pipeline; this value is not
 re-emitted by the current matched-budget contract under the strict-accept
 gate (D-14-13) — it is a labeled historical-reference literal preserved for
 narrative continuity with the LaTeX read-only sources (D-14-18). The
-Orlandi et al. reference DTW=1.954 at `main.tex:191` is a labeled
+Orlandi et al. reference DTW=1.954 at `paper/main.tex:191` is a labeled
 external benchmark, also not re-emitted.
 
 Under the current matched-2000ep evaluation contract, OD-scale DTW

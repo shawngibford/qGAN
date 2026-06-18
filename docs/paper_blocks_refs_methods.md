@@ -1,7 +1,7 @@
 # Paper Revision Blocks — References, Methods, Typos (PAPER-06..11)
 
 > **Manuscript of record is Overleaf-external (RESEARCH Assumption A1).** The
-> in-repo `main.tex` / `supp_material.tex` are READ-ONLY reference
+> in-repo `paper/main.tex` / `paper/supp_material.tex` are READ-ONLY reference
 > (D-14-18) and are NEVER edited. Every block below is a self-contained
 > copy-paste unit keyed to a `\cite{}` key, a `\label{}`, or a verbatim anchor
 > sentence so it applies regardless of the `.bib` / `.tex` physical location.
@@ -22,13 +22,13 @@
 
 Reviewer R1-m1 ("Misplaced / Weak References"): several `\cite{}` keys point at
 work that does not support the attached claim. Each fix below is delivered as
-**(a)** a `.bib` entry to add to the Overleaf `bib.bib` and **(b)** a
+**(a)** a `.bib` entry to add to the Overleaf `paper/bib.bib` and **(b)** a
 sentence-rewrite keyed to the `\cite{}` key as it appears in
-`main.tex` — location-independent (A1).
+`paper/main.tex` — location-independent (A1).
 
 > The bracketed numbers `[27] [28] [39] [18] [19] [41] [55]-[57] [59]` are the
 > reviewer's numbering from the compiled PDF; the corresponding source
-> `\cite{}` keys are identified from `main.tex` and are the load-bearing
+> `\cite{}` keys are identified from `paper/main.tex` and are the load-bearing
 > handle for each fix.
 
 ### PAPER-06.a — Ref [27] (`\cite{esteban2017realvaluedmedicaltimeseries}`) — RCGAN is classical, not a QGAN
@@ -38,7 +38,7 @@ conditional GAN for medical time series); it is currently attached to a
 sentence implying *QGANs* have been applied to healthcare. Rewrite the claim so
 the citation supports a *classical* GAN healthcare application, not a quantum one.
 
-**Anchor (`main.tex` §1.4 line ~92 and §2.4 line ~151), before:**
+**Anchor (`paper/main.tex` §1.4 line ~92 and §2.4 line ~151), before:**
 
 ```latex
 ... with successful applications in finance \cite{orlandi2024enhancing}, healthcare \cite{esteban2017realvaluedmedicaltimeseries}, and optimization \cite{Mugel2022}.
@@ -85,7 +85,7 @@ implies it is QGAN-method evidence.
 **R1-m1 rationale:** replace the over-specialized [39] with the two canonical
 quantum-kernel references the reviewer names.
 
-**Anchor (`main.tex` §2.4 line ~148, quantum kernels sentence), before:**
+**Anchor (`paper/main.tex` §2.4 line ~148, quantum kernels sentence), before:**
 
 ```latex
 Relevant approaches include quantum-enhanced sampling, quantum kernels \cite{giraldo2025q2sar}, and variational quantum algorithms ...
@@ -123,7 +123,7 @@ Relevant approaches include quantum-enhanced sampling, quantum kernels \cite{hav
 sentence claims Gaussian *process* regression. Replace with the canonical GPR
 reference (Rasmussen & Williams).
 
-**Anchor (`main.tex` §1.3 line ~84), before:**
+**Anchor (`paper/main.tex` §1.3 line ~84), before:**
 
 ```latex
 Methods such as Gaussian process regression and multivariate statistical models can generate synthetic data based on estimated probability distributions.  \cite{chokwitthaya2020applying}
@@ -153,7 +153,7 @@ ESRGAN) is an *image* super-resolution GAN cited in a *time-series* synthetic
 data context. Replace with a time-series-relevant GAN reference (TimeGAN — the
 `\cite{yoon2019TimeGAN}` key is already present in the manuscript, so reuse it).
 
-**Anchor (`main.tex` §1.3 line ~86), before:**
+**Anchor (`paper/main.tex` §1.3 line ~86), before:**
 
 ```latex
 Machine learning models such as variational autoencoders (VAEs) and generative adversarial networks (GANs) can learn directly from available data to generate synthetic samples.  \cite{wang2018esrganenhancedsuperresolutiongenerative, akkem2024comprehensive}
@@ -178,7 +178,7 @@ reference. The manuscript already cites `\cite{dimoudis2023utilizing}` for the
 rolling-window technique at §3.1 / Supp §A.7 — reuse that key as the rolling-window
 subsequence reference and drop the misattributed [41].
 
-**Anchor (`main.tex` §3.1 line ~172), before:**
+**Anchor (`paper/main.tex` §3.1 line ~172), before:**
 
 ```latex
 Overlapping subsequences of length 10 with stride 2 were extracted using a rolling window approach \cite{dimoudis2023utilizing}.
@@ -204,7 +204,7 @@ and adversarial-robustness papers. None establishes that quantum interference
 helps *bioprocess* generative learning; the reviewer asks for removal or
 replacement with directly relevant citations.
 
-**Anchor (`supp_material.tex` §A.2.3 "Quantum Advantage for Generative Models",
+**Anchor (`paper/supp_material.tex` §A.2.3 "Quantum Advantage for Generative Models",
 the interference/optimization-landscape sentences ~line 138), before:**
 
 ```latex
@@ -256,7 +256,7 @@ asserted).
 }
 ```
 
-**Insertion sentence — keyed to the §1.4 transition anchor (`main.tex`
+**Insertion sentence — keyed to the §1.4 transition anchor (`paper/main.tex`
 line ~88-92, end of §1.3 "Synthetic Data Generation Approaches" / start of §1.4
 "Quantum Generative Adversarial Networks"):**
 
@@ -278,7 +278,7 @@ Addressing these challenges requires novel methodological approaches. These limi
 ```
 
 > The same `\cite{bernal2022perspectives}` may also be added at the §2.4
-> opening (`main.tex` line ~146-148) where QML is introduced; one
+> opening (`paper/main.tex` line ~146-148) where QML is introduced; one
 > citation insertion, two valid anchor points (R1-m6 "Sections 1.3 and 2").
 
 ---
@@ -286,7 +286,7 @@ Addressing these challenges requires novel methodological approaches. These limi
 ## PAPER-10 — Appendix A3 / Hybrid-GAN: relabel as proposed extension + clarify log-GAN vs Wasserstein discrepancy (Reviewer comment: R2-5a)
 
 **R2-5a rationale:** Appendix A.3's systematic mathematical layout
-(`supp_material.tex` §A.3, `eq:balance`, `eq:constraint1`, `eq:constraint2`,
+(`paper/supp_material.tex` §A.3, `eq:balance`, `eq:constraint1`, `eq:constraint2`,
 `eq:constitutive`, and the Hybrid-GAN objective at line ~158-165) reads as if
 the Hybrid-GAN were *implemented and executed*, but the text says it is future
 work — confusing. Resolution: relabel as a clearly-marked **proposed
@@ -299,7 +299,7 @@ Earth-Mover/Wasserstein form)** is what was actually trained, whereas the
 
 ### PAPER-10.a — A.3 section-header + lead-in relabel
 
-**Anchor (`supp_material.tex` line ~142 `\subsection{Hybrid-GAN Framework for
+**Anchor (`paper/supp_material.tex` line ~142 `\subsection{Hybrid-GAN Framework for
 Future Work}`), before:**
 
 ```latex
@@ -345,7 +345,7 @@ the original GAN objective.
 
 ### PAPER-10.c — Supp Table A2 caveat (R1-M5 / R2-5a — aspirational, not validated)
 
-**Anchor (`supp_material.tex` §A.3.3 Table `\label{tbl:various_approaches}`,
+**Anchor (`paper/supp_material.tex` §A.3.3 Table `\label{tbl:various_approaches}`,
 caption line ~225 and trailing sentence line ~248), before:**
 
 ```latex
@@ -370,7 +370,7 @@ Each R1-m7 checklist item is one keyed before→after block.
 **Where:** ACF figure x-axis label (rendered figure; in this repo the
 regenerated ACF figures are `figures/acf_*.png` whose
 companion JSON carries the corrected `xlabel`). In the manuscript the relevant
-caption is `\label{fig:acf}` (`main.tex` line ~251).
+caption is `\label{fig:acf}` (`paper/main.tex` line ~251).
 
 ```text
 BEFORE: x-axis tick/label reads "Laas"
@@ -383,7 +383,7 @@ AFTER : x-axis tick/label reads "Lags"
 
 ### PAPER-11 / R1-m7 item 2 — Missing space: "Figure A5).This" → "Figure A5). This"
 
-**Anchor (`main.tex` §4.2 line ~261), before:**
+**Anchor (`paper/main.tex` §4.2 line ~261), before:**
 
 ```latex
 ... within a unified feedback loop (Figure A5).%~\ref{fig:qgan_schemcatic}).
@@ -398,7 +398,7 @@ This framework provides a systematic approach ...
 
 ### PAPER-11 / R1-m7 item 3 — "LUCY ©photobioreactor" → "LUCY® photobioreactor"
 
-**Anchor (`supp_material.tex` Figure `\label{fig:lucy}` caption line ~346), before:**
+**Anchor (`paper/supp_material.tex` Figure `\label{fig:lucy}` caption line ~346), before:**
 
 ```latex
 \caption{Schematic of the 300L LUCY \textcopyright  photobioreactor, sensors, and actuators.}
@@ -411,12 +411,12 @@ This framework provides a systematic approach ...
 ```
 
 > Note `\textcopyright` (©) is replaced by `\textregistered` (®) to match the
-> main-text usage `LUCY\textregistered` at `main.tex` line ~178. The
+> main-text usage `LUCY\textregistered` at `paper/main.tex` line ~178. The
 > "300L" descriptor is corrected by PAPER-11 / R1-m7 item 4.
 
 ### PAPER-11 / R1-m7 item 4 — Fix the incomplete 300L/20L sentence + the malformed mid-sentence `\label`
 
-**Anchor (`main.tex` §3.2 line ~178), before (a literal
+**Anchor (`paper/main.tex` §3.2 line ~178), before (a literal
 `\label{fig:lucy}` is incorrectly embedded mid-sentence, and the 300L/20L
 description is malformed):**
 
@@ -432,12 +432,12 @@ Time-series data were collected from a 20-liter photobioreactor (LUCY\textregist
 ```
 
 > The orphan `\label{fig:lucy}` belongs on the actual figure environment in
-> `supp_material.tex` (line ~347), which already declares `\label{fig:lucy}`;
+> `paper/supp_material.tex` (line ~347), which already declares `\label{fig:lucy}`;
 > the mid-sentence occurrence in the main text is a typo and is deleted.
 
 ### PAPER-11 / R1-m7 item 5 — "Dry Biomass" → "dry biomass"
 
-**Anchor (`main.tex` abstract line ~49), before:**
+**Anchor (`paper/main.tex` abstract line ~49), before:**
 
 ```latex
 ... focusing on Optical Density as a key measurement for Dry Biomass estimation.
@@ -451,7 +451,7 @@ Time-series data were collected from a 20-liter photobioreactor (LUCY\textregist
 
 ### PAPER-11 / R1-m7 item 6 — Standardize "bio-manufacturing" vs "biomanufacturing" → "biomanufacturing"
 
-**Anchors:** `main.tex` abstract line ~49 ("bio-manufacturing") and
+**Anchors:** `paper/main.tex` abstract line ~49 ("bio-manufacturing") and
 Plain Language Summary line ~59 ("biomanufacturing"). Standardize on the closed
 form **biomanufacturing** everywhere.
 
@@ -476,7 +476,7 @@ disappears; if the original [39] entry is retained anywhere its title must read
 ### PAPER-11 / R1-m7 item 8 — Ref [51] title capitalization
 
 **Where:** the `.bib` entry the manuscript numbered [51]. Standardize the title
-to sentence case consistent with the rest of `bib.bib` (protect proper nouns
+to sentence case consistent with the rest of `paper/bib.bib` (protect proper nouns
 with `{}`).
 
 ```bibtex
@@ -486,7 +486,7 @@ with `{}`).
 
 ### PAPER-11 / R1-m7 item 9 — "QWGAN-GPs" → "QWGAN-GP" (Concluding Remarks)
 
-**Anchor (`main.tex` §5 Concluding Remarks line ~296), before:**
+**Anchor (`paper/main.tex` §5 Concluding Remarks line ~296), before:**
 
 ```latex
 By successfully demonstrating that QWGAN-GPs can generate synthetic time-series data ...
@@ -500,8 +500,8 @@ By successfully demonstrating that the QWGAN-GP can generate synthetic time-seri
 
 ### PAPER-11 / R1-m7 item 10 — Unify the return-variable symbol (log δ vs ς)
 
-**Anchor (`main.tex` `\label{fig:acf}` caption line ~250, and
-`supp_material.tex` §A.7 Eq.~`eq:lambert_w_s9` / Data Transformation line
+**Anchor (`paper/main.tex` `\label{fig:acf}` caption line ~250, and
+`paper/supp_material.tex` §A.7 Eq.~`eq:lambert_w_s9` / Data Transformation line
 ~354-379), before (the ACF caption uses "log $\delta$" while Supp uses $\nu$ /
 $\varsigma$ inconsistently):**
 
@@ -521,7 +521,7 @@ it everywhere):**
 ### PAPER-11 / R1-m7 item 11 — Enlarge Figures 2-6
 
 **Where:** the main-text result figures `\label{fig:DTWD}`, `\label{fig:pdf}`,
-`\label{fig:cdf}`, `\label{fig:qq}`, `\label{fig:acf}` (`main.tex`
+`\label{fig:cdf}`, `\label{fig:qq}`, `\label{fig:acf}` (`paper/main.tex`
 lines ~196-252). Increase rendered size for legibility.
 
 ```latex
@@ -556,7 +556,7 @@ DERIVED from `data.csv` + the locked window config — D-14-16, success criterio
 > copy-paste LaTeX block below remains the single load-bearing manuscript
 > insertion; methods_full.md is the reviewer-facing audit companion.
 
-**Insertion point:** `main.tex` §3.2 "Photobioreactor Experimental
+**Insertion point:** `paper/main.tex` §3.2 "Photobioreactor Experimental
 Setup", immediately after the data-logging sentence (line ~180, "...data logged
 at 10-minute intervals by an internal data acquisition system."), as a new
 "Dataset and Preprocessing" paragraph before §4.
@@ -615,7 +615,7 @@ metric family with its evaluation scale and gives the headline 55-param IQP:SEL
 quantum value on each scale (single representative seed 42, Pipeline~B — the
 native preprocessing pipeline) so the dual-scale reporting is concrete.
 
-**Insertion point:** `main.tex` §4.1 "Results", immediately before the
+**Insertion point:** `paper/main.tex` §4.1 "Results", immediately before the
 "Dynamic Time Warping." paragraph (line ~189), as an "Evaluation scale" Methods
 paragraph + table.
 
