@@ -63,7 +63,7 @@ from pathlib import Path
 
 # Repo-root resolver (run_multiseed_rollup.py idiom): this file lives at
 # <repo>/verify_freeze_ready.py.
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parent
 RESULTS_DIR = REPO_ROOT / "results"
 GITIGNORE = REPO_ROOT / ".gitignore"
 

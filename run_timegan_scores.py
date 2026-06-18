@@ -54,7 +54,7 @@ import yaml
 
 # ── repo root (mirrors _build_baseline_notebook.py:74-93) ────────────────────
 def _find_repo_root() -> Path:
-    p = Path(__file__).resolve().parent.parent
+    p = Path(__file__).resolve().parent
     for cand in [p, *p.parents]:
         if (cand / "core" / "preprocessing.py").exists():
             return cand
