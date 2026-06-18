@@ -131,7 +131,7 @@ The `.tex` numbers are therefore NOT gate-exempt by silence. The numeric literal
 The `.bib` file (`bib.bib`) is not in the repo working tree. The following `.bib`-entry additions from PAPER-06/07/11 are recorded as Overleaf-side actions and do NOT block this plan or 14-07:
 - Add `@article{esteban2017realvaluedmedicaltimeseries}` verification (classical RCGAN), `@article{havlicek2019supervised}`, `@article{schuld2019quantum}`, `@book{rasmussen2006gaussian}`, `@article{bernal2022perspectives}`.
 - PAPER-11 item 7/8: `.bib` title typo "Approac"→"Approach" and [51] title-capitalization standardization.
-- PAPER-11 item 1/11: regenerated high-DPI ACF/result figures (`results/figures/*.pdf`) replace the Overleaf-embedded bitmaps; the "Laas"→"Lags" x-axis label and Figure 2-6 enlargement are figure-asset swaps, not `.tex` text edits.
+- PAPER-11 item 1/11: regenerated high-DPI ACF/result figures (`figures/*.pdf`) replace the Overleaf-embedded bitmaps; the "Laas"→"Lags" x-axis label and Figure 2-6 enlargement are figure-asset swaps, not `.tex` text edits.
 
 ## Next Phase Readiness
 - The manuscript `.tex` files now carry the complete r1/r2/r3 revision and are consistent with the certified JSON evidence base.

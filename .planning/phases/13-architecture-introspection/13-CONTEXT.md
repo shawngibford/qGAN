@@ -21,7 +21,7 @@ Concretely, Phase 13 produces:
 2. **Training-progression figure** (INTRO-01) — generated distribution at epochs
    {0, N/4, N/2, 3N/4, N} for the quantum generator **and all three Phase-10
    classical WGAN-GP variants** side-by-side, Pipeline B →
-   `results/figures/training_progression.*` + underlying JSON
+   `figures/training_progression.*` + underlying JSON
 3. **Parameter-trajectory plot** (INTRO-02) — PQC param norms + angle histograms
    across epochs → figure + JSON
 4. **Entanglement trajectory** (INTRO-03) — Von Neumann entanglement entropy
@@ -270,7 +270,7 @@ opinion needed):
 
 ### Integration Points
 - `ansatz_comparison.json` + the four introspection figures (+ companion JSON)
-  join the `results/*.json` + `results/figures/` contract
+  join the `results/*.json` + `figures/` contract
   Phase 14 paper-writing reads (PAPER-03 circuit rationale, PAPER-05 outlook).
 - CR-01/CR-02 fixes land in `core/training.py` — must preserve the
   byte-unchanged default behavior all prior phases depend on (spectral

@@ -190,7 +190,7 @@ repo-figure access confirm all `\includegraphics` targets resolve in the frozen
 tree (`dtwd.png`, `pdf.png`, `cdf.png`, `qq.png`, `acf.png`, `quantum_circuit.png`,
 `classicalgan.png`, `hybridgan.png`, `mech_rep.png`, `bpm_qgan.drawio.png`,
 `lucy_diagram.jpg`, `concept_diagram.png`). The figure regeneration
-(`results/figures/*.pdf`, PAPER-11 note) is also not wired into the
+(`figures/*.pdf`, PAPER-11 note) is also not wired into the
 `.tex` `\graphicspath`.
 
 **L-3 — `\bibliography{bib}` (`main:304`)** — the `bib` source file was not

@@ -233,7 +233,7 @@ this revision, but the absence should be acknowledged rather than ignored.
 style="pennylane")(noise, params)` — the canonical PennyLane renderer
 fed by the actual QNode tape with the actual `circuit_id`/`topology`/
 `num_layers` arguments. The companion JSON sidecars
-(`results/figures/circuits/{name}.json`) record
+(`figures/circuits/{name}.json`) record
 `renderer = "qml.draw_mpl(style=\"pennylane\")"` and a generation
 timestamp. There is no bespoke matplotlib gate drawing, no
 post-render edits, and `run_circuit_diagrams._draw_one` hard-asserts

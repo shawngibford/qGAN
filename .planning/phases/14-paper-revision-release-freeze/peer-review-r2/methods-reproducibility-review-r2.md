@@ -52,11 +52,11 @@ Round-1 HIGH-2 explicitly called out three emitters as missing `data_hash`: `cir
 | `results/methods_full.json` | YES | Top-level `buckets.5_reproducibility.data_hash` |
 | `results/framework_versions.json` | YES | Top-level (HIGH-2 fix) |
 | `results/classical_architectures.json` | YES | (HIGH-2 fix) |
-| `results/figures/circuits/iqp_sel_55.json` | YES | (HIGH-2 fix — per-circuit JSON) |
-| `results/figures/circuits/default_75.json` | YES | (HIGH-2 fix) |
-| `results/figures/circuits/V1.json` | YES | (HIGH-2 fix) |
-| `results/figures/circuits/V2.json` | YES | (HIGH-2 fix) |
-| `results/figures/circuits/V3.json` | YES | (HIGH-2 fix) |
+| `figures/circuits/iqp_sel_55.json` | YES | (HIGH-2 fix — per-circuit JSON) |
+| `figures/circuits/default_75.json` | YES | (HIGH-2 fix) |
+| `figures/circuits/V1.json` | YES | (HIGH-2 fix) |
+| `figures/circuits/V2.json` | YES | (HIGH-2 fix) |
+| `figures/circuits/V3.json` | YES | (HIGH-2 fix) |
 | `results/headline_canonical.json` | YES | Pre-existing |
 | `results/matched2000_dualscale.json` | YES | Pre-existing |
 | `results/multiseed_summary.json` | YES | Pre-existing |
@@ -72,7 +72,7 @@ Round-1 HIGH-2 explicitly called out three emitters as missing `data_hash`: `cir
 
 ### JSONs WITHOUT `data_hash`
 
-I separately grepped every top-level JSON in `results/*.json` and every figure companion JSON in `results/figures/*.json`:
+I separately grepped every top-level JSON in `results/*.json` and every figure companion JSON in `figures/*.json`:
 
 | JSON | Has data_hash? | Verdict |
 |---|---|---|
@@ -310,7 +310,7 @@ The reproducibility story for the manuscript is **sound for resubmission**.
 - `/Users/shawngibford/dev/phd/qGAN/results/methods_full.json`
 - `/Users/shawngibford/dev/phd/qGAN/results/model_info.json`
 - `/Users/shawngibford/dev/phd/qGAN/results/classical_architectures.json`
-- `/Users/shawngibford/dev/phd/qGAN/results/figures/circuits/{default_75,iqp_sel_55,V1,V2,V3}.json`
+- `/Users/shawngibford/dev/phd/qGAN/figures/circuits/{default_75,iqp_sel_55,V1,V2,V3}.json`
 - `/Users/shawngibford/dev/phd/qGAN/docs/methods_full.md`
 - `/Users/shawngibford/dev/phd/qGAN/docs/training_protocol.md`
 - `/Users/shawngibford/dev/phd/qGAN/docs/reviewer_response.md`

@@ -16,7 +16,7 @@
 | `run_introspect.py` (NEW) | driver | event-driven (callback) | `run_baselines.py` (`_train_wgan`) + callback hook `training.py:396-411` | role-match |
 | `run_introspect_figures.py` (NEW) | utility | transform → file-I/O | `run_dualscale_fidelity.py` (JSON-emit shape) | partial — no matplotlib analog in repo |
 | `results/ansatz_comparison.json` (NEW artifact) | config/contract | — | `run_dualscale_fidelity.py` rows[] builder (lines 358–376, 400–434) | exact (schema clone) |
-| `results/figures/*.{png,pdf}` + companion `*.json` (NEW) | artifact | file-I/O | none (no figure-rendering code anywhere in repo) | **no analog** |
+| `figures/*.{png,pdf}` + companion `*.json` (NEW) | artifact | file-I/O | none (no figure-rendering code anywhere in repo) | **no analog** |
 | `tests/test_cr01_spectral_grad.py`, `test_cr02_es_restore.py`, `test_ansatz_variants.py`, `test_ansatz_json_schema.py`, `test_introspect_callback.py`, `test_entropy_purity.py` (NEW) | test | — | none (`tests/` dir does not exist yet) | **no analog** |
 
 ---
@@ -180,7 +180,7 @@ def snapshot_cb(epoch, metrics):
 ```
 Use `eval_every=10` (project default, `EVAL_EVERY`) so 0/250/500/750 all land on eval epochs (RESEARCH Pitfall 4). Classical variants have no `introspect()` — guard with `hasattr(generator, "introspect")`.
 
-**Persist:** snapshots → JSON under `results/figures/*.json` companion (the reproducibility contract, ROADMAP criterion 4). Record the bipartition `{0,1}|{2,3,4}` in metadata (D-13-09).
+**Persist:** snapshots → JSON under `figures/*.json` companion (the reproducibility contract, ROADMAP criterion 4). Record the bipartition `{0,1}|{2,3,4}` in metadata (D-13-09).
 
 ---
 
@@ -253,9 +253,9 @@ Never replace `xargs -P 2 -L 1` with `multiprocessing.Pool` (D-10-24 / Pitfall 5
 
 | File | Role | Data Flow | Reason |
 |------|------|-----------|--------|
-| `results/figures/training_progression.{png,pdf}` | artifact | file-I/O | No matplotlib/figure-rendering code exists anywhere in `revision/` (`run_ablation.py:17`: "NO matplotlib import"). Planner uses RESEARCH structure + D-13 figure discretion + standard matplotlib; companion JSON reuses `run_dualscale_fidelity.py:376` write pattern. |
-| `results/figures/param_trajectory.{png,pdf}` | artifact | file-I/O | Same — no figure analog. |
-| `results/figures/entanglement_trajectory.{png,pdf}` | artifact | file-I/O | Same — no figure analog; bipartition metadata `{0,1}|{2,3,4}` recorded in companion JSON (D-13-09). |
+| `figures/training_progression.{png,pdf}` | artifact | file-I/O | No matplotlib/figure-rendering code exists anywhere in `revision/` (`run_ablation.py:17`: "NO matplotlib import"). Planner uses RESEARCH structure + D-13 figure discretion + standard matplotlib; companion JSON reuses `run_dualscale_fidelity.py:376` write pattern. |
+| `figures/param_trajectory.{png,pdf}` | artifact | file-I/O | Same — no figure analog. |
+| `figures/entanglement_trajectory.{png,pdf}` | artifact | file-I/O | Same — no figure analog; bipartition metadata `{0,1}|{2,3,4}` recorded in companion JSON (D-13-09). |
 | `tests/test_cr01_spectral_grad.py` | test | — | No `tests/` directory exists yet (verified). RESEARCH Validation Architecture mandates pytest; Wave 0 must create `tests/` (+ conftest if needed). Test shapes are CONTEXT-mandated (assert non-zero grad into `params_pqc` when `spectral_loss_weight>0`; skipped when `=0.0`). |
 | `tests/test_cr02_es_restore.py` | test | — | Same — no test analog. CONTEXT-mandated: early-stop+restore device/dtype consistency on CPU and MPS (skip-marker if MPS unavailable). |
 | `tests/test_ansatz_variants.py` | test | — | Same — covers ARCH-01: `count_params()==75` default byte-unchanged, V2=135, V3=75, V3 uses linear CNOT only. |
@@ -267,7 +267,7 @@ Never replace `xargs -P 2 -L 1` with `multiprocessing.Pool` (D-10-24 / Pitfall 5
 
 ## Metadata
 
-**Analog search scope:** `core/` (models, training, eval), `run_*.py` (7 drivers), `run_*sweep.sh` (3 sweeps), `tests/` (absent), `results/figures/` (absent)
+**Analog search scope:** `core/` (models, training, eval), `run_*.py` (7 drivers), `run_*sweep.sh` (3 sweeps), `tests/` (absent), `figures/` (absent)
 **Files scanned:** quantum.py, training.py, eval.py, run_baselines.py, run_baselines_sweep.sh, run_dualscale_fidelity.py (+ grep survey of run_ablation/run_multiseed_rollup/run_sensitivity)
 **Key correction carried from RESEARCH:** PennyLane installed version is **0.43.0** (not 0.44.0 as CONTEXT canonical-refs states) — in-QNode `qml.vn_entropy`/`qml.purity` API is version-robust; the offline `qml.math.*` route is NOT a drop-in on 0.43.
 **Pattern extraction date:** 2026-05-18

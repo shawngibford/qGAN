@@ -49,7 +49,7 @@ key-files:
     - docs/reviewer_response.md (utility-battery table + R1-M2 narrative + DTW addendum + per-baseline Welch table + outlier-seed disclosure)
     - .planning/CONTEXT-HANDOFF-2026-06-02.md (§6 #2 prohibition amended)
     - All paper-cited JSONs in results/ that consume samples.npy (regenerated; differential test passes)
-    - ~200 PDF/PNG/JSON figure triples in results/figures/ (regenerated)
+    - ~200 PDF/PNG/JSON figure triples in figures/ (regenerated)
 
 key-decisions:
   - "Inference-only correction (no retraining): the historical x0.1 was preserved at training/sample-export sites because removing it would invalidate every checkpoint; the correction is applied only at samples.npy load time inside every paper-cited consumer."

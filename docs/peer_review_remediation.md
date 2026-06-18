@@ -274,7 +274,7 @@ of the pre-v1.0 paper metric as a comparable column in
 `reconciliation_note.md`. The three threads:
 
 (a) **User-observed visual concern.** All 9 per-model OD-scale QQ plots
-(`results/figures/qq_<model>.png`) look near-identical to the eye
+(`figures/qq_<model>.png`) look near-identical to the eye
 — flagged as a possible data-routing or plot-rendering error.
 
 (b) **Empirical verification result.** Independent reconstruction of
@@ -289,7 +289,7 @@ absolute (8/9 in 0.24–0.28; WGAN-CNN diverges from the cluster at median
 approximately 0.69 vs others, range 0.55–0.77, and at 0.81 vs real).
 
 (c) **Resolution.** Plan 14-15 emits
-`results/figures/qq_overlay.{png,pdf,json}` (single 9-model
+`figures/qq_overlay.{png,pdf,json}` (single 9-model
 discriminating figure with delta-QQ panel) and adds a new 3-column
 comparable-variants table to `docs/reconciliation_note.md`
 (`## EMD comparable across metric variants (matched 2000ep budget)`)

@@ -409,7 +409,7 @@ return (qml.expval(qml.PauliX(0)), qml.expval(qml.PauliZ(0)), ...,
 
 - **Main notebook untouched** — `qgan_pennylane.ipynb` stays as-is; all work in `revision/`.
 - **Compute: Local Mac only** — statevector simulator; sweep sized accordingly (`--parallel ≤ 2`).
-- **Results contract** — every artifact is structured JSON under `results/<name>.json`; figures under `results/figures/` with companion `*.json`.
+- **Results contract** — every artifact is structured JSON under `results/<name>.json`; figures under `figures/` with companion `*.json`.
 - **`core/` byte-untouched except the two folded fixes** — `quantum.py` topology add and `training.py` CR-01/CR-02 must preserve byte-unchanged defaults (`spectral_loss_weight=0.0`, `callback=None`, `early_stopper=None`, default `topology="range"`).
 - **No new variance-collapse remediation** — report honestly; explain dynamics, don't close the gap.
 - **No `multiprocessing.Pool`** — `xargs -P 2` OS processes only (D-10-24, LOCKED).

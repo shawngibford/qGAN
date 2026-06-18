@@ -78,9 +78,9 @@ key-files:
     - results/headline_canonical.json
     - results/classical_architectures.json
     - results/framework_versions.json
-    - results/figures/cross_model_emd.{png,pdf,json}
-    - results/figures/timeseries_{ar,iqp_sel_55_repro,V1,V2,V3,vae,wgan_cnn,wgan_lstm,wgan_mlp}.{png,pdf,json}
-    - results/figures/* (additional re-renders dependent on the data updates)
+    - figures/cross_model_emd.{png,pdf,json}
+    - figures/timeseries_{ar,iqp_sel_55_repro,V1,V2,V3,vae,wgan_cnn,wgan_lstm,wgan_mlp}.{png,pdf,json}
+    - figures/* (additional re-renders dependent on the data updates)
 decisions:
   - "D-14-16 (gate byte-freeze) LIFTED for Task 2 only; back in byte-freeze under v2 schema after T2"
   - "D-14-22 (core/ byte-freeze) PRESERVED across all 7 tasks"

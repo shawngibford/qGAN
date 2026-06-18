@@ -207,10 +207,10 @@ If any gate fails, **stop**. The gate failures from before the swarm + audit cle
 | Repo root | `quantum_circuit.png` | Supp Fig A4 — quantum circuit |
 | Repo root | `bpm_qgan.drawio.png` | Supp Fig A5 — decision-tree triage schematic (future work) |
 | Repo root | `lucy_diagram.jpg` | Supp Fig A6 — LUCY photobioreactor |
-| `results/figures/` | `cross_model_dtw_dualscale.{pdf,png}` | Main Fig 2 — 9-model DTW dual-scale |
-| `results/figures/` | `cross_model_acf_overlay.{pdf,png}` | Main Fig 3 — 9-model log-return ACF overlay |
-| `results/figures/` | `preprocessing_pipeline_4panel.{pdf,png}` | Supp Fig A7 — Pipeline B preprocessing chain |
-| `results/figures/` | `preprocessing_ablation_comparison.{pdf,png}` | Supp Fig A8 — A/B/C ablation comparison |
+| `figures/` | `cross_model_dtw_dualscale.{pdf,png}` | Main Fig 2 — 9-model DTW dual-scale |
+| `figures/` | `cross_model_acf_overlay.{pdf,png}` | Main Fig 3 — 9-model log-return ACF overlay |
+| `figures/` | `preprocessing_pipeline_4panel.{pdf,png}` | Supp Fig A7 — Pipeline B preprocessing chain |
+| `figures/` | `preprocessing_ablation_comparison.{pdf,png}` | Supp Fig A8 — A/B/C ablation comparison |
 
 **Tag** — chosen: `v1.2` (matched-budget release version bump).
 

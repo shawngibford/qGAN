@@ -77,7 +77,7 @@ data-driven, and hybrid approaches.
 
 \begin{figure*}
  \centering
- \includegraphics[width=1\linewidth]{classicalgan.png}
+ \includegraphics[width=1\linewidth]{figures/classicalgan.png}
  \caption{Illustration of classical GAN architecture.}
  \label{fig:classical_gan}
 \end{figure*}
@@ -145,7 +145,7 @@ Huang_2021}.
 
 \begin{figure*}
  \centering
- \includegraphics[width=1\linewidth]{hybridgan.png}
+ \includegraphics[width=1\linewidth]{figures/hybridgan.png}
  \caption{QGAN and synthetic data implementation within a hybrid-model approach to process monitoring.}\label{fig:qgan_hybrid_approach}
 \end{figure*}
 
@@ -201,7 +201,7 @@ reproduced here.
 
 \begin{figure}[ht]
  \centering
- \includegraphics[width=\columnwidth]{mech_rep.png}
+ \includegraphics[width=\columnwidth]{figures/mech_rep.png}
  \caption{Mechanistic representation of (bio)chemical processes. Reprinted with permission from Elsevier. \cite{mansouri2025models}}
  \label{fig:mech_rep}
 \end{figure}
@@ -568,7 +568,7 @@ $\{40, 41, 42\}$).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/tstr_crossmodel_matched2000.pdf}
+ \includegraphics[width=\linewidth]{figures/tstr_crossmodel_matched2000.pdf}
  \caption{TSTR cross-model utility evaluation: 1-step-ahead OD soft
  sensor (1-layer LSTM, hidden$=32$) trained on 19200 synthetic
  windows from each generator (Pipeline~B, 2000 epochs, 3 init seeds
@@ -699,7 +699,7 @@ the figure.
  \centering
  \begin{subfigure}{\linewidth}
  \centering
- \includegraphics[width=\linewidth]{results/figures/circuits/iqp_sel_55.pdf}
+ \includegraphics[width=\linewidth]{figures/circuits/iqp_sel_55.pdf}
  \caption{IQP:SEL: 55 parameters, depth 3, range entangler (headline circuit).}
  \end{subfigure}
 
@@ -707,7 +707,7 @@ the figure.
 
  \begin{subfigure}{\linewidth}
  \centering
- \includegraphics[width=\linewidth]{results/figures/circuits/V1.pdf}
+ \includegraphics[width=\linewidth]{figures/circuits/V1.pdf}
  \caption{V1: 75 parameters, depth 4, range entangler.}
  \end{subfigure}
 
@@ -715,7 +715,7 @@ the figure.
 
  \begin{subfigure}{\linewidth}
  \centering
- \includegraphics[width=\linewidth]{results/figures/circuits/V2.pdf}
+ \includegraphics[width=\linewidth]{figures/circuits/V2.pdf}
  \caption{V2: 135 parameters, depth 8, range entangler.}
  \end{subfigure}
 
@@ -723,7 +723,7 @@ the figure.
 
  \begin{subfigure}{\linewidth}
  \centering
- \includegraphics[width=\linewidth]{results/figures/circuits/V3.pdf}
+ \includegraphics[width=\linewidth]{figures/circuits/V3.pdf}
  \caption{V3: 75 parameters, depth 4, linear entangler.}
  \end{subfigure}
 
@@ -759,13 +759,13 @@ reported in main-text §4.1)
 
 \begin{figure*}
  \centering
- \includegraphics[width=0.75\linewidth]{bpm_qgan.drawio.png}
+ \includegraphics[width=0.75\linewidth]{figures/bpm_qgan.drawio.png}
  \caption{Decision-tree triage schematic for bioprocess monitoring, outlined as future work in the Outlook subsection of Section~4 in the main text. Not an empirical contribution of the present study.}\label{fig:qgan_schematic}
 \end{figure*}
 This figure illustrates the decision-tree triage workflow outlined as future work in the Outlook subsection of Section~4 in the main text, sketching how sensor-feasibility, mechanistic, data-driven, and quantum-synthetic options could be organised under varying data-availability constraints. It is presented as an organising concept and is not evaluated empirically in this paper.
 \begin{figure*}
  \centering
- \includegraphics[width=1\linewidth]{lucy_diagram.jpg}
+ \includegraphics[width=1\linewidth]{figures/lucy_diagram.jpg}
  \caption{Schematic of the 20\,L LUCY\textregistered{} photobioreactor used in this study, with its sensors and actuators.}
  \label{fig:lucy}
 \end{figure*}
@@ -776,7 +776,7 @@ This schematic depicts the photobioreactor experimental setup described in Secti
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/preprocessing_pipeline_4panel.pdf}
+ \includegraphics[width=\linewidth]{figures/preprocessing_pipeline_4panel.pdf}
  \caption{Four-stage preprocessing pipeline (Pipeline~B, native): raw OD ($n=778$),
  log-returns $r_t = \ln \mathrm{OD}_t - \ln \mathrm{OD}_{t-1}$ ($n=777$),
  standardized ($\mu=0$, $\sigma=1$), and linearly rescaled to $[-1, 1]$ using
@@ -848,7 +848,7 @@ metrics and the ablation summary are released with the artifact set
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/preprocessing_ablation_comparison.pdf}
+ \includegraphics[width=\linewidth]{figures/preprocessing_ablation_comparison.pdf}
  \caption{Preprocessing ablation across three pipelines (A: raw min-max OD;
  B: log-returns standardized $+$ rescaled to $[-1, 1]$, selected;
  C: log-return $\to$ standardize $\to$ inverse Lambert~$W$ $\to$
@@ -928,7 +928,7 @@ quantitative evaluation in main \S4.1 is over the full 5-seed
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/training_progression.pdf}
+ \includegraphics[width=\linewidth]{figures/training_progression.pdf}
  \caption{Generated log-return distribution snapshots across training:
  4 generators (quantum IQP:SEL 55p; wgan\_mlp 74p; wgan\_cnn 73p;
  wgan\_lstm 78p) at snapshot epochs $\{0, 250, 500, 750, 1000\}$. Each
@@ -942,7 +942,7 @@ quantitative evaluation in main \S4.1 is over the full 5-seed
 
 \begin{figure}[!htbp]
  \centering
- \includegraphics[width=\columnwidth]{results/figures/entanglement_trajectory.pdf}
+ \includegraphics[width=\columnwidth]{figures/entanglement_trajectory.pdf}
  \caption{Entanglement entropy trajectory of the quantum generator
  during training (variant V1, 4 layers, range topology, seed~42).
  Bipartition $\{0,1\}\,|\,\{2,3,4\}$. Top: Von Neumann entanglement
@@ -959,7 +959,7 @@ quantitative evaluation in main \S4.1 is over the full 5-seed
 
 \begin{figure}[!htbp]
  \centering
- \includegraphics[width=\columnwidth]{results/figures/param_trajectory.pdf}
+ \includegraphics[width=\columnwidth]{figures/param_trajectory.pdf}
  \caption{PQC parameter trajectory during training (variant V1,
  4 layers, range topology, 75 parameters, seed~42). Top: $L_2$-norm
  of the parameter vector across snapshot epochs
@@ -1034,12 +1034,12 @@ known fragility at the matched-budget parameter count of 73.
 \begin{figure*}[!htbp]
  \centering
  \begin{subfigure}{0.42\linewidth}
- \includegraphics[width=\linewidth]{results/figures/loss_iqp_sel_55_repro.pdf}
+ \includegraphics[width=\linewidth]{figures/loss_iqp_sel_55_repro.pdf}
  \caption{IQP:SEL (55p, Q)}
  \label{fig:per_model_loss_grid_a}
  \end{subfigure}\hfill
  \begin{subfigure}{0.42\linewidth}
- \includegraphics[width=\linewidth]{results/figures/loss_V1.pdf}
+ \includegraphics[width=\linewidth]{figures/loss_V1.pdf}
  \caption{V1 (75p, Q)}
  \label{fig:per_model_loss_grid_b}
  \end{subfigure}
@@ -1047,12 +1047,12 @@ known fragility at the matched-budget parameter count of 73.
  \vspace{2pt}
 
  \begin{subfigure}{0.42\linewidth}
- \includegraphics[width=\linewidth]{results/figures/loss_V2.pdf}
+ \includegraphics[width=\linewidth]{figures/loss_V2.pdf}
  \caption{V2 (135p, Q)}
  \label{fig:per_model_loss_grid_c}
  \end{subfigure}\hfill
  \begin{subfigure}{0.42\linewidth}
- \includegraphics[width=\linewidth]{results/figures/loss_V3.pdf}
+ \includegraphics[width=\linewidth]{figures/loss_V3.pdf}
  \caption{V3 (75p, Q)}
  \label{fig:per_model_loss_grid_d}
  \end{subfigure}
@@ -1060,12 +1060,12 @@ known fragility at the matched-budget parameter count of 73.
  \vspace{2pt}
 
  \begin{subfigure}{0.42\linewidth}
- \includegraphics[width=\linewidth]{results/figures/loss_wgan_mlp.pdf}
+ \includegraphics[width=\linewidth]{figures/loss_wgan_mlp.pdf}
  \caption{WGAN-MLP (74p, C)}
  \label{fig:per_model_loss_grid_e}
  \end{subfigure}\hfill
  \begin{subfigure}{0.42\linewidth}
- \includegraphics[width=\linewidth]{results/figures/loss_wgan_cnn.pdf}
+ \includegraphics[width=\linewidth]{figures/loss_wgan_cnn.pdf}
  \caption{WGAN-CNN (73p, C)}
  \label{fig:per_model_loss_grid_f}
  \end{subfigure}
@@ -1073,12 +1073,12 @@ known fragility at the matched-budget parameter count of 73.
  \vspace{2pt}
 
  \begin{subfigure}{0.42\linewidth}
- \includegraphics[width=\linewidth]{results/figures/loss_wgan_lstm.pdf}
+ \includegraphics[width=\linewidth]{figures/loss_wgan_lstm.pdf}
  \caption{WGAN-LSTM (78p, C)}
  \label{fig:per_model_loss_grid_g}
  \end{subfigure}\hfill
  \begin{subfigure}{0.42\linewidth}
- \includegraphics[width=\linewidth]{results/figures/loss_vae.pdf}
+ \includegraphics[width=\linewidth]{figures/loss_vae.pdf}
  \caption{VAE (562p, ELBO+recon+KLD)}
  \label{fig:per_model_loss_grid_h}
  \end{subfigure}
@@ -1133,45 +1133,45 @@ un-corrected log-returns and are unaffected.
 \begin{figure*}[!htbp]
  \centering
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_iqp_sel_55_repro.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_iqp_sel_55_repro.pdf}
    \caption{IQP:SEL (55p, Q)}\label{fig:reconstruction_atlas_a}
  \end{subfigure}\hfill
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_V1.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_V1.pdf}
    \caption{V1 (75p, Q)}\label{fig:reconstruction_atlas_b}
  \end{subfigure}\hfill
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_V2.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_V2.pdf}
    \caption{V2 (135p, Q)}\label{fig:reconstruction_atlas_c}
  \end{subfigure}
 
  \vspace{2pt}
 
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_V3.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_V3.pdf}
    \caption{V3 (75p, Q, linear)}\label{fig:reconstruction_atlas_d}
  \end{subfigure}\hfill
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_wgan_mlp.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_wgan_mlp.pdf}
    \caption{WGAN-MLP (74p)}\label{fig:reconstruction_atlas_e}
  \end{subfigure}\hfill
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_wgan_cnn.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_wgan_cnn.pdf}
    \caption{WGAN-CNN (73p)}\label{fig:reconstruction_atlas_f}
  \end{subfigure}
 
  \vspace{2pt}
 
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_wgan_lstm.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_wgan_lstm.pdf}
    \caption{WGAN-LSTM (78p)}\label{fig:reconstruction_atlas_g}
  \end{subfigure}\hfill
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_vae.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_vae.pdf}
    \caption{VAE (562p)}\label{fig:reconstruction_atlas_h}
  \end{subfigure}\hfill
  \begin{subfigure}{0.30\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/reconstruction_ar.pdf}
+   \includegraphics[width=\linewidth]{figures/reconstruction_ar.pdf}
    \caption{AR(2) (3p)}\label{fig:reconstruction_atlas_i}
  \end{subfigure}
 
@@ -1215,7 +1215,7 @@ reproduce the un-shifted view for any of the nine models.
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/reconstruction_unshifted_quad.pdf}
+ \includegraphics[width=\linewidth]{figures/reconstruction_unshifted_quad.pdf}
  \caption{Un-shifted (raw) cumulative reconstructions for four
  representative models. Each panel: log-OD scale, real (blue) vs.\
  un-corrected generated (orange) over 778 points. Per-panel title
@@ -1257,7 +1257,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_iqp_sel_55_repro.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_iqp_sel_55_repro.pdf}
  \caption{Log-return distribution diagnostics: IQP:SEL 55p (2000ep
  repro), seed~42. Real (blue) vs.\ generated (orange). Panel layout
  (identical across all nine \S A.11 figures): top-left PDF
@@ -1274,7 +1274,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_V1.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_V1.pdf}
  \caption{Log-return distribution diagnostics: Quantum V1 (75p),
  seed~42. Panels as in
  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
@@ -1283,7 +1283,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_V2.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_V2.pdf}
  \caption{Log-return distribution diagnostics: Quantum V2 (135p),
  seed~42. Panels as in
  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
@@ -1292,7 +1292,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_V3.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_V3.pdf}
  \caption{Log-return distribution diagnostics: Quantum V3 (75p,
  linear entangler), seed~42. Panels as in
  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
@@ -1301,7 +1301,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_wgan_mlp.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_wgan_mlp.pdf}
  \caption{Log-return distribution diagnostics: WGAN-GP (MLP, 74p),
  seed~42. Panels as in
  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
@@ -1310,7 +1310,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_wgan_cnn.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_wgan_cnn.pdf}
  \caption{Log-return distribution diagnostics: WGAN-GP (CNN, 73p),
  seed~42 (the OD-EMD outlier seed disclosed in main-text \S 4.1).
  Panels as in Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
@@ -1319,7 +1319,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_wgan_lstm.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_wgan_lstm.pdf}
  \caption{Log-return distribution diagnostics: WGAN-GP (LSTM, 78p),
  seed~42. Panels as in
  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
@@ -1328,7 +1328,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_vae.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_vae.pdf}
  \caption{Log-return distribution diagnostics: VAE (562p,
  degenerate generation regime; see main-text \S 4.1), seed~42.
  Panels as in Figure~\ref{fig:stat_grid_iqp_sel_55_repro}.}
@@ -1337,7 +1337,7 @@ per-window evaluation protocol aggregated across all five seeds).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/stat_grid_ar.pdf}
+ \includegraphics[width=\linewidth]{figures/stat_grid_ar.pdf}
  \caption{Log-return distribution diagnostics: AR(2) closed-form
  baseline, seed~42. Panels as in
  Figure~\ref{fig:stat_grid_iqp_sel_55_repro}. The visibly tightest
@@ -1377,45 +1377,45 @@ than to re-derive the headline metric.
 \begin{figure*}[!htbp]
  \centering
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_iqp_sel_55_repro.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_iqp_sel_55_repro.pdf}
    \caption{IQP:SEL (55p, Q)}\label{fig:dtw_alignment_atlas_a}
  \end{subfigure}\hfill
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_V1.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_V1.pdf}
    \caption{V1 (75p, Q)}\label{fig:dtw_alignment_atlas_b}
  \end{subfigure}\hfill
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_V2.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_V2.pdf}
    \caption{V2 (135p, Q)}\label{fig:dtw_alignment_atlas_c}
  \end{subfigure}
 
  \vspace{4pt}
 
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_V3.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_V3.pdf}
    \caption{V3 (75p, Q, linear entangler)}\label{fig:dtw_alignment_atlas_d}
  \end{subfigure}\hfill
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_wgan_mlp.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_wgan_mlp.pdf}
    \caption{WGAN-MLP (74p)}\label{fig:dtw_alignment_atlas_e}
  \end{subfigure}\hfill
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_wgan_cnn.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_wgan_cnn.pdf}
    \caption{WGAN-CNN (73p)}\label{fig:dtw_alignment_atlas_f}
  \end{subfigure}
 
  \vspace{4pt}
 
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_wgan_lstm.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_wgan_lstm.pdf}
    \caption{WGAN-LSTM (78p)}\label{fig:dtw_alignment_atlas_g}
  \end{subfigure}\hfill
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_vae.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_vae.pdf}
    \caption{VAE (562p)}\label{fig:dtw_alignment_atlas_h}
  \end{subfigure}\hfill
  \begin{subfigure}{0.32\linewidth}
-   \includegraphics[width=\linewidth]{results/figures/dtw_alignment_ar.pdf}
+   \includegraphics[width=\linewidth]{figures/dtw_alignment_ar.pdf}
    \caption{AR(2) (3p)}\label{fig:dtw_alignment_atlas_i}
  \end{subfigure}
 
@@ -1447,7 +1447,7 @@ $\gamma \in \{0, 0.001, 0.01, 0.05\}$, per-layer channel insertion).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/shot_noise_robustness.pdf}
+ \includegraphics[width=\linewidth]{figures/shot_noise_robustness.pdf}
  \caption{Shot-noise sensitivity of the quantum generator
  (IQP:SEL 55p) under finite-shot measurement: analytic statevector
  baseline vs.\ 8192 shots vs.\ 1024 shots. OD-EMD reported as
@@ -1461,7 +1461,7 @@ $\gamma \in \{0, 0.001, 0.01, 0.05\}$, per-layer channel insertion).
 
 \begin{figure*}[!htbp]
  \centering
- \includegraphics[width=\linewidth]{results/figures/noise_robustness_quantum.pdf}
+ \includegraphics[width=\linewidth]{figures/noise_robustness_quantum.pdf}
  \caption{Noise-model sensitivity of the quantum generator
  (IQP:SEL 55p) under per-layer depolarizing and amplitude-damping
  channels (inserted after each entangling block). OD-EMD as 3-seed

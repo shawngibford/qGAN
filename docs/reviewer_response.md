@@ -34,7 +34,7 @@ quantitative claim is traceable to a `results/*.json` artifact via
 | ID | Verbatim concern (abbrev.) | Change made | Manuscript location | Supporting artifact |
 |----|----------------------------|-------------|---------------------|---------------------|
 | R1-M1 | No matched classical baseline — quantum contribution cannot be isolated | Added matched-parameter classical WGAN-GP (MLP/CNN/LSTM critics) and a non-adversarial VAE + AR baseline, all at matched 2000-epoch budget, identical critic/optimizer/seed set; parameter-count-controlled comparison table | §4.1 Results (new baseline comparison table); §4.2 Key Contributions (honest framing) | `results/baseline_comparison.json`; `results/model_info.json` |
-| R1-M2 | Validation is diagnostic only — need utility-oriented tests (TSTR, predictive/discriminative) | Added TSTR (train-on-synthetic, test-on-real soft sensor), TimeGAN predictive + discriminative scores, and Orlandi-style real-only vs synthetic-augmented comparison, re-run at matched 2000-epoch Pipeline B budget (Plan 14-20) so R1-M1 and R1-M2 share a single matched-budget evidence base; legacy 1000-epoch JSONs preserved as provenance but not cited | §4.1 Results (utility-evaluation subsection) | `results/tstr_matched2000.json`; `results/predictive_discriminative_matched2000.json`; `results/augmentation_matched2000.json`; figure `results/figures/tstr_crossmodel_matched2000.{png,pdf,json}` |
+| R1-M2 | Validation is diagnostic only — need utility-oriented tests (TSTR, predictive/discriminative) | Added TSTR (train-on-synthetic, test-on-real soft sensor), TimeGAN predictive + discriminative scores, and Orlandi-style real-only vs synthetic-augmented comparison, re-run at matched 2000-epoch Pipeline B budget (Plan 14-20) so R1-M1 and R1-M2 share a single matched-budget evidence base; legacy 1000-epoch JSONs preserved as provenance but not cited | §4.1 Results (utility-evaluation subsection) | `results/tstr_matched2000.json`; `results/predictive_discriminative_matched2000.json`; `results/augmentation_matched2000.json`; figure `figures/tstr_crossmodel_matched2000.{png,pdf,json}` |
 | R1-M3 | Log-returns + Lambert W may strip temporal structure; no OD back-transformation | Added original-OD-scale results (generate → invert → metrics on physical units); ACF on both transformed and OD scale; explicit per-metric scale statement; growth-rate justification of log-returns | §3 Methods (evaluation-scale paragraph + Table); §4.1 (dual-scale ACF) | `results/fidelity_dualscale.json`; `docs/dataset_stats.md` |
 | R1-M4 | Incomplete optimization / training details (n_critic, λ, LR, epochs, stopping, seeds, analytic vs shot) | Added full Training Protocol (all hyperparameters rendered from JSON); stated analytic statevector (no shot noise) backend; added shot-noise sensitivity; multi-seed (5 seeds) mean ± std; clarified Supp Eq. A3 log-GAN vs Wasserstein discrepancy | §3 Methods (Training Protocol); Supp §A.3 (PAPER-10 block) | `docs/training_protocol.md`; `results/shot_noise_sensitivity.json`; `results/multiseed_summary.json` |
 | R1-M5 | Claim calibration — language oversells a simulator-based, single-variable, single-campaign proof-of-concept | Toned language to "proof-of-concept feasibility study"; moved decision-tree workflow + Hybrid-GAN to a labeled Outlook; caveated Supp Table A2 as aspirational; clarified 20L/300L; softened "exponential compactness"/"reduced mode collapse" to literature-motivated hypotheses | Abstract; §1; §4.2–4.4; §5; Supp §A.3 (PAPER-02/05/10/11 blocks) | `docs/paper_blocks_refs_methods.md`; `results/model_info.json` |
@@ -49,7 +49,7 @@ quantitative claim is traceable to a `results/*.json` artifact via
 | R1-m4 | Freeze GitHub repository; cite frozen version with DOI | Tagged release + Zenodo DOI deposit **pending under Plan 14-07** (only outstanding Phase 14 plan); `release.md` will carry the resolved DOI and a frozen-tag commit SHA upon deposit. The provenance gate v2.1 + tracked checkpoint + pinned requirements provide the reproducibility surface today; Zenodo adds the citable DOI on top. | §4.3 Data Availability statement (INFRA-03, Plan 14-07) | `docs/reconciliation_note.md`; `results/model_info.json`; `REPRODUCE.md` (NEW, Plan 14-14) |
 | R1-m5 | Orlandi et al. comparison — replicate their utility-test style if kept | TSTR utility evaluation replicates the train-on-synthetic / test-on-real style of the Orlandi comparison (ties into R1-M2) | §4.1 Results (utility evaluation) | `results/tstr.json`; `results/predictive_discriminative.json` |
 | R1-m6 | Add Bernal et al. AIChE perspective in Introduction (§1.3 and §2) | Added Bernal et al. `.bib` entry + insertion sentence at the §1.3→§1.4 transition and §2.4 opening | §1.3/§1.4 and §2.4 (PAPER-07 block) | `docs/paper_blocks_refs_methods.md` (PAPER-07) |
-| R1-m7 | Typos / notation: Laas→Lags, missing space, LUCY ©→®, 300L/20L, Dry Biomass, bio-manufacturing, Ref[39] Approac, Ref[51] caps, QWGAN-GPs→QWGAN-GP, single return symbol, enlarge Figs 2-6 | One keyed before→after block per checklist item; figures regenerated at high DPI with corrected labels | Abstract, §3.2, §4.2, §5, Supp §A.7, captions fig:DTWD/pdf/cdf/qq/acf/lucy (PAPER-11 blocks) | `docs/paper_blocks_refs_methods.md` (PAPER-11); `results/figures/acf_iqp_sel_55_repro.png` |
+| R1-m7 | Typos / notation: Laas→Lags, missing space, LUCY ©→®, 300L/20L, Dry Biomass, bio-manufacturing, Ref[39] Approac, Ref[51] caps, QWGAN-GPs→QWGAN-GP, single return symbol, enlarge Figs 2-6 | One keyed before→after block per checklist item; figures regenerated at high DPI with corrected labels | Abstract, §3.2, §4.2, §5, Supp §A.7, captions fig:DTWD/pdf/cdf/qq/acf/lucy (PAPER-11 blocks) | `docs/paper_blocks_refs_methods.md` (PAPER-11); `figures/acf_iqp_sel_55_repro.png` |
 
 ---
 
@@ -63,7 +63,7 @@ quantitative claim is traceable to a `results/*.json` artifact via
 | R2-4 | "Improves prediction performance" — compared to what? | Addressed by the R1-M2 TSTR evaluation: real-only vs synthetic-augmented downstream training quantifies the comparison baseline | §4.1 Results (utility evaluation) | `results/augmentation.json`; `results/predictive_discriminative.json` |
 | R2-5a | Appendix A3 first-principles / Hybrid-GAN — done or not? | Relabeled Supp §A.3 as a "proposed extension (not implemented)"; removed presentation implying execution; clarified the log-GAN vs Wasserstein equation discrepancy; caveated Table A2 as aspirational | Supp §A.3 (PAPER-10 blocks) | `docs/paper_blocks_refs_methods.md` (PAPER-10) |
 | R2-5b | Why this particular circuit / architecture? No justification | Added a "Circuit Design Rationale" subsection (why 5 qubits, ansatz expressibility/trainability tradeoff, classical critic + quantum generator) with a 2–3 ansatz sensitivity comparison | §3 Methods (new Circuit Design Rationale subsection) | `results/ansatz_comparison.json`; `results/model_info.json` |
-| R2-6 | Analyze circuit outputs during training / reduce black-box feel | Added training-progression distribution figures, PQC parameter-trajectory and entanglement-entropy evolution, and quantum-vs-classical generator output-statistics comparison across training | §4.1 Results (circuit-introspection figures) | `results/figures/training_progression.png`; `results/figures/param_trajectory.png`; `results/figures/entanglement_trajectory.png` |
+| R2-6 | Analyze circuit outputs during training / reduce black-box feel | Added training-progression distribution figures, PQC parameter-trajectory and entanglement-entropy evolution, and quantum-vs-classical generator output-statistics comparison across training | §4.1 Results (circuit-introspection figures) | `figures/training_progression.png`; `figures/param_trajectory.png`; `figures/entanglement_trajectory.png` |
 
 ---
 
@@ -105,10 +105,10 @@ consolidated in `docs/methods_full.md` §3 (Training) + §4
 `results/framework_versions.json` + the five config-lock JSONs
 (Plan 14-11). The shot-noise sensitivity and multi-seed mean ± std
 components of R1-M4 are additionally rendered as figures in Plan 14-10:
-`results/figures/shot_noise_robustness.{png,pdf}` (source =
+`figures/shot_noise_robustness.{png,pdf}` (source =
 `results/shot_noise_sensitivity.json`),
-`results/figures/seed_variance_per_model.{png,pdf}` (source = 45
-per-run metrics.json), and `results/figures/training_convergence_all_models.{png,pdf}`
+`figures/seed_variance_per_model.{png,pdf}` (source = 45
+per-run metrics.json), and `figures/training_convergence_all_models.{png,pdf}`
 (source = 45 per-run metrics.json + `results/headline_canonical.json`).
 R1-M4 is hereby marked **RESOLVED**.
 
@@ -116,7 +116,7 @@ R1-M4 is hereby marked **RESOLVED**.
 
 The Circuit Design Rationale subsection (PAPER-03) is now visually
 grounded by five `qml.draw_mpl` architecture diagrams at
-`results/figures/circuits/{default_75,iqp_sel_55,V1,V2,V3}.{png,pdf}`
+`figures/circuits/{default_75,iqp_sel_55,V1,V2,V3}.{png,pdf}`
 and the copy-paste-ready spec-table atlas at
 `docs/circuit_atlas.md` (Plan 14-09). Every numeric literal in
 the atlas resolves to one of the five config-lock JSONs
@@ -142,7 +142,7 @@ rows[] with TimeGAN |acc − 0.5| convention for the discriminative score),
 and `results/augmentation_matched2000.json` (long-form rows[]
 with Orlandi-style +25%/+50%/+100% injection-ratio grid against
 n_real_train = 65). The matched-budget cross-model figure is rendered at
-`results/figures/tstr_crossmodel_matched2000.{png,pdf,json}`.
+`figures/tstr_crossmodel_matched2000.{png,pdf,json}`.
 
 **Headline matched-budget result (Pipeline B, 2000 epochs):**
 
@@ -234,7 +234,7 @@ number in this section resolves to the matched-budget sibling
 Companion-figure caveat: the per-model failure-mode diagnostic grid
 (distribution overlay × ACF lag-1 × log-return EMD across 9 models,
 ordered by ascending OD EMD) at
-`results/figures/failure_modes_summary.{png,pdf}` (source =
+`figures/failure_modes_summary.{png,pdf}` (source =
 `results/matched2000_dualscale.json` + per-model dist/acf
 companion JSONs) is retained from Plan 14-10 and continues to visualize
 the cross-model fidelity structure.
@@ -243,10 +243,10 @@ the cross-model fidelity structure.
 
 The noise-model sensitivity (depolarizing + amplitude-damping channels,
 per-layer insertion) is rendered at
-`results/figures/noise_robustness_quantum.{png,pdf}` (source =
+`figures/noise_robustness_quantum.{png,pdf}` (source =
 `results/noise_model_sensitivity.json`). The shot-noise
 sensitivity (analytic-statevector baseline + finite-shot regimes) is
-rendered at `results/figures/shot_noise_robustness.{png,pdf}`
+rendered at `figures/shot_noise_robustness.{png,pdf}`
 (source = `results/shot_noise_sensitivity.json`). Both consume
 previously-unconsumed audited JSONs and make the analytic-vs-shot-noise
 backend statement empirically grounded.
@@ -254,7 +254,7 @@ backend statement empirically grounded.
 ### PAPER-01 / R2-1 — Parameter-matched comparison — strengthened by Plan 14-10
 
 The parameter-matched comparison hypothesis (PAPER-01) is rendered as a
-visual companion at `results/figures/param_efficiency_pareto.{png,pdf}`
+visual companion at `figures/param_efficiency_pareto.{png,pdf}`
 (source = `results/model_info.json` (n_params per model) +
 `results/matched2000_dualscale.json` (EMD mean ± std per scale)).
 The frozen-checkpoint headline (D-14-10) appears as a visually distinct
@@ -337,14 +337,14 @@ matched-2000ep budget. Discrimination lives in the dependence structure:
 autocorrelation function (ACF), conditional moments, and TimeGAN-style
 discriminative/predictive scores. We refer reviewers to:
 
-- `results/figures/qq_overlay.png` (Plan 14-15) — single
+- `figures/qq_overlay.png` (Plan 14-15) — single
   discriminating QQ figure with delta-QQ panel making the convergence
   visually obvious
-- `results/figures/training_convergence_all_models.png` — ACF and
+- `figures/training_convergence_all_models.png` — ACF and
   convergence trajectory (Plan 14-10)
-- `results/figures/failure_modes_summary.png` — per-model failure-
+- `figures/failure_modes_summary.png` — per-model failure-
   mode decomposition (Plan 14-10)
-- `results/figures/seed_variance_per_model.png` — per-architecture
+- `figures/seed_variance_per_model.png` — per-architecture
   seed sensitivity (Plan 14-10)
 - `docs/methods_full.md §3.x` — metric conventions used in the
   dependence-structure evaluations

@@ -30,11 +30,11 @@
 | `results/v1_config_lock.json` | Config lock for V1 matched-budget ansatz | `run_matched2000.py:118` |
 | `results/v2_config_lock.json` | Config lock for V2 matched-budget ansatz | `run_matched2000.py:120` |
 | `results/v3_config_lock.json` | Config lock for V3 matched-budget ansatz | `run_matched2000.py:122` |
-| `results/figures/circuits/default_75.{png,pdf,json}` | Render-only architecture diagram for default_75 | `results/default_75_config_lock.json` |
-| `results/figures/circuits/iqp_sel_55.{png,pdf,json}` | Render-only architecture diagram for canonical paper circuit (frozen checkpoint per Plan 14-01) | `results/canonical_config_lock.json` |
-| `results/figures/circuits/V1.{png,pdf,json}` | Render-only architecture diagram for V1 | `results/v1_config_lock.json` |
-| `results/figures/circuits/V2.{png,pdf,json}` | Render-only architecture diagram for V2 | `results/v2_config_lock.json` |
-| `results/figures/circuits/V3.{png,pdf,json}` | Render-only architecture diagram for V3 | `results/v3_config_lock.json` |
+| `figures/circuits/default_75.{png,pdf,json}` | Render-only architecture diagram for default_75 | `results/default_75_config_lock.json` |
+| `figures/circuits/iqp_sel_55.{png,pdf,json}` | Render-only architecture diagram for canonical paper circuit (frozen checkpoint per Plan 14-01) | `results/canonical_config_lock.json` |
+| `figures/circuits/V1.{png,pdf,json}` | Render-only architecture diagram for V1 | `results/v1_config_lock.json` |
+| `figures/circuits/V2.{png,pdf,json}` | Render-only architecture diagram for V2 | `results/v2_config_lock.json` |
+| `figures/circuits/V3.{png,pdf,json}` | Render-only architecture diagram for V3 | `results/v3_config_lock.json` |
 | `docs/circuit_atlas.md` | Copy-paste PAPER-03 architecture atlas (one section per circuit + cross-comparison + provenance footer) | All five config-lock JSONs above |
 
 ---
@@ -44,17 +44,17 @@
 | Artifact | Description | Provenance source |
 |---|---|---|
 | `run_figure_suite.py` (extended) | Seven new render-* functions wired into main() after the 14-08 dual-scale block | 14-04 / 14-08 render-only contract reused |
-| `results/figures/training_convergence_all_models.{png,pdf,json}` | Nine-model EMD-vs-epoch trajectories with mean±std seed band + frozen-headline marker | Per-run `matched2000/runs/<model>/<seed>/metrics.json` + `headline_canonical.json` |
-| `results/figures/tstr_crossmodel.{png,pdf,json}` | Cross-model TSTR grouped bars (R², MAE, RMSE) for Pipelines A and B (LEGACY 1000-epoch — retained on disk for provenance, not cited in rebuttal post-Plan 14-20) | `results/tstr.json` |
-| `results/figures/tstr_crossmodel_matched2000.{png,pdf,json}` | Cross-model TSTR grouped bars on matched-budget Pipeline B (9 variants, 2000 epochs, real-only baseline as dashed reference) — Plan 14-20 | `results/tstr_matched2000.json` |
+| `figures/training_convergence_all_models.{png,pdf,json}` | Nine-model EMD-vs-epoch trajectories with mean±std seed band + frozen-headline marker | Per-run `matched2000/runs/<model>/<seed>/metrics.json` + `headline_canonical.json` |
+| `figures/tstr_crossmodel.{png,pdf,json}` | Cross-model TSTR grouped bars (R², MAE, RMSE) for Pipelines A and B (LEGACY 1000-epoch — retained on disk for provenance, not cited in rebuttal post-Plan 14-20) | `results/tstr.json` |
+| `figures/tstr_crossmodel_matched2000.{png,pdf,json}` | Cross-model TSTR grouped bars on matched-budget Pipeline B (9 variants, 2000 epochs, real-only baseline as dashed reference) — Plan 14-20 | `results/tstr_matched2000.json` |
 | `results/tstr_matched2000.json` | Matched-budget TSTR R²/MAE/RMSE: 9 trainable model_kinds × Pipeline B × 5 generator seeds × 3 init seeds (Plan 14-20; replaces legacy `tstr.json` for rebuttal citations) | Per-run `results/matched2000/runs/<model>/<seed>/samples.npy` + canonical `data.csv` |
 | `results/predictive_discriminative_matched2000.json` | Matched-budget TimeGAN predictive + discriminative scores (\|acc−0.5\| convention) across 9 model_kinds × Pipeline B × 5 seeds (Plan 14-20) | Per-run `results/matched2000/runs/<model>/<seed>/samples.npy` + canonical `data.csv` |
 | `results/augmentation_matched2000.json` | Matched-budget Orlandi-style real-only-vs-augmented lift (+25%/+50%/+100% injection ratios against n_real_train=65) across 9 model_kinds × Pipeline B (Plan 14-20) | Per-run `results/matched2000/runs/<model>/<seed>/samples.npy` + canonical `data.csv` |
-| `results/figures/failure_modes_summary.{png,pdf,json}` | Diagnostic grid: distribution overlay × ACF lag-1 × log-return EMD × nine models | `results/matched2000_dualscale.json` + per-model dist/acf companion JSONs |
-| `results/figures/param_efficiency_pareto.{png,pdf,json}` | log10(params) × EMD scatter, OD vs log-return facets, frozen-headline diamond | `results/model_info.json` + `results/matched2000_dualscale.json` |
-| `results/figures/seed_variance_per_model.{png,pdf,json}` | Facet grid of per-seed EMD trajectories | Per-run `matched2000/runs/<model>/<seed>/metrics.json` |
-| `results/figures/noise_robustness_quantum.{png,pdf,json}` | EMD vs noise level for depolarizing AND amplitude-damping channels | `results/noise_model_sensitivity.json` |
-| `results/figures/shot_noise_robustness.{png,pdf,json}` | EMD vs shot count (log-x) with analytic-statevector reference line | `results/shot_noise_sensitivity.json` |
+| `figures/failure_modes_summary.{png,pdf,json}` | Diagnostic grid: distribution overlay × ACF lag-1 × log-return EMD × nine models | `results/matched2000_dualscale.json` + per-model dist/acf companion JSONs |
+| `figures/param_efficiency_pareto.{png,pdf,json}` | log10(params) × EMD scatter, OD vs log-return facets, frozen-headline diamond | `results/model_info.json` + `results/matched2000_dualscale.json` |
+| `figures/seed_variance_per_model.{png,pdf,json}` | Facet grid of per-seed EMD trajectories | Per-run `matched2000/runs/<model>/<seed>/metrics.json` |
+| `figures/noise_robustness_quantum.{png,pdf,json}` | EMD vs noise level for depolarizing AND amplitude-damping channels | `results/noise_model_sensitivity.json` |
+| `figures/shot_noise_robustness.{png,pdf,json}` | EMD vs shot count (log-x) with analytic-statevector reference line | `results/shot_noise_sensitivity.json` |
 
 ---
 
@@ -76,7 +76,7 @@
 
 | Artifact | Description | Provenance source |
 |---|---|---|
-| `docs/paper_blocks_framing.md` (additive only) | PAPER-03 atlas-companion subsection + PAPER-02b param_efficiency_pareto footnote | All 14-09 artifacts above + `results/figures/param_efficiency_pareto.{png,pdf,json}` |
+| `docs/paper_blocks_framing.md` (additive only) | PAPER-03 atlas-companion subsection + PAPER-02b param_efficiency_pareto footnote | All 14-09 artifacts above + `figures/param_efficiency_pareto.{png,pdf,json}` |
 | `docs/paper_blocks_refs_methods.md` (additive only) | PAPER-08 cross-reference to methods_full.md §1-§5 + PAPER-09 subsection citing 14-10's six figures | All 14-10 artifacts (except param_efficiency_pareto, cited from PAPER-02b) + `docs/methods_full.md` |
 | `docs/reviewer_response.md` (additive only) | Completeness sweep section with R1-M4 RESOLVED via methods_full.md + supporting figure citations | All 14-09 / 14-10 / 14-11 artifacts above |
 | `docs/reconciliation_note.md` (additive only) | Short integration caveat paragraph citing v1/v2/v3_config_lock.json + param_efficiency_pareto | 14-09 config locks + 14-10 param_efficiency_pareto |
@@ -148,7 +148,7 @@ gate) EXTENDED to include `training_time_device`.
 | `results/manuscript_apparatus_constants.json` | T2 | Audit artifact for LUCY apparatus constants (20L/300L/880mm/120/6/10) quoted from LaTeX | (v2-gate-side) |
 | `docs/reconciliation_note.md` | T3 | OD-scale rebuild via matched2000_dualscale.json#aggregates; metric-redefinition disclosure paragraph | C-1, PROV-CRIT-1, C-3 |
 | `results/reconciliation_deltas.json` | T3 | Derived (NEW-OLD) delta artifact for the v2 gate to resolve computed-delta literals | (v2-gate-side) |
-| `results/figures/cross_model_emd.{png,pdf,json}` | T3 | OD-scale rebuild, mean-over-seeds (NOT min-over-trajectory), headline reference on same scale, 'best EMD' framing dropped | CR-2, C-2 |
+| `figures/cross_model_emd.{png,pdf,json}` | T3 | OD-scale rebuild, mean-over-seeds (NOT min-over-trajectory), headline reference on same scale, 'best EMD' framing dropped | CR-2, C-2 |
 | `results/matched2000_dualscale.json` | T3+T4 | ddof=0 → ddof=1 sample-std switch (statistics.pstdev → statistics.stdev); n alias populated alongside n_seeds; HEADLINE_MODEL_KIND included in model_kinds | H-2, HI-5, MED-4 |
 | `results/model_info.json` + `training_protocol.md` | T4 | optimizer_betas family-specific (HI-2); EXPECTED_DATA_HASH explicit-raise (HI-3); dtype renamed to dtype_samples with dtype_params alongside (PROV-HIGH-3/HIGH-3) | HI-2, HI-3, PROV-HIGH-2, PROV-HIGH-3, HIGH-3 |
 | `run_methods_full.py` (programmatic citations) + `methods_full.json` | T4 | _first_lineno / _citations[generator_to_compute_dtype, mps_dtype_block] replacing hardcoded training.py:347 + training.py:259-268 literals | CR-3 |
@@ -157,7 +157,7 @@ gate) EXTENDED to include `training_time_device`.
 | `run_circuit_diagrams.py` + `run_classical_arch_extract.py` + `run_framework_versions.py` (data_hash) | T4 | data_hash = 91e447d4624e25b3 recorded in JSON outputs | HIGH-2, PROV-HIGH-2 |
 | `run_figure_suite.py` (lock-driven head_epoch + corrected axis label + _finite_sanitize + ddof=1) | T3+T4 | MD-3 lock-driven head_epoch + H-1 corrected axis label + HI-8 mirror + H-2 sample-std at 4 sites | H-1, MD-3 |
 | `results/total_adversarial_param_budget.json` | T3 | Derived generator+critic totals (250881 + per-model) for methods_full.md §2.k.x | (H-3 derived) |
-| 9× `results/figures/timeseries_<model>.{png,pdf,json}` | T5 | SHA-256 deterministic seeding (Python string hash → hashlib.sha256(model.encode())); verified by two-pass byte-identity | CR-1 |
+| 9× `figures/timeseries_<model>.{png,pdf,json}` | T5 | SHA-256 deterministic seeding (Python string hash → hashlib.sha256(model.encode())); verified by two-pass byte-identity | CR-1 |
 | `docs/paper_blocks_framing.md:119` + `docs/paper_blocks_framing.md:520` | T5 | Phantom DTW 0.6843 removed from BEFORE quotation; misleading provenance footer removed | PROV-CRIT-2 doc-side |
 | `verify_freeze_ready.py` (rglob) | T5 | RESULTS_DIR.glob('*.json') → .rglob('*.json'); negation-self-heal writes !results/**/*.json | HI-6 |
 | `docs/reviewer_response.md` (CR-4 disclosure subsection) | T5 | Historical training-time device asymmetry disclosure (MPS at float32 vs CPU at float64) | CR-4 disclosure |
@@ -200,7 +200,7 @@ read-only) PRESERVED.
 | Artifact | Task | Description | Resolved finding(s) |
 |---|---|---|---|
 | `verify_number_provenance.py` (v2.1) | T1 | Boundary lookbehind class `(?<![\d.])` → `(?<![-\d.])` (one char); schema bumped to v2.1; macOS-version identifier strip added | R2-prov-HIGH-1 |
-| `results/figures/_introspect_{quantum,wgan_cnn,wgan_lstm,wgan_mlp}.json` | T1 | `"render_only": true` added at top level (4 files) | R2-code-LOW-1 |
+| `figures/_introspect_{quantum,wgan_cnn,wgan_lstm,wgan_mlp}.json` | T1 | `"render_only": true` added at top level (4 files) | R2-code-LOW-1 |
 | `results/noise_model_sensitivity.json` + `shot_noise_sensitivity.json` + `ansatz_comparison.json` | T1 | `"data_hash": "91e447d4624e25b3"` added at top level | R2-prov-MED-1 |
 | `run_matched2000.py` (training_time_device capture-before-.to(cpu)) | T2 | `_train_quantum`, `_train_wgan`, `_train_vae` capture `training_time_device` immediately after training and before .to(cpu); `_device_manifest` accepts optional pre-captured device kwarg; `_strict_accept` equality check unchanged | R2-code-HIGH-1 |
 | `docs/methods_full.md §3.x.d` | T3 | VAE β derivation rewritten: β_eff = 2.5 (KL up-weighted), NOT 0.4 (inverted figure from r1 M-4 → 14-13) | R2-math-HIGH-1 |
@@ -258,7 +258,7 @@ Wave 13 deliverables (per `.planning/phases/14-paper-revision-release-freeze/14-
   AND extension sentence added acknowledging the histogram-density column
   is commensurate with the pre-v1.0 paper headline ~0.0015 for the first
   time since the v1.0 raw-sample switch).
-- **T3** — `results/figures/qq_overlay.{png,pdf,json}` (NEW
+- **T3** — `figures/qq_overlay.{png,pdf,json}` (NEW
   primary discriminating figure: 9-model QQ overlay + delta-QQ panel;
   companion JSON carries `convergence_stats`, `cluster_summary`,
   `model_order_color_keys` (CR-1 sha256-seeded deterministic),

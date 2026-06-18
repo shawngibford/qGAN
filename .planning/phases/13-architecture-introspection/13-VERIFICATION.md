@@ -53,12 +53,12 @@ human_verification:
 | `core/models/quantum.py` | topology-selectable ansatz + introspect() | VERIFIED | 317 lines. `topology` in `__init__` (line 52), `self.topology` stored (line 75), `_TOPOLOGIES` constant, `if self.topology == "range"` literal first branch (range block at lines 183, 247), `elif self.topology == "linear"`, `qml.vn_entropy(wires=[0, 1])`, `qml.purity(wires=[0, 1])`, `introspect()` method, `INTROSPECT_BIPARTITION = ((0,1),(2,3,4))`. |
 | `core/training.py` | CR-01 torch.fft.rfft + CR-02 map_location restore | VERIFIED | `torch.fft.rfft` at lines 516-517 inside `_spectral_psd_loss`. No `from scipy.signal import welch`. `if spectral_loss_weight > 0.0` guard at line 376. `map_location` at line 178 inside `_load_checkpoint`. |
 | `results/ansatz_comparison.json` | ARCH-02 comparison (V1 reuse + V2/V3 new, dual-scale) | VERIFIED | 300 rows. V1/V2/V3 variants with depth=4/8/4, topology=range/range/linear, param_count=75/135/75. V2+V3 each have 5 seeds × both scales. `full_metric_suite` UNCHANGED used. |
-| `results/figures/training_progression.json` | INTRO-01 companion JSON | VERIFIED | 4 targets, 5 epochs each, real sample arrays. metadata pipeline=B, seed=42. |
-| `results/figures/param_trajectory.json` | INTRO-02 companion JSON | VERIFIED | `param_norm[5]`, `param_angles[5][75]`, metadata variant=V1. |
-| `results/figures/entanglement_trajectory.json` | INTRO-03 companion JSON | VERIFIED | `vn_entropy[5]`, `purity[5]`, metadata `bipartition="{0,1}|{2,3,4}"`. INTRO-03 bounds confirmed. |
-| `results/figures/training_progression.{png,pdf}` | INTRO-01 figure | VERIFIED | 71,084 bytes PNG / 36,504 bytes PDF. Non-empty. |
-| `results/figures/param_trajectory.{png,pdf}` | INTRO-02 figure | VERIFIED | 87,511 bytes PNG / 21,855 bytes PDF. Non-empty. |
-| `results/figures/entanglement_trajectory.{png,pdf}` | INTRO-03 figure | VERIFIED | 84,226 bytes PNG / 28,946 bytes PDF. Non-empty. |
+| `figures/training_progression.json` | INTRO-01 companion JSON | VERIFIED | 4 targets, 5 epochs each, real sample arrays. metadata pipeline=B, seed=42. |
+| `figures/param_trajectory.json` | INTRO-02 companion JSON | VERIFIED | `param_norm[5]`, `param_angles[5][75]`, metadata variant=V1. |
+| `figures/entanglement_trajectory.json` | INTRO-03 companion JSON | VERIFIED | `vn_entropy[5]`, `purity[5]`, metadata `bipartition="{0,1}|{2,3,4}"`. INTRO-03 bounds confirmed. |
+| `figures/training_progression.{png,pdf}` | INTRO-01 figure | VERIFIED | 71,084 bytes PNG / 36,504 bytes PDF. Non-empty. |
+| `figures/param_trajectory.{png,pdf}` | INTRO-02 figure | VERIFIED | 87,511 bytes PNG / 21,855 bytes PDF. Non-empty. |
+| `figures/entanglement_trajectory.{png,pdf}` | INTRO-03 figure | VERIFIED | 84,226 bytes PNG / 28,946 bytes PDF. Non-empty. |
 | `run_ansatz.py` | single (variant,seed) driver | VERIFIED | `QuantumGenerator(` with `topology=`, `train_wgan_gp(` with `num_epochs=1000`, no `early_stopper=`, `choices=["V2","V3"]`. |
 | `run_ansatz_sweep.sh` | 10-run sweep (V2/V3 × 5 seeds) | VERIFIED | VARIANTS/SEEDS/EPOCHS=1000 defined. xargs -P 2. No multiprocessing.Pool. |
 | `run_ansatz_comparison.py` | ARCH-02 aggregator | VERIFIED | `full_metric_suite` imported. `transform_ablation/runs/B` path for V1 reuse. V1 no-recompute note. |
@@ -150,19 +150,19 @@ The 13-REVIEW.md identifies 2 BLOCKER findings in the driver layer. Assessment a
 
 #### 1. Figure Visual Correctness — training_progression
 
-**Test:** Open `results/figures/training_progression.png` and confirm it shows a 4×5 grid (4 targets × 5 epochs) with distribution histograms/KDEs for quantum and the 3 classical models side-by-side; quantum row visually distinct from classical.
+**Test:** Open `figures/training_progression.png` and confirm it shows a 4×5 grid (4 targets × 5 epochs) with distribution histograms/KDEs for quantum and the 3 classical models side-by-side; quantum row visually distinct from classical.
 **Expected:** Each cell shows a meaningful distribution shape; the quantum row shows non-trivial structure distinct from the classical rows; axes are properly labeled.
 **Why human:** matplotlib rendering is confirmed (non-empty file, no training code in renderer), but histogram/KDE visual correctness cannot be verified by grep.
 
 #### 2. Figure Visual Correctness — entanglement_trajectory bipartition annotation
 
-**Test:** Open `results/figures/entanglement_trajectory.png` and confirm the bipartition string `{0,1}|{2,3,4}` is annotated, and reference bounds (ln4 ≈ 1.386, 0.25, 1.0) are shown.
+**Test:** Open `figures/entanglement_trajectory.png` and confirm the bipartition string `{0,1}|{2,3,4}` is annotated, and reference bounds (ln4 ≈ 1.386, 0.25, 1.0) are shown.
 **Expected:** Two panels (entropy + purity vs epoch); bipartition label visible; reference lines drawn at ln4 and 0.25.
 **Why human:** The JSON source contains the bipartition string; cannot verify matplotlib `ax.text()` / `ax.axhline()` output without viewing the file.
 
 #### 3. Figure Visual Correctness — param_trajectory
 
-**Test:** Open `results/figures/param_trajectory.png` and confirm two panels: (a) L2-norm of PQC params vs epoch and (b) angle-distribution histograms for each of the 5 snapshot epochs.
+**Test:** Open `figures/param_trajectory.png` and confirm two panels: (a) L2-norm of PQC params vs epoch and (b) angle-distribution histograms for each of the 5 snapshot epochs.
 **Expected:** Panel (a) shows norm values ~4.4 rising slightly over training; panel (b) shows 75-parameter angle distributions that change across epochs.
 **Why human:** Cannot verify subplot layout and histogram per-epoch content from file contents alone.
 

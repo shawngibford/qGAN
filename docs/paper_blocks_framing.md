@@ -136,7 +136,7 @@ Third, our empirical validation on a single real-world photobioreactor cultivati
 
 > **Visual companion (Plan 14-10).** The parameter-matched comparison
 > stated in this paragraph is rendered as a parameter-efficiency Pareto
-> scatter at `results/figures/param_efficiency_pareto.{png,pdf}`
+> scatter at `figures/param_efficiency_pareto.{png,pdf}`
 > (companion JSON `param_efficiency_pareto.json`; source =
 > `results/model_info.json` (n_params per model) +
 > `results/matched2000_dualscale.json` (EMD mean±std per scale)).
@@ -471,21 +471,21 @@ circuit.
 
 > The five production quantum circuits cited in the AFTER block above are
 > rendered as PennyLane `qml.draw_mpl` architecture diagrams under
-> `results/figures/circuits/`. Reviewers can audit the
+> `figures/circuits/`. Reviewers can audit the
 > architecture-vs-claim correspondence directly:
 >
-> - `default_75` — `results/figures/circuits/default_75.{png,pdf}`
+> - `default_75` — `figures/circuits/default_75.{png,pdf}`
 >   (companion JSON `default_75.json`; spec lock
 >   `results/default_75_config_lock.json`)
-> - `iqp_sel_55` — `results/figures/circuits/iqp_sel_55.{png,pdf}`
+> - `iqp_sel_55` — `figures/circuits/iqp_sel_55.{png,pdf}`
 >   (companion JSON `iqp_sel_55.json`; spec lock
 >   `results/canonical_config_lock.json`; frozen checkpoint epoch
 >   1969 per Plan 14-01)
-> - `V1` — `results/figures/circuits/V1.{png,pdf}` (companion JSON
+> - `V1` — `figures/circuits/V1.{png,pdf}` (companion JSON
 >   `V1.json`; spec lock `results/v1_config_lock.json`)
-> - `V2` — `results/figures/circuits/V2.{png,pdf}` (companion JSON
+> - `V2` — `figures/circuits/V2.{png,pdf}` (companion JSON
 >   `V2.json`; spec lock `results/v2_config_lock.json`)
-> - `V3` — `results/figures/circuits/V3.{png,pdf}` (companion JSON
+> - `V3` — `figures/circuits/V3.{png,pdf}` (companion JSON
 >   `V3.json`; spec lock `results/v3_config_lock.json`)
 >
 > The full per-circuit spec tables, cross-comparison, and provenance footer

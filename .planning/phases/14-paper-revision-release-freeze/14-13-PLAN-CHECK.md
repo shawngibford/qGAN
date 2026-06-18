@@ -33,7 +33,7 @@ However, **5 fixable issues** would either confuse reviewers using the remediati
 #### H-CHK-2 — 4 of 9 timeseries figure paths in plan don't match disk reality
 
 **Plan lines:** 40–48 (frontmatter `files_modified`), 974 (Task 5 `<files>`), 1095 (Task 5 determinism verify model list)
-**Conflicts with:** disk listing `ls results/figures/timeseries_*.png` returns: `ar`, `iqp_sel_55_repro`, `V1`, `V2`, `V3`, `vae`, `wgan_cnn`, `wgan_lstm`, `wgan_mlp` (9 files).
+**Conflicts with:** disk listing `ls figures/timeseries_*.png` returns: `ar`, `iqp_sel_55_repro`, `V1`, `V2`, `V3`, `vae`, `wgan_cnn`, `wgan_lstm`, `wgan_mlp` (9 files).
 
 The plan lists `default_75`, `iqp_sel_55`, `V1`, `V2`, `V3`, `vae`, `wgan_cnn`, `wgan_lstm`, `wgan_mlp` — i.e. it includes `default_75` (no such timeseries figure on disk) and `iqp_sel_55` (the actual file is `iqp_sel_55_repro`); it omits `ar` and `iqp_sel_55_repro`.
 

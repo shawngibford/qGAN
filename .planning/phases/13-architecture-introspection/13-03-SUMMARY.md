@@ -35,13 +35,13 @@ key-files:
   created:
     - run_introspect.py
     - tests/test_introspect_callback.py
-    - results/figures/training_progression.json
-    - results/figures/param_trajectory.json
-    - results/figures/entanglement_trajectory.json
-    - results/figures/_introspect_quantum.json
-    - results/figures/_introspect_wgan_mlp.json
-    - results/figures/_introspect_wgan_cnn.json
-    - results/figures/_introspect_wgan_lstm.json
+    - figures/training_progression.json
+    - figures/param_trajectory.json
+    - figures/entanglement_trajectory.json
+    - figures/_introspect_quantum.json
+    - figures/_introspect_wgan_mlp.json
+    - figures/_introspect_wgan_cnn.json
+    - figures/_introspect_wgan_lstm.json
   modified: []
 
 key-decisions:
@@ -117,8 +117,8 @@ No new security-relevant surface (local-Mac scientific compute; no network/auth/
 
 - FOUND: run_introspect.py
 - FOUND: tests/test_introspect_callback.py
-- FOUND: results/figures/training_progression.json
-- FOUND: results/figures/param_trajectory.json
-- FOUND: results/figures/entanglement_trajectory.json
+- FOUND: figures/training_progression.json
+- FOUND: figures/param_trajectory.json
+- FOUND: figures/entanglement_trajectory.json
 - FOUND commit 8afe796 (test/RED), 73305ab (feat/GREEN), e2efefb (fix), 7600fa7 (runs+JSON)
 - 4/4 tests pass; core/ byte-untouched

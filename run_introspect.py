@@ -27,14 +27,14 @@ copied verbatim — T-13-08): CPU + ``rng.uniform(NOISE_LOW, NOISE_HIGH,
 (NUM_QUBITS, BATCH_SIZE))`` float32 -> ``.to(float64) * 0.1``.
 
 Persists an idempotent per-target intermediate
-``results/figures/_introspect_<target>.json`` (re-runnable).
+``figures/_introspect_<target>.json`` (re-runnable).
 ``--assemble`` reads the four intermediates and emits the three companion
 reproducibility JSON files plan-04 renders into figures (ROADMAP criterion 4).
 
 Usage
 -----
     python -m run_introspect --target quantum  [--seed 42] \\
-        [--epochs 1000] [--out-dir results/figures] [--csv-path ./data.csv]
+        [--epochs 1000] [--out-dir figures] [--csv-path ./data.csv]
     python -m run_introspect --assemble [--out-dir ...]
 """
 from __future__ import annotations
@@ -420,7 +420,7 @@ def main() -> None:
     ap.add_argument(
         "--out-dir",
         type=Path,
-        default=Path("results/figures"),
+        default=Path("figures"),
         help="Directory for intermediate + companion JSON files.",
     )
     ap.add_argument(

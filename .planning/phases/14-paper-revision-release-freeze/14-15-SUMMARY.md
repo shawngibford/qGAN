@@ -7,7 +7,7 @@ requires: ["14-13", "14-14"]
 provides:
   - run_distribution_emd.py (NEW top-level emitter, 50-bin histogram-density Wasserstein)
   - results/distribution_emd.json (NEW aggregator JSON; 9 models × 5 seeds × 2 scales; auto-walked into v2.1 gate corpus)
-  - results/figures/qq_overlay.{png,pdf,json} (NEW primary discriminating figure; render_only=false)
+  - figures/qq_overlay.{png,pdf,json} (NEW primary discriminating figure; render_only=false)
   - docs/reconciliation_note.md (3-column comparable-variants table appended; C-3 disclosure extended)
   - docs/reviewer_response.md (## Marginal-convergence finding subsection appended)
   - docs/methods_full.md (§3.x.(e) OD-marginal convergence cross-reference appended)
@@ -21,9 +21,9 @@ key-files:
   created:
     - run_distribution_emd.py
     - results/distribution_emd.json
-    - results/figures/qq_overlay.png
-    - results/figures/qq_overlay.pdf
-    - results/figures/qq_overlay.json
+    - figures/qq_overlay.png
+    - figures/qq_overlay.pdf
+    - figures/qq_overlay.json
     - .planning/phases/14-paper-revision-release-freeze/14-15-SUMMARY.md
   modified:
     - run_figure_suite.py
@@ -33,7 +33,7 @@ key-files:
     - docs/methods_full.md
     - docs/peer_review_remediation.md
     - docs/completeness_sweep_manifest.md
-    - results/figures/qq_{ar,iqp_sel_55_repro,V1,V2,V3,vae,wgan_cnn,wgan_lstm,wgan_mlp}.json (additive caption_note)
+    - figures/qq_{ar,iqp_sel_55_repro,V1,V2,V3,vae,wgan_cnn,wgan_lstm,wgan_mlp}.json (additive caption_note)
 decisions:
   - D-14-22 (`core/` byte-freeze) PRESERVED across all 5 tasks — histogram-density EMD lives in top-level emitter, not core
   - D-14-13 (strict-accept gate) PRESERVED — new distribution-EMD column is informational only, not gated
@@ -56,7 +56,7 @@ Pre-v1.0 50-bin histogram-density Wasserstein EMD reintroduced as a third compar
 |---|---|---|---|
 | T1 | feat: dist-emd aggregator | `76430fd` | `run_distribution_emd.py` (NEW), `results/distribution_emd.json` (NEW) |
 | T2 | feat: 3-column comparable table | `abf41c0` | `run_model_info.py`, `docs/reconciliation_note.md` |
-| T3 | feat: qq_overlay figure | `36657ba` | `run_figure_suite.py`, `results/figures/qq_overlay.{png,pdf,json}` (NEW), 9 per-model `qq_<model>.json` (additive `caption_note`) |
+| T3 | feat: qq_overlay figure | `36657ba` | `run_figure_suite.py`, `figures/qq_overlay.{png,pdf,json}` (NEW), 9 per-model `qq_<model>.json` (additive `caption_note`) |
 | T4 | docs: reviewer-comms | `3a06894` | `docs/reviewer_response.md`, `docs/methods_full.md`, `docs/peer_review_remediation.md` |
 | T5 | docs: SUMMARY + sweep manifest | (this commit) | `docs/completeness_sweep_manifest.md`, `.planning/phases/14-paper-revision-release-freeze/14-15-SUMMARY.md` |
 
@@ -77,7 +77,7 @@ After this plan completes, **Phase 14 incomplete plans = `[14-07]`** only (Zenod
 - `.planning/phases/14-paper-revision-release-freeze/14-14-SUMMARY.md` — Phase 14 plan 14 (r2 peer-review punch list, Wave 12)
 - `docs/completeness_sweep_manifest.md#plan-14-15` — full cross-plan deliverable register (this plan's section appended)
 - `docs/reconciliation_note.md#emd-comparable-across-metric-variants-matched-2000ep-budget` — the 3-column comparable-variants table
-- `results/figures/qq_overlay.png` — the single discriminating figure
+- `figures/qq_overlay.png` — the single discriminating figure
 - `docs/reviewer_response.md#marginal-convergence-finding-post-r2-investigation` — reviewer-facing communication
 
 ## Verification (10-point checklist)
@@ -115,7 +115,7 @@ Schema string in every PASS message: `'v2.1 (Phase 14 plan 14-14 — negative-si
 - ✅ All 5 task commits exist in `git log --oneline` (76430fd, abf41c0, 36657ba, 3a06894 + this T5 commit).
 - ✅ `run_distribution_emd.py` exists (NEW top-level emitter).
 - ✅ `results/distribution_emd.json` exists with 90 rows + 18 aggregates.
-- ✅ `results/figures/qq_overlay.{png,pdf,json}` exist (`render_only: false`).
+- ✅ `figures/qq_overlay.{png,pdf,json}` exist (`render_only: false`).
 - ✅ 9 per-model `qq_<model>.json` carry the additive `caption_note` field.
 - ✅ `docs/reconciliation_note.md` carries both tables + cross-reference + C-3 extension.
 - ✅ `docs/reviewer_response.md` carries `## Marginal-convergence finding (post-r2 investigation)`.

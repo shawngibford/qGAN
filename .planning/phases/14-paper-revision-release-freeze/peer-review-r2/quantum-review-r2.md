@@ -102,10 +102,10 @@ All five locks intact, all formulas hold by direct arithmetic
 ### 4. Circuit-diagram PNG byte-identity ✓
 
 ```
-$ git show 06bb470:results/figures/circuits/iqp_sel_55.png | shasum -a 256
+$ git show 06bb470:figures/circuits/iqp_sel_55.png | shasum -a 256
 e85e1ca313ba5ef53721adc50dbaee8b7e82d36dd9715b4b96fb98b848d50e7e
 
-$ shasum -a 256 results/figures/circuits/iqp_sel_55.png
+$ shasum -a 256 figures/circuits/iqp_sel_55.png
 e85e1ca313ba5ef53721adc50dbaee8b7e82d36dd9715b4b96fb98b848d50e7e
 ```
 

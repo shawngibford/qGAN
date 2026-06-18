@@ -9,7 +9,7 @@ requires:
   - phase: 14-paper-revision-release-freeze (plan 03)
     provides: "model_info.json (10-model aggregate, 55-param decomposition), reconciliation_note.md (1000ep->2000ep EMD delta), verify_number_provenance.py (the executable gate)"
   - phase: 14-paper-revision-release-freeze (plan 04)
-    provides: "results/figures/ suite (per-model + cross-model + headline_vs_reproduction) referenced by the PAPER-02/03 'see figure suite' framing"
+    provides: "figures/ suite (per-model + cross-model + headline_vs_reproduction) referenced by the PAPER-02/03 'see figure suite' framing"
   - phase: 14-paper-revision-release-freeze (plan 02)
     provides: "matched2000 45/45 accepted sweep + headline_canonical.json — the matched-budget evidence the reframed hypothesis and de-overclaim blocks are calibrated against"
   - phase: 14-paper-revision-release-freeze (plan 01)

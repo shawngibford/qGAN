@@ -368,7 +368,7 @@ Each R1-m7 checklist item is one keyed before→after block.
 ### PAPER-11 / R1-m7 item 1 — Fig. 6 x-axis "Laas" → "Lags"
 
 **Where:** ACF figure x-axis label (rendered figure; in this repo the
-regenerated ACF figures are `results/figures/acf_*.png` whose
+regenerated ACF figures are `figures/acf_*.png` whose
 companion JSON carries the corrected `xlabel`). In the manuscript the relevant
 caption is `\label{fig:acf}` (`main.tex` line ~251).
 
@@ -379,7 +379,7 @@ AFTER : x-axis tick/label reads "Lags"
 
 > The regenerated figure suite already emits the corrected label; verify the
 > Overleaf-embedded `acf.png` is replaced by the regenerated
-> `results/figures/acf_iqp_sel_55_repro.png` (PAPER-09 / Plan 04).
+> `figures/acf_iqp_sel_55_repro.png` (PAPER-09 / Plan 04).
 
 ### PAPER-11 / R1-m7 item 2 — Missing space: "Figure A5).This" → "Figure A5). This"
 
@@ -529,7 +529,7 @@ lines ~196-252). Increase rendered size for legibility.
 %   \includegraphics[width=\columnwidth]{...}  ->  \includegraphics[width=\linewidth]{...}
 % For the full-width figure* environments (fig:qq, fig:acf) keep width=\linewidth
 % and, if still small, promote single-column figures to figure* (two-column span).
-% The regenerated high-DPI sources (results/figures/*.pdf, dpi=150,
+% The regenerated high-DPI sources (figures/*.pdf, dpi=150,
 % bbox_inches="tight", Plan 04) replace the Overleaf-embedded bitmaps so the
 % enlargement does not pixelate.
 ```
@@ -655,7 +655,7 @@ ACF (lag~1, mean)   & -0.0814285239177223 & 0.6965233188661055  & both scales \\
 PDF/CDF, Q--Q, and ACF diagnostic plots in the main text are shown on the
 transformed log-return scale (the training space); the corresponding
 original-OD-scale versions are provided as regenerated figures
-(\texttt{results/figures/acf\_iqp\_sel\_55\_repro}, dual-scale). DTW,
+(\texttt{figures/acf\_iqp\_sel\_55\_repro}, dual-scale). DTW,
 EMD, and the distributional moments are reported on both scales as above.
 ```
 
@@ -678,14 +678,14 @@ EMD, and the distributional moments are reported on both scales as above.
 >
 > - **Training protocol claim (R1-M4):** the per-epoch convergence behavior
 >   of every matched-2000ep model is rendered at
->   `results/figures/training_convergence_all_models.{png,pdf}`
+>   `figures/training_convergence_all_models.{png,pdf}`
 >   (companion JSON `training_convergence_all_models.json`; source = 45
 >   per-run metrics.json + `results/headline_canonical.json`).
 >   Cite alongside the Training Protocol paragraph (PAPER-08 / methods_full.md §3).
 >
 > - **TSTR utility claim (R1-M2):** the cross-model TSTR R²/MAE/RMSE bars
 >   for Pipelines A and B are rendered at
->   `results/figures/tstr_crossmodel.{png,pdf}` (companion JSON
+>   `figures/tstr_crossmodel.{png,pdf}` (companion JSON
 >   `tstr_crossmodel.json`; source = `results/tstr.json`).
 >   Negative R² is plotted honestly per the companion JSON's
 >   `caption_note`. Cite alongside the §4.1 utility-evaluation subsection.
@@ -693,7 +693,7 @@ EMD, and the distributional moments are reported on both scales as above.
 > - **Per-model fidelity / failure modes (R1-M5):** the diagnostic grid
 >   (distribution overlay × ACF lag-1 × log-return EMD, 9 models ordered
 >   by ascending OD EMD) is rendered at
->   `results/figures/failure_modes_summary.{png,pdf}` (companion
+>   `figures/failure_modes_summary.{png,pdf}` (companion
 >   JSON `failure_modes_summary.json`; source =
 >   `results/matched2000_dualscale.json` + per-model dist/acf
 >   companion JSONs). Cite alongside the §4.1 per-model fidelity claim
@@ -701,21 +701,21 @@ EMD, and the distributional moments are reported on both scales as above.
 >
 > - **Multi-seed mean ± std claim (R1-M4):** the per-seed EMD trajectories
 >   underneath the seed-aggregated mean ± std are rendered as a 3×3 facet
->   grid at `results/figures/seed_variance_per_model.{png,pdf}`
+>   grid at `figures/seed_variance_per_model.{png,pdf}`
 >   (companion JSON `seed_variance_per_model.json`; source = 45 per-run
 >   metrics.json). Cite alongside the multi-seed reporting paragraph
 >   (PAPER-08 / methods_full.md §3).
 >
 > - **Noise-model sensitivity claim (R1-M4):** EMD vs depolarizing /
 >   amplitude-damping noise level is rendered at
->   `results/figures/noise_robustness_quantum.{png,pdf}`
+>   `figures/noise_robustness_quantum.{png,pdf}`
 >   (companion JSON `noise_robustness_quantum.json`; source =
 >   `results/noise_model_sensitivity.json`). Cite alongside the
 >   noise-sensitivity discussion (R2-1 / R1-M4 backend statement).
 >
 > - **Shot-noise sensitivity claim (R1-M4):** EMD vs shot count (log-x)
 >   with the analytic-statevector reference line is rendered at
->   `results/figures/shot_noise_robustness.{png,pdf}` (companion
+>   `figures/shot_noise_robustness.{png,pdf}` (companion
 >   JSON `shot_noise_robustness.json`; source =
 >   `results/shot_noise_sensitivity.json`). Cite alongside the
 >   §3 backend statement (analytic statevector, no shot noise in the

@@ -42,7 +42,7 @@ Token chosen from a render-only file (`figures/acf_V1.json#acf_real_OD[2] = 0.99
 
 | Gate | Resolution |
 |---|---|
-| v1 | `results/figures/acf_V1.json` (admitted) |
+| v1 | `figures/acf_V1.json` (admitted) |
 | v2 | None (correctly excluded as `render_only: true` source) |
 
 **Reading:** PROV-MED-3 is genuinely closed for the 86 figure companion JSONs that declare `render_only: true`. The 7 `_introspect_*.json` files do NOT carry the flag and remain in the corpus (see §6 below).

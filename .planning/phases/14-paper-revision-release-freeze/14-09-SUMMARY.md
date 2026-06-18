@@ -15,7 +15,7 @@ requires:
 provides:
   - "run_circuit_diagrams.py — render-only PAPER-03 circuit-diagram emitter: build_config_locks() writes 4 lock JSONs from _QUANTUM_ANSATZ + core constants (pure aggregator import, no torch training), render_diagrams() draws all 5 production circuits via qml.draw_mpl under torch.no_grad()"
   - "4 new config-lock JSONs under results/ (v1/v2/v3 from _QUANTUM_ANSATZ + default_75 from core constants) mirroring canonical_config_lock.json schema with new source_path / ansatz_name / gate_layout_breakdown fields — auto-covered by verify_number_provenance.py's rglob, zero verifier edit"
-  - "15 render-only artifacts under results/figures/circuits/ ({default_75, iqp_sel_55, V1, V2, V3}.{png, pdf, json}) — every PNG drawn via qml.draw_mpl(qnode, style='pennylane'); every companion JSON records figure/circuit_id/ansatz_name/source_config_lock_path/n_params/depth/topology/num_qubits/render_only/renderer/generation_timestamp"
+  - "15 render-only artifacts under figures/circuits/ ({default_75, iqp_sel_55, V1, V2, V3}.{png, pdf, json}) — every PNG drawn via qml.draw_mpl(qnode, style='pennylane'); every companion JSON records figure/circuit_id/ansatz_name/source_config_lock_path/n_params/depth/topology/num_qubits/render_only/renderer/generation_timestamp"
   - "docs/circuit_atlas.md — copy-paste PAPER-03 atlas (one section per circuit + cross-comparison table + provenance footer) PASSING verify_number_provenance.py unmodified (18 distinct literals all resolve)"
 affects: [paper-PAPER-03, manuscript-circuit-design-rationale-section, supersedes-untracked-circuit_diagram.png]
 
@@ -35,21 +35,21 @@ key-files:
     - results/v2_config_lock.json
     - results/v3_config_lock.json
     - results/default_75_config_lock.json
-    - results/figures/circuits/default_75.png
-    - results/figures/circuits/default_75.pdf
-    - results/figures/circuits/default_75.json
-    - results/figures/circuits/iqp_sel_55.png
-    - results/figures/circuits/iqp_sel_55.pdf
-    - results/figures/circuits/iqp_sel_55.json
-    - results/figures/circuits/V1.png
-    - results/figures/circuits/V1.pdf
-    - results/figures/circuits/V1.json
-    - results/figures/circuits/V2.png
-    - results/figures/circuits/V2.pdf
-    - results/figures/circuits/V2.json
-    - results/figures/circuits/V3.png
-    - results/figures/circuits/V3.pdf
-    - results/figures/circuits/V3.json
+    - figures/circuits/default_75.png
+    - figures/circuits/default_75.pdf
+    - figures/circuits/default_75.json
+    - figures/circuits/iqp_sel_55.png
+    - figures/circuits/iqp_sel_55.pdf
+    - figures/circuits/iqp_sel_55.json
+    - figures/circuits/V1.png
+    - figures/circuits/V1.pdf
+    - figures/circuits/V1.json
+    - figures/circuits/V2.png
+    - figures/circuits/V2.pdf
+    - figures/circuits/V2.json
+    - figures/circuits/V3.png
+    - figures/circuits/V3.pdf
+    - figures/circuits/V3.json
     - docs/circuit_atlas.md
   modified: []
 
@@ -72,7 +72,7 @@ completed: 2026-05-20
 
 # Phase 14 Plan 09: Circuit Diagram Suite Summary
 
-**Added `run_circuit_diagrams.py` — a render-only PAPER-03 emitter that writes 4 new config-lock JSONs (V1/V2/V3 from `run_matched2000.py:118-122` + default_75 from core constants) mirroring `canonical_config_lock.json`'s schema, then renders all 5 production quantum circuits (`default_75`, `iqp_sel_55`, V1, V2, V3) via `qml.draw_mpl(qnode, style="pennylane")` under `torch.no_grad()` as PNG+PDF+companion JSON triples — and authored `docs/circuit_atlas.md` (one section per circuit + cross-comparison + provenance footer) which PASSES `verify_number_provenance.py` UNMODIFIED (18 distinct literals all resolve to one of the 5 config-lock JSONs). No retraining, no sampling, no checkpoint reload; `core/` byte-freeze (D-14-22) preserved across all 3 tasks; the previously-untracked singleton `circuit_diagram.png` at the repo root is superseded by the tracked, JSON-companion-backed `default_75.{png,pdf,json}` triple under `results/figures/circuits/`.**
+**Added `run_circuit_diagrams.py` — a render-only PAPER-03 emitter that writes 4 new config-lock JSONs (V1/V2/V3 from `run_matched2000.py:118-122` + default_75 from core constants) mirroring `canonical_config_lock.json`'s schema, then renders all 5 production quantum circuits (`default_75`, `iqp_sel_55`, V1, V2, V3) via `qml.draw_mpl(qnode, style="pennylane")` under `torch.no_grad()` as PNG+PDF+companion JSON triples — and authored `docs/circuit_atlas.md` (one section per circuit + cross-comparison + provenance footer) which PASSES `verify_number_provenance.py` UNMODIFIED (18 distinct literals all resolve to one of the 5 config-lock JSONs). No retraining, no sampling, no checkpoint reload; `core/` byte-freeze (D-14-22) preserved across all 3 tasks; the previously-untracked singleton `circuit_diagram.png` at the repo root is superseded by the tracked, JSON-companion-backed `default_75.{png,pdf,json}` triple under `figures/circuits/`.**
 
 ## Performance
 
@@ -89,7 +89,7 @@ completed: 2026-05-20
 - `build_config_locks(repo)` — pure-aggregator imports `_QUANTUM_ANSATZ` from `revision.run_matched2000` (verified safe per 14-03 SUMMARY deviation #1: the module's top-level imports are stdlib + dataclass + pathlib + typing only, so reading the module-level dict triggers NO model-fit / sample / training-loop / checkpoint-reload path). For each variant in `{"V1","V2","V3"}` it computes the expected `param_count` via the EXACT formula from `core/models/quantum.py:104-109` (`num_qubits + num_layers*(num_qubits*3) + num_qubits * (2 if circuit_id == "default_75" else 1)`) and writes the lock to `results/{name}_config_lock.json` mirroring `canonical_config_lock.json`'s schema (decomposition.{num_qubits, num_layers, param_count, gate_layout.{hadamard_init, iqp_encoding_params_per_qubit, sel_rot_params_per_qubit_per_layer, entangler, final_rotation}}, top-level param_count, native_pipeline="B", topology) with 3 NEW fields (`source_path` = `run_matched2000.py:118|120|122`, `ansatz_name` = operator label, `gate_layout_breakdown` = "IQP encoding (N) + L*SEL layers (M each) + final RX+RY (K) = P" summand string).
 - `default_75_config_lock.json` derived from `core/__init__.py` constants (`NUM_QUBITS=5`, `NUM_LAYERS=4`) + the `default_75` branch of `quantum.py` (final RX+RY per qubit, range topology): same schema, `locked_circuit_id="default_75"`, `ansatz_name="default_75"`, `param_count=75`, `topology="range"`, `source_path="core/__init__.py (NUM_QUBITS=5, NUM_LAYERS=4) + core/models/quantum.py (default_75 branch)"`, `gate_layout_breakdown="IQP encoding (5) + 4*SEL layers (15 each) + final RX+RY (10) = 75"`.
 - Explicit `raise AssertionError` (NOT bare assert — python -O safe, `run_multiseed_rollup.py:86-92` idiom) collects EVERY computed-vs-source-dict / computed-vs-expected `param_count` mismatch into a list and raises in a single shot BEFORE any lock is written. Loud-fail lists all offending variants in the same error message.
-- CLI: `argparse` with mutually-exclusive `--config-locks-only` / `--diagrams-only` flags + `--figures-dir` default `results/figures/circuits`; default behavior runs both lock build AND diagram render (the render half was stubbed at Task 1 with `raise NotImplementedError("filled in by plan 14-09 Task 2")` so the file is atomically committable with the locks).
+- CLI: `argparse` with mutually-exclusive `--config-locks-only` / `--diagrams-only` flags + `--figures-dir` default `figures/circuits`; default behavior runs both lock build AND diagram render (the render half was stubbed at Task 1 with `raise NotImplementedError("filled in by plan 14-09 Task 2")` so the file is atomically committable with the locks).
 - Idempotency verified: running `--config-locks-only` twice produces byte-identical lock JSONs (sha1 of all 4 unchanged across re-runs).
 - Verified `git diff --stat core/` empty after Task 1 (D-14-22 byte-freeze preserved).
 
@@ -98,15 +98,15 @@ completed: 2026-05-20
 - **Plan-check fix in action:** BOTH `QuantumGenerator` construction AND the `qml.draw_mpl(model.qnode, style="pennylane")(noise, params)` tape walk run INSIDE a SINGLE `with torch.no_grad():` block (verified by AST walk — the `draw_mpl` call site lives lexically under a `no_grad()` With-node). Without it, 5 forward passes through `default.qubit` would build PyTorch's autograd graph — wasteful and inconsistent with the render-only guarantee. Mirrors the `QuantumGenerator.introspect` pattern at `core/models/quantum.py:344`.
 - Hard-asserts `model.num_params == lock.param_count` BEFORE drawing so the rendered tape is the exact tape the lock describes (T-14-19). The placeholder param tensor is `model.params_pqc.detach().clone()` (param numerical values do not affect tape topology — only the (num_qubits, num_layers, topology, circuit_id) tuple does); the noise tensor is `torch.zeros(num_qubits)`.
 - Suptitle per variant: `f"{name} - {num_qubits} qubits x {num_layers} layers x {topology} topology - {param_count} parameters"`. For `iqp_sel_55` ONLY, suffix " (canonical paper circuit, frozen checkpoint epoch 1969)" — preserves continuity with 14-01 framing (no D-14-10 conflation concern because there are no generation numbers in an architecture diagram).
-- 15 artifacts emitted under `results/figures/circuits/` via the `_save` dual PNG+PDF + companion JSON idiom. Each companion JSON records: `figure`, `circuit_id`, `ansatz_name`, `source_config_lock_path`, `n_params`, `depth`, `topology`, `num_qubits`, `render_only=true`, `renderer="qml.draw_mpl(style=\"pennylane\")"`, `generation_timestamp` (ISO 8601 UTC).
-- `verify_number_provenance.py --target results/figures/circuits/default_75.json` PASSES (3 distinct literals all resolve via the gate's `results/*.json` rglob — the new companion JSON is auto-discoverable, zero verifier edit).
+- 15 artifacts emitted under `figures/circuits/` via the `_save` dual PNG+PDF + companion JSON idiom. Each companion JSON records: `figure`, `circuit_id`, `ansatz_name`, `source_config_lock_path`, `n_params`, `depth`, `topology`, `num_qubits`, `render_only=true`, `renderer="qml.draw_mpl(style=\"pennylane\")"`, `generation_timestamp` (ISO 8601 UTC).
+- `verify_number_provenance.py --target figures/circuits/default_75.json` PASSES (3 distinct literals all resolve via the gate's `results/*.json` rglob — the new companion JSON is auto-discoverable, zero verifier edit).
 - Renderer is `qml.draw_mpl(style="pennylane")` only — verified `grep 'qml.draw_mpl'` PASS, `grep 'style="pennylane"'` PASS, and NO bespoke matplotlib gate drawing (`! grep -qE 'plt\.Rectangle|plt\.Circle|hand.?rolled'` PASS).
 - No training/sampling/checkpoint-reload path: `! grep -qE '\.fit\(|def train_|model\.sample\(|best_checkpoint\.pt'` PASS (banned strings absent from script source, including docstrings and comments — Rule-3 fix below applied during initial run when first-draft docstrings contained those literals).
 - Verified `git diff --stat core/` empty after Task 2.
 
 ### Task 3 — Author docs/circuit_atlas.md (PAPER-03 copy-paste atlas)
 - `docs/circuit_atlas.md` (181 lines) — copy-paste-ready PAPER-03 visualization atlas. Front-matter blockquote names the source of truth (5 config-lock JSONs), the executable gate (`verify_number_provenance.py --target ...`), and the renderer (`qml.draw_mpl(qnode, style="pennylane")`); explicitly disclaims D-14-10 applicability (architecture diagrams have no generation numbers).
-- 5 circuit sections (default_75, iqp_sel_55, V1, V2, V3) — each with: embedded image (`![](../results/figures/circuits/<name>.png)` relative-from-doc path verified to resolve), spec table (num_qubits / num_layers / topology / encoding / variational block / final rotations / param_count), 2-3 sentence "what this circuit does differently" prose paragraph. iqp_sel_55 explicitly labelled "canonical paper circuit (frozen checkpoint epoch 1969)" in both the section heading and the prose (continuity with 14-01 framing).
+- 5 circuit sections (default_75, iqp_sel_55, V1, V2, V3) — each with: embedded image (`![](../figures/circuits/<name>.png)` relative-from-doc path verified to resolve), spec table (num_qubits / num_layers / topology / encoding / variational block / final rotations / param_count), 2-3 sentence "what this circuit does differently" prose paragraph. iqp_sel_55 explicitly labelled "canonical paper circuit (frozen checkpoint epoch 1969)" in both the section heading and the prose (continuity with 14-01 framing).
 - Section 6 cross-comparison table — 5 rows × 6 columns (circuit name + num_qubits + num_layers + topology + final_rotation + param_count); closing paragraph notes the variation axes are (num_layers, topology, final_rotation) holding num_qubits=5 and IQP+SEL constant.
 - Section 7 provenance footer — bullet list of the 5 lock JSON sources + the renderer + the gate command, copy-paste-ready for the manuscript's methods section.
 - `./qgan_env/bin/python verify_number_provenance.py --target docs/circuit_atlas.md` PASSES — **18 distinct numeric literals all resolve to results/*.json values** (the literals 5, 4, 3, 8, 55, 75, 135, 10, 15 from gate_layout breakdowns / spec tables AND 1969 from `canonical_config_lock.json::checkpoint_epoch` — every number traces).
@@ -131,7 +131,7 @@ completed: 2026-05-20
 - `results/v2_config_lock.json` — V2 lock (5q, 8L, range, 135p, src `run_matched2000.py:120`)
 - `results/v3_config_lock.json` — V3 lock (5q, 4L, linear, 75p, src `run_matched2000.py:122`)
 - `results/default_75_config_lock.json` — default lock (5q, 4L, range, 75p, src core constants + default_75 branch)
-- `results/figures/circuits/{default_75, iqp_sel_55, V1, V2, V3}.{png, pdf, json}` — 15 render-only artifacts via `qml.draw_mpl(style="pennylane")`
+- `figures/circuits/{default_75, iqp_sel_55, V1, V2, V3}.{png, pdf, json}` — 15 render-only artifacts via `qml.draw_mpl(style="pennylane")`
 - `docs/circuit_atlas.md` — copy-paste PAPER-03 atlas (181 lines, 7 sections, 18 verifier-resolved literals)
 
 ## Decisions Made
@@ -163,7 +163,7 @@ completed: 2026-05-20
 - **`qgan_env` absent in worktree:** `qgan_env` is gitignored and lives in the main checkout. Resolved by the established `ln -s /Users/shawngibford/dev/phd/qGAN/qgan_env qgan_env` symlink (already in `.gitignore`, never committed) — same idiom as plans 14-01 / 14-02 / 14-04 / 14-08. The script's repo-root resolver writes artifacts into the worktree's `results/`.
 - **First matplotlib invocation triggers font cache build** ("Matplotlib is building the font cache; this may take a moment.") — pre-existing across the worktree, one-time cost, no impact on output content.
 - **Plan-check fix already applied at base:** `worktree_branch_check` pinned HEAD to `e11d524` which already contained the plan-check fix (`qml.draw_mpl` inside `torch.no_grad()` requirement). My Task 2 implementation honors that contract directly — no follow-up fix needed.
-- **Singleton `circuit_diagram.png` at repo root left untouched:** the existing untracked `/Users/shawngibford/dev/phd/qGAN/circuit_diagram.png` (produced ad-hoc via `qml.draw_mpl(qgan.generator, style="pennylane")` in `qgan_pennylane.ipynb`) is NOT deleted by this plan per the plan's <interfaces> note ("leave it for the 14-07 release-freeze gate to triage; the canonical replacement lives under results/figures/circuits/"). The tracked, JSON-companion-backed `default_75.{png,pdf,json}` triple is the canonical PAPER-03 replacement.
+- **Singleton `circuit_diagram.png` at repo root left untouched:** the existing untracked `/Users/shawngibford/dev/phd/qGAN/circuit_diagram.png` (produced ad-hoc via `qml.draw_mpl(qgan.generator, style="pennylane")` in `qgan_pennylane.ipynb`) is NOT deleted by this plan per the plan's <interfaces> note ("leave it for the 14-07 release-freeze gate to triage; the canonical replacement lives under figures/circuits/"). The tracked, JSON-companion-backed `default_75.{png,pdf,json}` triple is the canonical PAPER-03 replacement.
 
 ## Known Stubs
 
@@ -190,7 +190,7 @@ No threat flags.
 - `results/v2_config_lock.json` — FOUND (5q/8L/range/135p, src `run_matched2000.py:120`)
 - `results/v3_config_lock.json` — FOUND (5q/4L/linear/75p, src `run_matched2000.py:122`)
 - `results/default_75_config_lock.json` — FOUND (5q/4L/range/75p, src core constants + default_75 branch)
-- 15 figure artifacts under `results/figures/circuits/` — FOUND ({default_75, iqp_sel_55, V1, V2, V3}.{png, pdf, json})
+- 15 figure artifacts under `figures/circuits/` — FOUND ({default_75, iqp_sel_55, V1, V2, V3}.{png, pdf, json})
 - `docs/circuit_atlas.md` — FOUND (181 lines, 18 verifier-resolved literals)
 - Plan verify gates (Task 1 + Task 2 + Task 3) — all PASS (lock schema check, diagram triple-presence + metadata check, atlas-against-verify_number_provenance.py)
 - `qml.draw_mpl` lexically inside `torch.no_grad()` — AST-verified PASS

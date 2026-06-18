@@ -14,7 +14,7 @@ provides:
   - docs/reconciliation_note.md (C-3 disclosure extended; 4th DTW column)
   - docs/peer_review_remediation.md (## Plan 14-16 r3 forensic remediation + DTW phantom asymmetry sections)
   - docs/completeness_sweep_manifest.md (## Plan 14-16 section appended)
-  - results/figures/qq_overlay.json (plan_14_16_verification field appended)
+  - figures/qq_overlay.json (plan_14_16_verification field appended)
 affects:
   - run_matched2000_dualscale.py (R3-CR-2 fix in _log_return_rows; reconstruct_od returns mu/sigma)
   - run_distribution_emd.py (R3-CR-1 fix in compute_histogram_density_emd; R3-HI-1 sister-fix in _real_references)
@@ -35,7 +35,7 @@ key-files:
     - docs/reconciliation_note.md
     - docs/peer_review_remediation.md
     - docs/completeness_sweep_manifest.md
-    - results/figures/qq_overlay.json
+    - figures/qq_overlay.json
 decisions:
   - D-14-22 (`core/` byte-freeze) PRESERVED across all 7 tasks — all fixes live in top-level emitters
   - D-14-13 (strict-accept gate) PRESERVED — no edit to gate semantics
@@ -68,7 +68,7 @@ which survive the corrections.
 | T3 | feat: welch_pairwise.json aggregator | `32209da` | `run_welch_aggregator.py` (NEW), `results/welch_pairwise.json` (NEW) |
 | T4 | docs: reviewer_response.md Path A H2 | `028ef42` | `docs/reviewer_response.md` |
 | T5 | docs: methods_full + reconciliation_note | `4eccc07` | `run_model_info.py`, `docs/methods_full.md`, `docs/reconciliation_note.md` |
-| T6 | docs: figure verification + gate sweep | `61c69cb` | `results/figures/qq_overlay.json` |
+| T6 | docs: figure verification + gate sweep | `61c69cb` | `figures/qq_overlay.json` |
 | T7 | docs: SUMMARY + remediation + manifest | (this commit) | `docs/peer_review_remediation.md`, `docs/completeness_sweep_manifest.md`, `.planning/.../14-16-SUMMARY.md` |
 
 (Plus the scaffold commit `c843171` carrying the plan + ROADMAP/STATE updates.)

@@ -38,4 +38,4 @@ Aggregates are mean over the 5 matched-2000ep seeds (42-46) for the 9 sweep mode
 
 Source: `results/matched2000_dualscale.json` (schema: `matched-2000ep dual-scale rows[] + per-(model,scale,metric) seed-aggregate; frozen headline DISTINCT, D-14-10`).
 
-Every value above is `_fmt()` of an `aggregates[]` row from that JSON (see `run_figure_suite.py` `render_matched2000_dualscale_comparison_table`). The number-provenance gate (`verify_number_provenance.py --target results/figures/matched2000_dualscale_comparison.md`) auto-covers this doc because its `results/*.json` rglob includes the new dual-scale JSON without any verifier edit.
+Every value above is `_fmt()` of an `aggregates[]` row from that JSON (see `run_figure_suite.py` `render_matched2000_dualscale_comparison_table`). The number-provenance gate (`verify_number_provenance.py --target figures/matched2000_dualscale_comparison.md`) auto-covers this doc because its `results/*.json` rglob includes the new dual-scale JSON without any verifier edit.

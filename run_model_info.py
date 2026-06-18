@@ -462,7 +462,7 @@ def _write_reconciliation_note(recon: list[dict], data_hash: str) -> None:
         "headline-vs-repro distinction (iqp_sel_55_headline as the "
         "frozen-checkpoint EMD, iqp_sel_55_repro as the matched-2000ep "
         "reproduction) is now visualized as two distinct points in "
-        "`results/figures/param_efficiency_pareto.{png,pdf}` "
+        "`figures/param_efficiency_pareto.{png,pdf}` "
         "(Plan 14-10 — the headline appears as a separate dashed/diamond "
         "marker per the conflation-guard contract).\n"
     )

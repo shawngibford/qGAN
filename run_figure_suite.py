@@ -1132,7 +1132,7 @@ def render_logreturn_stat_grid(model: str, real_log_delta: np.ndarray,
     Inputs are 1D arrays of length 777 (real_log_delta from
     ``load_and_preprocess`` and gen_log_delta the raw, un-drift-corrected
     synthetic log-delta as stored in
-    ``results/figures/reconstruction_<model>.json[gen_log_delta_raw]``).
+    ``figures/reconstruction_<model>.json[gen_log_delta_raw]``).
     """
     from scipy.stats import probplot, entropy as _entropy
 
@@ -1857,7 +1857,7 @@ def render_matched2000_dualscale_comparison_table(
         "`render_matched2000_dualscale_comparison_table`). The "
         "number-provenance gate "
         "(`verify_number_provenance.py --target "
-        "results/figures/matched2000_dualscale_comparison.md`) "
+        "figures/matched2000_dualscale_comparison.md`) "
         "auto-covers this doc because its `results/*.json` rglob "
         "includes the new dual-scale JSON without any verifier edit."
     )
@@ -2533,7 +2533,7 @@ def render_failure_modes_summary(repo: Path,
             "real_mean": real_mean,
             "is_failure": bool(is_fail_A),
             "failure_label": "wrong mean" if is_fail_A else None,
-            "source": f"results/figures/dist_{m}.json + "
+            "source": f"figures/dist_{m}.json + "
                       f"reconstructed OD (PRIMARY_SEED={PRIMARY_SEED})",
         }
 
@@ -2562,7 +2562,7 @@ def render_failure_modes_summary(repo: Path,
             "real_value": acf_real,
             "is_failure": bool(is_fail_B),
             "failure_label": "ACF-lag1 mismatch" if is_fail_B else None,
-            "source": f"results/figures/acf_{m}.json (lag-1 idx)",
+            "source": f"figures/acf_{m}.json (lag-1 idx)",
         }
 
         # --- Row C: log_return EMD with red outlier edge.
@@ -2610,8 +2610,8 @@ def render_failure_modes_summary(repo: Path,
         "render_only": True,
         "source_artifacts": [
             "results/matched2000_dualscale.json",
-            "results/figures/dist_<model>.json (×9)",
-            "results/figures/acf_<model>.json (×9)",
+            "figures/dist_<model>.json (×9)",
+            "figures/acf_<model>.json (×9)",
         ],
         "models_ordered_by_OD_emd_ascending": list(sorted_models),
         "OD_emd_per_model": {m: float(od_emd_per_model[m])
@@ -3274,7 +3274,7 @@ def main() -> None:
     ap.add_argument(
         "--figures-dir",
         type=Path,
-        default=Path("results/figures"),
+        default=Path("figures"),
         help="Directory holding companion JSON / receiving the figure suite.",
     )
     args = ap.parse_args()

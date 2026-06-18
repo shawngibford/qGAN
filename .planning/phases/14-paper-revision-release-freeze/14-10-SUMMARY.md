@@ -15,13 +15,13 @@ requires:
   - phase: 14-paper-revision-release-freeze (plan 03)
     provides: "results/model_info.json (per-model parameter_count + family + source) — the Task 4 input"
 provides:
-  - "results/figures/training_convergence_all_models.{png,pdf,json} — 7-adversarial-model EMD-vs-epoch trajectories (mean ± std over 5 seeds) + frozen-checkpoint headline as DISTINCT diamond at epoch 1969 + horizontal dashed reference line (D-14-10); VAE/AR explicitly skipped with caption note; render-only over 35 matched2000/runs/<model>/<seed>/metrics.json + headline_canonical.json"
-  - "results/figures/tstr_crossmodel.{png,pdf,json} — TSTR cross-model R²/MAE/RMSE grouped bars × Pipeline A/B for the 6 model_kinds in tstr.json (quantum, wgan_mlp, wgan_cnn, wgan_lstm, vae, ar — NO fabricated V1/V2/V3); negative R² plotted HONESTLY (no clamp/abs/rescale); caption_note built dynamically from tstr.json's per_model_pipeline block (plan-check fix); render-only over results/tstr.json (previously unconsumed paper-facing JSON, now consumed)"
-  - "results/figures/failure_modes_summary.{png,pdf,json} — 3-row × 9-column diagnostic grid (OD distribution overlay / ACF lag-1 vs real / log_return EMD with red-edged IQR outliers); columns ordered by ASCENDING OD EMD; frozen headline rendered as ROW-SPANNING dashed reference lines (D-14-10); render-only over matched2000_dualscale.json + dist_*.json + acf_*.json companions"
-  - "results/figures/param_efficiency_pareto.{png,pdf,json} — log10(parameter_count) × EMD Pareto scatter, OD and log_return facets, family-coded markers (circle/square/triangle); frozen-headline diamond at log10(55) — DISTINCT marker shape AND color AND y from the iqp_sel_55_repro circle at the same x (D-14-10); render-only over model_info.json + matched2000_dualscale.json"
-  - "results/figures/seed_variance_per_model.{png,pdf,json} — 3×3 facet grid (shared x, log-y, shared y) of per-seed EMD trajectories (light) + across-seed mean (bold) per model; 7 adversarial panels + 2 explicit no-trajectory caption panels (VAE/AR); per-panel spread label (tight/moderate/noisy) from final-step std/mean; render-only over 35 per-run metrics.json"
-  - "results/figures/noise_robustness_quantum.{png,pdf,json} — 1×2 panels (depolarizing | amplitude_damping); EMD vs noise level with Pipeline A/B curves (mean ± std over 3 seeds); monotonicity recorded per (channel, pipeline); zero-anchor preserved per zero_anchor_note; render-only over noise_model_sensitivity.json (previously unconsumed paper-facing JSON, now consumed)"
-  - "results/figures/shot_noise_robustness.{png,pdf,json} — single-panel EMD vs shot count (log-x) for Pipeline A/B with horizontal dotted analytic-statevector baseline per pipeline (shots=∞ asymptote); render-only over shot_noise_sensitivity.json (previously unconsumed paper-facing JSON, now consumed)"
+  - "figures/training_convergence_all_models.{png,pdf,json} — 7-adversarial-model EMD-vs-epoch trajectories (mean ± std over 5 seeds) + frozen-checkpoint headline as DISTINCT diamond at epoch 1969 + horizontal dashed reference line (D-14-10); VAE/AR explicitly skipped with caption note; render-only over 35 matched2000/runs/<model>/<seed>/metrics.json + headline_canonical.json"
+  - "figures/tstr_crossmodel.{png,pdf,json} — TSTR cross-model R²/MAE/RMSE grouped bars × Pipeline A/B for the 6 model_kinds in tstr.json (quantum, wgan_mlp, wgan_cnn, wgan_lstm, vae, ar — NO fabricated V1/V2/V3); negative R² plotted HONESTLY (no clamp/abs/rescale); caption_note built dynamically from tstr.json's per_model_pipeline block (plan-check fix); render-only over results/tstr.json (previously unconsumed paper-facing JSON, now consumed)"
+  - "figures/failure_modes_summary.{png,pdf,json} — 3-row × 9-column diagnostic grid (OD distribution overlay / ACF lag-1 vs real / log_return EMD with red-edged IQR outliers); columns ordered by ASCENDING OD EMD; frozen headline rendered as ROW-SPANNING dashed reference lines (D-14-10); render-only over matched2000_dualscale.json + dist_*.json + acf_*.json companions"
+  - "figures/param_efficiency_pareto.{png,pdf,json} — log10(parameter_count) × EMD Pareto scatter, OD and log_return facets, family-coded markers (circle/square/triangle); frozen-headline diamond at log10(55) — DISTINCT marker shape AND color AND y from the iqp_sel_55_repro circle at the same x (D-14-10); render-only over model_info.json + matched2000_dualscale.json"
+  - "figures/seed_variance_per_model.{png,pdf,json} — 3×3 facet grid (shared x, log-y, shared y) of per-seed EMD trajectories (light) + across-seed mean (bold) per model; 7 adversarial panels + 2 explicit no-trajectory caption panels (VAE/AR); per-panel spread label (tight/moderate/noisy) from final-step std/mean; render-only over 35 per-run metrics.json"
+  - "figures/noise_robustness_quantum.{png,pdf,json} — 1×2 panels (depolarizing | amplitude_damping); EMD vs noise level with Pipeline A/B curves (mean ± std over 3 seeds); monotonicity recorded per (channel, pipeline); zero-anchor preserved per zero_anchor_note; render-only over noise_model_sensitivity.json (previously unconsumed paper-facing JSON, now consumed)"
+  - "figures/shot_noise_robustness.{png,pdf,json} — single-panel EMD vs shot count (log-x) for Pipeline A/B with horizontal dotted analytic-statevector baseline per pipeline (shots=∞ asymptote); render-only over shot_noise_sensitivity.json (previously unconsumed paper-facing JSON, now consumed)"
   - "run_figure_suite.py — +1189 lines (7 new render_* functions wired into main() AFTER render_matched2000_dualscale_comparison_table and BEFORE render_existing_introspection; established 14-04 render-only contract reused unchanged: matplotlib.use('Agg'), _require/_load_json, _save dual PNG+PDF+JSON; ADVERSARIAL_MODELS_WITH_EMD_AVG and MODELS_NO_TRAJECTORY constants added for Tasks 1+5)"
 affects: [paper-PAPER-01, paper-PAPER-09, manuscript-full-story-arc, 14-11-release-freeze]
 
@@ -36,27 +36,27 @@ tech-stack:
 
 key-files:
   created:
-    - results/figures/training_convergence_all_models.png
-    - results/figures/training_convergence_all_models.pdf
-    - results/figures/training_convergence_all_models.json
-    - results/figures/tstr_crossmodel.png
-    - results/figures/tstr_crossmodel.pdf
-    - results/figures/tstr_crossmodel.json
-    - results/figures/failure_modes_summary.png
-    - results/figures/failure_modes_summary.pdf
-    - results/figures/failure_modes_summary.json
-    - results/figures/param_efficiency_pareto.png
-    - results/figures/param_efficiency_pareto.pdf
-    - results/figures/param_efficiency_pareto.json
-    - results/figures/seed_variance_per_model.png
-    - results/figures/seed_variance_per_model.pdf
-    - results/figures/seed_variance_per_model.json
-    - results/figures/noise_robustness_quantum.png
-    - results/figures/noise_robustness_quantum.pdf
-    - results/figures/noise_robustness_quantum.json
-    - results/figures/shot_noise_robustness.png
-    - results/figures/shot_noise_robustness.pdf
-    - results/figures/shot_noise_robustness.json
+    - figures/training_convergence_all_models.png
+    - figures/training_convergence_all_models.pdf
+    - figures/training_convergence_all_models.json
+    - figures/tstr_crossmodel.png
+    - figures/tstr_crossmodel.pdf
+    - figures/tstr_crossmodel.json
+    - figures/failure_modes_summary.png
+    - figures/failure_modes_summary.pdf
+    - figures/failure_modes_summary.json
+    - figures/param_efficiency_pareto.png
+    - figures/param_efficiency_pareto.pdf
+    - figures/param_efficiency_pareto.json
+    - figures/seed_variance_per_model.png
+    - figures/seed_variance_per_model.pdf
+    - figures/seed_variance_per_model.json
+    - figures/noise_robustness_quantum.png
+    - figures/noise_robustness_quantum.pdf
+    - figures/noise_robustness_quantum.json
+    - figures/shot_noise_robustness.png
+    - figures/shot_noise_robustness.pdf
+    - figures/shot_noise_robustness.json
   modified:
     - run_figure_suite.py  # +1189 lines net (7 new render_* functions + 2 new constants + main() wiring)
 
@@ -182,18 +182,18 @@ No new threat surface introduced beyond what the plan's `<threat_model>` (T-14-2
 - T-14-28 (negative R² clamped or rescaled): mitigated — raw negative `r2_mean` values appear verbatim in `tstr_crossmodel.json`'s `per_model_pipeline` block; caption_note carries explicit reviewer-facing R²<0 explanation
 - T-14-29 (`core/` edit slips in): mitigated — `git diff --stat core/` empty after every task's verify
 - T-14-30 (metric recomputation inside render functions): mitigated — verify greps confirm no `.fit/train_/sample/checkpoint` patterns added; only numpy aggregations
-- T-14-31 (`verify_number_provenance.py` modified): mitigated — gate is byte-frozen across all 7 task verifies; new companions land under `results/figures/` and are auto-rglob'd by the existing gate
+- T-14-31 (`verify_number_provenance.py` modified): mitigated — gate is byte-frozen across all 7 task verifies; new companions land under `figures/` and are auto-rglob'd by the existing gate
 - T-14-32 (figure ↔ data provenance for new figures): mitigated — every companion JSON records `source_artifact(s)` and `render_only: true`
 
 ## Self-Check: PASSED
 
-- `results/figures/training_convergence_all_models.{png,pdf,json}` — FOUND
-- `results/figures/tstr_crossmodel.{png,pdf,json}` — FOUND
-- `results/figures/failure_modes_summary.{png,pdf,json}` — FOUND
-- `results/figures/param_efficiency_pareto.{png,pdf,json}` — FOUND
-- `results/figures/seed_variance_per_model.{png,pdf,json}` — FOUND
-- `results/figures/noise_robustness_quantum.{png,pdf,json}` — FOUND
-- `results/figures/shot_noise_robustness.{png,pdf,json}` — FOUND
+- `figures/training_convergence_all_models.{png,pdf,json}` — FOUND
+- `figures/tstr_crossmodel.{png,pdf,json}` — FOUND
+- `figures/failure_modes_summary.{png,pdf,json}` — FOUND
+- `figures/param_efficiency_pareto.{png,pdf,json}` — FOUND
+- `figures/seed_variance_per_model.{png,pdf,json}` — FOUND
+- `figures/noise_robustness_quantum.{png,pdf,json}` — FOUND
+- `figures/shot_noise_robustness.{png,pdf,json}` — FOUND
 - All 7 commit hashes `bfdd93d / bf4664d / 57265bb / 1b63460 / 0c8cf68 / ac31814 / ea09265` present in `git log --oneline`
 - `run_figure_suite.py` modified (+1189 lines, 7 new render_* functions wired into main())
 - `core/` byte-frozen (D-14-22): `git diff --stat core/` empty

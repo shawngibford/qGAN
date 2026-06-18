@@ -4,7 +4,7 @@ Reviewer role: mathematical and statistical rigor at a top-tier journal.
 Date: 2026-05-20
 Scope: `core/*.py`, `run_*.py`, `docs/methods_full.md`,
 `docs/reconciliation_note.md`, `results/*.json`, and
-`results/figures/*.json`.
+`figures/*.json`.
 
 ## Executive verdict
 
@@ -154,7 +154,7 @@ Two independent issues:
    it as a horizontal dashed reference line. The bars are on the in-loop
    log-return-standardized scale (per C-1). The reference line and the bars
    are on **two different metric spaces**. Confirmed in
-   `results/figures/cross_model_emd.json`:
+   `figures/cross_model_emd.json`:
    - `best_emd_mean` for iqp_sel_55_repro = 0.1127 (in-loop log-return)
    - `frozen_headline_OD_emd` = 0.0231 (OD)
    A reader sees a horizontal dashed line at 0.023 sitting below all the
@@ -170,7 +170,7 @@ should be dropped entirely or moved to a supplementary diagnostic with the
 selection-bias caveat explicit.
 
 Citation: `run_figure_suite.py:620-669`,
-`results/figures/cross_model_emd.json`,
+`figures/cross_model_emd.json`,
 `results/headline_canonical.json:53` (OD EMD), training.py:415-420.
 
 ### C-3. Original paper's 0.0015 "headline EMD" was a different metric

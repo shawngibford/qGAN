@@ -22,7 +22,7 @@ Two outputs:
        ``verify_number_provenance.py`` (rglob over
        ``results/*.json`` — zero verifier edit).
 
-    2. 15 figure artifacts under ``results/figures/circuits/``:
+    2. 15 figure artifacts under ``figures/circuits/``:
        ``{default_75,iqp_sel_55,V1,V2,V3}.{png,pdf,json}`` — every PNG drawn
        via ``qml.draw_mpl(qnode, style="pennylane")`` (never a bespoke
        matplotlib gate drawing), every companion JSON records
@@ -45,7 +45,7 @@ to support both ``-m`` and bare-script invocation, ``_find_repo_root``,
 ``_require``/``_load_json`` loud-fail (``FileNotFoundError`` with a
 render-only message — never a silent partial figure), ``_save`` dual
 PNG+PDF (dpi=150, bbox_inches="tight") + same-stem companion JSON,
-``argparse --figures-dir`` default ``results/figures/circuits`` +
+``argparse --figures-dir`` default ``figures/circuits`` +
 print-every-written-path.
 
 Param-count consistency is enforced by an explicit ``raise AssertionError``
@@ -116,7 +116,7 @@ from run_matched2000 import _QUANTUM_ANSATZ  # noqa: E402
 # Constants / paths
 # ---------------------------------------------------------------------------
 RESULTS_REL = Path("results")
-FIGURES_REL = Path("results/figures/circuits")
+FIGURES_REL = Path("figures/circuits")
 
 # Mirrors the schema of results/canonical_config_lock.json
 # (Phase 14 D-14-05/06/07) with a new schema-string for the matched-budget
@@ -609,7 +609,7 @@ def main() -> None:
         type=Path,
         default=FIGURES_REL,
         help="Directory to receive the {png,pdf,json} circuit-diagram "
-        "triples (default: results/figures/circuits).",
+        "triples (default: figures/circuits).",
     )
     mode = ap.add_mutually_exclusive_group()
     mode.add_argument(

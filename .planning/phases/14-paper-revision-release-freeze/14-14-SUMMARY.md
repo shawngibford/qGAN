@@ -43,7 +43,7 @@ key-files:
     - results/manuscript_apparatus_constants.json (per-unit subfields; schema v2)
     - results/framework_versions.json (statsmodels==0.14.5; re-emitted)
     - results/methods_full.json (re-emitted with corrected CR-3 citation)
-    - results/figures/_introspect_{quantum,wgan_cnn,wgan_lstm,wgan_mlp}.json (render_only: true)
+    - figures/_introspect_{quantum,wgan_cnn,wgan_lstm,wgan_mlp}.json (render_only: true)
     - results/noise_model_sensitivity.json (data_hash 91e447d4624e25b3)
     - results/shot_noise_sensitivity.json (data_hash 91e447d4624e25b3)
     - results/ansatz_comparison.json (data_hash 91e447d4624e25b3)

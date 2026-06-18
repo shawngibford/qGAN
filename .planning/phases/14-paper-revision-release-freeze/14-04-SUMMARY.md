@@ -14,7 +14,7 @@ requires:
     provides: "run_introspect_figures.py render-only shape (the pattern D-14-17 names) + the 3 introspection companion JSONs"
 provides:
   - "run_figure_suite.py — render-only per-model + cross-model + introspection figure generator (loud-fail on missing companion, dual PNG+PDF + same-stem reproducibility JSON)"
-  - "results/figures/ — 76 PNG figures, each with matching PDF + JSON (>= the verified 16-figure canonical bar)"
+  - "figures/ — 76 PNG figures, each with matching PDF + JSON (>= the verified 16-figure canonical bar)"
 affects: [14-05, 14-06, 14-07, paper-figures, manuscript]
 
 # Tech tracking
@@ -29,7 +29,7 @@ key-files:
   created:
     - run_figure_suite.py
   modified:
-    - results/figures/ (76 PNG + 76 PDF + 76 JSON triples; 3 prior introspection PDFs re-rendered byte-identically in content)
+    - figures/ (76 PNG + 76 PDF + 76 JSON triples; 3 prior introspection PDFs re-rendered byte-identically in content)
 
 key-decisions:
   - "Completeness bar is the VERIFIED 16 Figure_*.png canonical set (gaps at 14/16/17/18), NOT 20 — the context/D-14-17 '20' is a known discrepancy (RESEARCH Runtime State / Open Q3 / Assumption A2). Delivered 76 PNG, far exceeding 16."
@@ -57,12 +57,12 @@ completed: 2026-05-19
 - **Started:** 2026-05-19 (worktree agent-a37ed7ad7a5e3e41a)
 - **Completed:** 2026-05-19
 - **Tasks:** 1
-- **Files modified:** 1 created + the `results/figures/` suite (228 figure files: 76 PNG / 76 PDF / 76 JSON)
+- **Files modified:** 1 created + the `figures/` suite (228 figure files: 76 PNG / 76 PDF / 76 JSON)
 
 ## Accomplishments
 
 ### Task 1 — Render-only per-model + cross-model + analysis figure suite
-- `run_figure_suite.py` copies the `run_introspect_figures.py` shape end-to-end: headless `matplotlib.use("Agg")` BEFORE pyplot, the `_require`/`_load_json` loud-fail (`FileNotFoundError` with a render-only message — never a silent partial figure), `_save()` writing `<stem>.png` + `<stem>.pdf` at `dpi=150, bbox_inches="tight"` + `plt.close` PLUS a same-stem `<stem>.json` reproducibility companion, the `_find_repo_root()` resolver, the `argparse --figures-dir` default of `results/figures`, and print-every-written-path.
+- `run_figure_suite.py` copies the `run_introspect_figures.py` shape end-to-end: headless `matplotlib.use("Agg")` BEFORE pyplot, the `_require`/`_load_json` loud-fail (`FileNotFoundError` with a render-only message — never a silent partial figure), `_save()` writing `<stem>.png` + `<stem>.pdf` at `dpi=150, bbox_inches="tight"` + `plt.close` PLUS a same-stem `<stem>.json` reproducibility companion, the `_find_repo_root()` resolver, the `argparse --figures-dir` default of `figures`, and print-every-written-path.
 - Added the verbatim `_bootstrap_repo_on_path()` from `run_dualscale_fidelity.py:69-83` so the plan's bare-script verify command (`./qgan_env/bin/python run_figure_suite.py`) works as well as `-m revision.run_figure_suite`.
 - **8 canonical per-model figure types** ported from the notebook's ~11 savefig routines, rendered for **all 9 matched2000 models** (`iqp_sel_55_repro`, V1, V2, V3, wgan_mlp/cnn/lstm, vae, ar): `distribution_comparison`, `acf_comparison` (dual-scale OD + log_return, NLAGS=9 matched to the peer driver), `qq_plot`, `time_series_comparison`, `loss_curves` (family-aware: adversarial critic/gen vs VAE ELBO/recon/KLD vs AR closed-form fit), `emd_over_training` (adversarial only), `od_reconstruction`, `stylized_facts_trajectory`.
 - **Cross-model figures:** `cross_model_distribution` (all models overlaid on real OD), `cross_model_emd` (5-seed mean ± std bar with the FROZEN headline EMD as a distinct annotated reference line), and an explicit `headline_vs_reproduction` figure. The 55-param IQP:SEL is the quantum entrant in every cross-model figure (D-14-04).
@@ -84,7 +84,7 @@ completed: 2026-05-19
 
 ## Files Created/Modified
 - `run_figure_suite.py` — render-only PNG+PDF+JSON figure suite generator (834 lines)
-- `results/figures/` — 76 PNG / 76 PDF / 76 JSON figure triples (per-model × 9 models × {6–8 types}, 3 cross-model, 3 introspection); the 3 prior introspection PDFs re-rendered byte-identically in content from the unchanged companion JSON
+- `figures/` — 76 PNG / 76 PDF / 76 JSON figure triples (per-model × 9 models × {6–8 types}, 3 cross-model, 3 introspection); the 3 prior introspection PDFs re-rendered byte-identically in content from the unchanged companion JSON
 
 ## Decisions Made
 - **16 not 20 (RESEARCH Runtime State / Open Q3 / Assumption A2):** the acceptance bar is the verified 16 `Figure_*.png` canonical set (gaps 14/16/17/18); the context/D-14-17 "20" is the documented discrepancy. The suite delivers 76 PNG, far exceeding the bar with full per-model coverage.
@@ -105,7 +105,7 @@ completed: 2026-05-19
 **Total deviations:** 1 auto-fixed (1 Rule-3 blocking import-path fix). No scope creep — the fix is a verbatim copy of the established peer-driver bootstrap and only restores the plan's own verify command.
 
 ## Issues Encountered
-- **`qgan_env` absent in worktree:** `qgan_env` is gitignored and lives in the main checkout (Plan 01/02 precedent). Resolved by the established `ln -s /…/qGAN/qgan_env qgan_env` symlink (already in `.gitignore`, never committed); the script's repo-root resolver writes figures into the worktree's `results/figures/`.
+- **`qgan_env` absent in worktree:** `qgan_env` is gitignored and lives in the main checkout (Plan 01/02 precedent). Resolved by the established `ln -s /…/qGAN/qgan_env qgan_env` symlink (already in `.gitignore`, never committed); the script's repo-root resolver writes figures into the worktree's `figures/`.
 - **3 introspection PDFs show as modified:** matplotlib embeds run-timestamp metadata in PDF, so a deterministic re-render of the unchanged introspection JSON produces a byte-different (content-identical) PDF. This is the intended "self-contained suite" behavior, not a content change — the introspection PNG/JSON are unchanged. No deletions; clean working tree post-commit.
 
 ## Known Stubs
@@ -116,7 +116,7 @@ No new network endpoints, auth paths, or external file-access patterns. The plan
 
 ## Self-Check: PASSED
 - `run_figure_suite.py` — FOUND (834 lines, `matplotlib.use("Agg")` before pyplot, `_require`/`_load_json` FileNotFoundError loud-fail, dual `savefig` + JSON companion, repo-root bootstrap, argparse `--figures-dir`)
-- `results/figures/*.png` — FOUND (76 PNG; every PNG has a matching PDF + JSON)
+- `figures/*.png` — FOUND (76 PNG; every PNG has a matching PDF + JSON)
 - Plan verify command (verbatim) — PASS (run OK, triple-complete, Agg grep, loud-fail grep)
 - Loud-fail probe — `_require` on a missing artifact RAISES `FileNotFoundError`
 - `headline_vs_reproduction` + `cross_model_emd` + `cross_model_distribution` — FOUND (55-param IQP:SEL entrant; headline distinctly labelled)

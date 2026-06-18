@@ -4,14 +4,14 @@ plan: 04
 subsystem: revision-figures
 tags: [introspection, figures, matplotlib, render-only, paper-ready]
 requires:
-  - "results/figures/training_progression.json (plan 13-03, INTRO-01)"
-  - "results/figures/param_trajectory.json (plan 13-03, INTRO-02)"
-  - "results/figures/entanglement_trajectory.json (plan 13-03, INTRO-03)"
+  - "figures/training_progression.json (plan 13-03, INTRO-01)"
+  - "figures/param_trajectory.json (plan 13-03, INTRO-02)"
+  - "figures/entanglement_trajectory.json (plan 13-03, INTRO-03)"
 provides:
   - "run_introspect_figures.py — render-only matplotlib renderer"
-  - "results/figures/training_progression.{png,pdf} — INTRO-01 figure"
-  - "results/figures/param_trajectory.{png,pdf} — INTRO-02 figure"
-  - "results/figures/entanglement_trajectory.{png,pdf} — INTRO-03 figure"
+  - "figures/training_progression.{png,pdf} — INTRO-01 figure"
+  - "figures/param_trajectory.{png,pdf} — INTRO-02 figure"
+  - "figures/entanglement_trajectory.{png,pdf} — INTRO-03 figure"
 affects:
   - "Phase 14 (paper) consumes these 6 figure files for the R2-6 black-box rebuttal"
 tech-stack:
@@ -23,12 +23,12 @@ tech-stack:
 key-files:
   created:
     - "run_introspect_figures.py"
-    - "results/figures/training_progression.png"
-    - "results/figures/training_progression.pdf"
-    - "results/figures/param_trajectory.png"
-    - "results/figures/param_trajectory.pdf"
-    - "results/figures/entanglement_trajectory.png"
-    - "results/figures/entanglement_trajectory.pdf"
+    - "figures/training_progression.png"
+    - "figures/training_progression.pdf"
+    - "figures/param_trajectory.png"
+    - "figures/param_trajectory.pdf"
+    - "figures/entanglement_trajectory.png"
+    - "figures/entanglement_trajectory.pdf"
   modified: []
 decisions:
   - "Per-row shared x-range (0.5/99.5 percentile clip) for training_progression so quantum-vs-classical distribution shapes are visually comparable within a target row (D-13 figure discretion)"

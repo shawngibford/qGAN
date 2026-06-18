@@ -165,7 +165,7 @@ def _save(fig, figures_dir: Path, stem: str) -> list[Path]:
     return written
 ```
 
-**CLI + repo-root + print-written-paths idiom** (`run_introspect_figures.py:51-57, 291-325`): `argparse --figures-dir` defaulting to `results/figures`, `_find_repo_root()` walking up to `core/preprocessing.py`, resolve relative dir against repo, `print` every written path. Mirror exactly. **Figure-completeness bar = the verified 16 `Figure_*.png`** in `Final Results from 2000 epochs - IQP:SEL circuit/`, NOT 20 (RESEARCH Runtime State + Open Q3 / Assumption A2).
+**CLI + repo-root + print-written-paths idiom** (`run_introspect_figures.py:51-57, 291-325`): `argparse --figures-dir` defaulting to `figures`, `_find_repo_root()` walking up to `core/preprocessing.py`, resolve relative dir against repo, `print` every written path. Mirror exactly. **Figure-completeness bar = the verified 16 `Figure_*.png`** in `Final Results from 2000 epochs - IQP:SEL circuit/`, NOT 20 (RESEARCH Runtime State + Open Q3 / Assumption A2).
 
 ---
 
@@ -199,7 +199,7 @@ Note `_agg()` (`:553-559`) computes mean/std directly from `comparison["rows"]` 
 
 **Pattern to copy:** the sourced-row table convention from `training_protocol.md` (every claim carries a `| ... | Source |` provenance column). For `reviewer_response.md` the per-reviewer table is:
 `| comment ID | verbatim concern | change made | manuscript location (§/table/fig) | supporting artifact (results/*.json or figure path) |`
-Comment IDs come from `QGAN_Review_Response_Plan.md.pdf` (R1-M1..M5, R1-m1..m7, R2-1..6 — RESEARCH Sources). Every "supporting artifact" cell must point at a real `results/*.json` or `results/figures/*` path (success criterion 5, Pitfall 5).
+Comment IDs come from `QGAN_Review_Response_Plan.md.pdf` (R1-M1..M5, R1-m1..m7, R2-1..6 — RESEARCH Sources). Every "supporting artifact" cell must point at a real `results/*.json` or `figures/*` path (success criterion 5, Pitfall 5).
 
 ---
 

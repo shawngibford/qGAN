@@ -8,21 +8,21 @@
 ## C1 — File paths in captions (coauthor's "most repeated note")
 
 ### Pattern
-The author has consistently appended a `Source: \protect\path{results/...json}` (sometimes 2-line) provenance trace to every figure/table caption. These render in monospace as `results/figures/<name>.json` etc. and read as leftover code. The reviewer is right: they belong in a Data Availability section, not in reader-facing captions. Two additional "code-dump" patterns appear in body captions: `\texttt{model\_kind=...}` filter snippets and `\texttt{metric\_name==...}` filter clauses.
+The author has consistently appended a `Source: \protect\path{results/...json}` (sometimes 2-line) provenance trace to every figure/table caption. These render in monospace as `figures/<name>.json` etc. and read as leftover code. The reviewer is right: they belong in a Data Availability section, not in reader-facing captions. Two additional "code-dump" patterns appear in body captions: `\texttt{model\_kind=...}` filter snippets and `\texttt{metric\_name==...}` filter clauses.
 
 ### Found in main paper ("main (4) copy.tex")
 
 | Figure/Table | Lines | Verbatim trace | Plain-language rewrite |
 |---|---|---|---|
-| Fig 2 (training_convergence) | 237–240 | `Source: \protect\path{results/figures/training_convergence_all_models.json}; per-seed trajectories from \protect\path{results/matched2000/runs/<model>/<seed>/metrics.json}.` | **Delete.** Provenance moves to Data Availability §. Replace with nothing (caption already conveys the finding). |
+| Fig 2 (training_convergence) | 237–240 | `Source: \protect\path{figures/training_convergence_all_models.json}; per-seed trajectories from \protect\path{results/matched2000/runs/<model>/<seed>/metrics.json}.` | **Delete.** Provenance moves to Data Availability §. Replace with nothing (caption already conveys the finding). |
 | Tbl 1 (eval_scale) | 362–364 | `Source: \protect\path{results/matched2000_dualscale.json}, filtered to \texttt{model\_kind=iqp\_sel\_55\_repro}.` | **Delete.** Move to Data Availability. |
 | Tbl 2 (cross_model_comparison) | 404–406 | `Source: \protect\path{results/matched2000_dualscale.json}, rows aggregated by \texttt{(model\_kind, metric\_name, scale)} over seeds 42--46.` | **Delete.** Move to Data Availability. |
 | (orphan comment) | 382 | `% source: results/matched2000_dualscale.json#rows aggregated by ...` | Drop (comment, harmless but signals same pattern). |
 | Fig 3 (cross_model_dtw_dualscale) | 497–499 | `Source: \protect\path{results/matched2000_dualscale.json}, filtered to \texttt{metric\_name=dtw\_mean}.` | **Delete.** |
-| Fig 4 (cross_model_acf_overlay) | 564–567 | `Source: \protect\path{results/figures/cross_model_acf_overlay.json}; real-data ACF computed via \protect\path{revision.core.data.load_and_preprocess}.` | **Delete.** The dotted-method reference (`revision.core.data.load_and_preprocess`) is the most egregious case — Python module path in a caption. |
-| Fig 5 (cross_model_emd) | 587–591 | `Source: \protect\path{results/figures/cross_model_emd.json}; rows aggregated from \protect\path{results/matched2000_dualscale.json} filtered to \texttt{metric\_name=emd}, \texttt{scale=OD}.` | **Delete.** |
-| §4.1 body text | 436 | `(\path{results/figures/acf_iqp_sel_55_repro}, dual-scale)` | Reword: "the corresponding original-OD-scale plots are provided in the supplement (Fig.~A11)." |
-| Fig 6 (param_efficiency_pareto) | 755–759 | `Source: \protect\path{results/figures/param_efficiency_pareto.json}; per-model means from \protect\path{results/matched2000_dualscale.json}, parameter counts from \protect\path{results/model_info.json}.` | **Delete.** |
+| Fig 4 (cross_model_acf_overlay) | 564–567 | `Source: \protect\path{figures/cross_model_acf_overlay.json}; real-data ACF computed via \protect\path{revision.core.data.load_and_preprocess}.` | **Delete.** The dotted-method reference (`revision.core.data.load_and_preprocess`) is the most egregious case — Python module path in a caption. |
+| Fig 5 (cross_model_emd) | 587–591 | `Source: \protect\path{figures/cross_model_emd.json}; rows aggregated from \protect\path{results/matched2000_dualscale.json} filtered to \texttt{metric\_name=emd}, \texttt{scale=OD}.` | **Delete.** |
+| §4.1 body text | 436 | `(\path{figures/acf_iqp_sel_55_repro}, dual-scale)` | Reword: "the corresponding original-OD-scale plots are provided in the supplement (Fig.~A11)." |
+| Fig 6 (param_efficiency_pareto) | 755–759 | `Source: \protect\path{figures/param_efficiency_pareto.json}; per-model means from \protect\path{results/matched2000_dualscale.json}, parameter counts from \protect\path{results/model_info.json}.` | **Delete.** |
 
 **Main-paper code-dump count: 7 captions + 1 inline body reference + 1 source comment.**
 
@@ -30,34 +30,34 @@ The author has consistently appended a `Source: \protect\path{results/...json}` 
 
 | Figure/Table | Lines | Verbatim trace | Plain-language rewrite |
 |---|---|---|---|
-| Fig A1 (tstr_crossmodel) | 502–505 | `Source: \protect\path{results/figures/tstr_crossmodel_matched2000.json}; underlying data \protect\path{results/tstr_matched2000.json}.` | **Delete.** |
-| Fig A2 (quantum_circuit) | 583–585 | `Rendered with PennyLane's \texttt{qml.draw\_mpl} from the locked configurations at \protect\path{results/figures/circuits/<name>.json}.` | Replace with `"Rendered with PennyLane's qml.draw_mpl from the locked per-variant configurations."` Drop file-path glob. |
+| Fig A1 (tstr_crossmodel) | 502–505 | `Source: \protect\path{figures/tstr_crossmodel_matched2000.json}; underlying data \protect\path{results/tstr_matched2000.json}.` | **Delete.** |
+| Fig A2 (quantum_circuit) | 583–585 | `Rendered with PennyLane's \texttt{qml.draw\_mpl} from the locked configurations at \protect\path{figures/circuits/<name>.json}.` | Replace with `"Rendered with PennyLane's qml.draw_mpl from the locked per-variant configurations."` Drop file-path glob. |
 | Tbl A2 (per_seed_dtw_dominance) | 348–350 | `Source: \protect\path{results/matched2000_dualscale.json}, filtered to \texttt{metric\_name=dtw\_mean} and \texttt{scale=log\_return}.` | **Delete.** |
 | (orphan) | 338 | `% source: results/matched2000_dualscale.json#rows filtered to ...` | Drop. |
 | Tbl A3 (welch_od_emd) | 389–391 | `Source: \protect\path{results/welch_pairwise.json}, filtered to \texttt{scale=='OD'}.` | **Delete.** |
 | (orphan) | 380 | `% source: results/welch_pairwise.json#pairs filtered to ...` | Drop. |
 | Tbl A4 (welch_lr_emd) | 438–440 | `Source: \protect\path{results/welch_pairwise.json}, filtered to \texttt{scale=='log\_return'}.` | **Delete.** |
 | (orphan) | 423 | `% source: results/welch_pairwise.json#pairs filtered to ...` | Drop. |
-| Fig A6 (preprocessing_pipeline) | 652–653 | `Source: \protect\path{results/figures/preprocessing_pipeline_4panel.json}.` | **Delete.** |
+| Fig A6 (preprocessing_pipeline) | 652–653 | `Source: \protect\path{figures/preprocessing_pipeline_4panel.json}.` | **Delete.** |
 | §A.7 body | 713–714 | `Full per-seed metrics ... are in \path{results/transform_ablation/metrics.csv} and \texttt{summary.md}.` | "Full per-seed metrics and the ablation summary are available in the released artifact set (Data Availability)." |
 | Fig A7 (preprocessing_ablation) | 728–731 | `Source: OD-scale panels from \protect\path{results/transform_ablation/metrics.csv}; TSTR-lite $R^2$ panel from \protect\path{results/transform_ablation/tstr_lite.json}.` | **Delete.** |
 | §A.7 body | 740–741 | `(\protect\path{archive/qgan_pennylane_SEL.py}; the relevant scaling block carries the explicit code comment ...)` | Reword: "(an earlier reference notebook that magnitude-matches the generator output to unstandardized log-returns)." |
 | §A.7 body | 747–748 | `\protect\path{results/matched2000/runs/}` | "the released per-run sample bundles" |
 | §A.7 body | 758 | `via a shared helper module \protect\path{_wgan_unscale.py}` | "via a shared inference-time helper module (released with the code)." |
-| Fig A8 (training_progression) | 820–821 | `Phase 13 INTRO-01 deliverable. Source: \protect\path{results/figures/training_progression.json}.` | **Delete** both. "Phase 13 INTRO-01 deliverable" is internal GSD-tracking ID — **must not** appear in published captions. |
-| Fig A9 (entanglement_trajectory) | 838–839 | `Phase 13 INTRO-03 deliverable. Source: \protect\path{results/figures/entanglement_trajectory.json}.` | **Delete.** Same Phase-ID problem. |
-| Fig A10 (param_trajectory) | 855–856 | `Phase 13 INTRO-02 deliverable. Source: \protect\path{results/figures/param_trajectory.json}.` | **Delete.** Same Phase-ID problem. |
-| Fig A11 (per_model_loss_grid) | 967–970 | `Source: per-model trajectories from \protect\path{results/matched2000/runs/<model>/42/metrics.json} via \protect\path{results/figures/loss_<model>.json}.` | **Delete.** |
-| §A.9 body | 914–915 | `recorded in \protect\path{results/figures/loss_ar.json#fit_summary}.` | "recorded in the released artifact set." |
-| Figs A12–A20 (reconstruction × 9) | 1038–1039, 1048–1049, 1058–1059, 1068–1069, 1077–1078, 1089–1090, 1098–1099, 1108–1109, 1120–1121 | `Source: \protect\path{results/figures/reconstruction_<model>.json}.` | **Delete all 9.** |
+| Fig A8 (training_progression) | 820–821 | `Phase 13 INTRO-01 deliverable. Source: \protect\path{figures/training_progression.json}.` | **Delete** both. "Phase 13 INTRO-01 deliverable" is internal GSD-tracking ID — **must not** appear in published captions. |
+| Fig A9 (entanglement_trajectory) | 838–839 | `Phase 13 INTRO-03 deliverable. Source: \protect\path{figures/entanglement_trajectory.json}.` | **Delete.** Same Phase-ID problem. |
+| Fig A10 (param_trajectory) | 855–856 | `Phase 13 INTRO-02 deliverable. Source: \protect\path{figures/param_trajectory.json}.` | **Delete.** Same Phase-ID problem. |
+| Fig A11 (per_model_loss_grid) | 967–970 | `Source: per-model trajectories from \protect\path{results/matched2000/runs/<model>/42/metrics.json} via \protect\path{figures/loss_<model>.json}.` | **Delete.** |
+| §A.9 body | 914–915 | `recorded in \protect\path{figures/loss_ar.json#fit_summary}.` | "recorded in the released artifact set." |
+| Figs A12–A20 (reconstruction × 9) | 1038–1039, 1048–1049, 1058–1059, 1068–1069, 1077–1078, 1089–1090, 1098–1099, 1108–1109, 1120–1121 | `Source: \protect\path{figures/reconstruction_<model>.json}.` | **Delete all 9.** |
 | §A.10 body | 1131–1133 | `(777 points from \protect\path{data.csv} via \protect\path{core/data.py::compute_log_delta})` and `each model's \protect\path{samples.npy}` | Reword to "from the released log-return series" and "each model's released sample bundle". |
 | §A.11 panel descriptors | 1144–1158 | `\texttt{scipy.stats.probplot(dist="norm")}`, `\texttt{ddof=0}`, `\texttt{scipy.stats.kurtosis}`, `\protect\path{core/eval.py::compute_moments}`, `\protect\path{core/eval.py::compute_emd}`, `\protect\path{core/eval.py::compute_jsd}` | Body paragraph, not caption. Keep the *scipy method* references but drop the dotted-source paths (`revision.core.eval.compute_*`). |
-| Figs A21–A29 (stat_grid × 9) | 1174–1175, 1184–1185, 1194–1195, 1204–1205, 1214–1215, 1224–1225, 1234–1235, 1244–1245, 1257–1258 | `Source: \protect\path{results/figures/stat_grid_<model>.json}.` | **Delete all 9.** |
-| Figs A30–A38 (dtw_alignment × 9) | 1297–1298, 1306–1307, 1315–1316, 1325–1326, 1334–1335, 1344–1345, 1353–1354, 1363–1364, 1372–1373 | `Source: \protect\path{results/figures/dtw_alignment_<model>.json}.` plus `(\texttt{dtaidistance}, \texttt{window=500}, \texttt{psi=2}).` | **Delete file paths.** Keep the library/parameter pair for reproducibility but in plain prose: "computed using the `dtaidistance` Python package with `window=500`, `psi=2`." |
+| Figs A21–A29 (stat_grid × 9) | 1174–1175, 1184–1185, 1194–1195, 1204–1205, 1214–1215, 1224–1225, 1234–1235, 1244–1245, 1257–1258 | `Source: \protect\path{figures/stat_grid_<model>.json}.` | **Delete all 9.** |
+| Figs A30–A38 (dtw_alignment × 9) | 1297–1298, 1306–1307, 1315–1316, 1325–1326, 1334–1335, 1344–1345, 1353–1354, 1363–1364, 1372–1373 | `Source: \protect\path{figures/dtw_alignment_<model>.json}.` plus `(\texttt{dtaidistance}, \texttt{window=500}, \texttt{psi=2}).` | **Delete file paths.** Keep the library/parameter pair for reproducibility but in plain prose: "computed using the `dtaidistance` Python package with `window=500`, `psi=2`." |
 | §A.12 intro body | 1282–1283 | `the canonical fastdtw-based LR-DTW reported in main-text \S 4.2 (which is computed under the matched-budget windowed-evaluation protocol per \protect\path{core/eval.py::compute_dtw}).` | Drop dotted path: "per the matched-budget windowed-evaluation protocol (see Data Availability)." |
 | §A.8 source comments | 1381–1382 | `% source: results/total_adversarial_param_budget.json#shared_critic_n_params (=250881)` etc. | Drop comments. |
-| Fig A39 (shot_noise_robustness) | 1440–1444 | `Phase~12 SENS-01 deliverable. Source: \protect\path{results/figures/shot_noise_robustness.json}; underlying data \protect\path{results/shot_noise_sensitivity.json}.` | **Delete.** Phase ID + paths. |
-| Fig A40 (noise_robustness_quantum) | 1460–1464 | `Phase~12 SENS-02 deliverable. Source: \protect\path{results/figures/noise_robustness_quantum.json}; underlying data \protect\path{results/noise_model_sensitivity.json}.` | **Delete.** Phase ID + paths. |
+| Fig A39 (shot_noise_robustness) | 1440–1444 | `Phase~12 SENS-01 deliverable. Source: \protect\path{figures/shot_noise_robustness.json}; underlying data \protect\path{results/shot_noise_sensitivity.json}.` | **Delete.** Phase ID + paths. |
+| Fig A40 (noise_robustness_quantum) | 1460–1464 | `Phase~12 SENS-02 deliverable. Source: \protect\path{figures/noise_robustness_quantum.json}; underlying data \protect\path{results/noise_model_sensitivity.json}.` | **Delete.** Phase ID + paths. |
 
 **Supplement code-dump count: ~30+ captions and embedded body refs; 5 "Phase XX-YY deliverable" leakage instances (Phase 12 SENS-01, SENS-02, Phase 13 INTRO-01/02/03). The Phase-ID leakage is its own line-item severity: these are internal task-tracking tags that have no place in a journal supplement.**
 
@@ -72,20 +72,20 @@ The author has consistently appended a `Source: \protect\path{results/...json}` 
 
 > **Per-figure data provenance.** Every figure and table in the main paper and this supplement is regenerable from the released artifact set. The figure scripts and the JSON/CSV data files they consume are organised under the `results/` tree of the released repository (Zenodo archive at the DOI above). The mapping is:
 >
-> - Main Figure 2 (training convergence): `results/figures/training_convergence_all_models.json`; per-seed trajectories under `results/matched2000/runs/<model>/<seed>/metrics.json`.
+> - Main Figure 2 (training convergence): `figures/training_convergence_all_models.json`; per-seed trajectories under `results/matched2000/runs/<model>/<seed>/metrics.json`.
 > - Main Figures 3, 5; Tables 1, 2: `results/matched2000_dualscale.json`, filtered by `model_kind`, `metric_name`, `scale` as appropriate.
-> - Main Figure 4 (cross-model ACF): `results/figures/cross_model_acf_overlay.json`; real-data ACF computed via `revision.core.data.load_and_preprocess`.
-> - Main Figure 6 (parameter-efficiency frontier): `results/figures/param_efficiency_pareto.json`; parameter counts from `results/model_info.json`.
-> - Supplementary Figure A1 (TSTR cross-model): `results/figures/tstr_crossmodel_matched2000.json`; underlying data `results/tstr_matched2000.json`.
+> - Main Figure 4 (cross-model ACF): `figures/cross_model_acf_overlay.json`; real-data ACF computed via `revision.core.data.load_and_preprocess`.
+> - Main Figure 6 (parameter-efficiency frontier): `figures/param_efficiency_pareto.json`; parameter counts from `results/model_info.json`.
+> - Supplementary Figure A1 (TSTR cross-model): `figures/tstr_crossmodel_matched2000.json`; underlying data `results/tstr_matched2000.json`.
 > - Supplementary Tables A3–A4 (pairwise Welch tests): `results/welch_pairwise.json`.
-> - Supplementary Figures A6–A7 (preprocessing pipeline and ablation): `results/figures/preprocessing_pipeline_4panel.json`; ablation data `results/transform_ablation/metrics.csv` and `tstr_lite.json`.
-> - Supplementary Figures A8–A10 (training progression, entanglement, parameter trajectory): `results/figures/{training_progression,entanglement_trajectory,param_trajectory}.json`.
-> - Supplementary Figure A11 (per-model loss grid): per-model JSONs at `results/figures/loss_<model>.json`, drawn from `results/matched2000/runs/<model>/42/metrics.json`. AR(2) fit summary at `results/figures/loss_ar.json#fit_summary`.
-> - Supplementary Figures A12–A20 (reconstruction overlays): `results/figures/reconstruction_<model>.json`.
-> - Supplementary Figures A21–A29 (log-return distribution grids): `results/figures/stat_grid_<model>.json`. Metric implementations live in `core/eval.py` (`compute_emd`, `compute_jsd`, `compute_moments`).
-> - Supplementary Figures A30–A38 (DTW alignments): `results/figures/dtw_alignment_<model>.json`.
-> - Supplementary Figure A39 (shot-noise sensitivity): `results/figures/shot_noise_robustness.json`; underlying data `results/shot_noise_sensitivity.json`.
-> - Supplementary Figure A40 (noise-model sensitivity): `results/figures/noise_robustness_quantum.json`; underlying data `results/noise_model_sensitivity.json`.
+> - Supplementary Figures A6–A7 (preprocessing pipeline and ablation): `figures/preprocessing_pipeline_4panel.json`; ablation data `results/transform_ablation/metrics.csv` and `tstr_lite.json`.
+> - Supplementary Figures A8–A10 (training progression, entanglement, parameter trajectory): `figures/{training_progression,entanglement_trajectory,param_trajectory}.json`.
+> - Supplementary Figure A11 (per-model loss grid): per-model JSONs at `figures/loss_<model>.json`, drawn from `results/matched2000/runs/<model>/42/metrics.json`. AR(2) fit summary at `figures/loss_ar.json#fit_summary`.
+> - Supplementary Figures A12–A20 (reconstruction overlays): `figures/reconstruction_<model>.json`.
+> - Supplementary Figures A21–A29 (log-return distribution grids): `figures/stat_grid_<model>.json`. Metric implementations live in `core/eval.py` (`compute_emd`, `compute_jsd`, `compute_moments`).
+> - Supplementary Figures A30–A38 (DTW alignments): `figures/dtw_alignment_<model>.json`.
+> - Supplementary Figure A39 (shot-noise sensitivity): `figures/shot_noise_robustness.json`; underlying data `results/shot_noise_sensitivity.json`.
+> - Supplementary Figure A40 (noise-model sensitivity): `figures/noise_robustness_quantum.json`; underlying data `results/noise_model_sensitivity.json`.
 > - WGAN sample-space convention and `×10` inverse correction: applied at the `samples.npy` load boundary via the helper `_wgan_unscale.py` (see §A.7).
 >
 > All script entry points are documented in `revision/README.md`.
@@ -98,31 +98,31 @@ This absorbs **every** path that was previously in captions, gives reviewers a s
 
 All five are currently `\begin{figure}[!htbp]` (single-column) with `\includegraphics[width=\columnwidth]{...}`. Visual confirmation from PDF pages 11, 17, 19, 20, 25 below.
 
-### Fig 2 — `results/figures/training_convergence_all_models.pdf` (`\label{fig:training_convergence_all_models}`)
+### Fig 2 — `figures/training_convergence_all_models.pdf` (`\label{fig:training_convergence_all_models}`)
 - Current: `figure` + `\columnwidth`, line 218–220.
 - Subpanels: 1 panel, 7 curves + 1 marker, multi-line legend overlaying curves at top-right; log-y; 5-seed ±std bands.
 - Verdict (page 11): **illegible.** Legend covers ~30% of plot area, axis ticks are sub-pixel-typeface. The headline "tight cluster of mean OD-EMD ≈ 0.026" is the central finding of §3.1 — invisible at print size.
 - **Recommended: `figure*` full-width.** Headline finding, 7-line legend, multi-band std envelopes.
 
-### Fig 3 — `results/figures/cross_model_dtw_dualscale.pdf` (`\label{fig:cross_model_dtw_dualscale}`)
+### Fig 3 — `figures/cross_model_dtw_dualscale.pdf` (`\label{fig:cross_model_dtw_dualscale}`)
 - Current: `figure` + `\columnwidth`, line 483–485.
 - Subpanels: 2 panels (OD scale, LR scale), each is a 9-bar cluster bar chart with model names on x-axis.
 - Verdict (page 17): **illegible.** The 9 model x-tick labels (`iqp_sel_55`, `wgan_mlp` etc.) are an unreadable diagonal smudge in both panels. This is the figure that visualises the headline dominance claim.
 - **Recommended: `figure*` full-width.** Two side-by-side panels with 9-category x-axes cannot fit in 84 mm.
 
-### Fig 4 — `results/figures/cross_model_acf_overlay.pdf` (`\label{fig:cross_model_acf_overlay}`)
+### Fig 4 — `figures/cross_model_acf_overlay.pdf` (`\label{fig:cross_model_acf_overlay}`)
 - Current: `figure` + `\columnwidth`, line 553–555.
 - Subpanels: 1 panel, 9 colored ACF curves + real-data dashed reference, 10 lags.
 - Verdict (page 19): **legibility marginal.** Curves visible, legend in upper-right corner has ~9 entries small but readable. Lag-1 anomaly markers visible. Still cramped.
 - **Recommended: `figure*` full-width OR keep single-column.** This is the borderline case. Has a 9-entry legend and is the headline-corroborating figure for lag-1 ACF. Recommend full-width for safety and consistency with Fig 3/5.
 
-### Fig 5 — `results/figures/cross_model_emd.pdf` (`\label{fig:cross_model_emd}`)
+### Fig 5 — `figures/cross_model_emd.pdf` (`\label{fig:cross_model_emd}`)
 - Current: `figure` + `\columnwidth`, line 571–573.
 - Subpanels: 1 panel, 9-bar cluster chart, OD-EMD with wgan_cnn outlier driving y-axis to 2.0.
 - Verdict (page 20): **illegible.** The 9 x-tick labels are unreadable; the bars for 8 of 9 models are visually flat against the y-axis baseline because the wgan_cnn seed-42 outlier extends to 2.0+. The "8 of 9 within ±0.005" claim in the caption is invisible.
 - **Recommended: `figure*` full-width AND axis-break or log-y.** Even at full-width the wgan_cnn outlier crushes the rest of the data. Consider a broken y-axis or inset that zooms on the 0.0–0.05 range so the within-cluster separation is visible. At minimum, full-width.
 
-### Fig 6 — `results/figures/param_efficiency_pareto.pdf` (`\label{fig:param_efficiency_pareto}`)
+### Fig 6 — `figures/param_efficiency_pareto.pdf` (`\label{fig:param_efficiency_pareto}`)
 - Current: `figure` + `\columnwidth`, line 739–741.
 - Subpanels: 2 panels (OD scale, LR scale), each a scatter with ~9 points + a diamond marker for the frozen reference, axis-labelled by parameter count.
 - Verdict (page 25): **illegible.** Two side-by-side scatters at column-width make markers and axis numerics tiny; the headline upper-tier legend describing marker shapes (circle/square/triangle/diamond) is sub-pixel.
@@ -175,7 +175,7 @@ Captions on Figs A8, A9, A10, A39, A40 contain internal Phase/task IDs ("Phase 1
 - Main paper: 7 caption traces + 1 inline §4.1 body sentence + 1 `% source` comment ≈ 9 edits, single text block in each (~30 lines edited).
 - Supplement: ~38 caption traces (including 9× reconstruction, 9× stat_grid, 9× dtw_alignment, plus 11 unique-figure traces and 5 Phase-ID-tagged ones) + 6 inline §-body path mentions + several `% source` comments ≈ 50+ edits (~100 lines edited).
 - New Data Availability subsection: insert at supp line 514, ~30 lines drafted above.
-- Many of the per-model reconstruction/stat_grid/dtw_alignment traces are template-substitutable with a find-replace pass (`Source: \protect\path{results/figures/<X>.json}.` → empty). Bulk-deletable.
+- Many of the per-model reconstruction/stat_grid/dtw_alignment traces are template-substitutable with a find-replace pass (`Source: \protect\path{figures/<X>.json}.` → empty). Bulk-deletable.
 
 **Figure-size adjustments:**
 - Main: 5 `\begin{figure}` → `\begin{figure*}` + 5 `\columnwidth` → `\linewidth` (Figs 2–6). 10 edits.

@@ -258,7 +258,7 @@ The PLAN's `<task>` definitions (T1-T7) are correctly numbered and scoped. Howev
 - **Line 36** (truth, D-14-16 closure narrative): *"after T3 lands"* — the gate runs against the updated docs after **T5** lands (not T3, which is the welch aggregator); T4 runs the gate against `reviewer_response.md` first.
 - **Line 41** (truth, R3-CR-1 schema): *"C-3 disclosure paragraph extension that T3 writes into reconciliation_note.md"* — T5 writes the C-3 extension.
 - **Line 44** (truth, R1-M1 / new H2): *"After T3, `docs/reviewer_response.md` R1-M1 row..."* — should read "After T4".
-- **Line 47** (truth, cross_model_emd re-render): *"After T4, `results/figures/cross_model_emd.{png,pdf,json}` is RE-RENDERED"* — figure re-render is T6, not T4.
+- **Line 47** (truth, cross_model_emd re-render): *"After T4, `figures/cross_model_emd.{png,pdf,json}` is RE-RENDERED"* — figure re-render is T6, not T4.
 - **Line 49** (truth, v2.1 gate run on 10 docs): *"After T4, v2.1 gate runs PASSING against all 10 paper-facing docs"* — the 10-doc gate run is T6 (T4 runs only against reviewer_response.md).
 - **Line 74** (artifact `run_model_info.py`): *"Updated (Task 3) to surface the corrected aggregates"* — should be Task 5. Also contradicts T4 by suggesting "R1-M1 response rewrite + Parametric-efficiency subsection logic MAY live in this emitter" (T4 task-definition is a manual edit, not an emit).
 - **Line 83** (artifact `methods_full.md`): *"Re-emitted (Task 3)"* — should be Task 5.

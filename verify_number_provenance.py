@@ -83,6 +83,7 @@ def _find_repo_root() -> Path:
 
 REPO = _find_repo_root()
 RESULTS = REPO / "results"
+FIGURES = REPO / "figures"
 
 # Numeric-literal token: optional sign, int/decimal, optional exponent.
 # Examples matched: 2000, 12, 2.16, 1.8046e-05, 6.9173e-05, -0.011286, 384.
@@ -179,7 +180,8 @@ def _json_corpus() -> dict[str, dict]:
     literal resolves whether the doc renders it as repr (1.8046e-05) or the
     JSON happens to store it differently (1.8046e-5 / 0.000018046)."""
     corpus: dict[str, dict] = {}
-    for jp in sorted(RESULTS.rglob("*.json")):
+    json_paths = list(RESULTS.rglob("*.json")) + list(FIGURES.rglob("*.json"))
+    for jp in sorted(json_paths):
         try:
             raw = jp.read_text()
         except OSError:

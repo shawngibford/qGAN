@@ -25,7 +25,7 @@ This atlas covers all five production quantum circuits used in the manuscript:
 
 ## 1. `default_75` — Byte-frozen v1.0/v1.1 baseline
 
-![default_75 circuit](../results/figures/circuits/default_75.png)
+![default_75 circuit](../figures/circuits/default_75.png)
 
 | spec | value |
 | --- | --- |
@@ -52,7 +52,7 @@ non-default circuit additions of Phase 14.
 
 ## 2. `iqp_sel_55` — Canonical paper circuit (frozen checkpoint epoch 1969)
 
-![iqp_sel_55 circuit](../results/figures/circuits/iqp_sel_55.png)
+![iqp_sel_55 circuit](../figures/circuits/iqp_sel_55.png)
 
 | spec | value |
 | --- | --- |
@@ -79,7 +79,7 @@ and is reported as a SEPARATE row-set (D-14-10).
 
 ## 3. `V1` — Matched-budget ansatz (range, depth 4, 75 params)
 
-![V1 circuit](../results/figures/circuits/V1.png)
+![V1 circuit](../figures/circuits/V1.png)
 
 | spec | value |
 | --- | --- |
@@ -104,7 +104,7 @@ underlying byte-frozen `circuit_id` that all three matched-budget V-variants sha
 
 ## 4. `V2` — Matched-budget ansatz (range, depth 8, 135 params)
 
-![V2 circuit](../results/figures/circuits/V2.png)
+![V2 circuit](../figures/circuits/V2.png)
 
 | spec | value |
 | --- | --- |
@@ -128,7 +128,7 @@ SEL stacks at the same topology pay off in the matched-budget 2000ep regime.
 
 ## 5. `V3` — Matched-budget ansatz (linear, depth 4, 75 params)
 
-![V3 circuit](../results/figures/circuits/V3.png)
+![V3 circuit](../figures/circuits/V3.png)
 
 | spec | value |
 | --- | --- |

@@ -563,7 +563,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--figures-dir", type=Path,
-        default=REPO / "results/figures",
+        default=REPO / "figures",
     )
     args = parser.parse_args()
     args.figures_dir.mkdir(parents=True, exist_ok=True)

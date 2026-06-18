@@ -15,8 +15,8 @@ requires:
 provides:
   - "run_matched2000_dualscale.py — eval-only matched-2000ep dual-scale aggregator: re-emits EMD + 4 moments + ACF lags 0-9 + DTW at BOTH OD and log_return scales for all 9 matched-2000ep models from the 45 frozen samples.npy bundles, plus the frozen-checkpoint headline as a DISTINCT row-set (D-14-10), with explicit-raise data_hash gate and loud-fail on missing samples"
   - "results/matched2000_dualscale.json — the single source of truth for matched-2000ep dual-scale numbers: 2576 long-form rows[] + 560 (model,scale,metric) aggregates[], data_hash=91e447d4624e25b3, the 10th row-set is model_kind=frozen_checkpoint_headline (n_seeds=1, source=frozen_checkpoint_epoch_1969)"
-  - "results/figures/matched2000_dualscale_sidebyside.{png,pdf,json} — render-only side-by-side dual-scale figure (3 metric panels x 2 scales = 6 panels; frozen headline as distinct dashed reference line + black diamond marker; companion JSON records every plotted tuple + source_artifact path)"
-  - "results/figures/matched2000_dualscale_comparison.md — copy-paste comparison-table doc rendered via _fmt() entirely from matched2000_dualscale.json; 167 distinct literals all resolve through the existing verify_number_provenance.py gate (no gate edit)"
+  - "figures/matched2000_dualscale_sidebyside.{png,pdf,json} — render-only side-by-side dual-scale figure (3 metric panels x 2 scales = 6 panels; frozen headline as distinct dashed reference line + black diamond marker; companion JSON records every plotted tuple + source_artifact path)"
+  - "figures/matched2000_dualscale_comparison.md — copy-paste comparison-table doc rendered via _fmt() entirely from matched2000_dualscale.json; 167 distinct literals all resolve through the existing verify_number_provenance.py gate (no gate edit)"
 affects: [paper-PAPER-09, manuscript-dual-scale-section, 14-09-zenodo-freeze]
 
 # Tech tracking
@@ -33,10 +33,10 @@ key-files:
   created:
     - run_matched2000_dualscale.py  # 625 lines (Task 1, recovered)
     - results/matched2000_dualscale.json  # 28270 lines / ~697 KB (Task 1, recovered)
-    - results/figures/matched2000_dualscale_sidebyside.png  # Task 2
-    - results/figures/matched2000_dualscale_sidebyside.pdf  # Task 2
-    - results/figures/matched2000_dualscale_sidebyside.json  # Task 2 (60 plotted tuples + source_artifact)
-    - results/figures/matched2000_dualscale_comparison.md  # Task 2 (passes verify_number_provenance.py)
+    - figures/matched2000_dualscale_sidebyside.png  # Task 2
+    - figures/matched2000_dualscale_sidebyside.pdf  # Task 2
+    - figures/matched2000_dualscale_sidebyside.json  # Task 2 (60 plotted tuples + source_artifact)
+    - figures/matched2000_dualscale_comparison.md  # Task 2 (passes verify_number_provenance.py)
   modified:
     - run_figure_suite.py  # Task 2: +305 lines (new dual-scale routines + main() wiring)
 
@@ -118,7 +118,7 @@ This task was completed by a prior executor (agent a6207b9353499ef52) but never 
 
 - `./qgan_env/bin/python run_figure_suite.py` → RUN OK (77 PNG total, up from 76 — the new sidebyside figure added; existing 76 figure stems unchanged in content though the PDFs re-render with new timestamps, see Issues Encountered)
 - `[ -e matched2000_dualscale_sidebyside.png AND .pdf AND .json AND matched2000_dualscale_comparison.md ]` → **PASS** (all 4 artifacts present, exit 0)
-- `./qgan_env/bin/python verify_number_provenance.py --target results/figures/matched2000_dualscale_comparison.md` → **PASS** (167/167 literals resolve)
+- `./qgan_env/bin/python verify_number_provenance.py --target figures/matched2000_dualscale_comparison.md` → **PASS** (167/167 literals resolve)
 - `grep 'matplotlib.use("Agg")'` in `run_figure_suite.py` → PASS (headless before pyplot)
 - `grep 'FileNotFoundError|render-only'` in `run_figure_suite.py` → PASS (loud-fail wired)
 - Loud-fail probe (point `MATCHED2000_DUALSCALE_REL` at a nonexistent file) → raises `FileNotFoundError` with the render-only message
@@ -138,10 +138,10 @@ This task was completed by a prior executor (agent a6207b9353499ef52) but never 
 - `run_matched2000_dualscale.py` — 625-line eval-only aggregator (Task 1, recovered)
 - `results/matched2000_dualscale.json` — 697 KB / 28270-line dual-scale JSON; 2576 rows + 560 aggregates; data_hash=`91e447d4624e25b3` (Task 1, recovered)
 - `run_figure_suite.py` — +305 lines: the two new dual-scale render routines + `main()` wiring (Task 2)
-- `results/figures/matched2000_dualscale_sidebyside.png` — 230 KB, 3×2-panel side-by-side figure (Task 2)
-- `results/figures/matched2000_dualscale_sidebyside.pdf` — 30 KB vector variant (Task 2)
-- `results/figures/matched2000_dualscale_sidebyside.json` — 571-line companion (60 plotted tuples + source_artifact + conflation_guard) (Task 2)
-- `results/figures/matched2000_dualscale_comparison.md` — 41-line copy-paste comparison table, 167 literals (Task 2)
+- `figures/matched2000_dualscale_sidebyside.png` — 230 KB, 3×2-panel side-by-side figure (Task 2)
+- `figures/matched2000_dualscale_sidebyside.pdf` — 30 KB vector variant (Task 2)
+- `figures/matched2000_dualscale_sidebyside.json` — 571-line companion (60 plotted tuples + source_artifact + conflation_guard) (Task 2)
+- `figures/matched2000_dualscale_comparison.md` — 41-line copy-paste comparison table, 167 literals (Task 2)
 
 ## Decisions Made
 
@@ -191,10 +191,10 @@ No threat flags.
 - `run_matched2000_dualscale.py` — FOUND (625 lines, on the working tree from commit `b3235d9`)
 - `results/matched2000_dualscale.json` — FOUND (697 KB / 28270 lines, data_hash=`91e447d4624e25b3`, 2576 rows, 560 aggregates, on commit `b3235d9`)
 - `run_figure_suite.py` — FOUND (1139 lines post-edit, includes new dual-scale routines + `main()` wiring)
-- `results/figures/matched2000_dualscale_sidebyside.png` — FOUND (3×2-panel figure, 230 KB)
-- `results/figures/matched2000_dualscale_sidebyside.pdf` — FOUND (30 KB)
-- `results/figures/matched2000_dualscale_sidebyside.json` — FOUND (60 plotted tuples + source_artifact + conflation_guard)
-- `results/figures/matched2000_dualscale_comparison.md` — FOUND (41 lines, 167 literals)
+- `figures/matched2000_dualscale_sidebyside.png` — FOUND (3×2-panel figure, 230 KB)
+- `figures/matched2000_dualscale_sidebyside.pdf` — FOUND (30 KB)
+- `figures/matched2000_dualscale_sidebyside.json` — FOUND (60 plotted tuples + source_artifact + conflation_guard)
+- `figures/matched2000_dualscale_comparison.md` — FOUND (41 lines, 167 literals)
 - Plan verify gate (full sequence) — PASS: `run_figure_suite.py` runs; all 4 Task-2 artifacts present; `verify_number_provenance.py --target ...comparison.md` returns "PASS — 167 distinct numeric literal(s) all resolve to results/*.json"; `matplotlib.use("Agg")` grep present; `FileNotFoundError|render-only` grep present.
 - Loud-fail probe — `_load_json` raises `FileNotFoundError` with the render-only message when the dual-scale JSON path is swapped to a nonexistent file.
 - `git diff --stat core/` — empty (eval module untouched across whole plan).

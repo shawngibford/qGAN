@@ -40,7 +40,7 @@ were re-trained — generators were not touched.
 | `results/tstr_matched2000.json` | 108 | 10 (9 variants + real_only_baseline) | TSTR R²/MAE/RMSE, 9 model_kinds × Pipeline B × 5 seeds × 3 init seeds |
 | `results/predictive_discriminative_matched2000.json` | 90 | 9 | TimeGAN predictive + discriminative (\|acc−0.5\| convention) |
 | `results/augmentation_matched2000.json` | 135 | 9 | Orlandi-style real-only vs +25%/+50%/+100% synthetic augmentation lift |
-| `results/figures/tstr_crossmodel_matched2000.{png,pdf,json}` | — | — | 9-variant Pipeline-B cross-model TSTR bars + real-only dashed reference |
+| `figures/tstr_crossmodel_matched2000.{png,pdf,json}` | — | — | 9-variant Pipeline-B cross-model TSTR bars + real-only dashed reference |
 
 ### Code changes
 

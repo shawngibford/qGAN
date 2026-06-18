@@ -10,7 +10,7 @@ The plan's structural integrity is sound (D-14-22, D-14-13, D-14-16 preserved; s
 
 Plan claims (T4, `reviewer_response.md` body + `methods_full.md` cross-reference, plus Context §2): "8 of the 9 models recover the OD marginal to within **≤0.03 OD-units** max-absolute-quantile-difference; only WGAN-CNN deviates with max upper-tail of **~0.69**."
 
-Spot-check from `results/figures/qq_<model>.json` (real_quantiles vs fake_quantiles, max-abs across the 0.5–99.5% grid):
+Spot-check from `figures/qq_<model>.json` (real_quantiles vs fake_quantiles, max-abs across the 0.5–99.5% grid):
 
 | model            | max-abs-quantile-diff |
 |------------------|-----------------------|

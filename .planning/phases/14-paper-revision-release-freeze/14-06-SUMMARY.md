@@ -9,7 +9,7 @@ requires:
   - phase: 14-paper-revision-release-freeze (plan 03)
     provides: "model_info.json (dataset block + seed_set + per-model records), reconciliation_note.md (1000ep->2000ep deltas), verify_number_provenance.py (the executable success-criterion-5 gate)"
   - phase: 14-paper-revision-release-freeze (plan 04)
-    provides: "results/figures/* (acf_iqp_sel_55_repro, training_progression, param_trajectory, entanglement_trajectory, cross_model_emd) — figure artifact paths cited by reviewer_response.md"
+    provides: "figures/* (acf_iqp_sel_55_repro, training_progression, param_trajectory, entanglement_trajectory, cross_model_emd) — figure artifact paths cited by reviewer_response.md"
   - phase: 11-utility-eval
     provides: "tstr.json, predictive_discriminative.json, augmentation.json, fidelity_dualscale.json — dual-scale + utility artifacts cited as supporting evidence"
 provides:

@@ -357,7 +357,7 @@ def main() -> None:
     ap.add_argument(
         "--figures-dir",
         type=Path,
-        default=Path("results/figures"),
+        default=Path("figures"),
         help="Directory holding the companion JSON / receiving the figures.",
     )
     args = ap.parse_args()

@@ -317,7 +317,7 @@ Both shot-noise and noise-channel sweeps use n=3 seeds (NOT n=1 — earlier draf
 | `results/shot_noise_sensitivity.json` | Analytic / 1024 / 8192 shots sweep, n=3 seeds |
 | `results/noise_model_sensitivity.json` | Depolarizing + amplitude-damping channels at 0/0.1/1/5%, n=3 seeds |
 
-### 5.3 Figures (in `results/figures/`)
+### 5.3 Figures (in `figures/`)
 
 Per-model (× 9 models): `loss`, `timeseries`, `dist`, `acf`, `qq`, `stylized`, `odrecon`, `emd` (last only for 7 adversarial models).
 Cross-model: `cross_model_distribution`, `cross_model_emd`, `cross_model_dtw_dualscale` ⭐ NEW, `cross_model_acf_overlay` ⭐ NEW, `qq_overlay`, `matched2000_dualscale_sidebyside`, `training_convergence_all_models`, `seed_variance_per_model`, `failure_modes_summary`, `param_efficiency_pareto`, `tstr_crossmodel`, `tstr_crossmodel_matched2000`, `headline_vs_reproduction`.

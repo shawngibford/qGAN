@@ -173,9 +173,9 @@ docs(state): record v1.2.4 loss-diagnostics patch
 | 4-agent audit findings (v1.2.2) | `.planning/review-findings/REVIEW-FINDINGS.md` + per-agent files |
 | Headline data JSON | `results/matched2000_dualscale.json` (705 KB) |
 | Per-pair Welch tests | `results/welch_pairwise.json` |
-| Cross-model EMD | `results/figures/cross_model_emd.json` |
+| Cross-model EMD | `figures/cross_model_emd.json` |
 | TSTR utility data | `results/tstr_matched2000.json` |
-| Loss-curve sidecars | `results/figures/loss_<model>.json` |
+| Loss-curve sidecars | `figures/loss_<model>.json` |
 | Per-model run metrics | `results/matched2000/runs/<model>/<seed>/metrics.json` |
 | AIChE upload bundle | `~/Desktop/aiche_upload_v1.2.4/` + `.zip` |
 | Project state | `.planning/STATE.md` |

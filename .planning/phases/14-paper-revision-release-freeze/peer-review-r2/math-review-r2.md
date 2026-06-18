@@ -554,7 +554,7 @@ Primary artifacts (all paths absolute):
 - `/Users/shawngibford/dev/phd/qGAN/results/matched2000_dualscale.json`
 - `/Users/shawngibford/dev/phd/qGAN/results/reconciliation_deltas.json`
 - `/Users/shawngibford/dev/phd/qGAN/results/total_adversarial_param_budget.json`
-- `/Users/shawngibford/dev/phd/qGAN/results/figures/cross_model_emd.json`
+- `/Users/shawngibford/dev/phd/qGAN/figures/cross_model_emd.json`
 - `/Users/shawngibford/dev/phd/qGAN/results/methods_full.json`
 - `/Users/shawngibford/dev/phd/qGAN/results/classical_architectures.json`
 - `/Users/shawngibford/dev/phd/qGAN/results/baseline_comparison.json`

@@ -106,7 +106,7 @@ These have nothing to do with the deltas the doc is claiming. The gate accepted 
 
 ### HIGH — HIGH-2 — `data_hash` invariant enforced inconsistently across paper-facing JSONs
 
-**Where.** All five config-lock JSONs (`canonical_config_lock.json`, `default_75_config_lock.json`, `v1_config_lock.json`, `v2_config_lock.json`, `v3_config_lock.json`); `classical_architectures.json`; `framework_versions.json`; `noise_model_sensitivity.json`; `shot_noise_sensitivity.json`; `ansatz_comparison.json`; `parity_check.json`; `eval06_roundtrip.json`; `canonical_recovery.json`; every figure companion JSON under `results/figures/*.json` (≥75 files); `matched2000/sweep_status.json`; `transform_ablation/*.json` — none of these carry `data_hash: 91e447d4624e25b3`.
+**Where.** All five config-lock JSONs (`canonical_config_lock.json`, `default_75_config_lock.json`, `v1_config_lock.json`, `v2_config_lock.json`, `v3_config_lock.json`); `classical_architectures.json`; `framework_versions.json`; `noise_model_sensitivity.json`; `shot_noise_sensitivity.json`; `ansatz_comparison.json`; `parity_check.json`; `eval06_roundtrip.json`; `canonical_recovery.json`; every figure companion JSON under `figures/*.json` (≥75 files); `matched2000/sweep_status.json`; `transform_ablation/*.json` — none of these carry `data_hash: 91e447d4624e25b3`.
 
 **Evidence.** Among 12 top-level JSONs that do carry a `data_hash`, every one of them is `91e447d4624e25b3` (consistent across `model_info.json`, `methods_full.json`, `headline_canonical.json`, `matched2000_dualscale.json`, `baseline_comparison.json`, `baseline_classical_wgan.json`, `baseline_nonadversarial.json`, `fidelity_dualscale.json`, `multiseed_summary.json`, `tstr.json`, `predictive_discriminative.json`, `augmentation.json`).
 
@@ -148,7 +148,7 @@ These have nothing to do with the deltas the doc is claiming. The gate accepted 
 
 **Where.** `verify_number_provenance.py:99` — `RESULTS.rglob("*.json")`.
 
-**Evidence.** ≥75 companion JSONs under `results/figures/` (e.g. `headline_vs_reproduction.json`, `param_efficiency_pareto.json`, `tstr_crossmodel.json`, `seed_variance_per_model.json`) are pure render artifacts. They carry `"render_only": true` and reference their source artifacts under `source_artifact` / `source_artifacts`. The gate treats them identically to source JSONs. In §4-FP2 above I verified `seed_variance_per_model.json#per_model_final_emd_mean[iqp_sel_55_repro] = 0.15499896082475875` resolves the `0.154999` literal — and this **is** the actual source for the (wrong-scale) NEW column in reconciliation_note.md.
+**Evidence.** ≥75 companion JSONs under `figures/` (e.g. `headline_vs_reproduction.json`, `param_efficiency_pareto.json`, `tstr_crossmodel.json`, `seed_variance_per_model.json`) are pure render artifacts. They carry `"render_only": true` and reference their source artifacts under `source_artifact` / `source_artifacts`. The gate treats them identically to source JSONs. In §4-FP2 above I verified `seed_variance_per_model.json#per_model_final_emd_mean[iqp_sel_55_repro] = 0.15499896082475875` resolves the `0.154999` literal — and this **is** the actual source for the (wrong-scale) NEW column in reconciliation_note.md.
 
 **Consequence.** Two failure modes:
 - A doc literal can "resolve" against a render-only companion that itself derived the number elsewhere — circular reference. Today the docs don't appear to exploit this circularly, but the protection is purely good behavior, not enforcement.

@@ -7,7 +7,7 @@
 
   1. 2–3 alternate ansatz variants (varying depth in {4, 6, 8} and/or entanglement topology) implemented in `core/models/quantum.py` and selectable via config
   2. Ansatz comparison table (identical training budget, multi-seed, full metric suite) written to `results/ansatz_comparison.json`
-  3. Training-progression figure (`results/figures/training_progression.*`) shows generated distribution at epochs {0, N/4, N/2, 3N/4, N} for quantum generator and classical WGAN-GP side-by-side
+  3. Training-progression figure (`figures/training_progression.*`) shows generated distribution at epochs {0, N/4, N/2, 3N/4, N} for quantum generator and classical WGAN-GP side-by-side
   4. PQC parameter-trajectory plot (norms + angle histograms across epochs) and entanglement-entropy (or state-purity) trajectory saved as figure artifacts — each with underlying data in JSON for reproducibility
 
 **Plans**: 4 plans
