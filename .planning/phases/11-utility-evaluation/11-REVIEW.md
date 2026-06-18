@@ -4,11 +4,11 @@ reviewed: 2026-05-18T00:00:00Z
 depth: standard
 files_reviewed: 5
 files_reviewed_list:
-  - revision/run_utility.py
-  - revision/run_timegan_scores.py
-  - revision/run_dualscale_fidelity.py
-  - revision/tests/test_timegan_scores.py
-  - revision/tests/test_utility.py
+  - run_utility.py
+  - run_timegan_scores.py
+  - run_dualscale_fidelity.py
+  - tests/test_timegan_scores.py
+  - tests/test_utility.py
 findings:
   critical: 1
   warning: 6
@@ -29,7 +29,7 @@ status: issues_found
 Reviewed the four Phase-11 evaluation drivers (TSTR/augmentation, TimeGAN
 predictive/discriminative, dual-scale fidelity) and the two pytest suites.
 The "verbatim reuse" claims for `reconstruct_od` and `train_eval_tstr` were
-checked byte-for-byte against `revision/_build_baseline_notebook.py` and the
+checked byte-for-byte against `_build_baseline_notebook.py` and the
 OD-scale fidelity emission against the baseline notebook — those reuses are
 faithful and bit-stable, and `compute_emd` ravels internally so the test-9
 2-D call site is safe.
@@ -49,7 +49,7 @@ and a discriminative-split RNG-coupling subtlety).
 
 ### CR-01: Hardcoded absolute home-directory path defeats reproducibility and can silently mix stale artifacts
 
-**File:** `revision/run_dualscale_fidelity.py:112` (used at `:145-147` via `_resolve_run_dir`)
+**File:** `run_dualscale_fidelity.py:112` (used at `:145-147` via `_resolve_run_dir`)
 **Issue:**
 ```python
 _CANONICAL_REPO_FALLBACK = Path("/Users/shawngibford/dev/phd/qGAN")
@@ -114,7 +114,7 @@ so cross-checkout artifact mixing cannot pass silently.
 
 ### WR-01: Stale shape comment contradicts the `n_train_real == 65` test invariant
 
-**File:** `revision/run_utility.py:187` (comment); cross-ref `revision/tests/test_utility.py:168`
+**File:** `run_utility.py:187` (comment); cross-ref `tests/test_utility.py:168`
 **Issue:** `_real_windowed_od` annotates the return as `# (384,10)`. But
 `rolling_window` returns `(len(OD)-10)//2 + 1` rows, and
 `test_no_leakage_sentinel` hard-asserts `rob["n_train_real"] == 65` with
@@ -131,7 +131,7 @@ or drop the magic number entirely.
 
 ### WR-02: `r2_score_inline` silently returns 0.0 when the eval target is constant — masks a degenerate run
 
-**File:** `revision/run_utility.py:216-219`
+**File:** `run_utility.py:216-219`
 **Issue:** `return 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0`. The `else 0.0`
 branch is reached when the held-out target variance is zero. In this driver an
 R2 of exactly `0.0` is indistinguishable from a *legitimately computed* R2 of
@@ -154,7 +154,7 @@ separate `assert eval_windows[:, 9:10].std() > 0` guard in `train_eval_tstr`.
 
 ### WR-03: Augmentation subsample RNG seed is lossy and collides across distinct ratios
 
-**File:** `revision/run_utility.py:446` and `:462`
+**File:** `run_utility.py:446` and `:462`
 **Issue:** `sub_rng = np.random.default_rng(int(ratio * 1000) + 1)`. The seed
 is derived from `int(ratio * 1000)`. This is fragile: any future ratio with
 sub-0.001 resolution (or a float like `0.1 + 0.15`) truncates, and more
@@ -173,7 +173,7 @@ label, not by `int(ratio*1000)`.
 
 ### WR-04: `synthetic_only` augmentation condition can equal `+100%` and is not partition-guarded against pool size
 
-**File:** `revision/run_utility.py:447-475`
+**File:** `run_utility.py:447-475`
 **Issue:** For the `+100%` row, `n_synth = round(1.0 * n_real_train)` (~65),
 which is far below `synth_pool.shape[0]` (~3840×... pooled), so the
 `if n_synth >= synth_pool.shape[0]: synth_sel = synth_pool` branch is
@@ -189,7 +189,7 @@ instead of emitting duplicated conditions.
 
 ### WR-05: Discriminative score couples two independent RNG streams off one seed; split is order-sensitive
 
-**File:** `revision/run_timegan_scores.py:273-283, :305-309`
+**File:** `run_timegan_scores.py:273-283, :305-309`
 **Issue:** `discriminative_score` calls `np.random.seed(seed)` (legacy global
 RNG) for the two `_split` permutations, then *separately* constructs
 `np.random.default_rng(seed)` for minibatch index draws. The two `_split`
@@ -209,7 +209,7 @@ analogous to the predictive determinism test.
 
 ### WR-06: No determinism / range test for `discriminative_score`; smoke assertions only run under `__main__`
 
-**File:** `revision/tests/test_timegan_scores.py:44-49`; `revision/run_timegan_scores.py:454-472`
+**File:** `tests/test_timegan_scores.py:44-49`; `run_timegan_scores.py:454-472`
 **Issue:** `test_scores_deterministic` covers only `predictive_score`. The
 discriminative path — which has the riskier RNG coupling (WR-05) and a
 `squeeze(-1)`/shape contract between `(B,)` logits and `(B,)` labels — has no
@@ -230,18 +230,18 @@ before the accuracy computation:
 
 ### IN-01: `_find_repo_root` is duplicated four ways with divergent start points
 
-**File:** `revision/run_utility.py:41-51`, `revision/run_timegan_scores.py:56-66`, `revision/run_dualscale_fidelity.py:68-82` & `:115-121`, `revision/tests/test_utility.py:67-72`
+**File:** `run_utility.py:41-51`, `run_timegan_scores.py:56-66`, `run_dualscale_fidelity.py:68-82` & `:115-121`, `tests/test_utility.py:67-72`
 **Issue:** Five near-identical repo-root walkers exist; `run_utility` starts
 from `Path(__file__).parent`, `run_timegan_scores` from `.parent.parent`, and
 `run_dualscale_fidelity` has *two* different implementations
 (`_bootstrap_repo_on_path` and `_find_repo_root`). Drift between these is a
 latent maintenance hazard and already nearly bit the hardcoded-path issue.
 **Fix:** Promote one `_find_repo_root` helper (e.g. into a small
-`revision/_pathutil.py`, not `revision/core/` per D-11-10) and import it.
+`revision/_pathutil.py`, not `core/` per D-11-10) and import it.
 
 ### IN-02: `run_dualscale_fidelity` defines `_find_repo_root` but also `_bootstrap_repo_on_path`; the former re-walks from cwd
 
-**File:** `revision/run_dualscale_fidelity.py:115-121`
+**File:** `run_dualscale_fidelity.py:115-121`
 **Issue:** `_find_repo_root()` walks from `Path.cwd()`, while
 `_bootstrap_repo_on_path()` walks from `__file__`. `main()` uses the
 cwd-based one for `--out` anchoring, so running from an unexpected cwd anchors
@@ -253,7 +253,7 @@ bootstrap and output anchoring.
 
 ### IN-03: `import yaml` performed inside `verify_data_hash` rather than at module top
 
-**File:** `revision/run_dualscale_fidelity.py:226`
+**File:** `run_dualscale_fidelity.py:226`
 **Issue:** The other two drivers import `yaml` at module scope; here it is a
 function-local import with no stated reason. Minor inconsistency / hides a
 hard dependency from import-time failure.
@@ -261,7 +261,7 @@ hard dependency from import-time failure.
 
 ### IN-04: `real_only_r2` long-form extraction in the leakage test is effectively dead
 
-**File:** `revision/tests/test_utility.py:176-189`
+**File:** `tests/test_utility.py:176-189`
 **Issue:** `real_only_r2` filters augmentation rows for
 `metric_name == "r2"`, but `run_augmentation` only ever emits `r2_delta`/
 `mae_delta`/`rmse_delta` long-form rows (never a bare `"r2"`), so the list is
@@ -273,7 +273,7 @@ emitted metric name (`r2_delta == 0` for `real_only`).
 
 ### IN-05: Unused parameter / dead `n_synth_subsample` path carried verbatim into three consumers
 
-**File:** `revision/run_utility.py:143-152`, `revision/run_timegan_scores.py:146-155`, `revision/run_dualscale_fidelity.py:171-189`
+**File:** `run_utility.py:143-152`, `run_timegan_scores.py:146-155`, `run_dualscale_fidelity.py:171-189`
 **Issue:** `reconstruct_od(..., n_synth_subsample=None)` is copied verbatim
 (justified by the verbatim-reuse contract) but no Phase-11 call site ever
 passes `n_synth_subsample`, so the branch is dead in this phase. Acceptable

@@ -14,7 +14,7 @@ from __future__ import annotations
 import torch
 import pytest
 
-from revision.core.training import EarlyStopping, _ESAdapter
+from core.training import EarlyStopping, _ESAdapter
 
 
 class _TinyCritic(torch.nn.Module):

@@ -1,7 +1,7 @@
 # Agent 5 — Manuscript Consistency Review (Peer Review r4)
 
 **Scope:** Cross-check `main (4) copy.tex` + `supp_material.tex` against JSON-backed
-evidence in `revision/results/` and the paper-block docs in `revision/docs/`.
+evidence in `results/` and the paper-block docs in `docs/`.
 **Date:** 2026-05-21. **Target freeze:** git tag `v2.0-revision` → irreversible Zenodo DOI.
 
 ---
@@ -9,7 +9,7 @@ evidence in `revision/results/` and the paper-block docs in `revision/docs/`.
 ## ENVIRONMENT NOTE (read first)
 
 This agent runs in a git worktree branched from an old commit (`c82169c`); the
-worktree HEAD does **not** contain the `.tex` files or `revision/docs/paper_blocks_*`.
+worktree HEAD does **not** contain the `.tex` files or `docs/paper_blocks_*`.
 All file reads in this report were performed read-only against the main repo at
 `/Users/shawngibford/dev/phd/qGAN` (main HEAD `8180a5e`). No writes were made to
 the main repo. Line numbers cited are from the main-repo copies of the files.
@@ -48,7 +48,7 @@ own audit doc says so explicitly — `methods_full.md:427-434`:
 > current matched-budget contract under the strict-accept gate (D-14-13)."
 
 So the project KNOWS 0.6843 is a stale pre-v1.0 best-case number. But that
-disclosure lives **only in `revision/docs/methods_full.md` and
+disclosure lives **only in `docs/methods_full.md` and
 `reviewer_response.md` (markdown)** — it is **completely absent from the
 manuscript `.tex`**. The manuscript text presents 0.6843 as the live result with
 no "frozen pre-v1.0 checkpoint" label, no reconciliation to the 0.30 matched
@@ -190,7 +190,7 @@ repo-figure access confirm all `\includegraphics` targets resolve in the frozen
 tree (`dtwd.png`, `pdf.png`, `cdf.png`, `qq.png`, `acf.png`, `quantum_circuit.png`,
 `classicalgan.png`, `hybridgan.png`, `mech_rep.png`, `bpm_qgan.drawio.png`,
 `lucy_diagram.jpg`, `concept_diagram.png`). The figure regeneration
-(`revision/results/figures/*.pdf`, PAPER-11 note) is also not wired into the
+(`results/figures/*.pdf`, PAPER-11 note) is also not wired into the
 `.tex` `\graphicspath`.
 
 **L-3 — `\bibliography{bib}` (`main:304`)** — the `bib` source file was not
@@ -213,8 +213,8 @@ and tracked.
 
 ## ASSESSMENT
 
-The JSON evidence base (`revision/results/`) and the audit/markdown layer
-(`revision/docs/`) are internally consistent, carefully provenance-gated, and
+The JSON evidence base (`results/`) and the audit/markdown layer
+(`docs/`) are internally consistent, carefully provenance-gated, and
 honest about the Path A reframe and the pre-v1.0/matched-budget metric history.
 That work is sound.
 

@@ -55,7 +55,7 @@ Thumbs.db
 *.log
 
 # Sweep runtime lockfiles (advisory flock guard — not an artifact)
-revision/results/**/.status.lock
+results/**/.status.lock
 
 
 #docs
@@ -67,11 +67,11 @@ results/
 plan.md
 
 # Phase 14 plan 14-13: track headline checkpoint in-repo (~6 MB)
-!revision/checkpoints/best_checkpoint.pt
+!checkpoints/best_checkpoint.pt
 
 # Pitfall-4 remediation (D-14-22): the provenance backbone MUST ship in the v2.0-revision tag archive
-!revision/results/
-!revision/results/**/*.json
+!results/
+!results/**/*.json
 
 # Phase 14 plan 14-19: pre-freeze working-tree hygiene — junk that must NOT
 # enter the v2.0-revision tag archive (Agent 6 L-2 freeze-readiness review).
@@ -87,9 +87,9 @@ Final Results from 2000 epochs - IQP:SEL circuit/
 # Phase 14 plan 14-19: classical-baseline run binaries are large and excluded
 # from the tag (D-14-21 / Agent 6 HIGH-1 / M10). Only the per-seed
 # metrics.json + config.yaml are tracked (force-staged with git add -f).
-revision/results/baselines/runs/**/*.npy
-revision/results/baselines/runs/**/*.npz
-revision/results/baselines/runs/**/*.pt
+results/baselines/runs/**/*.npy
+results/baselines/runs/**/*.npz
+results/baselines/runs/**/*.pt
 
 # LaTeX build artifacts at repo root (regenerable from .tex + bib.bib)
 *.aux

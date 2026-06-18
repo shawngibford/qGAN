@@ -19,7 +19,7 @@
 | Bibliography | `bib.bib` (59 entries; `yoon2019TimeGAN` re-typed as @inproceedings with pages added) |
 | Last commit | `a4cfc1a chore(paper-rewrite): bundle 7 legacy figures into repo + clear 10 audit FLAGs` |
 | Tag | `v1.2` (local, not yet pushed) |
-| Provenance gate | v2.2, PASS — **143 main + 156 supp** literals all resolve to `revision/results/*.json` |
+| Provenance gate | v2.2, PASS — **143 main + 156 supp** literals all resolve to `results/*.json` |
 | pdflatex compile (no TEXINPUTS needed) | PASS — **52 pages**, 0 undefined cites, 0 undefined refs, **0 hyperref duplicate-destination warnings**, all 11 figures in PDF render from repo-local files |
 | Audit verdicts (all 4 sub-audits) | LaTeX/bib: SUBMISSION-READY • Cleanliness/framing: SUBMISSION-READY • Figure verification: SUBMISSION-READY • Prohibition sentinel: SENTINEL-CLEAN |
 | Working tree | Clean |
@@ -169,17 +169,17 @@ supp_material.tex:
 ```bash
 cd /Users/shawngibford/dev/phd/qGAN
 
-./qgan_env/bin/python revision/verify_number_provenance.py --target "main (4) copy.tex"
+./qgan_env/bin/python verify_number_provenance.py --target "main (4) copy.tex"
 # Expect: PASS — 143 distinct numeric literal(s) (was 122 pre-audit; +21 from Table 2 cells)
 
-./qgan_env/bin/python revision/verify_number_provenance.py --target "supp_material.tex"
+./qgan_env/bin/python verify_number_provenance.py --target "supp_material.tex"
 # Expect: PASS — 156 distinct numeric literal(s) (was 26 pre-audit;
 # +25 from per-seed dominance table, +93 from Welch tables, +11 from ablation prose, +1 from Welch caption scope tag)
 
-./qgan_env/bin/python revision/verify_number_provenance.py --differential-test
+./qgan_env/bin/python verify_number_provenance.py --differential-test
 # Expect: v2.1 differential test PASSED
 
-./qgan_env/bin/python revision/verify_freeze_ready.py
+./qgan_env/bin/python verify_freeze_ready.py
 # Expect: all gates PASS except (d) release.md (plan 14-07's deliverable, deferred to acceptance)
 
 # Compile (no TEXINPUTS needed — all 11 figures are in the repo)
@@ -207,10 +207,10 @@ If any gate fails, **stop**. The gate failures from before the swarm + audit cle
 | Repo root | `quantum_circuit.png` | Supp Fig A4 — quantum circuit |
 | Repo root | `bpm_qgan.drawio.png` | Supp Fig A5 — decision-tree triage schematic (future work) |
 | Repo root | `lucy_diagram.jpg` | Supp Fig A6 — LUCY photobioreactor |
-| `revision/results/figures/` | `cross_model_dtw_dualscale.{pdf,png}` | Main Fig 2 — 9-model DTW dual-scale |
-| `revision/results/figures/` | `cross_model_acf_overlay.{pdf,png}` | Main Fig 3 — 9-model log-return ACF overlay |
-| `revision/results/figures/` | `preprocessing_pipeline_4panel.{pdf,png}` | Supp Fig A7 — Pipeline B preprocessing chain |
-| `revision/results/figures/` | `preprocessing_ablation_comparison.{pdf,png}` | Supp Fig A8 — A/B/C ablation comparison |
+| `results/figures/` | `cross_model_dtw_dualscale.{pdf,png}` | Main Fig 2 — 9-model DTW dual-scale |
+| `results/figures/` | `cross_model_acf_overlay.{pdf,png}` | Main Fig 3 — 9-model log-return ACF overlay |
+| `results/figures/` | `preprocessing_pipeline_4panel.{pdf,png}` | Supp Fig A7 — Pipeline B preprocessing chain |
+| `results/figures/` | `preprocessing_ablation_comparison.{pdf,png}` | Supp Fig A8 — A/B/C ablation comparison |
 
 **Tag** — chosen: `v1.2` (matched-budget release version bump).
 
@@ -284,7 +284,7 @@ These three corrections are **load-bearing** and were the foundation of the swar
 
 3. **Real-data lag-1 ACF reference is −0.0641** (matched-pipeline, with dither), **NOT −0.029** (legacy unmatched).
 
-4. **Pipeline B = log-returns + standardize + linear rescale to [-1, 1] — NO Lambert W.** The matched-budget runs use Pipeline B exclusively per decision D-10-05 (5-seed ablation showed Pipeline C tied with B on every OD-scale metric while introducing an over-Gaussianization concern flagged by reviewer R1-M3). The inverse Lambert W transform belongs to dropped Pipeline C and may only appear in the manuscript inside the explicit "Pipeline C dropped" rationale (Methods §3.2, Supp §A.7). **Never re-introduce Lambert W into the matched-budget Pipeline B description or the preprocessing figure.** The `lambert_w_transform` / `inverse_lambert_w_transform` functions in `revision/core/data.py` are retained for ablation reproducibility only; do not delete them.
+4. **Pipeline B = log-returns + standardize + linear rescale to [-1, 1] — NO Lambert W.** The matched-budget runs use Pipeline B exclusively per decision D-10-05 (5-seed ablation showed Pipeline C tied with B on every OD-scale metric while introducing an over-Gaussianization concern flagged by reviewer R1-M3). The inverse Lambert W transform belongs to dropped Pipeline C and may only appear in the manuscript inside the explicit "Pipeline C dropped" rationale (Methods §3.2, Supp §A.7). **Never re-introduce Lambert W into the matched-budget Pipeline B description or the preprocessing figure.** The `lambert_w_transform` / `inverse_lambert_w_transform` functions in `core/data.py` are retained for ablation reproducibility only; do not delete them.
 
 Additional prohibitions enforced by the A2 sentinel regex sweep:
 
@@ -321,18 +321,18 @@ Additional prohibitions enforced by the A2 sentinel regex sweep:
 - **A5's prior critique was preserved verbatim in the next-wave A5 prompt**, which let A5 explicitly say "M1 RESOLVED — [verbatim quote of new content]". That continuity made the audit chain auditable end-to-end.
 
 ### From the post-swarm audit cleanup (2026-05-28)
-- **The provenance gate validates literals, not prose.** It caught zero issues with the swarm's Lambert W misdescription because the affected numbers (778, 384, 5 seeds, etc.) were all correct in isolation — the prose chaining them as "Pipeline B = log-returns → standardize → Lambert W → rescale" was wrong, but no individual number triggered the gate. **Lesson:** add a "pipeline-name prose check" gate that verifies every "Pipeline B" mention's described chain matches the actual `revision/run_ablation.py::build_dataset_for_pipeline('B', ...)` code path. The next swarm iteration should include a prose-vs-code consistency auditor as a deterministic gate.
+- **The provenance gate validates literals, not prose.** It caught zero issues with the swarm's Lambert W misdescription because the affected numbers (778, 384, 5 seeds, etc.) were all correct in isolation — the prose chaining them as "Pipeline B = log-returns → standardize → Lambert W → rescale" was wrong, but no individual number triggered the gate. **Lesson:** add a "pipeline-name prose check" gate that verifies every "Pipeline B" mention's described chain matches the actual `run_ablation.py::build_dataset_for_pipeline('B', ...)` code path. The next swarm iteration should include a prose-vs-code consistency auditor as a deterministic gate.
 - **Four parallel audit agents was the right number for a 14-section paper.** Each had a tight, distinct scope (structural / cleanliness / figures / prohibitions). Together they surfaced 4 BLOCK + 10 FLAG findings in ~12 min wall time; the same audit by a single agent would have taken 4× longer and missed cross-cutting issues from the narrow scope per agent.
 - **Stale-figure-in-cap detection** was the agent's most valuable single contribution. The 5 single-model figures (`pdf.png`, `cdf.png`, etc.) had retrofitted captions but Oct-2025 file timestamps and embedded "Lucy Log Returns" / "Log δ" titles that no human reader scanning the manuscript would have spotted without opening the underlying image files. The agent's `stat` + Read-the-PDF combination caught this where prose-reading alone would not have.
 - **Adding artefacts (Table 2, per-seed dominance, Welch pairwise tables) addressed a "make the strong claim auditable" reviewer-ergonomics gap.** The original §4.1 prose was scope-honest but the strong "no quantum-classical seed overlap on LR-DTW" claim was assertion-only. Adding the per-seed table converted it into a cell-counting test the reviewer can verify in one glance. Same logic applied to the 40-pair Welch table for the OD-EMD null and the LR-EMD reversal. **Lesson:** for any strong claim of the form "every X is Y", produce the artefact that lists all X cells so the reviewer can re-verify by inspection.
 
 ---
 
-**End of submission handoff.** When in doubt, prefer the JSON sources in `revision/results/` over any prose summary. Every quantitative claim in the manuscript is supposed to trace back to one of them.
+**End of submission handoff.** When in doubt, prefer the JSON sources in `results/` over any prose summary. Every quantitative claim in the manuscript is supposed to trace back to one of them.
 
 **Cumulative session state at HEAD (a4cfc1a, tag v1.2):**
 - Manuscript: submission-ready
-- Numerical traceability: every literal traces to `revision/results/*.json`
+- Numerical traceability: every literal traces to `results/*.json`
 - Statistical artefacts: Table 2 + per-seed dominance + 40-pair pairwise Welch tests
 - Reviewer ergonomics: Table 2 bolded row-leaders; full-page-width supp stat tables; per-claim auditable artefacts
 - Scope hedging: all 4 hard prohibitions + 14 sentinel-phrase prohibitions hold

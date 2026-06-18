@@ -12,7 +12,7 @@ substantively defensible. Three MINOR items and one notable absence
 
 **Finding.** The paper-facing label for the encoding sub-block is
 "IQP (Hadamard + RZ per qubit)" (`methods_full.md` §2.a, all five circuit
-tables). Code (`revision/core/models/quantum.py:194-206`) implements the
+tables). Code (`core/models/quantum.py:194-206`) implements the
 sub-block as: H on every qubit → trainable `RZ(theta_i)` per qubit → noise
 `RZ(z_i)` per qubit. The gate sequence is `H ⊗ RZ ⊗ RZ` — all diagonal in the
 computational basis after the Hadamards, no further Hadamards before the
@@ -34,7 +34,7 @@ not wrong but invites a reviewer to expect a richer feature map.
 
 ## 2. "Data re-uploading" docstring misnomer — MINOR (code-only, not in paper)
 
-**Finding.** `revision/core/models/quantum.py:1` opens with:
+**Finding.** `core/models/quantum.py:1` opens with:
 
 > `PQC generator: data re-uploading ansatz with strongly-entangled Rot layers.`
 
@@ -45,8 +45,8 @@ layers. This is therefore **not** a data re-uploading circuit in the
 Pérez-Salinas et al. 2020 sense — it is a single-shot encoding.
 
 **Critical: this misnomer never leaks into paper-facing text.** I grepped
-`revision/docs/*.md`, `revision/results/methods_full.json`, and
-`revision/results/*_config_lock.json`: none use "re-uploading" or "re-upload".
+`docs/*.md`, `results/methods_full.json`, and
+`results/*_config_lock.json`: none use "re-uploading" or "re-upload".
 The paper consistently describes the encoding as IQP (single layer). Only the
 internal source-file docstring is misleading.
 
@@ -78,7 +78,7 @@ range-topology variants (default_75, iqp_sel_55, V1, V2).
 
 ## 4. Range vs linear topology — VERIFIED ✓
 
-**Finding.** `revision/run_matched2000.py:117-124` defines the source-of-truth
+**Finding.** `run_matched2000.py:117-124` defines the source-of-truth
 `_QUANTUM_ANSATZ` dict:
 
 ```
@@ -150,7 +150,7 @@ formula. ✓
 **Question posed:** was the 55-param decomposition recovered by structural
 verification or by formula-matching?
 
-**Finding.** `revision/run_recover_canonical.py` is a two-step driver. Step 1
+**Finding.** `run_recover_canonical.py` is a two-step driver. Step 1
 (`--recover-only`) reads `best_checkpoint.pt`, hard-asserts
 `params_pqc.shape == (55,)` (line 219-224) — this is the **ground-truth shape
 gate**. Step 2 (`--assert-equivalence`) is the **structural gate**:
@@ -233,7 +233,7 @@ this revision, but the absence should be acknowledged rather than ignored.
 style="pennylane")(noise, params)` — the canonical PennyLane renderer
 fed by the actual QNode tape with the actual `circuit_id`/`topology`/
 `num_layers` arguments. The companion JSON sidecars
-(`revision/results/figures/circuits/{name}.json`) record
+(`results/figures/circuits/{name}.json`) record
 `renderer = "qml.draw_mpl(style=\"pennylane\")"` and a generation
 timestamp. There is no bespoke matplotlib gate drawing, no
 post-render edits, and `run_circuit_diagrams._draw_one` hard-asserts
@@ -256,7 +256,7 @@ circuit from the diagram alone. ✓
 log_return-EMD=0.1212) a circuit problem or an evaluation problem?
 
 **Finding.** It is an **evaluation problem**, not a circuit problem.
-`revision/run_canonical_headline.py` (the Phase-14 audited driver) loads the
+`run_canonical_headline.py` (the Phase-14 audited driver) loads the
 same `best_checkpoint.pt` (SHA `f7cceb52…`, epoch 1969) into the
 **structurally-verified** 55-param `iqp_sel_55` circuit:
 
@@ -336,7 +336,7 @@ Required edits before publication:
 1. **§2.a-e of methods_full.md / paper:** add a footnote that "IQP encoding"
    refers to the single-qubit, depth-1 sector of the IQP family (Havlíček et
    al. 2019), with no ZZ couplings. Pre-empts the obvious referee objection.
-2. **`revision/core/models/quantum.py:1` docstring:** strike "data
+2. **`core/models/quantum.py:1` docstring:** strike "data
    re-uploading"; replace with "single-shot IQP-style encoding". Source-only
    fix; no behavioral change.
 3. **Discussion section:** add one paragraph acknowledging that no formal

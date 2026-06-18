@@ -10,12 +10,12 @@ This phase delivers the **utility-oriented evidence** AIChE reviewers R1-M2 ("ut
 
 Concretely, Phase 11 produces three downstream-task verdicts for the quantum generator vs. the classical WGAN-GP variants vs. the non-adversarial baselines:
 
-1. **TSTR soft-sensor** (EVAL-01) — train a soft-sensor on synthetic OD windows, evaluate on held-out real data; report R²/MAE/RMSE → `revision/results/tstr.json`
-2. **TimeGAN predictive + discriminative scores** (EVAL-02/03) with mean ± std across seeds → `revision/results/predictive_discriminative.json`
-3. **Real-only vs. synthetic-augmented lift** (EVAL-04, Orlandi-style) → `revision/results/augmentation.json`
+1. **TSTR soft-sensor** (EVAL-01) — train a soft-sensor on synthetic OD windows, evaluate on held-out real data; report R²/MAE/RMSE → `results/tstr.json`
+2. **TimeGAN predictive + discriminative scores** (EVAL-02/03) with mean ± std across seeds → `results/predictive_discriminative.json`
+3. **Real-only vs. synthetic-augmented lift** (EVAL-04, Orlandi-style) → `results/augmentation.json`
 4. **Both-scale fidelity reporting** (EVAL-05) — every fidelity metric carries an explicit `scale: "log_return" | "OD"` field
 
-**In scope:** TSTR pipeline; faithful TimeGAN post-hoc predictive/discriminative nets; mixing-ratio augmentation study; dual-scale JSON emission; consumption of existing Phase 10 (`revision/results/baselines/runs/...`) and Phase 09.1 quantum sample artifacts.
+**In scope:** TSTR pipeline; faithful TimeGAN post-hoc predictive/discriminative nets; mixing-ratio augmentation study; dual-scale JSON emission; consumption of existing Phase 10 (`results/baselines/runs/...`) and Phase 09.1 quantum sample artifacts.
 
 **Out of scope (other phases own these):**
 - Shot-noise / noise-model / multi-seed roll-up sweeps → Phase 12 (SENS-01..03)
@@ -46,11 +46,11 @@ Concretely, Phase 11 produces three downstream-task verdicts for the quantum gen
 - **D-11-07:** Conditions: `real-only` baseline, then `real + synthetic` at multiple injection ratios producing a **lift curve per generator** (suggested grid `{+25%, +50%, +100%, synthetic-only}`; exact grid is planner discretion). Delta table = downstream R²/MAE/RMSE change vs. the real-only baseline, per generator.
 
 ### Sample provenance
-- **D-11-08:** **Reuse Phase 10 / Phase 09.1 artifacts as-is.** Read existing `samples.npy` from the 50 Phase 10 baseline run dirs (`revision/results/baselines/runs/<model>/<pipeline>/<seed>/`) plus the Phase 09.1 quantum runs. **No regeneration, no retraining** — preserves the identical-protocol invariant; Phase 11 adds evaluation code only.
+- **D-11-08:** **Reuse Phase 10 / Phase 09.1 artifacts as-is.** Read existing `samples.npy` from the 50 Phase 10 baseline run dirs (`results/baselines/runs/<model>/<pipeline>/<seed>/`) plus the Phase 09.1 quantum runs. **No regeneration, no retraining** — preserves the identical-protocol invariant; Phase 11 adds evaluation code only.
 - **D-11-09:** Both **Pipeline A and Pipeline B** are evaluated (matching Phase 10's comparison-table coverage). Pipeline B remains the headline pipeline (D-10-06); Pipeline A reported as the supplementary raw-OD control. EVAL-05 dual-scale (`log_return` + `OD`) emission applies to every metric.
 
 ### Code placement (carried forward from D-10-13 invariant)
-- **D-11-10:** Evaluation/aggregation logic stays **out of `revision/core/`** (which holds model definitions + `eval.py` fidelity helpers only). New TSTR/score/augmentation orchestration lives in new `revision/run_*.py` driver(s) + JSON emitters, patterned after `revision/run_baselines.py`. Reuse `revision/core/eval.py` fidelity helpers unchanged for EVAL-05 dual-scale reporting.
+- **D-11-10:** Evaluation/aggregation logic stays **out of `core/`** (which holds model definitions + `eval.py` fidelity helpers only). New TSTR/score/augmentation orchestration lives in new `run_*.py` driver(s) + JSON emitters, patterned after `run_baselines.py`. Reuse `core/eval.py` fidelity helpers unchanged for EVAL-05 dual-scale reporting.
 
 ### Claude's Discretion
 - Exact post-hoc GRU hyperparameters (depth, hidden dim, epochs) — pin to the cited TimeGAN reference implementation during research.
@@ -79,14 +79,14 @@ Concretely, Phase 11 produces three downstream-task verdicts for the quantum gen
 - `.planning/phases/10-classical-baselines/10-CONTEXT.md` — Run-dir layout (D-10-14), data-hash invariant (D-10-15), comparison-table schema (D-10-16/17), TSTR-lite spec (D-10-21), code-placement invariant (D-10-13)
 - `.planning/phases/09.1-r1-m3-preprocessing-ablation/09.1-CONTEXT.md` — Identical-conditions invariant, Pipeline A/B definitions, eval.py contract
 - `.planning/phases/09.1-r1-m3-preprocessing-ablation/09.1-04-SUMMARY.md` — Pipeline B recommendation rationale; held-out real split / TSTR-lite numbers
-- `revision/results/baseline_comparison.json` — Existing long-form metrics schema to extend (`{model_kind, pipeline, seed, metric_name, scale, value}`)
-- `revision/results/baselines/runs/<model>/<pipeline>/<seed>/samples.npy` — The synthetic samples Phase 11 evaluates (no regeneration)
+- `results/baseline_comparison.json` — Existing long-form metrics schema to extend (`{model_kind, pipeline, seed, metric_name, scale, value}`)
+- `results/baselines/runs/<model>/<pipeline>/<seed>/samples.npy` — The synthetic samples Phase 11 evaluates (no regeneration)
 
 ### Reusable code
-- `revision/core/eval.py` — Fidelity helpers (`compute_emd/moments/acf/dtw/jsd/psd`, `full_metric_suite`) — reuse unchanged; EVAL-05 wraps each with a `scale` field
-- `revision/core/preprocessing.py` — `inverse_minmax_od`, `inverse_logreturns` for OD-scale reconstruction (ABL-01 verified round-trip)
-- `revision/core/data.py` — `load_and_preprocess`, `rolling_window`, EVAL-06 differentiable `inverse_transform`
-- `revision/run_baselines.py` — Reference template for the new Phase 11 driver(s)
+- `core/eval.py` — Fidelity helpers (`compute_emd/moments/acf/dtw/jsd/psd`, `full_metric_suite`) — reuse unchanged; EVAL-05 wraps each with a `scale` field
+- `core/preprocessing.py` — `inverse_minmax_od`, `inverse_logreturns` for OD-scale reconstruction (ABL-01 verified round-trip)
+- `core/data.py` — `load_and_preprocess`, `rolling_window`, EVAL-06 differentiable `inverse_transform`
+- `run_baselines.py` — Reference template for the new Phase 11 driver(s)
 
 ### External
 - TimeGAN reference implementation (ydata-synthetic / original Yoon et al. repo) — canonical predictive/discriminative score definitions; researcher to locate and pin exact version
@@ -97,17 +97,17 @@ Concretely, Phase 11 produces three downstream-task verdicts for the quantum gen
 ## Existing Code Insights
 
 ### Reusable Assets
-- `revision/core/eval.py::full_metric_suite` — already computes EMD/moments/ACF/DTW/JSD/PSD; EVAL-05 only needs a `scale` tag wrapper, not new metric math.
+- `core/eval.py::full_metric_suite` — already computes EMD/moments/ACF/DTW/JSD/PSD; EVAL-05 only needs a `scale` tag wrapper, not new metric math.
 - Phase 10 TSTR-lite (1-layer LSTM-32, 3 init seeds, 320 held-out real windows) — the held-out real split convention and a working synthetic→real evaluation harness already exist to build the full TSTR on top of.
 - 50 Phase 10 baseline run dirs + Phase 09.1 quantum runs — all carry `samples.npy` + data-hash; Phase 11 reads, never regenerates.
 
 ### Established Patterns
-- `revision/run_baselines.py` + `..._sweep.sh` idempotent per-(model,pipeline,seed) driver pattern with 5-file artifact bundle and atomic `sweep_status.json` — Phase 11 drivers follow the same shape.
-- Code-placement invariant (D-10-13): `revision/core/` = model defs + eval helpers only; orchestration/aggregation in `revision/run_*.py`.
+- `run_baselines.py` + `..._sweep.sh` idempotent per-(model,pipeline,seed) driver pattern with 5-file artifact bundle and atomic `sweep_status.json` — Phase 11 drivers follow the same shape.
+- Code-placement invariant (D-10-13): `core/` = model defs + eval helpers only; orchestration/aggregation in `run_*.py`.
 - Long-form metrics schema `{model_kind, pipeline, seed, metric_name, scale, value}` — Phase 11 JSON outputs extend, not replace, this.
 
 ### Integration Points
-- Phase 11 outputs (`tstr.json`, `predictive_discriminative.json`, `augmentation.json`) join the existing `revision/results/*.json` contract that Phase 14 paper-writing reads.
+- Phase 11 outputs (`tstr.json`, `predictive_discriminative.json`, `augmentation.json`) join the existing `results/*.json` contract that Phase 14 paper-writing reads.
 - Data-hash field (D-10-15) is the cross-phase consistency check — Phase 11 should assert hashes match across consumed artifacts.
 </code_context>
 

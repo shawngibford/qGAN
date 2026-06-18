@@ -9,7 +9,7 @@ requires:
   - phase: 11-utility-evaluation
     provides: "11-03 run_dualscale_fidelity.py (EVAL-05 dual-scale fidelity driver)"
 provides:
-  - "revision/run_dualscale_fidelity.py — portable: QGAN_CANONICAL_REPO opt-in resolver, fail-loud _resolve_run_dir, single-root provenance assertion"
+  - "run_dualscale_fidelity.py — portable: QGAN_CANONICAL_REPO opt-in resolver, fail-loud _resolve_run_dir, single-root provenance assertion"
 affects: [14-paper-revision]
 
 # Tech tracking
@@ -22,7 +22,7 @@ tech-stack:
 key-files:
   created: []
   modified:
-    - revision/run_dualscale_fidelity.py
+    - run_dualscale_fidelity.py
 
 key-decisions:
   - "Provenance recorded via a module-level _RESOLVED_ROOTS set populated inside _resolve_run_dir; asserted at end of emit_rows (the single emission boundary) before any JSON write in main()"
@@ -39,7 +39,7 @@ completed: 2026-05-18
 
 # Phase 11 Plan 06: CR-01 Portable Canonical-Repo Resolver
 
-**Removed the hardcoded home-directory checkout path from `revision/run_dualscale_fidelity.py`, replaced it with an opt-in `QGAN_CANONICAL_REPO` env-var resolver that fails loudly with guidance, and added a single-root provenance assertion — closing the one critical (CR-01) finding and the open HUMAN-UAT reproducibility blocker.**
+**Removed the hardcoded home-directory checkout path from `run_dualscale_fidelity.py`, replaced it with an opt-in `QGAN_CANONICAL_REPO` env-var resolver that fails loudly with guidance, and added a single-root provenance assertion — closing the one critical (CR-01) finding and the open HUMAN-UAT reproducibility blocker.**
 
 ## Performance
 
@@ -47,7 +47,7 @@ completed: 2026-05-18
 - **Started:** 2026-05-18 (base 1f1c186)
 - **Completed:** 2026-05-18
 - **Tasks:** 1
-- **Files modified:** 1 (`revision/run_dualscale_fidelity.py`)
+- **Files modified:** 1 (`run_dualscale_fidelity.py`)
 
 ## Accomplishments
 
@@ -55,7 +55,7 @@ completed: 2026-05-18
 - **Fail-loud resolver:** `_resolve_run_dir` returns the in-tree path if present; else, only if `QGAN_CANONICAL_REPO` is set, tries the fallback; else raises `FileNotFoundError` whose message names the missing in-tree path, instructs the operator to set `QGAN_CANONICAL_REPO`, and cites the D-11-08 no-regeneration rule. Verified functionally: env unset → `_CANONICAL_REPO_FALLBACK is None` and the raised message contains both `QGAN_CANONICAL_REPO` and `D-11-08`.
 - **Single-root provenance guard:** a module-level `_RESOLVED_ROOTS` set records each resolved checkout root; `emit_rows` asserts `len(_RESOLVED_ROOTS) <= 1` after the 60-run loop and before any JSON is written, with a message naming the mixed checkouts. Cross-checkout artifact mixing can no longer pass silently.
 - **HUMAN-UAT test 1** (cross-machine reproducibility) is now resolvable: portable + fail-loud + provenance-asserted.
-- **Invariants held:** `git diff --stat -- revision/core/` empty; `fidelity_dualscale.json` `data_hash` still `91e447d4624e25b3` with 3360 rows; `pytest revision/tests/ -q` → 22 passed.
+- **Invariants held:** `git diff --stat -- core/` empty; `fidelity_dualscale.json` `data_hash` still `91e447d4624e25b3` with 3360 rows; `pytest tests/ -q` → 22 passed.
 
 ## Task Commits
 
@@ -63,7 +63,7 @@ completed: 2026-05-18
 
 ## Files Created/Modified
 
-- `revision/run_dualscale_fidelity.py` - Env-var opt-in canonical-repo resolver (no baked path), fail-loud `_resolve_run_dir` with actionable guidance, `_RESOLVED_ROOTS` single-root provenance assertion in `emit_rows`.
+- `run_dualscale_fidelity.py` - Env-var opt-in canonical-repo resolver (no baked path), fail-loud `_resolve_run_dir` with actionable guidance, `_RESOLVED_ROOTS` single-root provenance assertion in `emit_rows`.
 
 ## Decisions Made
 
@@ -80,6 +80,6 @@ completed: 2026-05-18
 - `_CANONICAL_REPO_FALLBACK is None` when env unset ✓ (functional check)
 - `_resolve_run_dir` raises `FileNotFoundError` naming `QGAN_CANONICAL_REPO` + `D-11-08` ✓ (functional check)
 - single-root assertion present with mixed-checkout message ✓
-- `git diff --stat -- revision/core/` → empty ✓
+- `git diff --stat -- core/` → empty ✓
 - `fidelity_dualscale.json` data_hash `91e447d4624e25b3`, 3360 rows ✓
-- `pytest revision/tests/ -q` → 22 passed ✓
+- `pytest tests/ -q` → 22 passed ✓

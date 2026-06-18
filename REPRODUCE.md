@@ -2,12 +2,12 @@
 
 > One-stop reviewer entry-point for reproducing the figures, numbers, and
 > methods doc emitted by Phase 14 (manuscript revision). For the full
-> per-script breakdown see `revision/docs/methods_full.md §5.2`; for
-> cross-plan navigation see `revision/docs/completeness_sweep_manifest.md`.
+> per-script breakdown see `docs/methods_full.md §5.2`; for
+> cross-plan navigation see `docs/completeness_sweep_manifest.md`.
 
 This file lives at the repository root so reviewers landing on the
 top-level directory listing find an oriented walkthrough rather than
-having to spelunk inside `revision/` for the methods doc.
+having to spelunk inside `docs/` for the methods doc.
 
 ## 1 — Setup
 
@@ -16,7 +16,7 @@ git clone <repo URL>
 cd qGAN
 python -m venv qgan_env
 source qgan_env/bin/activate
-pip install -r revision/requirements-pinned.txt
+pip install -r requirements-pinned.txt
 ```
 
 The pinned-requirements file captures the exact package versions used
@@ -39,30 +39,30 @@ git checkout v2.0-revision  # post-14-07; use `main` in the interim
 
 ```bash
 # Headline metric — single frozen-checkpoint evaluation on the audited
-# dataset hash; outputs revision/results/headline_canonical.json.
-./qgan_env/bin/python revision/run_canonical_headline.py
+# dataset hash; outputs results/headline_canonical.json.
+./qgan_env/bin/python run_canonical_headline.py
 
 # Matched-budget dualscale sweep — aggregate mean/std across seeds 42-46
 # at the matched 2000-epoch budget; outputs
-# revision/results/matched2000_dualscale.json#aggregates (the source of
+# results/matched2000_dualscale.json#aggregates (the source of
 # truth for the EMD OD-scale reconciliation table).
-./qgan_env/bin/python revision/run_matched2000_dualscale.py
+./qgan_env/bin/python run_matched2000_dualscale.py
 
 # Methods doc + companion JSON — re-emit
-# revision/docs/methods_full.md from the live model_info.json,
+# docs/methods_full.md from the live model_info.json,
 # classical_architectures.json, circuit_diagrams.json,
 # framework_versions.json, and the verbatim run_matched2000.py module
 # docstring (lines 1-69).
-./qgan_env/bin/python revision/run_methods_full.py
+./qgan_env/bin/python run_methods_full.py
 
 # Figure suite — regenerate the figure PDFs/PNGs consumed by the
 # manuscript.
-./qgan_env/bin/python revision/run_figure_suite.py
+./qgan_env/bin/python run_figure_suite.py
 
 # Provenance gate v2.1 — verify every numeric literal in the methods doc
-# resolves to a revision/results/*.json artifact at the stated precision.
-./qgan_env/bin/python revision/verify_number_provenance.py \
-    --target revision/docs/methods_full.md
+# resolves to a results/*.json artifact at the stated precision.
+./qgan_env/bin/python verify_number_provenance.py \
+    --target docs/methods_full.md
 ```
 
 The gate's v2.1 schema (Phase 14 plan 14-14) adds a negative-sign-aware
@@ -72,14 +72,14 @@ Run with `--manifest` for a per-literal resolution trace.
 
 ## 4 — Further reading
 
-- `revision/docs/methods_full.md §5.2` — full per-script breakdown
+- `docs/methods_full.md §5.2` — full per-script breakdown
   (emitter dependency order, input/output artifact map).
-- `revision/docs/completeness_sweep_manifest.md` — cross-plan artifact
+- `docs/completeness_sweep_manifest.md` — cross-plan artifact
   navigation (Plans 14-09 through 14-14).
-- `revision/docs/peer_review_remediation.md` — finding-to-commit index
+- `docs/peer_review_remediation.md` — finding-to-commit index
   for the r1 + r2 peer-review passes (every reviewer finding mapped to
   the commit that resolved it).
-- `revision/docs/release.md` — frozen-tag commit SHA + Zenodo DOI
+- `docs/release.md` — frozen-tag commit SHA + Zenodo DOI
   (post-14-07 deposit).
-- `revision/docs/reviewer_response.md` — point-by-point response to
+- `docs/reviewer_response.md` — point-by-point response to
   reviewer R1 and R2 findings.

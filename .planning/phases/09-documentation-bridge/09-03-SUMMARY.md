@@ -7,11 +7,11 @@ tags: [methods-section, training-protocol, wgan-gp, hyperparameters, citations, 
 # Dependency graph
 requires:
   - phase: 08-core-module-extraction
-    provides: revision/core/{__init__.py, training.py, eval.py, models/quantum.py, models/critic.py} — source-of-truth constants and class implementations cited by the doc
+    provides: core/{__init__.py, training.py, eval.py, models/quantum.py, models/critic.py} — source-of-truth constants and class implementations cited by the doc
   - phase: 04-hyperparameter-optimization (v1.1)
     provides: HPO-tuned constants (N_CRITIC=9, LAMBDA=2.16, LR_CRITIC=1.8046e-05, LR_GENERATOR=6.9173e-05, [0, 4π] noise) embedded in __init__.py
 provides:
-  - revision/docs/training_protocol.md (DOC-01) — paper-ready Methods-section content
+  - docs/training_protocol.md (DOC-01) — paper-ready Methods-section content
   - Hybrid format (table + 1-paragraph prose) template for other phase-9 docs
   - File:line citation discipline (D-09) for hyperparameter traceability
 affects: [09-04-dataset-stats, 14-paper-drafting (PAPER-08, PAPER-09), future HPO retunes that touch __init__.py]
@@ -26,7 +26,7 @@ tech-stack:
 
 key-files:
   created:
-    - revision/docs/training_protocol.md
+    - docs/training_protocol.md
   modified: []
 
 key-decisions:
@@ -48,7 +48,7 @@ completed: 2026-05-15
 
 # Phase 9 Plan 03: Training Protocol Methods Doc Summary
 
-**`revision/docs/training_protocol.md` (153 lines, 7 sections) documenting all 17 HPO hyperparameters with per-row file:line citations to `revision/core/__init__.py` plus Adam betas, EarlyStopping, shots=None, and seeding citations to training.py / quantum.py / critic.py / eval.py — paper-ready drop-in for Phase 14 Methods (PAPER-08, PAPER-09).**
+**`docs/training_protocol.md` (153 lines, 7 sections) documenting all 17 HPO hyperparameters with per-row file:line citations to `core/__init__.py` plus Adam betas, EarlyStopping, shots=None, and seeding citations to training.py / quantum.py / critic.py / eval.py — paper-ready drop-in for Phase 14 Methods (PAPER-08, PAPER-09).**
 
 ## Performance
 
@@ -60,15 +60,15 @@ completed: 2026-05-15
 
 ## Accomplishments
 
-- All 17 hyperparameter constants from `revision/core/__init__.py` (lines 11–33) documented with verbatim values and line citations.
-- Adam optimizer betas=(0.0, 0.9) cited at `revision/core/training.py:233-234`.
-- EarlyStopping (patience=50, warmup_epochs=100, save-best-EMD/reload-on-stop) cited at `revision/core/training.py:79-175`.
-- shots=None / diff_method="backprop" cited at `revision/core/models/quantum.py:64, 43, 77`.
-- Critic 1D-CNN architecture (Conv1d 1→64→128→128, k=10, p=5, AdaptiveAvgPool1d, Linear 128→32→1 with LeakyReLU + Dropout) cited at `revision/core/models/critic.py:46, 49, 52, 56, 59-63, 67`.
-- Two-sided gradient penalty (λ=2.16, U(0,1) interpolation, unit-norm target) cited at `revision/core/training.py:30-73`.
-- Seed=42 default + torch/np/random/cuda seeding cited at `revision/core/training.py:188, 211-215`.
+- All 17 hyperparameter constants from `core/__init__.py` (lines 11–33) documented with verbatim values and line citations.
+- Adam optimizer betas=(0.0, 0.9) cited at `core/training.py:233-234`.
+- EarlyStopping (patience=50, warmup_epochs=100, save-best-EMD/reload-on-stop) cited at `core/training.py:79-175`.
+- shots=None / diff_method="backprop" cited at `core/models/quantum.py:64, 43, 77`.
+- Critic 1D-CNN architecture (Conv1d 1→64→128→128, k=10, p=5, AdaptiveAvgPool1d, Linear 128→32→1 with LeakyReLU + Dropout) cited at `core/models/critic.py:46, 49, 52, 56, 59-63, 67`.
+- Two-sided gradient penalty (λ=2.16, U(0,1) interpolation, unit-norm target) cited at `core/training.py:30-73`.
+- Seed=42 default + torch/np/random/cuda seeding cited at `core/training.py:188, 211-215`.
 - D-10 shot/analytic statement explicit in dedicated final section deferring shot-noise sweep to Phase 12 SENS-01.
-- R1-M5 calibration honesty caveat included in Early-Stopping section (no held-out validation split because of single-campaign dataset; cross-references `revision/docs/dataset_stats.md`).
+- R1-M5 calibration honesty caveat included in Early-Stopping section (no held-out validation split because of single-campaign dataset; cross-references `docs/dataset_stats.md`).
 
 ## 7 Sections with their numerical citations
 
@@ -82,26 +82,26 @@ completed: 2026-05-15
 
 ## Citation audit
 
-Every constant value in the doc matches `revision/core/__init__.py` verbatim — verified by reading `__init__.py` (45 lines, fully read) and `training.py` lines 1–250 before drafting. Live-grep count: 17 occurrences of `revision/core/__init__.py:` (acceptance threshold ≥ 10), 14 occurrences of `revision/core/training.py:`, 4 occurrences of `revision/core/models/quantum.py:`, 7 occurrences of `revision/core/models/critic.py:`, 1 occurrence of `revision/core/eval.py:`. All 20+ acceptance-criteria grep gates returned `OK` in one run.
+Every constant value in the doc matches `core/__init__.py` verbatim — verified by reading `__init__.py` (45 lines, fully read) and `training.py` lines 1–250 before drafting. Live-grep count: 17 occurrences of `core/__init__.py:` (acceptance threshold ≥ 10), 14 occurrences of `core/training.py:`, 4 occurrences of `core/models/quantum.py:`, 7 occurrences of `core/models/critic.py:`, 1 occurrence of `core/eval.py:`. All 20+ acceptance-criteria grep gates returned `OK` in one run.
 
 ## Task Commits
 
-1. **Task 1: Write revision/docs/training_protocol.md (7 sections, hybrid table+prose)** — `4b2f5ed` (docs)
+1. **Task 1: Write docs/training_protocol.md (7 sections, hybrid table+prose)** — `4b2f5ed` (docs)
 
 ## Files Created/Modified
 
-- `revision/docs/training_protocol.md` (created, 153 lines) — Paper-ready Methods-section equivalent. Drop-in target for Phase 14 PAPER-08 / PAPER-09.
+- `docs/training_protocol.md` (created, 153 lines) — Paper-ready Methods-section equivalent. Drop-in target for Phase 14 PAPER-08 / PAPER-09.
 
 ## Decisions Made
 
 - **Included Reproducibility section** (Claude's discretion item from `09-CONTEXT.md` line 57): the section fits naturally between Gradient Penalty and the Shot/Analytic statement and is needed to cite `seed=42` + DITHER constants.
-- **Line numbers corrected vs. plan template:** plan's draft listed `np.random.seed(seed) | revision/core/training.py:212-213` and `random.seed(seed) | revision/core/training.py:213-214`. Live `Read` of `training.py` confirmed `np.random.seed` is line 212 alone and `random.seed` is line 213 alone, with `torch.cuda.manual_seed_all` at line 215 inside an `if torch.cuda.is_available():` block at line 214. Citations now read `:212`, `:213`, `:214-215` respectively for accuracy (D-09 compliance).
-- **Critic architecture rows carry per-line citations** (46, 49, 52, 56, 59-63, 67) rather than the plan's generic `revision/core/models/critic.py`; chosen to give reviewers single grep targets.
+- **Line numbers corrected vs. plan template:** plan's draft listed `np.random.seed(seed) | core/training.py:212-213` and `random.seed(seed) | core/training.py:213-214`. Live `Read` of `training.py` confirmed `np.random.seed` is line 212 alone and `random.seed` is line 213 alone, with `torch.cuda.manual_seed_all` at line 215 inside an `if torch.cuda.is_available():` block at line 214. Citations now read `:212`, `:213`, `:214-215` respectively for accuracy (D-09 compliance).
+- **Critic architecture rows carry per-line citations** (46, 49, 52, 56, 59-63, 67) rather than the plan's generic `core/models/critic.py`; chosen to give reviewers single grep targets.
 - **Gradient penalty "Gradient target = 1" cited to `training.py:72`** (the `((gradients.norm(2, dim=1) - 1) ** 2).mean()` line) rather than the generic `30-73` range used for the type row.
 
 ## Deviations from Plan
 
-None on the spec side — all required content delivered verbatim. Citation-line accuracy improvements (above) are interpretations of the plan's instruction "do not hand-type values for any constant; copy the values from `revision/core/__init__.py` line-by-line" — the same discipline applied to citation lines. The plan's textual draft also lists `revision/core/training.py:30-73` for the gradient-penalty "Gradient target = 1" row; refined to `:72` since that is the literal line containing the `- 1` term. This is a Rule 1 (citation accuracy) micro-fix, not a content change.
+None on the spec side — all required content delivered verbatim. Citation-line accuracy improvements (above) are interpretations of the plan's instruction "do not hand-type values for any constant; copy the values from `core/__init__.py` line-by-line" — the same discipline applied to citation lines. The plan's textual draft also lists `core/training.py:30-73` for the gradient-penalty "Gradient target = 1" row; refined to `:72` since that is the literal line containing the `- 1` term. This is a Rule 1 (citation accuracy) micro-fix, not a content change.
 
 **Total deviations:** 0 functional, 4 citation-line-number refinements (all Rule 1 accuracy; values unchanged).
 **Impact on plan:** None. All acceptance grep-gates passed on first run.
@@ -113,7 +113,7 @@ None. Source files were all read and cross-checked before the Write call.
 ## Threat surface scan
 
 Re-read of the doc against the plan `<threat_model>` register:
-- **T-09-11 (number drift):** Mitigated. Every numeric value in every table row carries a `revision/core/__init__.py:LINE` (or `training.py`/`quantum.py`/`critic.py`/`eval.py`) citation. One `grep -c 'revision/core/__init__.py'` confirms ≥ 17 occurrences against the ≥ 10 threshold.
+- **T-09-11 (number drift):** Mitigated. Every numeric value in every table row carries a `core/__init__.py:LINE` (or `training.py`/`quantum.py`/`critic.py`/`eval.py`) citation. One `grep -c 'core/__init__.py'` confirms ≥ 17 occurrences against the ≥ 10 threshold.
 - **T-09-12 (overclaiming shots):** Mitigated. Final section ("Analytic-vs-Shot Distinction") states explicitly that all Phase 9 results use analytic statevector simulation and defers shot-noise reporting to Phase 12 SENS-01. R1-M5 calibration caveat additionally appears inline in the Early-Stopping section regarding the absence of held-out validation EMD.
 - **T-09-13 (info disclosure):** Accepted — static markdown, no PII or secrets.
 - **T-09-14 (citation provenance):** Mitigated. Citations resolve to actual files (all four — `__init__.py`, `training.py`, `quantum.py`, `critic.py`, `eval.py` — exist and were read live during drafting).
@@ -122,12 +122,12 @@ No new threat flags introduced (no new endpoints, no auth surface, no schema cha
 
 ## Pointer to downstream consumer
 
-This doc is the upstream artifact for **Phase 14 (PAPER-08, PAPER-09) Methods drafting**. Both paper requirements consume `revision/docs/training_protocol.md` directly: PAPER-08 drafts the Training Methods subsection by paraphrasing the prose blocks and embedding the constants tables; PAPER-09 cross-references the shot/analytic statement when discussing reviewer concern R1-M5. A future HPO retune (post-Phase 12 SENS-01) updates `revision/core/__init__.py` once and the doc tracking is mechanical via the line citations.
+This doc is the upstream artifact for **Phase 14 (PAPER-08, PAPER-09) Methods drafting**. Both paper requirements consume `docs/training_protocol.md` directly: PAPER-08 drafts the Training Methods subsection by paraphrasing the prose blocks and embedding the constants tables; PAPER-09 cross-references the shot/analytic statement when discussing reviewer concern R1-M5. A future HPO retune (post-Phase 12 SENS-01) updates `core/__init__.py` once and the doc tracking is mechanical via the line citations.
 
 ## Self-Check: PASSED
 
 Verified files:
-- `revision/docs/training_protocol.md` — exists (153 lines, `[ -f revision/docs/training_protocol.md ]` returns 0)
+- `docs/training_protocol.md` — exists (153 lines, `[ -f docs/training_protocol.md ]` returns 0)
 
 Verified commits:
 - `4b2f5ed` (docs(09-03): write training_protocol.md paper-ready Methods doc) — confirmed in `git log`

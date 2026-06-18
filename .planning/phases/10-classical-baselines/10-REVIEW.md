@@ -4,16 +4,16 @@ reviewed: 2026-05-17T00:00:00Z
 depth: standard
 files_reviewed: 10
 files_reviewed_list:
-  - revision/core/models/classical.py
-  - revision/core/models/nonadversarial.py
-  - revision/core/models/__init__.py
-  - revision/core/training.py
-  - revision/run_baselines.py
-  - revision/run_baselines_sweep.sh
-  - revision/_build_baseline_notebook.py
-  - revision/tests/test_classical.py
-  - revision/tests/test_nonadversarial.py
-  - revision/tests/__init__.py
+  - core/models/classical.py
+  - core/models/nonadversarial.py
+  - core/models/__init__.py
+  - core/training.py
+  - run_baselines.py
+  - run_baselines_sweep.sh
+  - _build_baseline_notebook.py
+  - tests/test_classical.py
+  - tests/test_nonadversarial.py
+  - tests/__init__.py
 findings:
   critical: 2
   warning: 7
@@ -53,7 +53,7 @@ maintainability issues.
 
 ### CR-01: Spectral-loss hook is non-differentiable and device-unsafe; breaks the documented opt-in contract
 
-**File:** `revision/core/training.py:356-360, 470-507`
+**File:** `core/training.py:356-360, 470-507`
 **Issue:** When `spectral_loss_weight > 0` the generator phase computes
 `_spectral_psd_loss(gen_out, real_log_returns_for_psd(...))`. Two defects:
 
@@ -96,7 +96,7 @@ the wrong loss.
 
 ### CR-02: EarlyStopping checkpoint restore is device/dtype-inconsistent with optimizer state after the MPS move
 
-**File:** `revision/core/training.py:163-171, 244, 263`
+**File:** `core/training.py:163-171, 244, 263`
 **Issue:** After the Phase-10 change, `generator` is moved to `device` and
 `g_opt = torch.optim.Adam([generator.params_pqc], ...)` binds Adam state
 (`exp_avg`, `exp_avg_sq`) to the device tensor. `EarlyStopping._save_checkpoint`
@@ -136,7 +136,7 @@ device and asserts a post-restore optimizer `step()` succeeds.
 
 ### WR-01: WGAN-GP double-backward on MPS float32 is unverified and may silently degrade or fail
 
-**File:** `revision/core/training.py:63-72, 234`
+**File:** `core/training.py:63-72, 234`
 **Issue:** `compute_gradient_penalty` uses `torch.autograd.grad(..., create_graph=True)`
 followed by `gp.backward()` (double-backward through the critic's Conv1d stack).
 On the new MPS float32 path this exercises second-order autograd through MPS
@@ -154,7 +154,7 @@ MPS is selected for the generator.
 
 ### WR-02: `compute_gradient_penalty` ignores its `device` argument — dead parameter that invites misuse
 
-**File:** `revision/core/training.py:36, 52-56`
+**File:** `core/training.py:36, 52-56`
 **Issue:** The `device` parameter is accepted but never used; placement is driven
 entirely by `real_samples.device`. The docstring rationalizes this as "API
 symmetry," but a dead, silently-ignored argument is a latent bug: a caller
@@ -167,7 +167,7 @@ loop `device`) will reasonably expect it to take effect and will not notice if
 
 ### WR-03: Optimizer rebinds to a stale parameter tensor if `params_pqc` is ever reassigned
 
-**File:** `revision/core/training.py:263, 457-461`; `revision/core/models/classical.py:77`
+**File:** `core/training.py:263, 457-461`; `core/models/classical.py:77`
 **Issue:** `g_opt = torch.optim.Adam([generator.params_pqc], ...)` captures the
 tensor object. The `_ESAdapter.params_pqc` setter reassigns
 `self._generator.params_pqc = value`, which would orphan the optimizer (it still
@@ -186,7 +186,7 @@ def params_pqc(self, value):
 
 ### WR-04: `train_wgan_gp` mutates global RNG state, coupling it to caller-side determinism
 
-**File:** `revision/core/training.py:211-213`
+**File:** `core/training.py:211-213`
 **Issue:** The function calls `torch.manual_seed`, `np.random.seed`, and
 `random.seed` as side effects on import-global RNGs. `run_baselines._train_wgan`
 ALSO calls `torch.manual_seed(seed)` (line 246) before constructing the
@@ -207,7 +207,7 @@ local `np.random.Generator`).
 
 ### WR-05: `_compute_data_hash` loads and preprocesses the CSV a second time — silent drift risk
 
-**File:** `revision/run_baselines.py:226-234, 466-469`
+**File:** `run_baselines.py:226-234, 466-469`
 **Issue:** `build_dataset_for_pipeline` calls `load_and_preprocess(str(csv_path))`
 and `_compute_data_hash` calls it again independently. If `load_and_preprocess`
 is non-deterministic in any way (e.g. row order, NaN handling, float rounding),
@@ -221,7 +221,7 @@ re-invoking `load_and_preprocess`.
 
 ### WR-06: Sweep skips a triple as "complete" on artifact presence alone — corrupt/short artifacts pass
 
-**File:** `revision/run_baselines_sweep.sh:174-184, 295-301`
+**File:** `run_baselines_sweep.sh:174-184, 295-301`
 **Issue:** `is_complete` checks only that the five files exist and are non-empty
 (`-s`). A run that crashed mid-`np.save` or wrote a truncated `samples.npy`
 (non-empty but malformed) is treated as complete and permanently skipped on
@@ -236,7 +236,7 @@ is sufficient; on validation failure, treat the triple as incomplete and rerun.
 
 ### WR-07: VAE/AR run on CPU while WGAN runs on MPS — cross-family metric comparability not asserted
 
-**File:** `revision/run_baselines.py:285-335, 380-393`
+**File:** `run_baselines.py:285-335, 380-393`
 **Issue:** `_train_vae` and `_train_ar` never move to `device`; they always run
 on CPU float32/float64. The WGAN branch trains on MPS float32 (when available).
 The Wave-4 notebook compares all families "apples-to-apples," but the WGAN
@@ -254,7 +254,7 @@ comparable to CPU-trained VAE/AR.
 
 ### IN-01: `elbo_hist` stores a loss, not an ELBO
 
-**File:** `revision/run_baselines.py:300, 322, 327, 342-343`
+**File:** `run_baselines.py:300, 322, 327, 342-343`
 **Issue:** `loss = recon + beta * kld` (a minimization objective) is appended to
 `elbo_hist` and emitted in `metrics.json` under key `"elbo"`. The ELBO is the
 *negative* of this (and `recon` here is MSE, not a log-likelihood). Downstream
@@ -265,7 +265,7 @@ consumers reading `metrics["elbo"]` as an ELBO will misinterpret it.
 
 ### IN-02: Redundant double `no_grad` on VAE sampling
 
-**File:** `revision/core/models/nonadversarial.py:105`; `revision/run_baselines.py:334-335`
+**File:** `core/models/nonadversarial.py:105`; `run_baselines.py:334-335`
 **Issue:** `VAEBaseline.sample` is decorated `@torch.no_grad()` and is also
 called inside `with torch.no_grad():` in `_train_vae`. Harmless but redundant
 and signals confusion about ownership of the no-grad context.
@@ -275,7 +275,7 @@ and signals confusion about ownership of the no-grad context.
 
 ### IN-03: Module-level grep sentinels are code smell
 
-**File:** `revision/core/training.py:510-514`
+**File:** `core/training.py:510-514`
 **Issue:** `_NOISE_HIGH_LITERAL = 4 * math.pi` exists solely so a grep-based
 verification step finds the literal `4 * math.pi` in the file. Production code
 should not carry dead constants to satisfy a CI text search; this invites future
@@ -286,7 +286,7 @@ instead of grepping source text, and delete the sentinel.
 
 ### IN-04: `args` shadows nothing but `else: raise` branch is provably unreachable
 
-**File:** `revision/run_baselines.py:487-488`
+**File:** `run_baselines.py:487-488`
 **Issue:** The `else: raise ValueError(...)` after the `vae`/`ar`/`_WGAN_GENERATORS`
 dispatch is unreachable because `argparse` `choices=_MODEL_CHOICES` already
 constrains `args.model`. The inline comment acknowledges this. Dead defensive
@@ -297,7 +297,7 @@ coverage reports (consistent with the callback `except` at training.py:410).
 
 ### IN-05: `eval` phase ACF/vol/lev metrics are hardcoded placeholders
 
-**File:** `revision/core/training.py:390-392`
+**File:** `core/training.py:390-392`
 **Issue:** `acf_avg`, `vol_avg`, `lev_avg` are appended as constant `0.0` every
 eval epoch. Anyone reading `metrics["acf_avg"]` from a baseline run will see a
 flat zero trace and may mistake it for a real (degenerate) measurement rather

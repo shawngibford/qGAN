@@ -12,7 +12,7 @@ import math
 
 import torch
 
-from revision.core.models.quantum import QuantumGenerator
+from core.models.quantum import QuantumGenerator
 
 _EPS = 1e-6
 

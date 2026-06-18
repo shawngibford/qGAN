@@ -8,21 +8,21 @@
 
 | New/Modified File | Role | Data Flow | Closest Analog | Match Quality |
 |-------------------|------|-----------|----------------|---------------|
-| `revision/core/models/classical.py` | model | transform (latent → window) | `revision/core/models/quantum.py` | role-match (nn.Module generator; classical vs quantum internals) |
-| `revision/core/models/nonadversarial.py` | model | transform (VAE) / batch-fit (AR) | `revision/core/models/quantum.py` (interface/count_params contract only) | partial (interface contract; no in-tree VAE/AR training analog) |
-| `revision/core/models/__init__.py` | config | n/a (barrel import) | existing `revision/core/models/__init__.py` (3-line pattern) | exact |
-| `revision/run_baselines.py` | route/driver (CLI) | request-response (one run per invocation) | `revision/run_ablation.py` | exact |
-| `revision/run_baselines_sweep.sh` | route/driver (sweep) | batch (50-pair fan-out) | `revision/run_ablation_sweep.sh` | exact |
-| `revision/06_baseline_comparison.ipynb` | utility (aggregation) | batch (load runs → aggregate → render) | `revision/_build_analysis_notebook.py` (reconstruct_od + TSTR-lite cells) | role-match |
-| `revision/results/baseline_classical_wgan.json` | artifact | n/a (output) | 09.1 `metrics.csv` long-form schema (via notebook) | role-match |
-| `revision/results/baseline_nonadversarial.json` | artifact | n/a (output) | same long-form schema | role-match |
-| `revision/results/baseline_comparison.{json,md}` | artifact | n/a (output) | 09.1 `tstr_lite.json` schema + notebook md render | role-match |
+| `core/models/classical.py` | model | transform (latent → window) | `core/models/quantum.py` | role-match (nn.Module generator; classical vs quantum internals) |
+| `core/models/nonadversarial.py` | model | transform (VAE) / batch-fit (AR) | `core/models/quantum.py` (interface/count_params contract only) | partial (interface contract; no in-tree VAE/AR training analog) |
+| `core/models/__init__.py` | config | n/a (barrel import) | existing `core/models/__init__.py` (3-line pattern) | exact |
+| `run_baselines.py` | route/driver (CLI) | request-response (one run per invocation) | `run_ablation.py` | exact |
+| `run_baselines_sweep.sh` | route/driver (sweep) | batch (50-pair fan-out) | `run_ablation_sweep.sh` | exact |
+| `06_baseline_comparison.ipynb` | utility (aggregation) | batch (load runs → aggregate → render) | `_build_analysis_notebook.py` (reconstruct_od + TSTR-lite cells) | role-match |
+| `results/baseline_classical_wgan.json` | artifact | n/a (output) | 09.1 `metrics.csv` long-form schema (via notebook) | role-match |
+| `results/baseline_nonadversarial.json` | artifact | n/a (output) | same long-form schema | role-match |
+| `results/baseline_comparison.{json,md}` | artifact | n/a (output) | 09.1 `tstr_lite.json` schema + notebook md render | role-match |
 
 ## Pattern Assignments
 
-### `revision/core/models/classical.py` (model, transform)
+### `core/models/classical.py` (model, transform)
 
-**Analog:** `revision/core/models/quantum.py`
+**Analog:** `core/models/quantum.py`
 
 The classical generators must satisfy the *exact same `train_wgan_gp` interface contract* the `QuantumGenerator` satisfies. Copy the interface surface from `quantum.py`, replace the PQC internals with `torch.nn` layers.
 
@@ -65,9 +65,9 @@ def forward(self, noise_params, par_light=None):
 
 ---
 
-### `revision/core/models/nonadversarial.py` (model, transform / batch-fit)
+### `core/models/nonadversarial.py` (model, transform / batch-fit)
 
-**Analog:** `revision/core/models/quantum.py` (for `nn.Module` shape + `count_params()` convention only — no in-tree VAE/AR training analog exists; see "No Analog Found")
+**Analog:** `core/models/quantum.py` (for `nn.Module` shape + `count_params()` convention only — no in-tree VAE/AR training analog exists; see "No Analog Found")
 
 **Copy from quantum.py:** the `nn.Module` skeleton + `count_params()` (lines 80-85) signature so `VAE.count_params()` reports its ~562 params for the comparison-table `models[]` array (D-10-03/16). AR is not an `nn.Module` — it is `{phi, sigma2, p}` fit/sample helpers; its "param count" is `p+1` reported as a plain int.
 
@@ -79,7 +79,7 @@ def forward(self, noise_params, par_light=None):
 
 ---
 
-### `revision/core/models/__init__.py` (config, barrel)
+### `core/models/__init__.py` (config, barrel)
 
 **Analog:** the existing 3-line file (exact pattern):
 ```python
@@ -91,9 +91,9 @@ __all__ = ["quantum", "critic"]
 
 ---
 
-### `revision/run_baselines.py` (route/driver, request-response)
+### `run_baselines.py` (route/driver, request-response)
 
-**Analog:** `revision/run_ablation.py` — copy structure verbatim, branch on `--model`.
+**Analog:** `run_ablation.py` — copy structure verbatim, branch on `--model`.
 
 **Imports + HPO-constant import block** (`run_ablation.py` lines 32-65) — copy verbatim; D-10-08 identical-conditions requires the same `from revision.core import BATCH_SIZE, EVAL_EVERY, LAMBDA, LR_CRITIC, LR_GENERATOR, N_CRITIC, NOISE_HIGH, NOISE_LOW, NUM_LAYERS, NUM_QUBITS, WINDOW_LENGTH` block and `from revision.core.models.critic import Critic` (same critic for every WGAN-GP variant per D-10-08).
 
@@ -120,9 +120,9 @@ The `* 0.1` is mandatory for WGAN variants (mirrors `training.py:283`). For VAE/
 
 ---
 
-### `revision/run_baselines_sweep.sh` (route/driver, batch)
+### `run_baselines_sweep.sh` (route/driver, batch)
 
-**Analog:** `revision/run_ablation_sweep.sh` — copy verbatim, change the worklist dimensions and `is_complete()` to be `.npz`-aware.
+**Analog:** `run_ablation_sweep.sh` — copy verbatim, change the worklist dimensions and `is_complete()` to be `.npz`-aware.
 
 **`set -euo pipefail` + python-interpreter detection** (`run_ablation_sweep.sh` lines 77-102) — copy verbatim (`./qgan_env/bin/python` preference).
 
@@ -146,17 +146,17 @@ is_complete() {
 
 **Main dispatch + xargs -P 2 worklist** (lines 369-395) — copy verbatim; expand the nested loop to `MODELS="wgan_mlp wgan_cnn wgan_lstm vae ar"` × `PIPELINES="A B"` × `SEEDS="42 43 44 45 46"` = 50 lines; the `xargs -P 2 -L 1 bash -c 'run_one "$0" "$1" "$2"'` invocation gets a third positional.
 
-**Constants block** (lines 82-87) — adapt: `MODELS`, `PIPELINES="A B"` (no C), `SEEDS="42 43 44 45 46"`, `OUT_ROOT="revision/results/baselines"`.
+**Constants block** (lines 82-87) — adapt: `MODELS`, `PIPELINES="A B"` (no C), `SEEDS="42 43 44 45 46"`, `OUT_ROOT="results/baselines"`.
 
 ---
 
-### `revision/06_baseline_comparison.ipynb` (utility, batch aggregation)
+### `06_baseline_comparison.ipynb` (utility, batch aggregation)
 
-**Analog:** `revision/_build_analysis_notebook.py` (the deterministic notebook-generator pattern — RESEARCH line 379 suggests an optional `_build_baseline_notebook.py`)
+**Analog:** `_build_analysis_notebook.py` (the deterministic notebook-generator pattern — RESEARCH line 379 suggests an optional `_build_baseline_notebook.py`)
 
-**Copy `reconstruct_od` VERBATIM** from `_build_analysis_notebook.py` lines 95-149 — keep the A and B branches (lines 105-127) exactly (identical inverse_kwargs contract); drop the C branch (lines 129-147). Re-point `base = Path(...)` from `runs/{pipeline}/{seed}` to `runs/{model}/{pipeline}/{seed}` for new runs, but keep the original 09.1 path `revision/results/transform_ablation/runs/{pipeline}/{seed}` for the reused quantum rows (D-10-04/18).
+**Copy `reconstruct_od` VERBATIM** from `_build_analysis_notebook.py` lines 95-149 — keep the A and B branches (lines 105-127) exactly (identical inverse_kwargs contract); drop the C branch (lines 129-147). Re-point `base = Path(...)` from `runs/{pipeline}/{seed}` to `runs/{model}/{pipeline}/{seed}` for new runs, but keep the original 09.1 path `results/transform_ablation/runs/{pipeline}/{seed}` for the reused quantum rows (D-10-04/18).
 
-**Copy TSTR-lite VERBATIM** from `_build_analysis_notebook.py` lines 432-477 — `TSTRLiteLSTM` (lines 432-440), `r2_score_inline` (lines 442-445; sklearn-free, sklearn not installed), `train_eval_tstr` (lines 447-477). 3 init seeds {40,41,42}, `HELD_OUT_N = 320` (line 483), eval on `real_windowed_OD[:320]`, train on `[320:]` (D-10-21, RESEARCH lines 317-328). Do NOT promote to `revision/core/` (D-10-13).
+**Copy TSTR-lite VERBATIM** from `_build_analysis_notebook.py` lines 432-477 — `TSTRLiteLSTM` (lines 432-440), `r2_score_inline` (lines 442-445; sklearn-free, sklearn not installed), `train_eval_tstr` (lines 447-477). 3 init seeds {40,41,42}, `HELD_OUT_N = 320` (line 483), eval on `real_windowed_OD[:320]`, train on `[320:]` (D-10-21, RESEARCH lines 317-328). Do NOT promote to `core/` (D-10-13).
 
 **Outputs:** long-form `rows` schema mirroring 09.1 `metrics.csv` plus `model_kind`; top-level `models[]` array; markdown render (RESEARCH §"Comparison Table Schema" lines 292-315). Recompute `data_hash` once and assert all 50 new `config.yaml` hashes equal it; quantum equivalence established by construction, NOT by grepping 09.1 configs (RESEARCH lines 283-290, anti-pattern line 421).
 
@@ -165,7 +165,7 @@ is_complete() {
 ## Shared Patterns
 
 ### HPO Constants (identical-conditions invariant, D-10-08)
-**Source:** `revision/run_ablation.py` lines 45-57
+**Source:** `run_ablation.py` lines 45-57
 **Apply to:** `run_baselines.py` (WGAN path) and the WGAN-GP `config.yaml` fields
 ```python
 from revision.core import (
@@ -176,7 +176,7 @@ from revision.core import (
 Never hardcode literals (RESEARCH "Don't Hand-Roll" line 436).
 
 ### `train_wgan_gp` Generator Contract
-**Source:** `revision/core/training.py` lines 228-234, 282-283, 315-316
+**Source:** `core/training.py` lines 228-234, 282-283, 315-316
 **Apply to:** all 3 classical WGAN generators in `classical.py`
 ```python
 num_qubits = getattr(generator, "num_qubits", NUM_QUBITS)      # :228
@@ -188,20 +188,20 @@ generated_samples = generated_samples.to(torch.float64) * 0.1   # :283 the *0.1 
 The classical generator MUST expose `num_qubits=5`, `window_length=10`, a single live `params_pqc` `nn.Parameter`, and `forward((5,B)) -> (B,10)`.
 
 ### 5-File Artifact Bundle
-**Source:** `revision/run_ablation.py` lines 285-330 (writes) + `run_ablation_sweep.sh` lines 164-172 (`is_complete`)
+**Source:** `run_ablation.py` lines 285-330 (writes) + `run_ablation_sweep.sh` lines 164-172 (`is_complete`)
 **Apply to:** `run_baselines.py` (every model path) and `run_baselines_sweep.sh`
 Bundle: `config.yaml, checkpoint.pt|.npz, samples.npy, metrics.json, inverse_kwargs.npz`. WGAN/VAE → `.pt`; AR → `.npz` (D-10-14).
 
 ### Atomic Sweep-Status Writer
-**Source:** `revision/run_ablation_sweep.sh` lines 187-266 (`update_status` + `flock -x 9` + `tempfile.mkstemp`/`os.rename`)
+**Source:** `run_ablation_sweep.sh` lines 187-266 (`update_status` + `flock -x 9` + `tempfile.mkstemp`/`os.rename`)
 **Apply to:** `run_baselines_sweep.sh` — copy verbatim, change `total_count` to 50 and key records on `(model, pipeline, seed)`.
 
 ### sklearn-free R²
-**Source:** `revision/_build_analysis_notebook.py` lines 442-445 (`r2_score_inline`)
+**Source:** `_build_analysis_notebook.py` lines 442-445 (`r2_score_inline`)
 **Apply to:** TSTR-lite in `06_baseline_comparison.ipynb`. sklearn is NOT installed (RESEARCH line 101); use this inline form, do not add a dependency.
 
 ### Sample-Space Consistency (cross-model comparability — highest risk)
-**Source:** `revision/run_ablation.py` line 205 (`* 0.1`) vs RESEARCH Pitfall 3 (lines 237-239)
+**Source:** `run_ablation.py` line 205 (`* 0.1`) vs RESEARCH Pitfall 3 (lines 237-239)
 **Apply to:** WGAN samplers (replicate `*0.1`); VAE/AR samplers (do NOT replicate `*0.1`). Wave-2 smoke gate: reconstruct one VAE sample and one WGAN sample through the identical pipeline inverse; both must land in real OD range.
 
 ## No Analog Found
@@ -214,7 +214,7 @@ Bundle: `config.yaml, checkpoint.pt|.npz, samples.npy, metrics.json, inverse_kwa
 
 ## Metadata
 
-**Analog search scope:** `revision/core/models/`, `revision/core/training.py`, `revision/run_ablation*.{py,sh}`, `revision/_build_analysis_notebook.py`, `revision/core/models/__init__.py`, `revision/core/models/critic.py`
+**Analog search scope:** `core/models/`, `core/training.py`, `run_ablation*.{py,sh}`, `_build_analysis_notebook.py`, `core/models/__init__.py`, `core/models/critic.py`
 **Files scanned:** 7 source files read (quantum.py, run_ablation.py, training.py:220-360, run_ablation_sweep.sh, _build_analysis_notebook.py:90-154 & 425-484, models/__init__.py, critic.py grep)
 **Pattern extraction date:** 2026-05-17
-**Key constraint:** D-10-13 — only model definitions in `revision/core/`; all loop/aggregation/orchestration logic in `run_baselines.py`, `run_baselines_sweep.sh`, and the notebook.
+**Key constraint:** D-10-13 — only model definitions in `core/`; all loop/aggregation/orchestration logic in `run_baselines.py`, `run_baselines_sweep.sh`, and the notebook.

@@ -9,7 +9,7 @@ requires:
   - phase: 11-utility-evaluation
     provides: "11-07 single-Generator discriminative_score (the contract this test pins)"
 provides:
-  - "revision/tests/test_timegan_scores.py — pytest-collected test_discriminative_score_deterministic locking discriminative_score determinism"
+  - "tests/test_timegan_scores.py — pytest-collected test_discriminative_score_deterministic locking discriminative_score determinism"
 affects: [14-paper-revision]
 
 # Tech tracking
@@ -21,7 +21,7 @@ tech-stack:
 key-files:
   created: []
   modified:
-    - revision/tests/test_timegan_scores.py
+    - tests/test_timegan_scores.py
 
 key-decisions:
   - "Exact-equality assertion (a == b), not tolerance — the 11-07 single-Generator fix makes the path bit-deterministic, so the test would fail against the old mixed-global-RNG implementation"
@@ -46,14 +46,14 @@ completed: 2026-05-18
 - **Started:** 2026-05-18 (base 1f1c186)
 - **Completed:** 2026-05-18
 - **Tasks:** 1
-- **Files modified:** 1 (`revision/tests/test_timegan_scores.py`)
+- **Files modified:** 1 (`tests/test_timegan_scores.py`)
 
 ## Accomplishments
 
 - **WR-06 closed:** new module-level `def test_discriminative_score_deterministic()` (pytest-collected, not only in `__main__`) builds fixed-size seeded float64 arrays, calls `discriminative_score(real, synth, 42, 10, iters=40, bs=32)` twice, and asserts exact equality (`a == b`) plus a finite + `[0.0, 0.5 + 1e-6]` range check. It would fail against the old mixed-global-RNG implementation and passes against the 11-07 single-Generator fix.
 - `test_discriminative_score_deterministic()` also appended to the `if __name__ == "__main__"` smoke block.
-- **Untouched:** `revision/run_timegan_scores.py` and `revision/core/` — test-only addition, no driver/data change.
-- **Invariants held:** `git diff --stat -- revision/core/ revision/run_timegan_scores.py` empty; all 4 result JSON `data_hash` remain `91e447d4624e25b3`; isolated test passes; `pytest revision/tests/ -q` → **23 passed** (strictly greater than the prior 22).
+- **Untouched:** `run_timegan_scores.py` and `core/` — test-only addition, no driver/data change.
+- **Invariants held:** `git diff --stat -- core/ run_timegan_scores.py` empty; all 4 result JSON `data_hash` remain `91e447d4624e25b3`; isolated test passes; `pytest tests/ -q` → **23 passed** (strictly greater than the prior 22).
 
 ## Task Commits
 
@@ -61,7 +61,7 @@ completed: 2026-05-18
 
 ## Files Created/Modified
 
-- `revision/tests/test_timegan_scores.py` - Added pytest-collected `test_discriminative_score_deterministic` (exact-equality + range) and its `__main__` smoke call.
+- `tests/test_timegan_scores.py` - Added pytest-collected `test_discriminative_score_deterministic` (exact-equality + range) and its `__main__` smoke call.
 
 ## Decisions Made
 
@@ -77,6 +77,6 @@ completed: 2026-05-18
 - exact-equality `a == b` + finite + `[0, 0.5+1e-6]` asserts ✓
 - `__main__` block calls `test_discriminative_score_deterministic()` (line 84) ✓
 - `pytest ...::test_discriminative_score_deterministic -q` → 1 passed ✓
-- `git diff --stat -- revision/core/ revision/run_timegan_scores.py` → empty ✓
+- `git diff --stat -- core/ run_timegan_scores.py` → empty ✓
 - all 4 result JSON data_hash `91e447d4624e25b3` ✓
-- `pytest revision/tests/ -q` → 23 passed (> 22) ✓
+- `pytest tests/ -q` → 23 passed (> 22) ✓

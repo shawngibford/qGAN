@@ -14,27 +14,27 @@ documented one-process-per-invocation contract.
 ## D-14-22 byte-freeze attestation
 
 > ```
-> $ git diff 06bb470..main -- revision/core/ | wc -l
+> $ git diff 06bb470..main -- core/ | wc -l
 >        0
-> $ git diff 06bb470..main --stat -- revision/core/
+> $ git diff 06bb470..main --stat -- core/
 > (no output — zero lines, zero files)
-> $ git log --oneline 06bb470..main -- revision/core/
+> $ git log --oneline 06bb470..main -- core/
 > (no output — zero commits)
 > ```
 
-**ATTESTED:** zero bytes changed under `revision/core/` between the
+**ATTESTED:** zero bytes changed under `core/` between the
 post-Wave-10 anchor (`06bb470`) and the post-14-13 tip (`main`). The
-quantum implementation in `revision/core/models/quantum.py`,
-`revision/core/training.py`, and `revision/core/eval.py` is verifiably
+quantum implementation in `core/models/quantum.py`,
+`core/training.py`, and `core/eval.py` is verifiably
 byte-frozen. All correctness-sensitive quantum code is untouched.
 
-`revision/docs/circuit_atlas.md` is also untouched
-(`git log 06bb470..main -- revision/docs/circuit_atlas.md` → empty), as
+`docs/circuit_atlas.md` is also untouched
+(`git log 06bb470..main -- docs/circuit_atlas.md` → empty), as
 required by the plan (owned by 14-09).
 
 The five `*_config_lock.json` files (canonical, default_75, v1, v2, v3)
 are also untouched
-(`git log 06bb470..main -- revision/results/*_config_lock.json` →
+(`git log 06bb470..main -- results/*_config_lock.json` →
 empty). The 5-circuit configuration matrix is intact.
 
 ---
@@ -44,10 +44,10 @@ empty). The 5-circuit configuration matrix is intact.
 ### 1. Checkpoint sha256 identity ✓
 
 ```
-$ shasum -a 256 revision/checkpoints/best_checkpoint.pt
+$ shasum -a 256 checkpoints/best_checkpoint.pt
 f7cceb52285f753b9f5f697086f3042817761d37f3112a9b36dc580ebe03b082  ...
 
-$ python3 -c "import json; print(json.load(open('revision/results/canonical_config_lock.json'))['checkpoint_sha256'])"
+$ python3 -c "import json; print(json.load(open('results/canonical_config_lock.json'))['checkpoint_sha256'])"
 f7cceb52285f753b9f5f697086f3042817761d37f3112a9b36dc580ebe03b082
 ```
 
@@ -63,7 +63,7 @@ import torch, sys
 sys.path.insert(0, 'revision')
 from core.models.quantum import QuantumGenerator
 
-ckpt = torch.load('revision/checkpoints/best_checkpoint.pt',
+ckpt = torch.load('checkpoints/best_checkpoint.pt',
                   map_location='cpu', weights_only=False)
 # top-level: epoch=1969, emd=0.0838, params_pqc shape=(55,)
 # critic_state, c_optimizer, g_optimizer, mu=0.002455, sigma=0.02141
@@ -102,10 +102,10 @@ All five locks intact, all formulas hold by direct arithmetic
 ### 4. Circuit-diagram PNG byte-identity ✓
 
 ```
-$ git show 06bb470:revision/results/figures/circuits/iqp_sel_55.png | shasum -a 256
+$ git show 06bb470:results/figures/circuits/iqp_sel_55.png | shasum -a 256
 e85e1ca313ba5ef53721adc50dbaee8b7e82d36dd9715b4b96fb98b848d50e7e
 
-$ shasum -a 256 revision/results/figures/circuits/iqp_sel_55.png
+$ shasum -a 256 results/figures/circuits/iqp_sel_55.png
 e85e1ca313ba5ef53721adc50dbaee8b7e82d36dd9715b4b96fb98b848d50e7e
 ```
 
@@ -118,7 +118,7 @@ itself is byte-frozen.
 
 ### 5. methods_full.md §2 citations resolve correctly ✓
 
-Spot-checked the `revision/core/training.py:{72,245,246,247,248,249,259,
+Spot-checked the `core/training.py:{72,245,246,247,248,249,259,
 268,346,347,364,385}` line citations against the actual code:
 
 | Cited line | Expected content | Actual content at that line |
@@ -135,19 +135,19 @@ Spot-checked the `revision/core/training.py:{72,245,246,247,248,249,259,
 | 385 | generator loss | `generator_loss = -torch.mean(fake_scores)` ✓ |
 
 All 10 cited line numbers in `methods_full.md` + `methods_full.json`
-resolve to the claimed content. Since `revision/core/training.py` is
+resolve to the claimed content. Since `core/training.py` is
 byte-frozen, no regression risk on these citations was possible.
 
 The quantum architecture text in `methods_full.md §2.a`
 ("IQP (Hadamard + RZ per qubit)", "SEL (Rot(phi,theta,omega) per qubit
-per layer)") matches `revision/core/models/quantum.py:195-203` (Hadamard
+per layer)") matches `core/models/quantum.py:195-203` (Hadamard
 on every wire, then per-qubit `qml.RZ(params_pqc[idx])`) and
 `quantum.py:211-219` (per-qubit `qml.Rot(phi, theta, omega)` inside the
 SEL loop). ✓
 
 ### 6. Headline numbers unchanged ✓
 
-`revision/results/headline_canonical.json` is byte-untouched in 14-13
+`results/headline_canonical.json` is byte-untouched in 14-13
 (`git diff --stat` empty). The recorded values:
 
 - `checkpoint_sha256 = f7cceb52...` (matches the lock)
@@ -162,7 +162,7 @@ The original quantum-review §12 reported these as 0.0231 (OD) and 0.1212
 confirmed.
 
 Five matched-budget `iqp_sel_55_repro` per-seed runs at
-`revision/results/matched2000/runs/iqp_sel_55_repro/{42..46}/metrics.json`
+`results/matched2000/runs/iqp_sel_55_repro/{42..46}/metrics.json`
 are also untouched (`git log` empty); `emd_avg[-1]` per seed:
 
 | seed | emd_avg[-1] | n_epochs |
@@ -191,7 +191,7 @@ the headline). No regression possible on the audited record.
 
 ### 8. MPS-disable hook symmetry safety ✓ (within documented contract)
 
-The hook now appears in three places in `revision/run_matched2000.py`:
+The hook now appears in three places in `run_matched2000.py`:
 - `:447-464` (`_train_quantum`) — pre-existing
 - `:538-554` (`_train_wgan`) — added by T4 (`8c67891`)
 - `:604-641` (`_train_vae`) — added by T4 (`8c67891`)
@@ -207,7 +207,7 @@ finally:
     torch.backends.mps.is_available = orig_mps
 ```
 
-**Concurrency analysis:** `revision/run_matched2000.py:935` explicitly
+**Concurrency analysis:** `run_matched2000.py:935` explicitly
 disclaims in-process concurrency:
 
 > `"...one model/seed per invocation (NEVER multiprocessing.Pool; the
@@ -224,13 +224,13 @@ symmetric application affects three call sites instead of one, but each
 still runs in process-local isolation. The reviewer-flagged
 threadsafety concern persists structurally (a future maintainer running
 the trainers in-thread would hit it) but is correctly disclosed as
-deferred in `revision/docs/peer_review_remediation.md:92-96`:
+deferred in `docs/peer_review_remediation.md:92-96`:
 
 > "MD-7 (`mps.is_available` monkey-patch threadsafety) — byte-frozen
 > under D-14-22; the CR-4 future-gate applies the monkey-patch to
 > `_train_wgan` and `_train_vae` consistently with the existing
 > `_train_quantum` pattern (Plan 14-13 Task 4), but the underlying
-> threadsafety concern cannot be addressed without `revision/core/`
+> threadsafety concern cannot be addressed without `core/`
 > edits and is therefore deferred."
 
 This is honest, scoped, and consistent with D-14-22. ✓
@@ -297,8 +297,8 @@ correctness-sensitive quantum code.
 
 | # | Original finding | Severity | Status post-14-13 |
 |---|---|---|---|
-| §1 | IQP-encoding nomenclature (depth-1, single-qubit IQP — not ZZ-feature-map) | MINOR | **STILL STANDING.** `revision/docs/methods_full.md:66` still reads "IQP (Hadamard + RZ per qubit)" with no clarifying footnote. Documented as out-of-scope in `peer_review_remediation.md` (quantum-review.md → no CR/HI in scope). Defer to follow-up plan. |
-| §2 | `quantum.py:1` "data re-uploading" docstring misnomer | MINOR | **STILL STANDING.** The docstring is unchanged because `revision/core/` is byte-frozen under D-14-22. Documented as a forward-fix-only item; paper text is clean of "re-uploading" wording. Defer to a post-freeze release. |
+| §1 | IQP-encoding nomenclature (depth-1, single-qubit IQP — not ZZ-feature-map) | MINOR | **STILL STANDING.** `docs/methods_full.md:66` still reads "IQP (Hadamard + RZ per qubit)" with no clarifying footnote. Documented as out-of-scope in `peer_review_remediation.md` (quantum-review.md → no CR/HI in scope). Defer to follow-up plan. |
+| §2 | `quantum.py:1` "data re-uploading" docstring misnomer | MINOR | **STILL STANDING.** The docstring is unchanged because `core/` is byte-frozen under D-14-22. Documented as a forward-fix-only item; paper text is clean of "re-uploading" wording. Defer to a post-freeze release. |
 | §3 | SEL block structural equivalence to `qml.StronglyEntanglingLayers` | VERIFIED | Unchanged. Code byte-frozen. |
 | §4 | range vs linear topology (V3) | VERIFIED | Unchanged. Config locks byte-frozen. T4's `HI-4` fix (read topology from `canonical_config_lock.json#decomposition.gate_layout.entangler` at `run_matched2000.py:417-419` instead of hardcoding `"range"`) is a **strict improvement** — even though the value is identical (`range`), the read now flows through the locked source-of-truth rather than a duplicated literal. |
 | §5 | Final RX+RY vs RX-only | VERIFIED | Unchanged. quantum.py:239-250 byte-frozen. |
@@ -350,9 +350,9 @@ remains RESOLVED.
 **Quantum claims sound for paper resubmission: YES.**
 
 The 14-13 sweep was scrupulous in observing the D-14-22 byte-freeze on
-`revision/core/`:
+`core/`:
 
-- Quantum code unchanged (`git diff 06bb470..main -- revision/core/`
+- Quantum code unchanged (`git diff 06bb470..main -- core/`
   returns empty).
 - All 5 quantum config locks unchanged.
 - Headline canonical numbers unchanged
@@ -374,7 +374,7 @@ The improvements 14-13 introduced are all **strictly safer**:
   without the field are accepted, preserving the disclosed historical
   classical-MPS asymmetry).
 - The headline checkpoint is now version-tracked
-  (`!revision/checkpoints/best_checkpoint.pt` `.gitignore` exception),
+  (`!checkpoints/best_checkpoint.pt` `.gitignore` exception),
   sha256-verified, and structurally loadable as the 55-param
   iqp_sel_55 decomposition.
 

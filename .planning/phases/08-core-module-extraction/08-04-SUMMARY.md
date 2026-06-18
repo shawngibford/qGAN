@@ -27,7 +27,7 @@ tech-stack:
 key-files:
   created: []
   modified:
-    - "revision/core/training.py"
+    - "core/training.py"
 
 key-decisions:
   - "alpha for GP placed on real_samples.device (matches cell 26 ``.to(real_batch_tensor.device)``); device kwarg preserved for API symmetry"
@@ -47,7 +47,7 @@ completed: 2026-04-27
 
 # Phase 8 Plan 04: WGAN-GP Training Loop Extraction Summary
 
-**Working `train_wgan_gp` + `compute_gradient_penalty` + `EarlyStopping` extracted into `revision/core/training.py`, mirroring qgan_pennylane.ipynb cell 26/31 verbatim with three CONTEXT-authorized extension hooks (seed / spectral_loss_weight / callback) that are no-ops at defaults.**
+**Working `train_wgan_gp` + `compute_gradient_penalty` + `EarlyStopping` extracted into `core/training.py`, mirroring qgan_pennylane.ipynb cell 26/31 verbatim with three CONTEXT-authorized extension hooks (seed / spectral_loss_weight / callback) that are no-ops at defaults.**
 
 ## Performance
 
@@ -71,7 +71,7 @@ def train_wgan_gp(
 
 ## Notebook Method → Module Function Map
 
-| `qgan_pennylane.ipynb` method (cell)         | `revision/core/training.py`                      |
+| `qgan_pennylane.ipynb` method (cell)         | `core/training.py`                      |
 | -------------------------------------------- | ------------------------------------------------ |
 | `qGAN.train_qgan` (cell 26)                  | `train_wgan_gp` outer epoch loop                 |
 | `qGAN._train_one_epoch` (cell 26)            | `train_wgan_gp` critic+generator inner phases    |
@@ -80,7 +80,7 @@ def train_wgan_gp(
 | `EarlyStopping` (cell 31)                    | `EarlyStopping` (verbatim port)                  |
 | `qGAN.params_pqc` / `.critic` / `.c_optimizer` / `.g_optimizer` attribute layout (cell 26 init + cell 31 checkpoint hooks) | `_ESAdapter` (presents the same attribute layout to EarlyStopping over the externally-built generator/critic/optimizer trio) |
 
-`stylized_facts()` from cell 26 is **not** ported here — it is invoked end-to-end by 08-05 on the trained generator output via `revision/core/eval.py` instead of per-epoch in the loop. The training loop's `acf_avg`/`vol_avg`/`lev_avg` stay as 0.0 placeholders to keep the dict shape stable for downstream consumers; per-epoch metric depth is `emd_avg` + `kurt_avg` (sufficient for the 08-05 parity check, which compares final-state metrics, not training trace).
+`stylized_facts()` from cell 26 is **not** ported here — it is invoked end-to-end by 08-05 on the trained generator output via `core/eval.py` instead of per-epoch in the loop. The training loop's `acf_avg`/`vol_avg`/`lev_avg` stay as 0.0 placeholders to keep the dict shape stable for downstream consumers; per-epoch metric depth is `emd_avg` + `kurt_avg` (sufficient for the 08-05 parity check, which compares final-state metrics, not training trace).
 
 ## Noise Range
 
@@ -118,7 +118,7 @@ All three are confirmed no-ops at defaults: signature defaults pass `assert` che
 
 ## Files Created/Modified
 
-- `revision/core/training.py` — replaced both `NotImplementedError` stubs (`compute_gradient_penalty`, `train_wgan_gp`) with working notebook-parity implementations; added `EarlyStopping` class, `_ESAdapter` helper, `_spectral_psd_loss` helper.
+- `core/training.py` — replaced both `NotImplementedError` stubs (`compute_gradient_penalty`, `train_wgan_gp`) with working notebook-parity implementations; added `EarlyStopping` class, `_ESAdapter` helper, `_spectral_psd_loss` helper.
 
 ## Decisions Made
 
@@ -136,7 +136,7 @@ All three are confirmed no-ops at defaults: signature defaults pass `assert` che
 - **Found during:** Task 2 (`train_wgan_gp` end-to-end smoke test)
 - **Issue:** Plan-suggested `alpha = torch.rand(batch_size, 1, device=device)` placed alpha on the autodetected MPS/CUDA device, but the real and fake batches stay on CPU (the QNode returns CPU tensors and the dataloader serves CPU). Result: `RuntimeError: Expected all tensors to be on the same device, but found at least two devices, mps:0 and cpu!` during the very first GP forward pass.
 - **Fix:** Place `alpha` on `real_samples.device` (matching cell 26's `alpha = torch.rand(...).to(real_batch_tensor.device)`); use `dtype=real_samples.dtype` to also avoid float32/float64 mismatch when the critic operates on `.double()` tensors. The `device` kwarg is preserved on the function signature for API symmetry.
-- **Files modified:** `revision/core/training.py` (`compute_gradient_penalty`)
+- **Files modified:** `core/training.py` (`compute_gradient_penalty`)
 - **Verification:** Mini end-to-end run (3 epochs, n_critic=2 over 24 toy windows) completes cleanly producing populated `critic_loss_avg` / `generator_loss_avg` / `emd_avg` lists.
 - **Committed in:** `4f1d53c` (Task 2 commit — fix landed before Task 2 was committed; Task 1 commit `df9c3a2` already contains the notebook-parity placement)
 
@@ -156,13 +156,13 @@ None — pure code refactor.
 ## Next Phase Readiness
 
 - 08-05 (parity-check notebook) can now `from revision.core.training import train_wgan_gp, compute_gradient_penalty, EarlyStopping` and exercise a forward-and-train pass with HPO-tuned defaults.
-- Constants `N_CRITIC=9`, `LAMBDA=2.16`, `LR_CRITIC=1.8046e-05`, `LR_GENERATOR=6.9173e-05` from `revision/core/__init__.py` are mirrored as the function signature defaults so a parity caller does not have to thread them.
+- Constants `N_CRITIC=9`, `LAMBDA=2.16`, `LR_CRITIC=1.8046e-05`, `LR_GENERATOR=6.9173e-05` from `core/__init__.py` are mirrored as the function signature defaults so a parity caller does not have to thread them.
 - Phase 12 multi-seed sweep can drive `seed=...` directly without restructuring the loop.
 - Phase 13 introspection can pass a `callback` to capture per-eval-epoch state without modifying the training loop.
 
 ## Self-Check: PASSED
 
-- `revision/core/training.py` exists ✓
+- `core/training.py` exists ✓
 - Commits `df9c3a2`, `4f1d53c` in git log ✓
 - No `NotImplementedError` remains in `train_wgan_gp` body ✓
 - Signature defaults match HPO-tuned values ✓

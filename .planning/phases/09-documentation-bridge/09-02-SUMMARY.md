@@ -7,9 +7,9 @@ tags: [python, torch, preprocessing, lambert-w, api-contract, ablation]
 # Dependency graph
 requires:
   - phase: 08-core-module-extraction
-    provides: "revision/core/{data,eval,training,models}.py extracted from notebook; lambert_w_transform + inverse_lambert_w_transform live in data.py"
+    provides: "core/{data,eval,training,models}.py extracted from notebook; lambert_w_transform + inverse_lambert_w_transform live in data.py"
 provides:
-  - "revision/core/preprocessing.py: unified 3-pipeline ablation API contract (D-06)"
+  - "core/preprocessing.py: unified 3-pipeline ablation API contract (D-06)"
   - "Lambert W pair re-exported from data.py per D-07 (single source of truth, no duplication)"
   - "4 NotImplementedError(\"Phase 09.1\") stubs locking signatures for forward_logreturns/inverse_logreturns/forward_minmax_od/inverse_minmax_od"
   - "Package-level import: `from revision.core import preprocessing`"
@@ -25,14 +25,14 @@ tech-stack:
 
 key-files:
   created:
-    - "revision/core/preprocessing.py"
+    - "core/preprocessing.py"
   modified:
-    - "revision/core/__init__.py"
+    - "core/__init__.py"
 
 key-decisions:
   - "Honored D-06 verbatim: exactly 2 re-exports + 4 NotImplementedError stubs + __all__ (no over-engineering, no extra helpers)"
   - "Honored D-07 verbatim: Lambert pair lives ONLY in data.py; preprocessing.py uses `import X as Y` aliasing (preprocessing.forward_lambert is data.lambert_w_transform — object-identical, verified)"
-  - "Section-banner style and module-docstring voice mirror revision/core/data.py exactly to match project signature"
+  - "Section-banner style and module-docstring voice mirror core/data.py exactly to match project signature"
   - "NotImplementedError message is the exact bareword \"Phase 09.1\" (not \"Phase 9.1\", not \"phase 09.1\") so future grep gates pin to a single canonical string"
 
 patterns-established:
@@ -48,7 +48,7 @@ completed: 2026-05-15
 
 # Phase 09 Plan 02: Preprocessing Contract Skeleton Summary
 
-**Unified 3-pipeline preprocessing API (`revision/core/preprocessing.py`) created as Phase 09.1 ABL-01 contract: Lambert W pair re-exported from `data.py` (D-07 single source of truth), four pipeline-A/B stubs raise `NotImplementedError("Phase 09.1")` with locked signatures.**
+**Unified 3-pipeline preprocessing API (`core/preprocessing.py`) created as Phase 09.1 ABL-01 contract: Lambert W pair re-exported from `data.py` (D-07 single source of truth), four pipeline-A/B stubs raise `NotImplementedError("Phase 09.1")` with locked signatures.**
 
 ## Performance
 
@@ -60,28 +60,28 @@ completed: 2026-05-15
 
 ## Accomplishments
 
-- **`revision/core/preprocessing.py` (62 lines)** — public 3-pipeline ablation API contract for Phase 09.1 R1-M3 reviewer response; locks 6-symbol surface via `__all__` so ABL-01 cannot refactor mid-ablation (T-09-07 mitigation).
+- **`core/preprocessing.py` (62 lines)** — public 3-pipeline ablation API contract for Phase 09.1 R1-M3 reviewer response; locks 6-symbol surface via `__all__` so ABL-01 cannot refactor mid-ablation (T-09-07 mitigation).
 - **D-07 single-source-of-truth preserved** — `preprocessing.forward_lambert is data.lambert_w_transform` and `preprocessing.inverse_lambert is data.inverse_lambert_w_transform` (object-identity verified, not value-equality).
 - **Fail-loud stubs for Phase 09.1** — all four un-implemented pipelines (`forward_logreturns`, `inverse_logreturns`, `forward_minmax_od`, `inverse_minmax_od`) raise `NotImplementedError("Phase 09.1")` with the exact bareword message (T-09-08 mitigation: silent fallthrough impossible).
-- **Package-level registration** — `from revision.core import preprocessing` now works at the package boundary; `preprocessing` added to both the module import line and `__all__` in `revision/core/__init__.py` with zero collateral changes to HPO constants or import order (T-09-09 circular-import mitigation: `preprocessing` imports from `data`, never the reverse).
+- **Package-level registration** — `from revision.core import preprocessing` now works at the package boundary; `preprocessing` added to both the module import line and `__all__` in `core/__init__.py` with zero collateral changes to HPO constants or import order (T-09-09 circular-import mitigation: `preprocessing` imports from `data`, never the reverse).
 
 ## Task Commits
 
 Each task was committed atomically (zero file deletions):
 
-1. **Task 1: Create `revision/core/preprocessing.py` with re-exports and NotImplementedError stubs** — `7505888` (feat)
-2. **Task 2: Register preprocessing module in `revision/core/__init__.py`** — `bd52f72` (feat)
+1. **Task 1: Create `core/preprocessing.py` with re-exports and NotImplementedError stubs** — `7505888` (feat)
+2. **Task 2: Register preprocessing module in `core/__init__.py`** — `bd52f72` (feat)
 
 ## Files Created/Modified
 
-- **`revision/core/preprocessing.py`** (CREATED, 62 lines)
+- **`core/preprocessing.py`** (CREATED, 62 lines)
   - Module docstring (D-06 contract statement + 1e-8 tolerance reference)
   - `from __future__ import annotations` (matches `data.py:11` convention)
   - Pipeline C banner + `from revision.core.data import lambert_w_transform as forward_lambert, inverse_lambert_w_transform as inverse_lambert`
   - Pipeline B banner + `forward_logreturns`, `inverse_logreturns` stubs (4-arg inverse signature: `r, od_start, mu, sigma`)
   - Pipeline A banner + `forward_minmax_od`, `inverse_minmax_od` stubs (3-arg inverse signature: `scaled, od_min, od_max`)
   - `__all__` list locking 6 names
-- **`revision/core/__init__.py`** (MODIFIED, +2 / -2 lines)
+- **`core/__init__.py`** (MODIFIED, +2 / -2 lines)
   - Line 35: added `preprocessing` to the `data, eval, training` import tuple
   - Line 39: added `"preprocessing"` to `__all__` immediately after `"models"`
   - No constants modified; no entries reordered; `from revision.core import models` line at 36 untouched
@@ -120,7 +120,7 @@ None — plan executed exactly as written.
 
 All 14 acceptance criteria (10 for Task 1 + 4 for Task 2) PASS:
 
-**Task 1 — `revision/core/preprocessing.py`:**
+**Task 1 — `core/preprocessing.py`:**
 
 | # | Criterion | Result |
 |---|-----------|--------|
@@ -135,7 +135,7 @@ All 14 acceptance criteria (10 for Task 1 + 4 for Task 2) PASS:
 | 9 | `grep -c '__all__'` == 1 | 1 |
 | 10 | `grep -c 'from __future__ import annotations'` == 1 | 1 |
 
-**Task 2 — `revision/core/__init__.py`:**
+**Task 2 — `core/__init__.py`:**
 
 | # | Criterion | Result |
 |---|-----------|--------|
@@ -165,7 +165,7 @@ The `<verify>` automated snippet in the PLAN file has a script-level structural 
 |-----------|-----------------|--------|
 | T-09-07 (API drift) | Locked signatures + `__all__` list | **mitigated** — 8 grep gates pin function names, signatures, and `__all__` membership |
 | T-09-08 (silent fail) | `raise NotImplementedError("Phase 09.1")` | **mitigated** — all 4 stubs verified to raise with the exact string; calling any stub fails loud |
-| T-09-09 (circular import) | `preprocessing` imports from `data`; `data` never imports `preprocessing` | **mitigated** — verified by `grep -c 'preprocessing' revision/core/data.py` == 0 |
+| T-09-09 (circular import) | `preprocessing` imports from `data`; `data` never imports `preprocessing` | **mitigated** — verified by `grep -c 'preprocessing' core/data.py` == 0 |
 | T-09-10 (PII / network) | Pure module-level Python; no I/O | **accepted** — no network, no file I/O, no PII surfaces introduced |
 
 ## Threat Flags
@@ -182,16 +182,16 @@ None — no external service configuration required.
 
 ## Next Phase Readiness
 
-- **Plan 09-02 complete.** The `revision/core/preprocessing.py` contract is locked and importable.
+- **Plan 09-02 complete.** The `core/preprocessing.py` contract is locked and importable.
 - **Ready for plan 09-03** (likely the differentiable `inverse_lambert_w_transform` rewrite per EVAL-06 / D-03, which lives in `data.py` and will be transparently exposed via the re-export aliasing established here).
 - **Downstream consumers** (Phase 09.1 `.planning/scratch/09.1-r1-m3-ablation-spec.md` lines 16–19 and 95–97) can now `from revision.core import preprocessing` and import the 6 contract symbols — the four NotImplementedError stubs will fail loudly until Phase 09.1 ABL-01 implements them, which is the intended behavior.
 
 ## Self-Check: PASSED
 
-- `revision/core/preprocessing.py`: **FOUND**
-- `revision/core/__init__.py` (modified): **FOUND** (preprocessing in both import line and __all__)
-- Commit `7505888`: **FOUND** (feat(09-02): add revision/core/preprocessing.py contract skeleton)
-- Commit `bd52f72`: **FOUND** (feat(09-02): register preprocessing module in revision/core/__init__.py)
+- `core/preprocessing.py`: **FOUND**
+- `core/__init__.py` (modified): **FOUND** (preprocessing in both import line and __all__)
+- Commit `7505888`: **FOUND** (feat(09-02): add core/preprocessing.py contract skeleton)
+- Commit `bd52f72`: **FOUND** (feat(09-02): register preprocessing module in core/__init__.py)
 - All 14 acceptance criteria: **PASS**
 - Plan-level `<verification>` (4 assertions): **PASS**
 - `<success_criteria>` (4 items): **PASS**

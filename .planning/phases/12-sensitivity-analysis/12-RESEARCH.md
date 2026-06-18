@@ -15,8 +15,8 @@
 ### Claude's Discretion
 - Noise-channel device wiring (`default.mixed`, channel insertion strategy, finite-shot device construction) and how the trained analytic params are loaded into the noisy QNode.
 - Output JSON structure beyond the established long-form schema `{model_kind, pipeline, seed, metric_name, scale, value}`; degradation-curve representation in `shot_noise_sensitivity.json` / `noise_model_sensitivity.json`.
-- New driver/sweep file names and CLI surface (pattern after `revision/run_baselines.py` + `run_baselines_sweep.sh`); idempotent per-cell skip logic; `--parallel 2` guardrail; **no `multiprocessing.Pool`** (Phase 09.1 Pitfall 4).
-- Which fidelity metrics are recomputed under noise (reuse `revision/core/eval.py` helpers unchanged; EMD/moments/ACF/DTW at minimum, dual-scale per EVAL-05).
+- New driver/sweep file names and CLI surface (pattern after `run_baselines.py` + `run_baselines_sweep.sh`); idempotent per-cell skip logic; `--parallel 2` guardrail; **no `multiprocessing.Pool`** (Phase 09.1 Pitfall 4).
+- Which fidelity metrics are recomputed under noise (reuse `core/eval.py` helpers unchanged; EMD/moments/ACF/DTW at minimum, dual-scale per EVAL-05).
 - Pipeline coverage for the noise/shot grid (Pipeline B headline; Pipeline A as supplementary control).
 - Subsampling strategy if regenerated sample counts differ from the analytic artifacts.
 
@@ -31,33 +31,33 @@
 
 | ID | Description | Research Support |
 |----|-------------|------------------|
-| SENS-01 | Shot-noise sweep at {analytic, 8192, 1024} shots; metric degradation reported → `revision/results/shot_noise_sensitivity.json` | Code Example 2 (rebuild QNode + `qml.set_shots` transform); Pattern 1 (inference driver); existing analytic samples reused as the {analytic} column (no re-run needed) |
-| SENS-02 | Noise-model sensitivity — depolarizing p ∈ {0,0.001,0.01,0.05}, amplitude-damping γ ∈ {0,0.001,0.01,0.05} → `revision/results/noise_model_sensitivity.json` | Code Example 3 (`default.mixed` + per-wire channel insertion); Pattern 1; budget probe confirms ~12 s/run |
-| SENS-03 | Multi-seed runs (≥5 seeds) for every headline result; mean ± std in every comparison table → `revision/results/multiseed_summary.json` | Pattern 2 (pure aggregation over the 5 frozen long-form JSONs); Code Example 4 (groupby mean ± std + cross-artifact data_hash assertion) |
+| SENS-01 | Shot-noise sweep at {analytic, 8192, 1024} shots; metric degradation reported → `results/shot_noise_sensitivity.json` | Code Example 2 (rebuild QNode + `qml.set_shots` transform); Pattern 1 (inference driver); existing analytic samples reused as the {analytic} column (no re-run needed) |
+| SENS-02 | Noise-model sensitivity — depolarizing p ∈ {0,0.001,0.01,0.05}, amplitude-damping γ ∈ {0,0.001,0.01,0.05} → `results/noise_model_sensitivity.json` | Code Example 3 (`default.mixed` + per-wire channel insertion); Pattern 1; budget probe confirms ~12 s/run |
+| SENS-03 | Multi-seed runs (≥5 seeds) for every headline result; mean ± std in every comparison table → `results/multiseed_summary.json` | Pattern 2 (pure aggregation over the 5 frozen long-form JSONs); Code Example 4 (groupby mean ± std + cross-artifact data_hash assertion) |
 </phase_requirements>
 
 ## Summary
 
 Phase 12 is an **inference-and-aggregation** phase with zero new training. Three deliverables, each with a clean, low-risk implementation path that the live environment confirms:
 
-1. **SENS-01 / SENS-02 (shot + noise sensitivity).** The trained analytic quantum generator stores all learned state in a single 75-element tensor: `checkpoint.pt["params_pqc"]` in every `revision/results/transform_ablation/runs/<pipeline>/<seed>/`. Loading those params into a freshly-constructed QNode on a different device is the entire mechanism. PennyLane 0.44.0 **deprecated the `shots=` device-constructor kwarg** — the correct API is the `qml.set_shots(qnode, shots=N)` **transform** applied to the QNode. Noise channels require the `default.mixed` device with `qml.DepolarizingChannel(p, wires=i)` / `qml.AmplitudeDamping(gamma, wires=i)` inserted into the circuit body. Both paths run with `diff_method=None` (inference-only, no gradients) — `backprop` is incompatible with finite shots and mixed-state channels, which is exactly the technical fact behind D-12-01.
+1. **SENS-01 / SENS-02 (shot + noise sensitivity).** The trained analytic quantum generator stores all learned state in a single 75-element tensor: `checkpoint.pt["params_pqc"]` in every `results/transform_ablation/runs/<pipeline>/<seed>/`. Loading those params into a freshly-constructed QNode on a different device is the entire mechanism. PennyLane 0.44.0 **deprecated the `shots=` device-constructor kwarg** — the correct API is the `qml.set_shots(qnode, shots=N)` **transform** applied to the QNode. Noise channels require the `default.mixed` device with `qml.DepolarizingChannel(p, wires=i)` / `qml.AmplitudeDamping(gamma, wires=i)` inserted into the circuit body. Both paths run with `diff_method=None` (inference-only, no gradients) — `backprop` is incompatible with finite shots and mixed-state channels, which is exactly the technical fact behind D-12-01.
 
 2. **SENS-03 (multi-seed roll-up).** Pure pandas-style aggregation. All five headline JSONs (`baseline_comparison.json`, `tstr.json`, `predictive_discriminative.json`, `augmentation.json`, `fidelity_dualscale.json`) already exist on disk with an **identical long-form `rows[]` schema** `{model_kind, pipeline, seed, metric_name, scale, value}` and an identical `data_hash` (`91e447d4624e25b3`) plus a `data_hash_verification` block. SENS-03 reads them, asserts the hash matches across all five, groups by `(model_kind, pipeline, metric_name, scale)`, and emits mean ± std (n) cells.
 
 3. **Compute budget (Success Criterion 4).** Measured live on this Mac: analytic ≈ 0.013 s/batch, finite-shot 8192 ≈ 0.028 s/batch, `default.mixed` ≈ 0.036 s/batch (batch=12). Each run is 320 batches (N_synth=3840) → ≤ ~12 s/run. The full grid (SENS-01: 2 finite-shot levels × 3 seeds × ~2 pipelines; SENS-02: 8 noise cells × 3 seeds × ~2 pipelines) is **well under 10 minutes total** — Success Criterion 4 is comfortably achievable; no sample-count cap needed.
 
-**Primary recommendation:** Build two consumer/inference drivers patterned exactly on `run_baselines.py` + `run_baselines_sweep.sh` — `run_sensitivity.py` (SENS-01+02, one (pipeline, seed, condition) cell per invocation, idempotent, atomic `sweep_status.json`, `xargs -P 2`) and `run_multiseed_rollup.py` (SENS-03, pure aggregation, single invocation). Keep all logic in `revision/run_*.py`; `revision/core/` stays untouched (D-10-13). Reuse `QuantumGenerator.generator_circuit` and `eval.full_metric_suite` unchanged; reuse `run_utility.reconstruct_od`'s OD-scale inverse logic verbatim.
+**Primary recommendation:** Build two consumer/inference drivers patterned exactly on `run_baselines.py` + `run_baselines_sweep.sh` — `run_sensitivity.py` (SENS-01+02, one (pipeline, seed, condition) cell per invocation, idempotent, atomic `sweep_status.json`, `xargs -P 2`) and `run_multiseed_rollup.py` (SENS-03, pure aggregation, single invocation). Keep all logic in `run_*.py`; `core/` stays untouched (D-10-13). Reuse `QuantumGenerator.generator_circuit` and `eval.full_metric_suite` unchanged; reuse `run_utility.reconstruct_od`'s OD-scale inverse logic verbatim.
 
 ## Architectural Responsibility Map
 
 | Capability | Primary Tier | Secondary Tier | Rationale |
 |------------|-------------|----------------|-----------|
 | Trained-param loading | Reusable code (`core/models/quantum.py`) | — | `QuantumGenerator` + `params_pqc` tensor is the trained state; no new model code |
-| Noisy/finite-shot QNode construction | Driver (`revision/run_sensitivity.py`) | PennyLane 0.44 device API | Orchestration, not model definition (D-10-13 code-placement invariant) |
+| Noisy/finite-shot QNode construction | Driver (`run_sensitivity.py`) | PennyLane 0.44 device API | Orchestration, not model definition (D-10-13 code-placement invariant) |
 | Sample regeneration under noise | Driver | `core/preprocessing.py` inverse | Forward pass + OD-scale reconstruction; inverse helpers reused unchanged |
 | Fidelity metric recompute | Reusable code (`core/eval.py`) | Driver wraps with scale tag | `full_metric_suite` unchanged; driver only adds `scale`/`shots`/`noise_*` dims |
 | Per-cell sweep orchestration | Sweep shell (`*_sweep.sh`) | `xargs -P 2` | OS-process parallelism only — never `multiprocessing.Pool` (09.1 Pitfall 4) |
-| Multi-seed aggregation (SENS-03) | Driver (`revision/run_multiseed_rollup.py`) | pandas/stdlib | Pure read+groupby over frozen JSONs; no model, no device |
+| Multi-seed aggregation (SENS-03) | Driver (`run_multiseed_rollup.py`) | pandas/stdlib | Pure read+groupby over frozen JSONs; no model, no device |
 | Cross-artifact data-hash assertion | Driver (SENS-03) | — | D-10-15 invariant enforced before any roll-up math |
 
 ## Standard Stack
@@ -74,7 +74,7 @@ Phase 12 is an **inference-and-aggregation** phase with zero new training. Three
 ### Supporting
 | Library | Version | Purpose | When to Use |
 |---------|---------|---------|-------------|
-| pandas | (verify) | SENS-03 groupby mean±std roll-up | Optional — stdlib `statistics.mean/stdev` is sufficient and dependency-free; prefer stdlib unless pandas already imported elsewhere in `revision/run_*.py` |
+| pandas | (verify) | SENS-03 groupby mean±std roll-up | Optional — stdlib `statistics.mean/stdev` is sufficient and dependency-free; prefer stdlib unless pandas already imported elsewhere in `run_*.py` |
 
 ### Alternatives Considered
 | Instead of | Could Use | Tradeoff |
@@ -153,10 +153,10 @@ SENS-03 (run_multiseed_rollup.py — single invocation, pure aggregation)
 ```
 
 File-to-implementation mapping (the diagram shows data flow, not files):
-- `revision/run_sensitivity.py` — per-cell SENS-01/02 inference driver
-- `revision/run_sensitivity_sweep.sh` — idempotent sweep wrapper (xargs -P 2)
-- `revision/run_multiseed_rollup.py` — SENS-03 aggregator (single invocation)
-- `revision/core/*` — UNTOUCHED (D-10-13 invariant; assert `git diff --stat revision/core/` empty in verification)
+- `run_sensitivity.py` — per-cell SENS-01/02 inference driver
+- `run_sensitivity_sweep.sh` — idempotent sweep wrapper (xargs -P 2)
+- `run_multiseed_rollup.py` — SENS-03 aggregator (single invocation)
+- `core/*` — UNTOUCHED (D-10-13 invariant; assert `git diff --stat core/` empty in verification)
 
 ### Recommended Project Structure
 ```
@@ -177,7 +177,7 @@ revision/
 ### Pattern 1: Inference-only per-cell driver (mirrors run_baselines.py)
 **What:** One process per `(condition, pipeline, seed)` cell. Loads frozen `params_pqc`, builds the appropriate device/QNode, regenerates samples, recomputes the fidelity suite, writes a small artifact bundle + appends long-form rows. Idempotent: rerun overwrites the cell's run dir cleanly.
 **When to use:** All SENS-01 / SENS-02 cells.
-**Key sub-pattern — the `{analytic}` shot column is free:** The `{analytic}` shot level in SENS-01 *is exactly* the existing `revision/results/transform_ablation/runs/<pipeline>/<seed>/samples.npy`. Do **not** re-run it — read the frozen samples (preserves the no-regeneration invariant for the analytic reference, mirrors D-11-08). Only `shots ∈ {8192, 1024}` and the 8 noise cells require fresh forward passes.
+**Key sub-pattern — the `{analytic}` shot column is free:** The `{analytic}` shot level in SENS-01 *is exactly* the existing `results/transform_ablation/runs/<pipeline>/<seed>/samples.npy`. Do **not** re-run it — read the frozen samples (preserves the no-regeneration invariant for the analytic reference, mirrors D-11-08). Only `shots ∈ {8192, 1024}` and the 8 noise cells require fresh forward passes.
 
 ### Pattern 2: Pure-aggregation roll-up (SENS-03)
 **What:** Read the five frozen headline JSONs, assert `data_hash` equality across all of them (D-10-15), concatenate their `rows[]`, group by `(model_kind, pipeline, metric_name, scale)` (+ `injection_ratio` for augmentation), emit `{mean, std, n, seeds}` per cell into a single `multiseed_summary.json` with a provenance header listing every consumed file + its `data_hash`.
@@ -210,7 +210,7 @@ revision/
 
 | Category | Items Found | Action Required |
 |----------|-------------|------------------|
-| Stored data | Trained params: `revision/results/transform_ablation/runs/{A,B,C}/{42,43,44,45,46}/checkpoint.pt` key `params_pqc` (75-tensor). Analytic samples: `samples.npy` (3840,10) float64 in same dirs. All 5 seeds present for A, B, C — **verified by `ls`**. | None — reload read-only |
+| Stored data | Trained params: `results/transform_ablation/runs/{A,B,C}/{42,43,44,45,46}/checkpoint.pt` key `params_pqc` (75-tensor). Analytic samples: `samples.npy` (3840,10) float64 in same dirs. All 5 seeds present for A, B, C — **verified by `ls`**. | None — reload read-only |
 | Live service config | None — local Mac statevector simulator only; no external services. | None |
 | OS-registered state | None — sweeps run via tmux/nohup + xargs, no scheduled tasks. | None |
 | Secrets/env vars | `QGAN_CANONICAL_REPO` resolver pattern used by `run_dualscale_fidelity.py`/`run_utility.py` (Phase 11 CR-01 fix). New drivers should reuse the same repo-root resolver for cwd-independence. | Reuse existing resolver pattern |
@@ -267,7 +267,7 @@ from revision.core import NUM_QUBITS, NUM_LAYERS, WINDOW_LENGTH  # 5, 4, 10
 g = QuantumGenerator(num_qubits=NUM_QUBITS, num_layers=NUM_LAYERS,
                      window_length=WINDOW_LENGTH)
 ck = torch.load(
-    f"revision/results/transform_ablation/runs/{pipeline}/{seed}/checkpoint.pt",
+    f"results/transform_ablation/runs/{pipeline}/{seed}/checkpoint.pt",
     map_location="cpu", weights_only=False)
 g.params_pqc.data = ck["params_pqc"]        # 75-element trained tensor
 g.eval()
@@ -349,7 +349,7 @@ The CONTEXT.md grants channel-insertion strategy to Claude's discretion; the
 planner should pick **per-layer insertion** (channel after each entangling
 block) as the middle-ground default and document it. Copying the ~40-line
 circuit body into the driver does **not** violate D-10-13 (the copy lives in
-`revision/run_sensitivity.py`, not `core/`), but the planner must note it as a
+`run_sensitivity.py`, not `core/`), but the planner must note it as a
 deliberate, documented duplication keyed to the noise study.
 Live-verified minimal form:
 ```python
@@ -467,7 +467,7 @@ augmentation 180. `data_hash` is `91e447d4624e25b3` in all five `[VERIFIED]`.
    zero new dependency, dependency-audit-clean. Codified in the SENS-03 plan (Phase 12
    Plan 03) per Code Example 4.
    - What we know: Example 4 works with pure stdlib (`statistics.fmean/stdev`).
-   - Recommendation: prefer stdlib (zero new dependency, dependency-audit-clean). Use pandas only if a `revision/run_*.py` already imports it (verify at plan time).
+   - Recommendation: prefer stdlib (zero new dependency, dependency-audit-clean). Use pandas only if a `run_*.py` already imports it (verify at plan time).
 
 ## Environment Availability
 
@@ -490,7 +490,7 @@ Nyquist formal validation is disabled for this project. Lightweight validation g
 - **Smoke gate:** before the full sweep, run one cell (`pipeline=B, seed=42, condition=analytic`) and assert the regenerated samples reproduce the frozen `samples.npy` to fp tolerance — proves the device-swap harness is faithful (Pitfall 3 detector).
 - **Baseline-cell sanity:** the `p=0` / `γ=0` / `shots=∞` cells must reproduce the corresponding `fidelity_dualscale.json` quantum rows within fp tolerance (Pitfall 4 detector).
 - **Monotonicity expectation (not a hard gate):** EMD should generally *increase* (degrade) as shots decrease and as p/γ increase. A non-monotone curve is a flag for investigation, not necessarily a bug (3-seed noise can produce local non-monotonicity — D-12-02 acknowledges this).
-- **Core-untouched invariant:** `git diff --stat revision/core/` must be empty (cross-cutting constraint carried from Phases 10/11).
+- **Core-untouched invariant:** `git diff --stat core/` must be empty (cross-cutting constraint carried from Phases 10/11).
 - **Cross-artifact hash:** SENS-03 driver asserts all five `data_hash` fields equal `91e447d4624e25b3` before emitting (hard gate, D-10-15).
 
 ## Security Domain
@@ -503,8 +503,8 @@ Not applicable. This phase performs local scientific computation only — no aut
 - Live PennyLane 0.44.0 (system python3) — verified `qml.set_shots` exists and produces shot-noisy expectations; `default.mixed` + `DepolarizingChannel(p, wires)` + `AmplitudeDamping(gamma, wires)` work with `diff_method=None`; `shots=` device kwarg emits `PennyLaneDeprecationWarning`. Probed 2026-05-18.
 - Live timing probe — analytic 0.013s, shots-8192 0.028s, default.mixed 0.036s per batch(12); 320 batches/run. 2026-05-18.
 - On-disk artifact inspection — `checkpoint.pt["params_pqc"]` (75-tensor) in all `transform_ablation/runs/{A,B,C}/{42..46}/`; five headline JSON schemas + `data_hash=91e447d4624e25b3` confirmed identical.
-- `revision/core/models/quantum.py`, `revision/core/eval.py`, `revision/core/preprocessing.py` — read in full.
-- `revision/run_baselines.py`, `revision/run_baselines_sweep.sh`, `revision/run_ablation.py`, `revision/run_utility.py` (relevant sections) — read for the driver/sweep/reconstruction patterns.
+- `core/models/quantum.py`, `core/eval.py`, `core/preprocessing.py` — read in full.
+- `run_baselines.py`, `run_baselines_sweep.sh`, `run_ablation.py`, `run_utility.py` (relevant sections) — read for the driver/sweep/reconstruction patterns.
 - CONTEXT.md (12, 11, 09.1), REQUIREMENTS.md, ROADMAP.md Phase 12 entry, STATE.md — read.
 
 ### Secondary (MEDIUM confidence)

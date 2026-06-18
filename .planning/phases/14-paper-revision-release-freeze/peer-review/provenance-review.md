@@ -1,7 +1,7 @@
 # Provenance / Numerical-Claims Peer Review
 
 **Reviewer role:** numerical-claims / provenance auditor (independent of the 14-12 executor).
-**Method:** ran `revision/verify_number_provenance.py` end-to-end on all 9 paper-facing docs; spot-checked 10 random load-bearing literals against their claimed source JSONs; audited gate internals (`_NUM`, `_ID_PATTERNS`, `_ALLOW`, `_json_blobs` rglob); checked `data_hash` consistency across paper-facing JSONs; checked cross-artifact field consistency; checked headline-vs-repro conflation; checked R²<0 honesty; investigated the reconciliation_note.md failure.
+**Method:** ran `verify_number_provenance.py` end-to-end on all 9 paper-facing docs; spot-checked 10 random load-bearing literals against their claimed source JSONs; audited gate internals (`_NUM`, `_ID_PATTERNS`, `_ALLOW`, `_json_blobs` rglob); checked `data_hash` consistency across paper-facing JSONs; checked cross-artifact field consistency; checked headline-vs-repro conflation; checked R²<0 honesty; investigated the reconciliation_note.md failure.
 
 **Bottom line.** The provenance gate is *mostly* faithful and the high-volume paper-facing numbers (methods_full, training_protocol, dataset_stats, circuit_atlas, paper_blocks_framing/refs_methods, reviewer_response) resolve correctly to source JSON fields at the right precision. **However, three substantive issues exist:** (1) `reconciliation_note.md` mixes scales — its "NEW (2000ep)" column is on a different scale than its "OLD (1000ep)" column, making every delta in that table meaningless; (2) the gate has at least two latent false-positive resolution paths that already triggered on paper-facing literals; (3) data_hash invariant is enforced inconsistently — most paper-facing JSONs lack the field, including all five config-lock JSONs and every figure companion JSON.
 
@@ -11,15 +11,15 @@
 
 | Doc | Status | Distinct literals | Failed literals |
 |---|---|---|---|
-| `revision/docs/paper_blocks_framing.md` | PASS | 24 | — |
-| `revision/docs/paper_blocks_refs_methods.md` | PASS | 93 | — |
-| `revision/docs/reviewer_response.md` | PASS | 45 | — |
-| `revision/docs/reconciliation_note.md` | **FAIL** | — | `+0.127413`, `-0.011286` |
-| `revision/docs/methods_full.md` | PASS | 57 | — |
-| `revision/docs/circuit_atlas.md` | PASS | 18 | — |
-| `revision/docs/completeness_sweep_manifest.md` | PASS | 8 | — |
-| `revision/docs/training_protocol.md` | PASS | 17 | — |
-| `revision/docs/dataset_stats.md` | PASS | 5 | — |
+| `docs/paper_blocks_framing.md` | PASS | 24 | — |
+| `docs/paper_blocks_refs_methods.md` | PASS | 93 | — |
+| `docs/reviewer_response.md` | PASS | 45 | — |
+| `docs/reconciliation_note.md` | **FAIL** | — | `+0.127413`, `-0.011286` |
+| `docs/methods_full.md` | PASS | 57 | — |
+| `docs/circuit_atlas.md` | PASS | 18 | — |
+| `docs/completeness_sweep_manifest.md` | PASS | 8 | — |
+| `docs/training_protocol.md` | PASS | 17 | — |
+| `docs/dataset_stats.md` | PASS | 5 | — |
 
 Notable deviation from the 14-12 executor's report: only **2** literals fail in `reconciliation_note.md`, not 3. The third (`+0.116935`) silently resolves via a **coincidental float-precision match** to an unrelated value in `baselines/runs/vae/A/44/metrics.json` (the value `0.11693459987873212` rounds to `0.116935` at 6 dp). That is a **false positive**, not a true resolution — see §4-FP1.
 
@@ -46,7 +46,7 @@ The gate (`verify_number_provenance.py`) doesn't compute or recognize arithmetic
 
 Both are arithmetically correct subtractions (modulo the last-digit rounding for the wgan_mlp and wgan_lstm cells — see §3-CRIT-1 for a deeper concern). Two routes:
 
-- **(a) Add audited delta fields.** Emit a new JSON `revision/results/reconciliation_deltas.json` with explicit `delta` fields computed from the same source numbers; the gate would then resolve them by substring match. Re-run `run_model_info.py` or a dedicated `run_reconciliation.py` emitter. This is the cleaner option but adds an artifact.
+- **(a) Add audited delta fields.** Emit a new JSON `results/reconciliation_deltas.json` with explicit `delta` fields computed from the same source numbers; the gate would then resolve them by substring match. Re-run `run_model_info.py` or a dedicated `run_reconciliation.py` emitter. This is the cleaner option but adds an artifact.
 - **(b) Document the limitation.** Leave as-is; record that the gate cannot recognize arithmetic derivations and the reconciliation_note.md FAIL is expected. This is what `completeness_sweep_manifest.md:105` already does.
 
 **Recommendation:** Option (b) does NOT discharge the deeper §3-CRIT-1 problem (the reconciliation table is wrong-scale on the NEW column). Fix the table first; the gate failure will resolve itself once the table is restated correctly against either `matched2000_dualscale.json` aggregates or the (existing) `multiseed_summary.json` rollup mechanism.
@@ -57,13 +57,13 @@ Both are arithmetically correct subtractions (modulo the last-digit rounding for
 
 ### CRITICAL — CRIT-1 — `reconciliation_note.md` mixes scales in the headline EMD table
 
-**Where.** `revision/docs/reconciliation_note.md:9-22` — the "EMD (OD scale) — final-eval mean over seeds 42-46" table.
+**Where.** `docs/reconciliation_note.md:9-22` — the "EMD (OD scale) — final-eval mean over seeds 42-46" table.
 
-**Evidence.** The header asserts both columns are "EMD (OD scale)". The OLD column basis is `baseline_comparison.json rows[] (pipeline=B, emd, OD)` — that is OD-scale. The NEW column basis is `matched2000/runs/<model>/<seed>/metrics.json emd_avg[-1]`. But `revision/core/training.py:415-423` shows `emd_avg` is computed from `real_log_returns` — i.e. it is the **log-return-scale** training-trace EMD at the final epoch, NOT the OD-scale final-eval EMD.
+**Evidence.** The header asserts both columns are "EMD (OD scale)". The OLD column basis is `baseline_comparison.json rows[] (pipeline=B, emd, OD)` — that is OD-scale. The NEW column basis is `matched2000/runs/<model>/<seed>/metrics.json emd_avg[-1]`. But `core/training.py:415-423` shows `emd_avg` is computed from `real_log_returns` — i.e. it is the **log-return-scale** training-trace EMD at the final epoch, NOT the OD-scale final-eval EMD.
 
 **Consequence.** Every delta in the NEW column is the difference of OD-scale (OLD) minus log-return-scale (NEW). The deltas are scale-mixed, not arithmetically meaningful.
 
-**Concrete numbers.** The actual OD-scale matched-2000ep aggregate means already exist in `revision/results/matched2000_dualscale.json` under `aggregates[*, emd, OD].mean`:
+**Concrete numbers.** The actual OD-scale matched-2000ep aggregate means already exist in `results/matched2000_dualscale.json` under `aggregates[*, emd, OD].mean`:
 
 | Model | OLD (1000ep OD) | NEW per doc (log-return!) | NEW correct (2000ep OD) | Correct delta |
 |---|---|---|---|---|
@@ -80,7 +80,7 @@ The doc-reported deltas (~+0.09 to +0.13 worse) misrepresent the matched-budget 
 
 ### CRITICAL — CRIT-2 — `paper_blocks_framing.md:520` justifies a phantom resolution for `0.6843`
 
-**Where.** `paper_blocks_framing.md:119` — the BEFORE block quotes the manuscript: "The QWGAN-GP achieved a Dynamic Time Warping (DTW) score of 0.6843, representing improved temporal alignment compared to previously reported methods." The provenance footer at `:520` states `0.6843` resolves "as a substring of the frozen `revision/results/*.json` artifacts where they coincide".
+**Where.** `paper_blocks_framing.md:119` — the BEFORE block quotes the manuscript: "The QWGAN-GP achieved a Dynamic Time Warping (DTW) score of 0.6843, representing improved temporal alignment compared to previously reported methods." The provenance footer at `:520` states `0.6843` resolves "as a substring of the frozen `results/*.json` artifacts where they coincide".
 
 **Evidence.** `0.6843` does not appear as a literal field in any JSON. It only "resolves" because the longer float `0.03006843578171075` (an EMD value in `baseline_comparison.json` / `fidelity_dualscale.json` / `baseline_classical_wgan.json`) **contains** the substring `0.6843`. This is a **substring false positive**, not an actual data source. The number `0.6843` is the manuscript's claimed DTW score; the only place it is sourced from is the original Overleaf manuscript prose, and the reviewer would correctly demand: "show me the JSON field that equals 0.6843."
 
@@ -106,7 +106,7 @@ These have nothing to do with the deltas the doc is claiming. The gate accepted 
 
 ### HIGH — HIGH-2 — `data_hash` invariant enforced inconsistently across paper-facing JSONs
 
-**Where.** All five config-lock JSONs (`canonical_config_lock.json`, `default_75_config_lock.json`, `v1_config_lock.json`, `v2_config_lock.json`, `v3_config_lock.json`); `classical_architectures.json`; `framework_versions.json`; `noise_model_sensitivity.json`; `shot_noise_sensitivity.json`; `ansatz_comparison.json`; `parity_check.json`; `eval06_roundtrip.json`; `canonical_recovery.json`; every figure companion JSON under `revision/results/figures/*.json` (≥75 files); `matched2000/sweep_status.json`; `transform_ablation/*.json` — none of these carry `data_hash: 91e447d4624e25b3`.
+**Where.** All five config-lock JSONs (`canonical_config_lock.json`, `default_75_config_lock.json`, `v1_config_lock.json`, `v2_config_lock.json`, `v3_config_lock.json`); `classical_architectures.json`; `framework_versions.json`; `noise_model_sensitivity.json`; `shot_noise_sensitivity.json`; `ansatz_comparison.json`; `parity_check.json`; `eval06_roundtrip.json`; `canonical_recovery.json`; every figure companion JSON under `results/figures/*.json` (≥75 files); `matched2000/sweep_status.json`; `transform_ablation/*.json` — none of these carry `data_hash: 91e447d4624e25b3`.
 
 **Evidence.** Among 12 top-level JSONs that do carry a `data_hash`, every one of them is `91e447d4624e25b3` (consistent across `model_info.json`, `methods_full.json`, `headline_canonical.json`, `matched2000_dualscale.json`, `baseline_comparison.json`, `baseline_classical_wgan.json`, `baseline_nonadversarial.json`, `fidelity_dualscale.json`, `multiseed_summary.json`, `tstr.json`, `predictive_discriminative.json`, `augmentation.json`).
 
@@ -118,7 +118,7 @@ These have nothing to do with the deltas the doc is claiming. The gate accepted 
 
 **Where.** `training_protocol.md:34` says **"Param dtype | torch.float64"** sourced from `model_info.json` `models[].dtype`. `methods_full.md:262` says **"Param dtype (`dtype_params`) | torch.float32"** sourced from `methods_full.json` `4_hardware_software.dtype_params`. Both cite `model_info.json` / `methods_full.json` as authoritative.
 
-**Evidence.** `model_info.json#models[iqp_sel_55_repro].dtype` = `"torch.float64"`. `methods_full.json#buckets.4_hardware_software.dtype_params` = `"torch.float32 (classical: nn.Parameter constructed with dtype=torch.float32 — revision/core/models/classical.py:78; quantum: params_pqc nn.Parameter dtype=torch.float32)"`. `methods_full.md:381-403` correctly distinguishes `dtype_params` (float32, the trainable parameters) from `dtype_samples` (float64, samples cast to match the float64 critic) and even calls out at `:403` that a previous doc conflated them.
+**Evidence.** `model_info.json#models[iqp_sel_55_repro].dtype` = `"torch.float64"`. `methods_full.json#buckets.4_hardware_software.dtype_params` = `"torch.float32 (classical: nn.Parameter constructed with dtype=torch.float32 — core/models/classical.py:78; quantum: params_pqc nn.Parameter dtype=torch.float32)"`. `methods_full.md:381-403` correctly distinguishes `dtype_params` (float32, the trainable parameters) from `dtype_samples` (float64, samples cast to match the float64 critic) and even calls out at `:403` that a previous doc conflated them.
 
 **Consequence.** `training_protocol.md` is the doc that conflates them — its row 34 attributes "Param dtype" to `model_info.json#dtype`, but `model_info.json#dtype` is actually the sample dtype (the conflated field) and the genuine param dtype is float32 per `classical.py:78` / the quantum nn.Parameter.
 
@@ -148,7 +148,7 @@ These have nothing to do with the deltas the doc is claiming. The gate accepted 
 
 **Where.** `verify_number_provenance.py:99` — `RESULTS.rglob("*.json")`.
 
-**Evidence.** ≥75 companion JSONs under `revision/results/figures/` (e.g. `headline_vs_reproduction.json`, `param_efficiency_pareto.json`, `tstr_crossmodel.json`, `seed_variance_per_model.json`) are pure render artifacts. They carry `"render_only": true` and reference their source artifacts under `source_artifact` / `source_artifacts`. The gate treats them identically to source JSONs. In §4-FP2 above I verified `seed_variance_per_model.json#per_model_final_emd_mean[iqp_sel_55_repro] = 0.15499896082475875` resolves the `0.154999` literal — and this **is** the actual source for the (wrong-scale) NEW column in reconciliation_note.md.
+**Evidence.** ≥75 companion JSONs under `results/figures/` (e.g. `headline_vs_reproduction.json`, `param_efficiency_pareto.json`, `tstr_crossmodel.json`, `seed_variance_per_model.json`) are pure render artifacts. They carry `"render_only": true` and reference their source artifacts under `source_artifact` / `source_artifacts`. The gate treats them identically to source JSONs. In §4-FP2 above I verified `seed_variance_per_model.json#per_model_final_emd_mean[iqp_sel_55_repro] = 0.15499896082475875` resolves the `0.154999` literal — and this **is** the actual source for the (wrong-scale) NEW column in reconciliation_note.md.
 
 **Consequence.** Two failure modes:
 - A doc literal can "resolve" against a render-only companion that itself derived the number elsewhere — circular reference. Today the docs don't appear to exploit this circularly, but the protection is purely good behavior, not enforcement.
@@ -158,7 +158,7 @@ These have nothing to do with the deltas the doc is claiming. The gate accepted 
 
 ### MEDIUM — MED-4 — `matched2000_dualscale.json` aggregates carry `n: None`
 
-**Where.** `revision/results/matched2000_dualscale.json` — every aggregate row has `"n": null`.
+**Where.** `results/matched2000_dualscale.json` — every aggregate row has `"n": null`.
 
 **Evidence.** Sampled rows confirm `mean` and `std` are populated but the sample-size field is null. The seeds list is in `seeds: [42,43,44,45,46]` at top level, so the count is inferable to 5 — but a paper-facing aggregate that doesn't carry its own n is a small audit-hostile choice.
 

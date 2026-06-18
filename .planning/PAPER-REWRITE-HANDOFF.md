@@ -18,7 +18,7 @@ successor: .planning/PAPER-SUBMISSION-HANDOFF.md (Wave 8 / post-swarm / submissi
 > 1. **LR-EMD asymmetry**: quantum models are statistically significantly WORSE than every classical adversarial baseline on the log-return marginal (AR=0.003, classical 0.007–0.013, quantum 0.014–0.015, VAE 0.016). The current §4.1 discloses this honestly. This is NOT a "withdrawn LR-EMD claim" violation per §4.1 — it is the OPPOSITE-direction scope-honest disclosure.
 > 2. **OD-EMD pipeline-invariance**: the four quantum ansatze produce near-identical OD-EMD per seed (within 0.0002), because the inverse-preprocessing pipeline projects them to a near-identical OD support. Disclosed in §4.1.
 >
-> Also: **handoff §3 stated Adam β₁ = 0.5; the JSON ground truth (revision/results/model_info.json) is β₁ = 0.0**. The manuscript now uses 0.0; DECISIONS.md was synced.
+> Also: **handoff §3 stated Adam β₁ = 0.5; the JSON ground truth (results/model_info.json) is β₁ = 0.0**. The manuscript now uses 0.0; DECISIONS.md was synced.
 >
 > Also: **handoff §2.3 figure-caption examples list AR(2)=7.70 inside the classical adversarial range**. The actual classical adversarial range is **1.58–6.86** (wgan_lstm to wgan_cnn); AR(2)=7.70 is a 3-parameter non-adversarial reference. The current manuscript splits them correctly.
 
@@ -55,8 +55,8 @@ A fresh session opening this file should know:
 ### 1.2 Freeze state
 
 - **Active SHA**: `ab7086c` (v1.1). Supersedes `52f30b9` (v1.0-revision) for any new citation. v1.0-revision is preserved as the original first-round-resubmission tag.
-- **Freeze gate** (`./qgan_env/bin/python revision/verify_freeze_ready.py`): PASS on every gate except gate D (`release.md`), which is the post-acceptance Zenodo deliverable. Same posture as v1.0-revision.
-- **Provenance gate** (`./qgan_env/bin/python revision/verify_number_provenance.py`): PASS on the 3 reviewer-facing docs (paper_blocks_framing.md, paper_blocks_refs_methods.md, reviewer_response.md). Every numeric literal in those docs resolves to a JSON value under `revision/results/`.
+- **Freeze gate** (`./qgan_env/bin/python verify_freeze_ready.py`): PASS on every gate except gate D (`release.md`), which is the post-acceptance Zenodo deliverable. Same posture as v1.0-revision.
+- **Provenance gate** (`./qgan_env/bin/python verify_number_provenance.py`): PASS on the 3 reviewer-facing docs (paper_blocks_framing.md, paper_blocks_refs_methods.md, reviewer_response.md). Every numeric literal in those docs resolves to a JSON value under `results/`.
 - **Working tree**: clean (post-v1.1).
 
 ### 1.3 What's NOT done — the gap this handoff covers
@@ -115,7 +115,7 @@ Three new figures exist on disk (`v1.1` artifacts) but are **not yet referenced*
 
 ## 3. Load-bearing facts to use in the rewrite
 
-Every number below is verified against `revision/results/matched2000_dualscale.json` or the figure JSON companions. Quote these; do not introduce new literals.
+Every number below is verified against `results/matched2000_dualscale.json` or the figure JSON companions. Quote these; do not introduce new literals.
 
 ### 3.1 Dataset (verified)
 
@@ -263,7 +263,7 @@ Both shot-noise and noise-channel sweeps use n=3 seeds (NOT n=1 — earlier draf
 - **MUST NOT** cite the pre-revision DTW headline 0.6843 as a current result. It is preserved only as a labelled historical reference.
 - **MUST NOT** use the real-data lag-1 ACF reference of −0.029. That value was computed without dither and is not apples-to-apples with the per-model evaluation. Use **−0.064** (matched pipeline).
 - **MUST NOT** describe shot-noise or noise-channel sweeps as "n=1 representative seed". Both sweeps use **n=3 seeds {42,43,44}**.
-- **MUST NOT** introduce numeric literals that don't trace to `revision/results/*.json`. The provenance gate will catch them.
+- **MUST NOT** introduce numeric literals that don't trace to `results/*.json`. The provenance gate will catch them.
 - **MUST NOT** use "industrial bioprocess monitoring framework", "computational advantages", "deployable framework", "high fidelity", or "strong performance" framing anywhere outside an explicitly-labelled Outlook subsection.
 - **MUST NOT** reintroduce the closed-loop-feedback-control framing for the decision-tree workflow. It is a decision-tree triage workflow, demoted to the Outlook.
 - **MUST NOT** characterize Hybrid-GAN material in §A.3 as anything other than a *proposed extension that was not implemented or evaluated*.
@@ -295,29 +295,29 @@ Both shot-noise and noise-channel sweeps use n=3 seeds (NOT n=1 — earlier draf
 | `supp_material.tex` | Supplementary — secondary target for rewrite |
 | `bib.bib` | Cleaned + aligned bibliography (59 entries, compile-clean) |
 | `REF.md` | R1-m1 reference surgery record |
-| `revision/docs/methods_full.md` | Full methods document — every Methods-section claim traces from here |
-| `revision/docs/reviewer_response.md` | Reviewer-facing rebuttal text, per-comment |
-| `revision/docs/peer_review_remediation.md` | Forensic-remediation record |
-| `revision/docs/paper_blocks_framing.md` | PAPER-01..05 (framing) keyed before/after LaTeX blocks |
-| `revision/docs/paper_blocks_refs_methods.md` | PAPER-06..11 (refs + methods + typos) keyed blocks |
-| `revision/docs/completeness_sweep_manifest.md` | Artefact-inventory ledger |
+| `docs/methods_full.md` | Full methods document — every Methods-section claim traces from here |
+| `docs/reviewer_response.md` | Reviewer-facing rebuttal text, per-comment |
+| `docs/peer_review_remediation.md` | Forensic-remediation record |
+| `docs/paper_blocks_framing.md` | PAPER-01..05 (framing) keyed before/after LaTeX blocks |
+| `docs/paper_blocks_refs_methods.md` | PAPER-06..11 (refs + methods + typos) keyed blocks |
+| `docs/completeness_sweep_manifest.md` | Artefact-inventory ledger |
 | `.planning/REBUTTAL-HANDOFF.md` | Per-comment rebuttal drafts + style guide (read for tone) |
 
 ### 5.2 Data sources (every numeric literal must resolve to one of these)
 
 | JSON | Contents |
 |---|---|
-| `revision/results/matched2000_dualscale.json` | The master matched-budget evaluation: per-model × per-seed × per-scale × per-metric values (DTW, EMD, ACF lags 0-9, moments) |
-| `revision/results/welch_pairwise.json` | Welch *p* + Cohen's *d* for the 20 quantum-vs-classical pairs |
-| `revision/results/model_info.json` | Per-model architecture metadata, training-protocol notes, dataset shape |
-| `revision/results/classical_architectures.json` | Classical generator + critic architecture metadata |
-| `revision/results/tstr_matched2000.json` | TSTR utility results (matched-budget) |
-| `revision/results/predictive_discriminative_matched2000.json` | Predictive + discriminative TimeGAN scores |
-| `revision/results/augmentation_matched2000.json` | Real-only vs synthetic-augmented downstream training |
-| `revision/results/shot_noise_sensitivity.json` | Analytic / 1024 / 8192 shots sweep, n=3 seeds |
-| `revision/results/noise_model_sensitivity.json` | Depolarizing + amplitude-damping channels at 0/0.1/1/5%, n=3 seeds |
+| `results/matched2000_dualscale.json` | The master matched-budget evaluation: per-model × per-seed × per-scale × per-metric values (DTW, EMD, ACF lags 0-9, moments) |
+| `results/welch_pairwise.json` | Welch *p* + Cohen's *d* for the 20 quantum-vs-classical pairs |
+| `results/model_info.json` | Per-model architecture metadata, training-protocol notes, dataset shape |
+| `results/classical_architectures.json` | Classical generator + critic architecture metadata |
+| `results/tstr_matched2000.json` | TSTR utility results (matched-budget) |
+| `results/predictive_discriminative_matched2000.json` | Predictive + discriminative TimeGAN scores |
+| `results/augmentation_matched2000.json` | Real-only vs synthetic-augmented downstream training |
+| `results/shot_noise_sensitivity.json` | Analytic / 1024 / 8192 shots sweep, n=3 seeds |
+| `results/noise_model_sensitivity.json` | Depolarizing + amplitude-damping channels at 0/0.1/1/5%, n=3 seeds |
 
-### 5.3 Figures (in `revision/results/figures/`)
+### 5.3 Figures (in `results/figures/`)
 
 Per-model (× 9 models): `loss`, `timeseries`, `dist`, `acf`, `qq`, `stylized`, `odrecon`, `emd` (last only for 7 adversarial models).
 Cross-model: `cross_model_distribution`, `cross_model_emd`, `cross_model_dtw_dualscale` ⭐ NEW, `cross_model_acf_overlay` ⭐ NEW, `qq_overlay`, `matched2000_dualscale_sidebyside`, `training_convergence_all_models`, `seed_variance_per_model`, `failure_modes_summary`, `param_efficiency_pareto`, `tstr_crossmodel`, `tstr_crossmodel_matched2000`, `headline_vs_reproduction`.
@@ -332,11 +332,11 @@ Each figure has same-stem PDF + PNG + JSON companion for traceability.
 
 ```bash
 # Provenance: every literal in reviewer-facing docs resolves to a JSON value
-./qgan_env/bin/python revision/verify_number_provenance.py
+./qgan_env/bin/python verify_number_provenance.py
 
 # Freeze readiness: clean tree, gitignore, provenance, tag scope, release.md
 # Will FAIL on release.md (gate D) until acceptance — by design
-./qgan_env/bin/python revision/verify_freeze_ready.py
+./qgan_env/bin/python verify_freeze_ready.py
 
 # Rendering (idempotent — no retraining)
 ./qgan_env/bin/python -m revision.render_missing_figures
@@ -353,7 +353,7 @@ Each figure has same-stem PDF + PNG + JSON companion for traceability.
 4. **List the gaps**: every paragraph that needs rewriting, with a one-line note on what needs to change.
 5. **Apply rewrites** as a sequence of small, atomic `Edit` operations — each one keyed to a specific anchor sentence — so a diff review is easy.
 6. **Insert the three new figures** per §2.3 with captions sourced from the verified numbers in §3.
-7. **Run the provenance gate** after every batch of edits: `./qgan_env/bin/python revision/verify_number_provenance.py`. Any new literal must resolve.
+7. **Run the provenance gate** after every batch of edits: `./qgan_env/bin/python verify_number_provenance.py`. Any new literal must resolve.
 8. **Run the figure renderer** if any new figure or any figure-companion JSON needs to be regenerated.
 9. **Commit in atomic units** keyed to the rewrite areas (one commit per major section or per coherent edit batch). Use the conventional commit-message style from the project history (`fix(14): ...`, `docs(14): ...`, `refactor(14): ...`).
 10. **After all rewrites land**: tag the next release (`v1.2` or `v1.0-revision.final` — your call), push, update the GitHub release page.

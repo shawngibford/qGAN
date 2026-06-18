@@ -40,7 +40,7 @@ human_verification:
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
 | 1 | 2-3 alternate ansatz variants (V1/V2/V3 varying depth/topology) implemented in quantum.py and selectable via config | VERIFIED | `QuantumGenerator(num_layers=4, topology='range')` → 75 params; `(num_layers=8, topology='range')` → 135 params; `(num_layers=4, topology='linear')` → 75 params. Confirmed live via import. `topology` kwarg in `__init__` with ValueError guard verified. All 30 tests green. |
-| 2 | Ansatz comparison table (identical training budget, multi-seed, full metric suite) written to revision/results/ansatz_comparison.json | VERIFIED | File exists (75,177 bytes). 300 rows: V1×100, V2×100, V3×100. V2/V3 each have 5 seeds (42-46). Both scales (log_return + OD). 9 required fields per row. V1 reuse noted "D-13-01, no recompute". `full_metric_suite` called for all rows. Schema test green (30 passing). |
+| 2 | Ansatz comparison table (identical training budget, multi-seed, full metric suite) written to results/ansatz_comparison.json | VERIFIED | File exists (75,177 bytes). 300 rows: V1×100, V2×100, V3×100. V2/V3 each have 5 seeds (42-46). Both scales (log_return + OD). 9 required fields per row. V1 reuse noted "D-13-01, no recompute". `full_metric_suite` called for all rows. Schema test green (30 passing). |
 | 3 | Training-progression figure shows generated distribution at epochs {0,250,500,750,1000} for quantum generator and classical WGAN-GP side-by-side | VERIFIED | `training_progression.json` contains 4 targets (quantum, wgan_mlp, wgan_cnn, wgan_lstm), each with `epochs=[0,250,500,750,1000]` and `samples[5][12]` of real float data. `training_progression.png` (71,084 bytes) and `.pdf` (36,504 bytes) exist and non-empty. Figure reads from companion JSON (no training code in renderer). |
 | 4 | PQC parameter-trajectory (norms + angle histograms) and entanglement-entropy/purity trajectory saved as figure artifacts, each with underlying data in JSON | VERIFIED | `param_trajectory.json`: `param_norm[5]`, `param_angles[5][75]`, metadata V1/depth=4/topology=range. `entanglement_trajectory.json`: `vn_entropy[5]` (values 1.17-1.25 all < ln4=1.386), `purity[5]` (values 0.32-0.35 all in [0.25,1]), metadata `bipartition="{0,1}|{2,3,4}"`. Both `.png` + `.pdf` exist and non-empty. |
 
@@ -50,20 +50,20 @@ human_verification:
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `revision/core/models/quantum.py` | topology-selectable ansatz + introspect() | VERIFIED | 317 lines. `topology` in `__init__` (line 52), `self.topology` stored (line 75), `_TOPOLOGIES` constant, `if self.topology == "range"` literal first branch (range block at lines 183, 247), `elif self.topology == "linear"`, `qml.vn_entropy(wires=[0, 1])`, `qml.purity(wires=[0, 1])`, `introspect()` method, `INTROSPECT_BIPARTITION = ((0,1),(2,3,4))`. |
-| `revision/core/training.py` | CR-01 torch.fft.rfft + CR-02 map_location restore | VERIFIED | `torch.fft.rfft` at lines 516-517 inside `_spectral_psd_loss`. No `from scipy.signal import welch`. `if spectral_loss_weight > 0.0` guard at line 376. `map_location` at line 178 inside `_load_checkpoint`. |
-| `revision/results/ansatz_comparison.json` | ARCH-02 comparison (V1 reuse + V2/V3 new, dual-scale) | VERIFIED | 300 rows. V1/V2/V3 variants with depth=4/8/4, topology=range/range/linear, param_count=75/135/75. V2+V3 each have 5 seeds × both scales. `full_metric_suite` UNCHANGED used. |
-| `revision/results/figures/training_progression.json` | INTRO-01 companion JSON | VERIFIED | 4 targets, 5 epochs each, real sample arrays. metadata pipeline=B, seed=42. |
-| `revision/results/figures/param_trajectory.json` | INTRO-02 companion JSON | VERIFIED | `param_norm[5]`, `param_angles[5][75]`, metadata variant=V1. |
-| `revision/results/figures/entanglement_trajectory.json` | INTRO-03 companion JSON | VERIFIED | `vn_entropy[5]`, `purity[5]`, metadata `bipartition="{0,1}|{2,3,4}"`. INTRO-03 bounds confirmed. |
-| `revision/results/figures/training_progression.{png,pdf}` | INTRO-01 figure | VERIFIED | 71,084 bytes PNG / 36,504 bytes PDF. Non-empty. |
-| `revision/results/figures/param_trajectory.{png,pdf}` | INTRO-02 figure | VERIFIED | 87,511 bytes PNG / 21,855 bytes PDF. Non-empty. |
-| `revision/results/figures/entanglement_trajectory.{png,pdf}` | INTRO-03 figure | VERIFIED | 84,226 bytes PNG / 28,946 bytes PDF. Non-empty. |
-| `revision/run_ansatz.py` | single (variant,seed) driver | VERIFIED | `QuantumGenerator(` with `topology=`, `train_wgan_gp(` with `num_epochs=1000`, no `early_stopper=`, `choices=["V2","V3"]`. |
-| `revision/run_ansatz_sweep.sh` | 10-run sweep (V2/V3 × 5 seeds) | VERIFIED | VARIANTS/SEEDS/EPOCHS=1000 defined. xargs -P 2. No multiprocessing.Pool. |
-| `revision/run_ansatz_comparison.py` | ARCH-02 aggregator | VERIFIED | `full_metric_suite` imported. `transform_ablation/runs/B` path for V1 reuse. V1 no-recompute note. |
-| `revision/run_introspect.py` | callback-snapshot driver (4 targets) | VERIFIED | `SNAP = {0, 250, 500, 750, 999}`, 999→1000 relabel, `hasattr(gen_model, "introspect")` guard, `callback=cb` passed to `train_wgan_gp`. |
-| `revision/run_introspect_figures.py` | render-only matplotlib renderer | VERIFIED | `matplotlib.use("Agg")` at line 26. `savefig` present. Reads `training_progression.json`, `param_trajectory.json`, `entanglement_trajectory.json`. No `train_wgan_gp` / `QuantumGenerator(` in source. |
+| `core/models/quantum.py` | topology-selectable ansatz + introspect() | VERIFIED | 317 lines. `topology` in `__init__` (line 52), `self.topology` stored (line 75), `_TOPOLOGIES` constant, `if self.topology == "range"` literal first branch (range block at lines 183, 247), `elif self.topology == "linear"`, `qml.vn_entropy(wires=[0, 1])`, `qml.purity(wires=[0, 1])`, `introspect()` method, `INTROSPECT_BIPARTITION = ((0,1),(2,3,4))`. |
+| `core/training.py` | CR-01 torch.fft.rfft + CR-02 map_location restore | VERIFIED | `torch.fft.rfft` at lines 516-517 inside `_spectral_psd_loss`. No `from scipy.signal import welch`. `if spectral_loss_weight > 0.0` guard at line 376. `map_location` at line 178 inside `_load_checkpoint`. |
+| `results/ansatz_comparison.json` | ARCH-02 comparison (V1 reuse + V2/V3 new, dual-scale) | VERIFIED | 300 rows. V1/V2/V3 variants with depth=4/8/4, topology=range/range/linear, param_count=75/135/75. V2+V3 each have 5 seeds × both scales. `full_metric_suite` UNCHANGED used. |
+| `results/figures/training_progression.json` | INTRO-01 companion JSON | VERIFIED | 4 targets, 5 epochs each, real sample arrays. metadata pipeline=B, seed=42. |
+| `results/figures/param_trajectory.json` | INTRO-02 companion JSON | VERIFIED | `param_norm[5]`, `param_angles[5][75]`, metadata variant=V1. |
+| `results/figures/entanglement_trajectory.json` | INTRO-03 companion JSON | VERIFIED | `vn_entropy[5]`, `purity[5]`, metadata `bipartition="{0,1}|{2,3,4}"`. INTRO-03 bounds confirmed. |
+| `results/figures/training_progression.{png,pdf}` | INTRO-01 figure | VERIFIED | 71,084 bytes PNG / 36,504 bytes PDF. Non-empty. |
+| `results/figures/param_trajectory.{png,pdf}` | INTRO-02 figure | VERIFIED | 87,511 bytes PNG / 21,855 bytes PDF. Non-empty. |
+| `results/figures/entanglement_trajectory.{png,pdf}` | INTRO-03 figure | VERIFIED | 84,226 bytes PNG / 28,946 bytes PDF. Non-empty. |
+| `run_ansatz.py` | single (variant,seed) driver | VERIFIED | `QuantumGenerator(` with `topology=`, `train_wgan_gp(` with `num_epochs=1000`, no `early_stopper=`, `choices=["V2","V3"]`. |
+| `run_ansatz_sweep.sh` | 10-run sweep (V2/V3 × 5 seeds) | VERIFIED | VARIANTS/SEEDS/EPOCHS=1000 defined. xargs -P 2. No multiprocessing.Pool. |
+| `run_ansatz_comparison.py` | ARCH-02 aggregator | VERIFIED | `full_metric_suite` imported. `transform_ablation/runs/B` path for V1 reuse. V1 no-recompute note. |
+| `run_introspect.py` | callback-snapshot driver (4 targets) | VERIFIED | `SNAP = {0, 250, 500, 750, 999}`, 999→1000 relabel, `hasattr(gen_model, "introspect")` guard, `callback=cb` passed to `train_wgan_gp`. |
+| `run_introspect_figures.py` | render-only matplotlib renderer | VERIFIED | `matplotlib.use("Agg")` at line 26. `savefig` present. Reads `training_progression.json`, `param_trajectory.json`, `entanglement_trajectory.json`. No `train_wgan_gp` / `QuantumGenerator(` in source. |
 | `tests/test_ansatz_variants.py` | ARCH-01 param-count + byte-unchanged regression | VERIFIED | Present; 30 tests pass. |
 | `tests/test_entropy_purity.py` | INTRO-03 entropy/purity bounds | VERIFIED | Present; 30 tests pass. |
 | `tests/test_cr01_spectral_grad.py` | CR-01 grad regression | VERIFIED | Present; 30 tests pass. |
@@ -123,7 +123,7 @@ Step 7c: SKIPPED — no `scripts/*/tests/probe-*.sh` files exist in this project
 
 ### Cross-Phase Reproducibility Invariant
 
-The verifier assessed the `revision/core/` byte-behavior-unchanged invariant vs commit b7c84d3 (Phases 8-12 reproducibility):
+The verifier assessed the `core/` byte-behavior-unchanged invariant vs commit b7c84d3 (Phases 8-12 reproducibility):
 
 - `quantum.py`: The `range` CNOT block is the LITERAL first branch (`if self.topology == "range"`). `range_param = (layer % (self.num_qubits - 1)) + 1` confirmed present at both lines 184 and 248. `topology="range"` is the constructor default. `test_default_forward_byte_unchanged` pins this with atol=1e-12. **Invariant PRESERVED.**
 - `training.py`: `_spectral_psd_loss` and `_load_checkpoint` were rewritten, but both sit behind runtime guards (`if spectral_loss_weight > 0.0` and `early_stopper is not None`) that are off at default values. Default headline runs (Phase 8-12) do not use early stopping (D-13-05) or spectral loss (D-13-06). **Invariant PRESERVED for the Phases 8-12 forward path.** (Caveat per REVIEW WR-01: any prior early-stopped run now follows a different `_load_checkpoint` code path — acceptable because Phase-13 headline runs have early-stop OFF; documented in REVIEW for future reproductions.)
@@ -132,9 +132,9 @@ The verifier assessed the `revision/core/` byte-behavior-unchanged invariant vs 
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| `revision/core/training.py` | 191 | `checkpoint = ckpt` alias dead style (IN-01) | Info | None — cosmetic only |
-| `revision/run_ansatz.py` | 257 | `num_epochs=1000` hardcoded, ignores `args.epochs` parameter (REVIEW BLOCKER CR-01) | Warning | No data corruption in as-produced deliverables (sweep used default 1000); latent provenance risk for non-default `--epochs` invocations |
-| `revision/run_ansatz_comparison.py` | 148-154 | V1 `inverse_kwargs.npz` read with no key-presence guard (REVIEW BLOCKER CR-02) | Warning | Aggregator ran successfully (V1 npz keys match exactly); latent crash risk if V1 bundle is ever regenerated with different internals |
+| `core/training.py` | 191 | `checkpoint = ckpt` alias dead style (IN-01) | Info | None — cosmetic only |
+| `run_ansatz.py` | 257 | `num_epochs=1000` hardcoded, ignores `args.epochs` parameter (REVIEW BLOCKER CR-01) | Warning | No data corruption in as-produced deliverables (sweep used default 1000); latent provenance risk for non-default `--epochs` invocations |
+| `run_ansatz_comparison.py` | 148-154 | V1 `inverse_kwargs.npz` read with no key-presence guard (REVIEW BLOCKER CR-02) | Warning | Aggregator ran successfully (V1 npz keys match exactly); latent crash risk if V1 bundle is ever regenerated with different internals |
 
 No `TBD`, `FIXME`, or `XXX` debt markers found in any phase-modified file.
 
@@ -150,19 +150,19 @@ The 13-REVIEW.md identifies 2 BLOCKER findings in the driver layer. Assessment a
 
 #### 1. Figure Visual Correctness — training_progression
 
-**Test:** Open `revision/results/figures/training_progression.png` and confirm it shows a 4×5 grid (4 targets × 5 epochs) with distribution histograms/KDEs for quantum and the 3 classical models side-by-side; quantum row visually distinct from classical.
+**Test:** Open `results/figures/training_progression.png` and confirm it shows a 4×5 grid (4 targets × 5 epochs) with distribution histograms/KDEs for quantum and the 3 classical models side-by-side; quantum row visually distinct from classical.
 **Expected:** Each cell shows a meaningful distribution shape; the quantum row shows non-trivial structure distinct from the classical rows; axes are properly labeled.
 **Why human:** matplotlib rendering is confirmed (non-empty file, no training code in renderer), but histogram/KDE visual correctness cannot be verified by grep.
 
 #### 2. Figure Visual Correctness — entanglement_trajectory bipartition annotation
 
-**Test:** Open `revision/results/figures/entanglement_trajectory.png` and confirm the bipartition string `{0,1}|{2,3,4}` is annotated, and reference bounds (ln4 ≈ 1.386, 0.25, 1.0) are shown.
+**Test:** Open `results/figures/entanglement_trajectory.png` and confirm the bipartition string `{0,1}|{2,3,4}` is annotated, and reference bounds (ln4 ≈ 1.386, 0.25, 1.0) are shown.
 **Expected:** Two panels (entropy + purity vs epoch); bipartition label visible; reference lines drawn at ln4 and 0.25.
 **Why human:** The JSON source contains the bipartition string; cannot verify matplotlib `ax.text()` / `ax.axhline()` output without viewing the file.
 
 #### 3. Figure Visual Correctness — param_trajectory
 
-**Test:** Open `revision/results/figures/param_trajectory.png` and confirm two panels: (a) L2-norm of PQC params vs epoch and (b) angle-distribution histograms for each of the 5 snapshot epochs.
+**Test:** Open `results/figures/param_trajectory.png` and confirm two panels: (a) L2-norm of PQC params vs epoch and (b) angle-distribution histograms for each of the 5 snapshot epochs.
 **Expected:** Panel (a) shows norm values ~4.4 rising slightly over training; panel (b) shows 75-parameter angle distributions that change across epochs.
 **Why human:** Cannot verify subplot layout and histogram per-epoch content from file contents alone.
 
@@ -174,13 +174,13 @@ The 13-REVIEW.md identifies 2 BLOCKER findings in the driver layer. Assessment a
 
 #### 5. REVIEW BLOCKER CR-01 disposition (--epochs dead-code)
 
-**Test:** In `revision/run_ansatz.py` line 257: either (a) change `num_epochs=1000` to `num_epochs=int(epochs)` and update the `train_protocol_notes` string accordingly, or (b) remove the `--epochs` argparse argument from both `run_ansatz.py` and `run_ansatz_sweep.sh` to eliminate the misleading knob.
+**Test:** In `run_ansatz.py` line 257: either (a) change `num_epochs=1000` to `num_epochs=int(epochs)` and update the `train_protocol_notes` string accordingly, or (b) remove the `--epochs` argparse argument from both `run_ansatz.py` and `run_ansatz_sweep.sh` to eliminate the misleading knob.
 **Expected:** No silent discrepancy between `config.yaml epochs` and actual training budget on any invocation.
 **Why human:** Both options are valid; the choice depends on whether the 1000-epoch budget is an intentional Phase-13 lock (D-13 decision) or a parameterizable value.
 
 #### 6. REVIEW BLOCKER CR-02 disposition (V1 npz schema guard)
 
-**Test:** In `revision/run_ansatz_comparison.py` around line 148: either (a) add the key-validation guard from the REVIEW's suggested code block, or (b) add an inline comment documenting that the V1 key contract is verified by construction (the 09.1/10 driver and this aggregator share the same `_save_inverse_kwargs` function, making a mismatch structurally impossible absent a schema migration).
+**Test:** In `run_ansatz_comparison.py` around line 148: either (a) add the key-validation guard from the REVIEW's suggested code block, or (b) add an inline comment documenting that the V1 key contract is verified by construction (the 09.1/10 driver and this aggregator share the same `_save_inverse_kwargs` function, making a mismatch structurally impossible absent a schema migration).
 **Expected:** Future maintainers have a clear signal about whether the schema contract is validated or trusted by construction.
 **Why human:** The choice between a runtime guard and a documented assertion is an architectural/maintenance preference.
 

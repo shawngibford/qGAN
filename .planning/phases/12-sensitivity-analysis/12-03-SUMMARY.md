@@ -8,8 +8,8 @@ requires:
   - phase: 10-headline-results
     provides: five frozen headline JSONs (baseline_comparison, tstr, predictive_discriminative, augmentation, fidelity_dualscale) with shared data_hash 91e447d4624e25b3
 provides:
-  - revision/run_multiseed_rollup.py — SENS-03 pure stdlib aggregator
-  - revision/results/multiseed_summary.json — 5-seed mean±std roll-up (1266 cells)
+  - run_multiseed_rollup.py — SENS-03 pure stdlib aggregator
+  - results/multiseed_summary.json — 5-seed mean±std roll-up (1266 cells)
 affects: [sensitivity-analysis, manuscript-revision, verification]
 
 tech-stack:
@@ -21,8 +21,8 @@ tech-stack:
 
 key-files:
   created:
-    - revision/run_multiseed_rollup.py
-    - revision/results/multiseed_summary.json
+    - run_multiseed_rollup.py
+    - results/multiseed_summary.json
   modified: []
 
 key-decisions:
@@ -62,12 +62,12 @@ completed: 2026-05-18
 2. **Task 2: Run aggregator + verify multiseed_summary.json** — `0c47844` (feat)
 
 ## Files Created/Modified
-- `revision/run_multiseed_rollup.py` — SENS-03 pure aggregator: repo resolver, cross-artifact data_hash hard gate, long-form groupby roll-up with null-safe mean/std
-- `revision/results/multiseed_summary.json` — 1266-cell roll-up: provenance header (schema, data_hash, consumed_artifacts, seed_set) + per-cell {source, model_kind, pipeline, metric_name, scale, injection_ratio, mean, std, n, n_null, seeds}
+- `run_multiseed_rollup.py` — SENS-03 pure aggregator: repo resolver, cross-artifact data_hash hard gate, long-form groupby roll-up with null-safe mean/std
+- `results/multiseed_summary.json` — 1266-cell roll-up: provenance header (schema, data_hash, consumed_artifacts, seed_set) + per-cell {source, model_kind, pipeline, metric_name, scale, injection_ratio, mean, std, n, n_null, seeds}
 
 ## Decisions Made
 - **D-11-09 N/A propagation:** `fidelity_dualscale.json` carries `value: null` with `scale_na_reason` for Pipeline-A log_return rows (no log-return space for raw-OD Pipeline A). The aggregator excludes nulls from `statistics.fmean`/`stdev` (which raise on `None`), emits the cell with `mean/std = null, n = 0, n_null = <count>`. This preserves grid completeness (no headline cell silently dropped) without fabricating statistics — the scientifically correct behavior for a manuscript deliverable.
-- `revision/core/` untouched (D-10-13) — verified empty `git diff --stat`.
+- `core/` untouched (D-10-13) — verified empty `git diff --stat`.
 
 ## Deviations from Plan
 

@@ -7,7 +7,7 @@ tags: [pennylane, pytorch, pqc, ansatz, entanglement, spectral-loss, early-stopp
 # Dependency graph
 requires:
   - phase: 08-core-module-extraction
-    provides: revision/core/ shared modules (quantum.py, training.py)
+    provides: core/ shared modules (quantum.py, training.py)
   - phase: 12-sensitivity-analysis
     provides: byte-unchanged-default discipline + frozen Phase 8-12 reproducibility contract
 provides:
@@ -36,8 +36,8 @@ key-files:
     - tests/test_cr01_spectral_grad.py
     - tests/test_cr02_es_restore.py
   modified:
-    - revision/core/models/quantum.py
-    - revision/core/training.py
+    - core/models/quantum.py
+    - core/training.py
 
 key-decisions:
   - "Installed pytest into the shared qgan_env (test-runner mandated by the plan; unambiguous well-known framework, not an application dependency)"
@@ -91,8 +91,8 @@ _TDD tasks have test→feat commit pairs. No refactor commits needed (code clean
 - `tests/test_entropy_purity.py` - INTRO-03: entropy/purity bounds + bipartition metadata
 - `tests/test_cr01_spectral_grad.py` - CR-01: Tensor return, grad_fn, non-zero param grad, real detached, no welch import, call-site guard
 - `tests/test_cr02_es_restore.py` - CR-02: device/dtype-consistent restore CPU + MPS-skipif
-- `revision/core/models/quantum.py` - `topology` kwarg + `_TOPOLOGIES`/`INTROSPECT_BIPARTITION` constants, topology switch (range literal first), `_introspect_circuit` + `introspect()` + `_introspect_qnode`
-- `revision/core/training.py` - CR-01 differentiable PSD loss; CR-02 device-safe `_load_checkpoint`
+- `core/models/quantum.py` - `topology` kwarg + `_TOPOLOGIES`/`INTROSPECT_BIPARTITION` constants, topology switch (range literal first), `_introspect_circuit` + `introspect()` + `_introspect_qnode`
+- `core/training.py` - CR-01 differentiable PSD loss; CR-02 device-safe `_load_checkpoint`
 
 ## Decisions Made
 - Installed `pytest` into the shared `qgan_env` (the plan mandates `./qgan_env/bin/python -m pytest`; pytest is an unambiguous, well-known test runner — not an application dependency at slopsquat risk). Threat T-13-SC ("zero installs this phase") was scoped to *experiment* dependencies; the test runner is infrastructure required by the plan's own verification gate.

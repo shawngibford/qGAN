@@ -6,11 +6,11 @@
 
 ## Summary
 
-Phase 10 is glue + small new model definitions on top of an already-verified infrastructure. The 24 locked D-10-XX decisions settle every architectural question; this research supplies the *implementation knowledge* the planner needs so neither planner nor executor has to guess: exact parameter arithmetic to land each classical generator in 71–79 params, the precise (and slightly awkward) interface contract `revision/core/training.py::train_wgan_gp` imposes on a generator, VAE/AR sizing, the 5-file artifact bundle + data-hash formula, the reusable TSTR-lite helper, and the pitfalls.
+Phase 10 is glue + small new model definitions on top of an already-verified infrastructure. The 24 locked D-10-XX decisions settle every architectural question; this research supplies the *implementation knowledge* the planner needs so neither planner nor executor has to guess: exact parameter arithmetic to land each classical generator in 71–79 params, the precise (and slightly awkward) interface contract `core/training.py::train_wgan_gp` imposes on a generator, VAE/AR sizing, the 5-file artifact bundle + data-hash formula, the reusable TSTR-lite helper, and the pitfalls.
 
 The single most important finding — and the one most likely to derail the executor if not surfaced now — is that **`train_wgan_gp` is hard-coded to the quantum generator's interface in two places**: line 234 builds the generator optimizer as `torch.optim.Adam([generator.params_pqc], ...)` (a single named tensor, not `generator.parameters()`), and lines 282/315 call `generator(noise_batch)` where `noise_batch` has shape `(num_qubits, batch_size)` and the generator must return `(batch, window_length)`. A standard `nn.Module` classical generator has neither a `.params_pqc` attribute nor a `(num_qubits, batch)`→`(batch, 10)` forward signature. The classical generators must therefore expose a `.params_pqc` shim (an `nn.Parameter`-flattening view is not viable; see Pitfall 1) **OR** the plan must add a minimal CONTEXT-authorized adapter. This is the central plan-shaping decision and is analyzed in detail below.
 
-**Primary recommendation:** Implement the 3 classical WGAN-GP generators in `revision/core/models/classical.py` with a forward signature `forward(noise: Tensor[num_qubits, B]) -> Tensor[B, 10]` and a `params_pqc` **property that aliases the module's single trainable parameter bundle** so `train_wgan_gp` plugs in unchanged (D-10-13 forbids touching `revision/core/`). Size each to land in 71–79 params using the exact formulas in §Standard Stack. VAE/AR live in `revision/core/models/nonadversarial.py` with their own training loops in `revision/run_baselines.py` (D-10-11/12/13). Mirror `run_ablation.py`/`run_ablation_sweep.sh` exactly for the 50-run sweep, adding only a `data_hash` field (new — Phase 09.1 has none).
+**Primary recommendation:** Implement the 3 classical WGAN-GP generators in `core/models/classical.py` with a forward signature `forward(noise: Tensor[num_qubits, B]) -> Tensor[B, 10]` and a `params_pqc` **property that aliases the module's single trainable parameter bundle** so `train_wgan_gp` plugs in unchanged (D-10-13 forbids touching `core/`). Size each to land in 71–79 params using the exact formulas in §Standard Stack. VAE/AR live in `core/models/nonadversarial.py` with their own training loops in `run_baselines.py` (D-10-11/12/13). Mirror `run_ablation.py`/`run_ablation_sweep.sh` exactly for the 50-run sweep, adding only a `data_hash` field (new — Phase 09.1 has none).
 
 ## User Constraints (from CONTEXT.md)
 
@@ -22,23 +22,23 @@ The single most important finding — and the one most likely to derail the exec
 - **D-10-04:** Quantum generator is the reference; its 5-seed × 2-pipeline (A,B) runs from Phase 09.1 are reused as-is. NO quantum retraining in Phase 10.
 - **D-10-05:** Train on BOTH Pipeline A (min-max OD) and Pipeline B (log-returns standardized). Pipeline C dropped.
 - **D-10-06:** Pipeline B is the headline; Pipeline A is the supplementary "raw OD" control. Both reported in the comparison table.
-- **D-10-07:** Same windowed data from `load_and_preprocess` + `rolling_window(WINDOW_LENGTH=10, stride=2)`; per-pipeline forward/inverse from `revision/core/preprocessing.py`.
+- **D-10-07:** Same windowed data from `load_and_preprocess` + `rolling_window(WINDOW_LENGTH=10, stride=2)`; per-pipeline forward/inverse from `core/preprocessing.py`.
 - **D-10-08:** Identical training conditions across all WGAN-GP variants and the quantum reference: seeds {42,43,44,45,46}; 1000 epochs; N_CRITIC=9, LAMBDA=2.16, LR_CRITIC=1.8046e-05, LR_GENERATOR=6.9173e-05, BATCH_SIZE=12, WINDOW_LENGTH=10; **same `Critic`** for every WGAN-GP variant; same Adam betas, same GP formulation, same windowed loader.
 - **D-10-09:** VAE/AR have model-family-specific training (VAE→ELBO; AR→MLE/least-squares) but the data, seeds, epoch budget, and held-out eval split are matched to the WGAN-GP track. Per-model protocol documented in JSON.
 - **D-10-10:** 5×2×5 = 50 new runs; ≈110 min at `--parallel 2`; ≤3 h sweep budget; relaxable if classical >5× faster than quantum.
-- **D-10-11:** NEW `revision/core/models/classical.py` — all 3 classical WGAN-GP generators as `nn.Module` subclasses with a shared `count_params()` matching `QuantumGenerator.count_params()`.
-- **D-10-12:** NEW `revision/core/models/nonadversarial.py` — VAE + AR; both trained outside the WGAN-GP loop.
-- **D-10-13:** All training-loop/aggregation/orchestration logic stays OUT of `revision/core/` — only model definitions go there. Orchestration in NEW `revision/run_baselines.py` + `revision/run_baselines_sweep.sh`, patterned after `run_ablation.py`/`run_ablation_sweep.sh`.
-- **D-10-14:** Sweep outputs at `revision/results/baselines/runs/<model_kind>/<pipeline>/<seed>/`. Model kinds: `wgan_mlp`, `wgan_cnn`, `wgan_lstm`, `vae`, `ar`. Each run dir = same 5-file bundle as 09.1: `config.yaml`, `checkpoint.pt` (or `.npz` for AR), `samples.npy`, `metrics.json`, `inverse_kwargs.npz`.
+- **D-10-11:** NEW `core/models/classical.py` — all 3 classical WGAN-GP generators as `nn.Module` subclasses with a shared `count_params()` matching `QuantumGenerator.count_params()`.
+- **D-10-12:** NEW `core/models/nonadversarial.py` — VAE + AR; both trained outside the WGAN-GP loop.
+- **D-10-13:** All training-loop/aggregation/orchestration logic stays OUT of `core/` — only model definitions go there. Orchestration in NEW `run_baselines.py` + `run_baselines_sweep.sh`, patterned after `run_ablation.py`/`run_ablation_sweep.sh`.
+- **D-10-14:** Sweep outputs at `results/baselines/runs/<model_kind>/<pipeline>/<seed>/`. Model kinds: `wgan_mlp`, `wgan_cnn`, `wgan_lstm`, `vae`, `ar`. Each run dir = same 5-file bundle as 09.1: `config.yaml`, `checkpoint.pt` (or `.npz` for AR), `samples.npy`, `metrics.json`, `inverse_kwargs.npz`.
 - **D-10-15:** A `data_hash` field written to every `config.yaml`, computed `sha256(real_OD.tobytes())[:16]`. Must match across all 50 new runs AND across the Phase 09.1 quantum runs.
 - **D-10-16:** `baseline_comparison.json` aggregates every model×pipeline×seed into long-form `{model_kind, pipeline, seed, metric_name, scale, value}` + a top-level `models[]` array `{kind, parameter_count, family, train_protocol_notes}`.
 - **D-10-17:** Companion `baseline_comparison.md` markdown table, one row per model, columns: parameter count, OD-EMD (mean±std), OD-ACF lag-1, OD-DTW mean, transformed-space EMD (Pipeline B), TSTR-lite R².
 - **D-10-18:** Table reports BOTH the quantum reference (5 seeds × 2 pipelines from Phase 09.1) AND every new model on the same pipeline rows.
 - **D-10-19:** NO new recommendation in this phase. Phase 14 decides the highlighted baseline. Phase 10 only delivers the apples-to-apples table.
-- **D-10-20:** Every model emits the same per-run fidelity metric set as 09.1 (OD-scale EMD, moments, per-lag ACF mean+std lags 0..9, DTW mean/median/std on NN sub-sample, transformed-space EMD where applicable). All via `revision/core/eval.py` — NO new metric helpers.
+- **D-10-20:** Every model emits the same per-run fidelity metric set as 09.1 (OD-scale EMD, moments, per-lag ACF mean+std lags 0..9, DTW mean/median/std on NN sub-sample, transformed-space EMD where applicable). All via `core/eval.py` — NO new metric helpers.
 - **D-10-21:** TSTR-lite (1-layer LSTM-32, 3 init seeds {40,41,42}, 320 held-out real windows) per model×pipeline as sanity scaffolding. Phase 11 owns full TSTR.
-- **D-10-22:** `revision/run_baselines.py` per-(model,pipeline,seed) CLI driver: `python -m revision.run_baselines --model {wgan_mlp,wgan_cnn,wgan_lstm,vae,ar} --pipeline {A,B} --seed N --epochs M`. Idempotent.
-- **D-10-23:** `revision/run_baselines_sweep.sh` loops 5×2×5=50, skips complete pairs (same 5-file `is_complete()`), writes `sweep_status.json`, `--parallel {1,2}` guardrail, same atomic-status-writer pattern as `run_ablation_sweep.sh`.
+- **D-10-22:** `run_baselines.py` per-(model,pipeline,seed) CLI driver: `python -m revision.run_baselines --model {wgan_mlp,wgan_cnn,wgan_lstm,vae,ar} --pipeline {A,B} --seed N --epochs M`. Idempotent.
+- **D-10-23:** `run_baselines_sweep.sh` loops 5×2×5=50, skips complete pairs (same 5-file `is_complete()`), writes `sweep_status.json`, `--parallel {1,2}` guardrail, same atomic-status-writer pattern as `run_ablation_sweep.sh`.
 - **D-10-24:** NEVER `multiprocessing.Pool`. `xargs -P 2` OS-process parallelism only (Phase 09.1 Pitfall 4).
 
 ### Claude's Discretion
@@ -68,13 +68,13 @@ The single most important finding — and the one most likely to derail the exec
 
 | Capability | Primary Tier | Secondary Tier | Rationale |
 |------------|-------------|----------------|-----------|
-| 3 classical WGAN-GP generator definitions | `revision/core/models/classical.py` (NEW module) | — | D-10-11 locks; analog of `quantum.py` |
-| VAE + AR model definitions | `revision/core/models/nonadversarial.py` (NEW module) | — | D-10-12 locks |
+| 3 classical WGAN-GP generator definitions | `core/models/classical.py` (NEW module) | — | D-10-11 locks; analog of `quantum.py` |
+| VAE + AR model definitions | `core/models/nonadversarial.py` (NEW module) | — | D-10-12 locks |
 | WGAN-GP training | `revision.core.training.train_wgan_gp` (UNCHANGED) | classical generator's `params_pqc` shim | D-10-08/13: reuse loop verbatim; classical gen must satisfy the loop's hard-coded interface |
-| VAE training (ELBO) | `revision/run_baselines.py` (NEW orchestration) | `revision.core.models.nonadversarial.VAE` | D-10-09/13: VAE loop ≠ WGAN-GP loop; loop logic stays out of `core/` |
-| AR fit (MLE/Yule-Walker) + sampling | `revision/run_baselines.py` (NEW orchestration) | `revision.core.models.nonadversarial.AR` | D-10-13: fit/sample orchestration is not a "model definition" |
-| Per-(model,pipeline,seed) run driver | `revision/run_baselines.py` (NEW) | `revision.core.preprocessing`, `train_wgan_gp` | D-10-22; mirror `run_ablation.py` |
-| 50-run sweep + status JSON | `revision/run_baselines_sweep.sh` (NEW) | xargs -P 2 | D-10-23/24; mirror `run_ablation_sweep.sh` |
+| VAE training (ELBO) | `run_baselines.py` (NEW orchestration) | `revision.core.models.nonadversarial.VAE` | D-10-09/13: VAE loop ≠ WGAN-GP loop; loop logic stays out of `core/` |
+| AR fit (MLE/Yule-Walker) + sampling | `run_baselines.py` (NEW orchestration) | `revision.core.models.nonadversarial.AR` | D-10-13: fit/sample orchestration is not a "model definition" |
+| Per-(model,pipeline,seed) run driver | `run_baselines.py` (NEW) | `revision.core.preprocessing`, `train_wgan_gp` | D-10-22; mirror `run_ablation.py` |
+| 50-run sweep + status JSON | `run_baselines_sweep.sh` (NEW) | xargs -P 2 | D-10-23/24; mirror `run_ablation_sweep.sh` |
 | Per-run fidelity metrics | `revision.core.eval` (UNCHANGED — no new helpers) | run driver / analysis notebook | D-10-20 forbids new metric helpers |
 | Comparison table + markdown + TSTR-lite | analysis notebook (NEW, e.g. `06_baseline_comparison.ipynb`) | matplotlib/pandas | D-10-13/16/17/21; notebooks aggregate+render, `core/` is logic-only |
 | OD-scale reconstruction from samples.npy | analysis notebook (reuse 09.1 `reconstruct_od` pattern) | `revision.core.preprocessing.inverse_*` | identical inverse contract as 09.1 |
@@ -120,13 +120,13 @@ torch 2.9.0, numpy 2.3.4, pennylane 0.43.0, scipy 1.16.2, statsmodels 0.14.5, py
 
 ## The `train_wgan_gp` Generator Contract (CRITICAL — read before planning)
 
-The 3 classical WGAN-GP generators must drop into `revision.core.training.train_wgan_gp` **unchanged** (D-10-08 "same critic ... same windowed loader"; D-10-13 "training-loop logic stays out of `core/`"). Verbatim from `revision/core/training.py`:
+The 3 classical WGAN-GP generators must drop into `revision.core.training.train_wgan_gp` **unchanged** (D-10-08 "same critic ... same windowed loader"; D-10-13 "training-loop logic stays out of `core/`"). Verbatim from `core/training.py`:
 
 1. **Generator optimizer (line 234):**
    ```python
    g_opt = torch.optim.Adam([generator.params_pqc], lr=lr_generator, betas=(0.0, 0.9))
    ```
-   The loop builds the generator optimizer over the **single attribute `generator.params_pqc`**, NOT `generator.parameters()`. `[VERIFIED: revision/core/training.py:234]`
+   The loop builds the generator optimizer over the **single attribute `generator.params_pqc`**, NOT `generator.parameters()`. `[VERIFIED: core/training.py:234]`
 
 2. **Forward call (lines 282, 315, 349):**
    ```python
@@ -135,18 +135,18 @@ The 3 classical WGAN-GP generators must drop into `revision.core.training.train_
    generated_samples = generator(noise_batch)        # expected: (batch, window_length)
    generated_samples = generated_samples.to(torch.float64) * 0.1
    ```
-   Input noise shape is `(num_qubits, batch_size)` = `(5, 12)`; the loop transposes nothing — it expects `generator(noise)` to return `(batch_size, window_length)` = `(12, 10)`, then casts to float64 and **multiplies by 0.1**. `[VERIFIED: revision/core/training.py:275-286, 309-317]`
+   Input noise shape is `(num_qubits, batch_size)` = `(5, 12)`; the loop transposes nothing — it expects `generator(noise)` to return `(batch_size, window_length)` = `(12, 10)`, then casts to float64 and **multiplies by 0.1**. `[VERIFIED: core/training.py:275-286, 309-317]`
 
 3. **`num_qubits` / `window_length` resolution (lines 228-229):**
    ```python
    num_qubits = getattr(generator, "num_qubits", NUM_QUBITS)       # falls back to 5
    window_length = getattr(generator, "window_length", WINDOW_LENGTH)  # falls back to 10
    ```
-   So a classical generator either exposes `.num_qubits`/`.window_length` or the loop uses 5/10. Set them explicitly to `5`/`10` for clarity. `[VERIFIED: revision/core/training.py:228-229]`
+   So a classical generator either exposes `.num_qubits`/`.window_length` or the loop uses 5/10. Set them explicitly to `5`/`10` for clarity. `[VERIFIED: core/training.py:228-229]`
 
-4. **EarlyStopping adapter (line 255):** `_ESAdapter` reads `generator.params_pqc`. Not triggered (`run_ablation.py` passes no `early_stopper`), but the attribute must exist. `[VERIFIED: revision/core/training.py:255, 406-429]`
+4. **EarlyStopping adapter (line 255):** `_ESAdapter` reads `generator.params_pqc`. Not triggered (`run_ablation.py` passes no `early_stopper`), but the attribute must exist. `[VERIFIED: core/training.py:255, 406-429]`
 
-5. **`generate_samples` in `run_ablation.py` (lines 195-209):** uses the same `(NUM_QUBITS, bs)` noise → `generator(noise).to(float64) * 0.1`. `run_baselines.py` must mirror this so `samples.npy` is in the same `[-1,1]·0.1`-style space the 09.1 `reconstruct_od` helper expects. `[VERIFIED: revision/run_ablation.py:180-209]`
+5. **`generate_samples` in `run_ablation.py` (lines 195-209):** uses the same `(NUM_QUBITS, bs)` noise → `generator(noise).to(float64) * 0.1`. `run_baselines.py` must mirror this so `samples.npy` is in the same `[-1,1]·0.1`-style space the 09.1 `reconstruct_od` helper expects. `[VERIFIED: run_ablation.py:180-209]`
 
 **Implication for `classical.py`:** Each classical generator must expose:
 - `forward(noise: Tensor) -> Tensor` accepting `(5, B)`-shaped noise and returning `(B, 10)`. The `(5, B)` noise is the *latent input*; the generator may flatten/transpose it internally (it is just a `(5,B)` uniform-noise tensor — treat it as a 5-dim latent per sample, i.e. transpose to `(B, 5)` as the latent vector). **Latent-dim convention: 5** (= `num_qubits`), matching the quantum generator's input contract.
@@ -287,7 +287,7 @@ raw = load_and_preprocess(str(csv_path))           # same entry point as 09.1
 real_OD = raw["OD"].cpu().numpy()                   # float32, shape (778,)
 data_hash = hashlib.sha256(real_OD.tobytes()).hexdigest()[:16]
 ```
-> **CRITICAL — `[VERIFIED: grep over revision/ found zero data_hash/sha256/tobytes]`:** Phase 09.1 wrote **no** data-hash. The quantum 09.1 runs at `revision/results/transform_ablation/runs/{A,B}/{seed}/config.yaml` do **not** contain a `data_hash` field. Therefore the D-10-15 cross-check "the hash must match across the Phase 09.1 quantum runs" cannot be done by reading 09.1 configs. It must be done by **recomputing `sha256(real_OD.tobytes())[:16]` from the same `load_and_preprocess(csv_path)` call the 09.1 quantum runs used, and asserting equality**. Practically: the comparison-table step recomputes the hash once from `load_and_preprocess` and verifies all 50 new `config.yaml` hashes equal it; the *quantum* equivalence is established by construction (same code path, same CSV) and documented, not by reading a non-existent field. The planner must phrase the BASE-03 acceptance criterion accordingly — surface this so the executor does not waste time grepping 09.1 configs for a field that isn't there. The `csv_path` in 09.1 configs is `data.csv` `[VERIFIED: runs/B/42/config.yaml]` — Phase 10 must use the identical CSV path.
+> **CRITICAL — `[VERIFIED: grep over revision/ found zero data_hash/sha256/tobytes]`:** Phase 09.1 wrote **no** data-hash. The quantum 09.1 runs at `results/transform_ablation/runs/{A,B}/{seed}/config.yaml` do **not** contain a `data_hash` field. Therefore the D-10-15 cross-check "the hash must match across the Phase 09.1 quantum runs" cannot be done by reading 09.1 configs. It must be done by **recomputing `sha256(real_OD.tobytes())[:16]` from the same `load_and_preprocess(csv_path)` call the 09.1 quantum runs used, and asserting equality**. Practically: the comparison-table step recomputes the hash once from `load_and_preprocess` and verifies all 50 new `config.yaml` hashes equal it; the *quantum* equivalence is established by construction (same code path, same CSV) and documented, not by reading a non-existent field. The planner must phrase the BASE-03 acceptance criterion accordingly — surface this so the executor does not waste time grepping 09.1 configs for a field that isn't there. The `csv_path` in 09.1 configs is `data.csv` `[VERIFIED: runs/B/42/config.yaml]` — Phase 10 must use the identical CSV path.
 
 ## Comparison Table Schema (BASE-03, D-10-16/17/18)
 
@@ -316,7 +316,7 @@ data_hash = hashlib.sha256(real_OD.tobytes()).hexdigest()[:16]
 
 ## TSTR-lite Scaffolding (D-10-21) — REUSE, do not reinvent
 
-The exact helper already exists at `revision/_build_analysis_notebook.py:431-477` and produced `revision/results/transform_ablation/tstr_lite.json`. `[VERIFIED: file read 2026-05-17]`. Spec confirmed:
+The exact helper already exists at `_build_analysis_notebook.py:431-477` and produced `results/transform_ablation/tstr_lite.json`. `[VERIFIED: file read 2026-05-17]`. Spec confirmed:
 - `TSTRLiteLSTM(hidden=32)`: 1-layer `nn.LSTM(input_size=1, hidden_size=32, num_layers=1, batch_first=True)` + `nn.Linear(32,1)`.
 - Input: window `[:, :9]` → predict `[:, 9:10]` (9→1 next-step).
 - 3 init seeds **{40, 41, 42}** (NOT the training seeds 42-46).
@@ -325,20 +325,20 @@ The exact helper already exists at `revision/_build_analysis_notebook.py:431-477
 - Train: Adam lr=1e-3, MSE, 50 epochs, batch 64, `np.random.default_rng(lstm_seed)` for shuffling.
 - Per model×pipeline: pool synthetic OD windows across the 5 seeds (`np.concatenate([recon[(m,p,s)] for s in SEEDS])`), train 3 LSTMs (one per init seed), report mse_mean/std, r2_mean/std + per_init_seed (matches `tstr_lite.json` schema exactly).
 
-**Planner directive:** the new analysis notebook copies `TSTRLiteLSTM`, `r2_score_inline`, `train_eval_tstr` verbatim from `_build_analysis_notebook.py:432-477`. Do NOT promote to `revision/core/` (D-10-13: scaffolding stays in the notebook, exactly as 09.1 did).
+**Planner directive:** the new analysis notebook copies `TSTRLiteLSTM`, `r2_score_inline`, `train_eval_tstr` verbatim from `_build_analysis_notebook.py:432-477`. Do NOT promote to `core/` (D-10-13: scaffolding stays in the notebook, exactly as 09.1 did).
 
 ## Architecture Patterns
 
 ### System Architecture Diagram
 
 ```
-              revision/core/preprocessing.py  (UNCHANGED — A & B only, C dropped)
+              core/preprocessing.py  (UNCHANGED — A & B only, C dropped)
                  forward_minmax_od / inverse_minmax_od        (Pipeline A)
                  forward_logreturns / inverse_logreturns      (Pipeline B)
                                   │
    ┌──────────────────────────────┼─────────────────────────────────────────┐
    ▼                               ▼                                          ▼
-revision/core/models/        revision/core/models/                  revision/results/
+core/models/        core/models/                  results/
  classical.py (NEW)           nonadversarial.py (NEW)                 transform_ablation/
   WGAN_MLP   (74p)             VAE  (~562p, ELBO)                      runs/{A,B}/{42..46}/
   WGAN_CNN   (73p)             AR   (p+1 params, lstsq)                  (Phase 09.1 QUANTUM
@@ -346,14 +346,14 @@ revision/core/models/        revision/core/models/                  revision/res
   + params_pqc shim                 │                                          │
    │  (count_params==target)        │                                          │
    ▼                                ▼                                          │
-revision/run_baselines.py (NEW)  — one (model,pipeline,seed) per invocation     │
+run_baselines.py (NEW)  — one (model,pipeline,seed) per invocation     │
    ├─ WGAN path: train_wgan_gp(gen, Critic(), loader, …HPO consts…)  ──┐        │
    ├─ VAE path:  local ELBO loop (Adam, no critic)                     │        │
    └─ AR path:   np.linalg.lstsq fit + recursive simulate              │        │
         writes 5-file bundle + data_hash to                            │        │
-        revision/results/baselines/runs/<kind>/<pipe>/<seed>/          │        │
+        results/baselines/runs/<kind>/<pipe>/<seed>/          │        │
                                   │                                    │        │
-revision/run_baselines_sweep.sh (NEW) — 5×2×5=50, xargs -P{1,2},       │        │
+run_baselines_sweep.sh (NEW) — 5×2×5=50, xargs -P{1,2},       │        │
    is_complete() 5-file skip, atomic sweep_status.json (mirror 09.1)   │        │
                                   │                                    │        │
                                   ▼                                    ▼        ▼
@@ -384,7 +384,7 @@ revision/
     ├── baseline_nonadversarial.json
     └── baseline_comparison.{json,md}
 ```
-Note `revision/core/models/__init__.py` currently imports only `quantum, critic` `[VERIFIED: file read]` — it MUST be updated to expose `classical` and `nonadversarial` or `from revision.core.models.classical import ...` will still work (direct submodule import) but the package `__all__` should be kept consistent (matches 09.1 D-style conventions).
+Note `core/models/__init__.py` currently imports only `quantum, critic` `[VERIFIED: file read]` — it MUST be updated to expose `classical` and `nonadversarial` or `from revision.core.models.classical import ...` will still work (direct submodule import) but the package `__all__` should be kept consistent (matches 09.1 D-style conventions).
 
 ### Pattern: `params_pqc` shim for classical WGAN generators
 
@@ -416,7 +416,7 @@ See **Pitfall 1** for the resolved, correct approach (a single flat `nn.Paramete
 
 - **Re-implementing the WGAN-GP loop per model.** D-10-08/13 forbid. Reuse `train_wgan_gp` verbatim; only the generator changes.
 - **Adding new metric helpers to `eval.py`.** D-10-20 forbids. Use existing `compute_emd/compute_acf/compute_dtw/compute_moments`.
-- **Putting ELBO/AR-fit/aggregation logic in `revision/core/`.** D-10-13 forbids. Loops live in `run_baselines.py`; aggregation in the notebook.
+- **Putting ELBO/AR-fit/aggregation logic in `core/`.** D-10-13 forbids. Loops live in `run_baselines.py`; aggregation in the notebook.
 - **`multiprocessing.Pool` for the sweep.** D-10-24 / 09.1 Pitfall 4 forbid. `xargs -P {1,2}` only.
 - **Grepping 09.1 configs for `data_hash`.** It does not exist there (see Data-Hash section). Recompute from `load_and_preprocess`.
 - **Trusting the LSTM param formula without empirical check.** PyTorch LSTM has two bias vectors; verify with `sum(p.numel() ...)`.
@@ -443,11 +443,11 @@ See **Pitfall 1** for the resolved, correct approach (a single flat `nn.Paramete
 
 | Category | Items Found | Action Required |
 |----------|-------------|------------------|
-| Stored data | None — writes to fresh `revision/results/baselines/`. Reuses (read-only) Phase 09.1 quantum runs at `revision/results/transform_ablation/runs/{A,B}/{42..46}/` (D-10-04). | None — read-only reuse |
+| Stored data | None — writes to fresh `results/baselines/`. Reuses (read-only) Phase 09.1 quantum runs at `results/transform_ablation/runs/{A,B}/{42..46}/` (D-10-04). | None — read-only reuse |
 | Live service config | None — no DB, no n8n, no scheduler | None — verified by absence of any service config in `revision/` |
 | OS-registered state | None — no daemons/cron/launchd; sweep is a foreground/tmux bash script | None |
 | Secrets/env vars | None — no API keys, no auth in this phase | None |
-| Build artifacts | None new — no `pyproject.toml`/package-name change. `revision/core/models/__init__.py` is *edited* (add 2 submodule imports) but that is a source edit, not a stale build artifact. | None — no reinstall needed (pure-source package, run via `./qgan_env/bin/python -m revision...`) |
+| Build artifacts | None new — no `pyproject.toml`/package-name change. `core/models/__init__.py` is *edited* (add 2 submodule imports) but that is a source edit, not a stale build artifact. | None — no reinstall needed (pure-source package, run via `./qgan_env/bin/python -m revision...`) |
 
 **Verified by:** grep over `revision/` for service/secret/scheduler markers; inspection of `run_ablation_sweep.sh` (pure bash + tmux/nohup, no OS registration).
 
@@ -503,7 +503,7 @@ See **Pitfall 1** for the resolved, correct approach (a single flat `nn.Paramete
 ### `train_wgan_gp` invocation for a classical WGAN generator (mirror run_ablation.py:302-318)
 
 ```python
-# Source: revision/run_ablation.py:288-318 (verified pattern), generator swapped
+# Source: run_ablation.py:288-318 (verified pattern), generator swapped
 from revision.core import (N_CRITIC, LAMBDA, LR_CRITIC, LR_GENERATOR,
                            EVAL_EVERY, WINDOW_LENGTH)
 from revision.core.models.critic import Critic
@@ -626,18 +626,18 @@ config["data_hash"] = data_hash                         # NEW field; 09.1 has no
 ## Sources
 
 ### Primary (HIGH confidence — direct codebase verification, this session)
-- `revision/core/training.py:228-317, 234, 406-429` — `train_wgan_gp` generator contract (`params_pqc`, `(num_qubits,B)`→`(B,10)`, `*0.1`, `_ESAdapter`)
-- `revision/core/models/quantum.py:31-202` — quantum generator; `count_params()==75`; single `params_pqc` `(75,)` `nn.Parameter`
-- `revision/core/models/critic.py:19-77` — the shared `Critic` (unchanged for all WGAN variants, D-10-08)
-- `revision/core/__init__.py:11-45` — locked HPO constants
-- `revision/core/preprocessing.py:29-103` — A & B forward/inverse (C dropped per D-10-05)
-- `revision/core/eval.py:25-163` — EMD/ACF/DTW/moments (no new helpers, D-10-20)
-- `revision/core/data.py:227-296` — `load_and_preprocess` (data-hash source; `OD` float32 (778,))
-- `revision/run_ablation.py:94-340` — per-(pipeline,seed) driver template; 5-file bundle; `generate_samples` `*0.1`
-- `revision/run_ablation_sweep.sh:1-456` — sweep template; `is_complete()` 5-file check; atomic status; xargs -P; Pitfall-4 note
-- `revision/_build_analysis_notebook.py:95-149, 432-521` — `reconstruct_od` + TSTR-lite (`TSTRLiteLSTM`, `r2_score_inline`, `train_eval_tstr`, HELD_OUT_N=320, init seeds 40/41/42) — reusable verbatim
-- `revision/results/transform_ablation/tstr_lite.json` — confirms TSTR-lite output schema
-- `revision/results/transform_ablation/runs/B/42/config.yaml` — confirms 09.1 config schema and **absence of data_hash**; `csv_path: data.csv`
+- `core/training.py:228-317, 234, 406-429` — `train_wgan_gp` generator contract (`params_pqc`, `(num_qubits,B)`→`(B,10)`, `*0.1`, `_ESAdapter`)
+- `core/models/quantum.py:31-202` — quantum generator; `count_params()==75`; single `params_pqc` `(75,)` `nn.Parameter`
+- `core/models/critic.py:19-77` — the shared `Critic` (unchanged for all WGAN variants, D-10-08)
+- `core/__init__.py:11-45` — locked HPO constants
+- `core/preprocessing.py:29-103` — A & B forward/inverse (C dropped per D-10-05)
+- `core/eval.py:25-163` — EMD/ACF/DTW/moments (no new helpers, D-10-20)
+- `core/data.py:227-296` — `load_and_preprocess` (data-hash source; `OD` float32 (778,))
+- `run_ablation.py:94-340` — per-(pipeline,seed) driver template; 5-file bundle; `generate_samples` `*0.1`
+- `run_ablation_sweep.sh:1-456` — sweep template; `is_complete()` 5-file check; atomic status; xargs -P; Pitfall-4 note
+- `_build_analysis_notebook.py:95-149, 432-521` — `reconstruct_od` + TSTR-lite (`TSTRLiteLSTM`, `r2_score_inline`, `train_eval_tstr`, HELD_OUT_N=320, init seeds 40/41/42) — reusable verbatim
+- `results/transform_ablation/tstr_lite.json` — confirms TSTR-lite output schema
+- `results/transform_ablation/runs/B/42/config.yaml` — confirms 09.1 config schema and **absence of data_hash**; `csv_path: data.csv`
 - `.planning/phases/.../09.1-04-SUMMARY.md` — Pipeline B headline, ABL-02 GREEN (quantum runs complete), TSTR-lite spec, Pitfall-4
 - `.planning/phases/.../09.1-RESEARCH.md` — Pitfall 4 lineage, sweep timing, reusable patterns
 - `./qgan_env` import checks (2026-05-17) — torch 2.9.0, numpy 2.3.4, pennylane 0.43.0, scipy 1.16.2, statsmodels 0.14.5, pyyaml 6.0.3, fastdtw OK, **sklearn MISSING**; `QuantumGenerator().count_params()==75`

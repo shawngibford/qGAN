@@ -3,22 +3,22 @@ reviewer: code-quality-r3
 scope: r3 forensic — quantum-disadvantaging bug hunt in matched-2000ep
   + distribution-EMD + figure-suite code paths
 files_audited:
-  - revision/run_matched2000.py
-  - revision/run_matched2000_dualscale.py
-  - revision/run_distribution_emd.py
-  - revision/run_figure_suite.py
-  - revision/core/eval.py (byte-frozen audit)
-  - revision/core/training.py (byte-frozen audit)
-  - revision/core/models/quantum.py (byte-frozen audit)
-  - revision/core/models/critic.py (byte-frozen audit)
-  - revision/core/preprocessing.py (byte-frozen audit, supporting)
-  - revision/core/data.py (byte-frozen audit, supporting)
+  - run_matched2000.py
+  - run_matched2000_dualscale.py
+  - run_distribution_emd.py
+  - run_figure_suite.py
+  - core/eval.py (byte-frozen audit)
+  - core/training.py (byte-frozen audit)
+  - core/models/quantum.py (byte-frozen audit)
+  - core/models/critic.py (byte-frozen audit)
+  - core/preprocessing.py (byte-frozen audit, supporting)
+  - core/data.py (byte-frozen audit, supporting)
 created: 2026-05-21T00:00:00Z
 ---
 
 # Code Review R3 — Quantum-Disadvantaging Forensic Audit
 
-> **Addendum (2026-05-24):** The VAE "posterior collapse (sample std ≈ 0.0004)" characterization in this document was NOT supported by the matched-budget data. The actual matched-budget VAE log-return std is 0.0186 (≈ 1.17× narrower than real 0.0217, not 54× narrower). The VAE's anomalously low LR-DTW = 0.088 reflects a degenerate generation regime (marginal well-aligned, log-return lag-1 ACF = −0.648 vs real −0.064, matched-pipeline reference) rather than posterior collapse. See `revision/docs/peer_review_remediation.md` for the corrected characterization. This document is preserved unchanged below as a record of the prior belief and the bug-discovery timeline.
+> **Addendum (2026-05-24):** The VAE "posterior collapse (sample std ≈ 0.0004)" characterization in this document was NOT supported by the matched-budget data. The actual matched-budget VAE log-return std is 0.0186 (≈ 1.17× narrower than real 0.0217, not 54× narrower). The VAE's anomalously low LR-DTW = 0.088 reflects a degenerate generation regime (marginal well-aligned, log-return lag-1 ACF = −0.648 vs real −0.064, matched-pipeline reference) rather than posterior collapse. See `docs/peer_review_remediation.md` for the corrected characterization. This document is preserved unchanged below as a record of the prior belief and the bug-discovery timeline.
 
 ---
 
@@ -31,10 +31,10 @@ The r1 review (5 CRITICAL + 9 HIGH) and the r2 review (4 HIGH +
 follow-ups) addressed the gate-correctness and provenance side of the
 pipeline. They did NOT examine **metric-comparability across model
 families**. r3 finds that **the new histogram-density distribution-EMD
-metric introduced by plan 14-15 (`revision/run_distribution_emd.py`)
+metric introduced by plan 14-15 (`run_distribution_emd.py`)
 contains a metric construction that systematically disadvantages
 quantum**, and that **the dualscale log_return-EMD path
-(`revision/run_matched2000_dualscale.py:368-372` and the inherited
+(`run_matched2000_dualscale.py:368-372` and the inherited
 `run_dualscale_fidelity.py` recipe) compares real-on-raw-scale against
 fake-on-standardized-scale** — a scale mismatch that affects every model
 asymmetrically and was therefore inherited by both the 14-08 emit AND
@@ -51,14 +51,14 @@ notebook-parity `*0.1` cast in `training.py:347`). The bias is asymmetric
 across model families in a way that consistently DISADVANTAGES quantum.
 
 **Confidence: HIGH.** Empirically demonstrated against the actual
-saved artifacts in `revision/results/matched2000/runs/` and the actual
-`revision/results/distribution_emd.json` aggregates — see "Hypothesis
+saved artifacts in `results/matched2000/runs/` and the actual
+`results/distribution_emd.json` aggregates — see "Hypothesis
 verdicts → H3" below for the synthetic-test smoking gun and the
 real-artifact reproduction.
 
 D-14-22 byte-freeze attestation: **PASS** — `git diff 06bb470..HEAD --
-revision/core/` returns zero bytes (verified). No new modifications to
-`revision/core/` since the byte-freeze base.
+core/` returns zero bytes (verified). No new modifications to
+`core/` since the byte-freeze base.
 
 ---
 
@@ -78,9 +78,9 @@ revision/core/` returns zero bytes (verified). No new modifications to
 ### H1: Quantum-specific training-loop asymmetry — PASS
 
 Line-by-line comparison of `_train_quantum`
-(`revision/run_matched2000.py:412-547`) vs `_train_wgan`
-(`revision/run_matched2000.py:550-632`) vs `_train_vae`
-(`revision/run_matched2000.py:635-737`):
+(`run_matched2000.py:412-547`) vs `_train_wgan`
+(`run_matched2000.py:550-632`) vs `_train_vae`
+(`run_matched2000.py:635-737`):
 
 | Field | _train_quantum | _train_wgan | _train_vae |
 |---|---|---|---|
@@ -107,7 +107,7 @@ generate samples via the same `generate_wgan_samples` post-training.
 
 ### H2: Sample-generation asymmetry — PASS
 
-`generate_wgan_samples` (`revision/run_matched2000.py:257-284`) was
+`generate_wgan_samples` (`run_matched2000.py:257-284`) was
 verified empirically against both generator families:
 
 ```
@@ -145,7 +145,7 @@ Two distinct findings:
 
 #### CRITICAL R3-CR-1: distribution-EMD metric construction systematically rewards narrow / collapsed distributions and penalizes spread-but-bounded distributions (quantum disadvantage)
 
-**File:** `revision/run_distribution_emd.py:94-141` (the new
+**File:** `run_distribution_emd.py:94-141` (the new
 `compute_histogram_density_emd` function from plan 14-15)
 
 **The metric:**
@@ -194,7 +194,7 @@ extend far beyond the real range**.
 
 **Empirical demonstration (actual matched-2000ep artifacts):**
 
-Reading `revision/results/distribution_emd.json` log_return-scale
+Reading `results/distribution_emd.json` log_return-scale
 aggregates and reproducing the raw-sample EMD against the same samples:
 
 | Model | raw-sample EMD | dist-EMD (14-15) | Notes |
@@ -255,7 +255,7 @@ ranking is metric-construction-driven, NOT model-quality-driven.
   out-of-range output. Add a caveat sentence to
   `reconciliation_note.md`'s C-3 paragraph.
 - **Option C:** abandon distribution-EMD entirely and stick with the
-  v1.0 raw-sample EMD (already in `revision/core/eval.py:25-36`). The
+  v1.0 raw-sample EMD (already in `core/eval.py:25-36`). The
   pre-v1.0 paper's 50-bin distribution-EMD reference number ~0.0015
   was on a DIFFERENT dataset / different windowing — it is not
   reconcilable to the current matched-2000ep numbers regardless of
@@ -266,10 +266,10 @@ ranking is metric-construction-driven, NOT model-quality-driven.
 #### HIGH R3-HI-1: log_return-scale EMD compares real (raw) against fake (standardized) — pre-existing scale mismatch inherited from `run_dualscale_fidelity.py`
 
 **Files:**
-- `revision/run_matched2000_dualscale.py:368-372` (the `_log_return_rows`
+- `run_matched2000_dualscale.py:368-372` (the `_log_return_rows`
   emit, verbatim with `run_dualscale_fidelity._log_return_rows`)
-- `revision/run_distribution_emd.py:144-153` (`_real_references`) +
-  `revision/run_distribution_emd.py:156-169` (`_fake_log_return_flat`)
+- `run_distribution_emd.py:144-153` (`_real_references`) +
+  `run_distribution_emd.py:156-169` (`_fake_log_return_flat`)
 
 **Evidence:** in `run_matched2000_dualscale.py`'s `_log_return_rows`,
 the real reference is `real_log_delta = d_real["log_delta"].cpu().
@@ -347,7 +347,7 @@ construction pattern.
 Both `_train_quantum` (l. 465: `critic = Critic(window_length=WINDOW_
 LENGTH)`) and `_train_wgan` (l. 572: identical call) construct a fresh
 `Critic` with the same constructor args. Inside `Critic.__init__`
-(`revision/core/models/critic.py:38-67`): same `nn.Sequential`, same
+(`core/models/critic.py:38-67`): same `nn.Sequential`, same
 layer specs (Conv1d → LeakyReLU → ... → Linear), same `.double()` cast.
 
 The critic's INITIAL WEIGHTS depend on the torch RNG state at
@@ -390,7 +390,7 @@ so the critic init is the same across all 9 models for a given seed.
 
 ### H5: Gradient-penalty direction — PASS
 
-`compute_gradient_penalty` (`revision/core/training.py:31-73`) computes
+`compute_gradient_penalty` (`core/training.py:31-73`) computes
 the standard two-sided WGAN-GP penalty `((||∇D(x̂)||₂ - 1)²).mean()`
 where x̂ = α·real + (1-α)·fake. This is the canonical Gulrajani 2017
 formulation. The sign is correct: at `training.py:364`, `critic_loss =
@@ -402,7 +402,7 @@ No `torch.clamp` or `torch.nan_to_num` is applied to the quantum
 gradient path. The PennyLane backprop interface returns standard torch
 gradients that flow through the same `.backward()` chain as classical.
 
-`lambda_gp = 2.16` (from `revision/core/__init__.py`) is passed
+`lambda_gp = 2.16` (from `core/__init__.py`) is passed
 identically to both `_train_quantum` and `_train_wgan` (lines 481 + 588:
 `lambda_gp=float(LAMBDA)`).
 
@@ -442,7 +442,7 @@ samples_pm1 → r_norm via pm1→[r_min, r_max] linear map
 Same RNG seeding `np.random.default_rng(seed * 7919 + 1)` is used for
 the `od_start_per_window` draw across all 9 models. The torch.tensor
 casts are identical. The cumsum-based `inverse_logreturns` in
-`revision/core/preprocessing.py:49-75` has NO model_kind branching.
+`core/preprocessing.py:49-75` has NO model_kind branching.
 
 Quantum's narrow samples (`[-0.08, +0.08]`) result in a narrow
 reconstructed OD range (because the pm1→r_norm map preserves the
@@ -453,14 +453,14 @@ inverse is applied symmetrically.
 ### H8: D-14-22 byte-freeze verification — PASS
 
 ```
-$ git diff --stat 06bb470..HEAD -- revision/core/
+$ git diff --stat 06bb470..HEAD -- core/
 (empty output)
 
-$ git diff --stat db59b11..HEAD -- revision/core/
+$ git diff --stat db59b11..HEAD -- core/
 (empty output)
 ```
 
-The last commit modifying `revision/core/` is `db59b11` (14-01: "add
+The last commit modifying `core/` is `db59b11` (14-01: "add
 non-default 55-param IQP:SEL circuit + D-14-07 equivalence gate") —
 the 55-param `iqp_sel_55` circuit branch in `models/quantum.py:240-250`
 and `_introspect_circuit:315-326`. All subsequent core/ changes are
@@ -468,13 +468,13 @@ ZERO bytes. The byte-freeze is literally honored from 14-01 through
 14-15 (HEAD as of this review).
 
 Files specifically audited as read-only:
-- `revision/core/eval.py` — sound, notebook-parity preserved
-- `revision/core/training.py` — sound, notebook-parity preserved
+- `core/eval.py` — sound, notebook-parity preserved
+- `core/training.py` — sound, notebook-parity preserved
   (compute_dtype split + ES device-fix per CR-01/02 from Phase 13 already
   audited and accepted)
-- `revision/core/models/quantum.py` — sound, bounds-check arithmetic
+- `core/models/quantum.py` — sound, bounds-check arithmetic
   correct (IN-9 from r1)
-- `revision/core/models/critic.py` — sound, single Dropout layer,
+- `core/models/critic.py` — sound, single Dropout layer,
   `.double()` cast preserved
 
 ---
@@ -495,7 +495,7 @@ code, applied only to quantum-and-WGAN samples per the training
 contract) is systematically penalized vs collapse-prone models (VAE)
 and uncapped models (WGAN-CNN, AR).
 
-**File / lines:** `revision/run_distribution_emd.py:94-141`.
+**File / lines:** `run_distribution_emd.py:94-141`.
 
 **Fix preference:** Option C (don't ship distribution-EMD) is the
 safest single-step fix. The pre-v1.0 paper's 50-bin reference ~0.0015
@@ -515,9 +515,9 @@ log_return EMDs are scale-mismatch artifacts, not distributional
 fidelity measures.
 
 **Files / lines:**
-- `revision/run_matched2000_dualscale.py:368-372` (recipe inherited
+- `run_matched2000_dualscale.py:368-372` (recipe inherited
   from `run_dualscale_fidelity.py`)
-- `revision/run_distribution_emd.py:144-153` + `:156-169` (recipe
+- `run_distribution_emd.py:144-153` + `:156-169` (recipe
   inherited from the figure suite)
 
 **Asymmetric effect:** the *0.1 quantum cap limits quantum's scale-
@@ -534,7 +534,7 @@ paragraph and re-emit `matched2000_dualscale.json` +
 
 #### R3-HI-2: Quantum `*0.1` training-loop cap caps generator expressivity vs real `[-1, +1]` data scale (BYTE-FROZEN — disclosure only)
 
-**File / line:** `revision/core/training.py:347`
+**File / line:** `core/training.py:347`
 ```python
 generated_samples = generated_samples.to(compute_dtype) * 0.1
 ```
@@ -580,7 +580,7 @@ for the current resubmission.**
 
 #### R3-MD-1: `compute_histogram_density_emd` self-EMD assertion uses bare `assert` (not raise AssertionError)
 
-**File / line:** `revision/run_distribution_emd.py:280-282`
+**File / line:** `run_distribution_emd.py:280-282`
 ```python
 assert self_emd == 0.0, (
     f"self-EMD must be 0 on identical inputs; got {self_emd}"
@@ -596,7 +596,7 @@ exact pattern r1's LO-1 flagged for `quantum.py:87`.
 
 #### R3-MD-2: `_model_seed_rows` skips missing seeds silently (no recorded null-row)
 
-**File / lines:** `revision/run_distribution_emd.py:181-185`
+**File / lines:** `run_distribution_emd.py:181-185`
 ```python
 if not (base / "samples.npy").exists():
     # Skip missing seeds quietly (...)
@@ -619,7 +619,7 @@ schema and raise if `n_seeds != n_seeds_expected` for any model.
 
 #### R3-MD-3: The 14-15 disclosure in `reconciliation_note.md`'s C-3 paragraph does not call out the metric's structural bias
 
-The C-3 disclosure (per `revision/run_distribution_emd.py:8-14`)
+The C-3 disclosure (per `run_distribution_emd.py:8-14`)
 acknowledges that the pre-v1.0 50-bin density EMD and the v1.0 raw-
 sample EMD "are NOT commensurate". This is correct but understates the
 issue. The reader is given the impression that the two metrics measure
@@ -642,7 +642,7 @@ state:
 > output range is bounded (like the quantum generator, whose Pauli-
 > expectation values are bounded in [-1, +1] and then multiplied by
 > 0.1 in `training.py:347`). The raw-sample EMD in
-> `revision/core/eval.py:25-36` is the canonical metric; the hist-
+> `core/eval.py:25-36` is the canonical metric; the hist-
 > density column is presented for backward-comparability with the pre-
 > v1.0 paper figure only."
 
@@ -650,7 +650,7 @@ state:
 
 #### R3-LO-1: `_model_seed_rows` does not record the seeds that were processed
 
-**File / line:** `revision/run_distribution_emd.py:172-243`. The
+**File / line:** `run_distribution_emd.py:172-243`. The
 `rows[]` carry per-(model, seed) values, but the top-level JSON does
 not record the SEED SET that was attempted vs successful. A reader of
 the JSON cannot tell whether a missing (model_kind, scale) aggregate
@@ -661,7 +661,7 @@ is because the model was skipped or because all 5 seeds failed.
 
 #### R3-LO-2: `compute_histogram_density_emd` does not record the `density=True` flag in the metric_formulation citation
 
-**File / line:** `revision/run_distribution_emd.py:87-91`
+**File / line:** `run_distribution_emd.py:87-91`
 ```python
 METRIC_FORMULATION = (
     "scipy.stats.wasserstein_distance(bin_centers, bin_centers, "
@@ -710,7 +710,7 @@ of R3-HI-2.
 
 #### R3-IN-4: Empirical sample-range disparity at the saved-pm1 scale
 
-Verified from `revision/results/matched2000/runs/<model>/42/samples.
+Verified from `results/matched2000/runs/<model>/42/samples.
 npy`:
 - iqp_sel_55_repro: [-0.077, +0.076] (at the `*0.1` cap)
 - V1/V2/V3 quantum: similar range
@@ -730,20 +730,20 @@ consume these samples can be made fairer (R3-CR-1 fix options).
 
 **PASS.** Verified via:
 ```
-$ git log --diff-filter=M --oneline -- revision/core/
+$ git log --diff-filter=M --oneline -- core/
 db59b11 feat(14-01): add non-default 55-param IQP:SEL circuit + D-14-07 equivalence gate
 ... (all prior commits predate Phase 14)
 
-$ git diff --stat 06bb470..HEAD -- revision/core/
+$ git diff --stat 06bb470..HEAD -- core/
 (empty)
 
-$ git diff --stat db59b11..HEAD -- revision/core/
+$ git diff --stat db59b11..HEAD -- core/
 (empty)
 ```
 
-The last modification to `revision/core/` is commit `db59b11` (Phase
+The last modification to `core/` is commit `db59b11` (Phase
 14-01). All subsequent Phase 14 commits (14-02 through 14-15) added
-files OUTSIDE `revision/core/`. The byte-freeze contract is honored
+files OUTSIDE `core/`. The byte-freeze contract is honored
 literally from 14-01 onward.
 
 The 14-01 commit's changes to `models/quantum.py` (the `iqp_sel_55`
@@ -767,16 +767,16 @@ look mid-pack vs classical, possibly worse than historical Aug 2025
 figures." r3's audit finds NO code change between Aug 2025 and 14-15
 that would systematically worsen the quantum-side numbers:
 
-1. **`revision/core/training.py`** — last modified `9872e00` (Phase 13,
+1. **`core/training.py`** — last modified `9872e00` (Phase 13,
    pre-Aug 2025). The training loop is byte-identical to the Aug 2025
    run.
-2. **`revision/core/models/quantum.py`** — last modified `db59b11`
+2. **`core/models/quantum.py`** — last modified `db59b11`
    (14-01). The 55-param `iqp_sel_55` circuit was ADDED in 14-01; the
    `default_75` branch is byte-identical to pre-14-01. If the Aug 2025
    results used `default_75` (V1-style), they are reproducible today
    with no code drift. If they used `iqp_sel_55`, they would only
    exist post-14-01 (so cannot predate 14-01).
-3. **`revision/core/eval.py`** — last modified `721be89` (Phase 8). The
+3. **`core/eval.py`** — last modified `721be89` (Phase 8). The
    raw-sample EMD metric is byte-identical.
 4. **The NEW emitters** (`run_distribution_emd.py`,
    `run_matched2000_dualscale.py`, `run_figure_suite.py` extensions)
@@ -862,12 +862,12 @@ EMD ordering to be the headline column. Better to fix proactively.
 ## Methodology notes
 
 - All empirical claims verified against actual on-disk artifacts in
-  `revision/results/matched2000/runs/` and
-  `revision/results/distribution_emd.json` at HEAD = d52c1a0.
+  `results/matched2000/runs/` and
+  `results/distribution_emd.json` at HEAD = d52c1a0.
 - Synthetic metric-bias demonstrations run from a clean python -m
   invocation against scipy 1.x and numpy 1.x (per
-  `revision/requirements-pinned.txt`).
+  `requirements-pinned.txt`).
 - Byte-freeze attestation via `git log --diff-filter=M -- revision/
-  core/` and `git diff --stat <base>..HEAD -- revision/core/`.
+  core/` and `git diff --stat <base>..HEAD -- core/`.
 - No new artifacts were emitted during this review.
 - Read-only audit of all in-scope files; no edits.

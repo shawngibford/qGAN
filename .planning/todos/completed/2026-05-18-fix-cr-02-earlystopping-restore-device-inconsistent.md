@@ -5,13 +5,13 @@ area: general
 resolves_phase: 13
 source: 10-REVIEW.md (CR-02)
 files:
-  - revision/core/training.py:163-171
+  - core/training.py:163-171
 ---
 
 ## Problem
 
 Code review of Phase 10 (`10-REVIEW.md`, finding CR-02) flagged the
-`EarlyStopping` checkpoint-restore path in `revision/core/training.py` as
+`EarlyStopping` checkpoint-restore path in `core/training.py` as
 **device/dtype-inconsistent with Adam optimizer state after the Phase-10 device
 move**. `torch.load(weights_only=False)` is called with no `map_location`, so
 optimizer/parameter state is restored to whatever device it was saved on, which

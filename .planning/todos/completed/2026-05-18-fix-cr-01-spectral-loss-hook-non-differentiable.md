@@ -5,14 +5,14 @@ area: general
 resolves_phase: 13
 source: 10-REVIEW.md (CR-01)
 files:
-  - revision/core/training.py:356-360
-  - revision/core/training.py:470-507
+  - core/training.py:356-360
+  - core/training.py:470-507
 ---
 
 ## Problem
 
 Code review of Phase 10 (`10-REVIEW.md`, finding CR-01) flagged the opt-in
-`_spectral_psd_loss` hook in `revision/core/training.py` as **non-differentiable
+`_spectral_psd_loss` hook in `core/training.py` as **non-differentiable
 w.r.t. `params_pqc`**: `mse` is a frozen Python float derived from detached numpy
 arrays, and the `mse * var / var.detach()` construction carries zero
 PSD-mismatch gradient. The docstring tells callers they can "opt back in", but

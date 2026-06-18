@@ -28,9 +28,9 @@ import math
 import numpy as np
 import torch
 
-from revision.core.models.classical import WGANMLPGenerator
-from revision.core.models.quantum import QuantumGenerator
-from revision.run_introspect import make_snapshot_cb
+from core.models.classical import WGANMLPGenerator
+from core.models.quantum import QuantumGenerator
+from run_introspect import make_snapshot_cb
 
 _EPS = 1e-6
 # Short-run rescale of the production SNAP {0,250,500,750,999} @ 1000 epochs.

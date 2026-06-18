@@ -4,14 +4,14 @@ plan: 04
 subsystem: revision-figures
 tags: [introspection, figures, matplotlib, render-only, paper-ready]
 requires:
-  - "revision/results/figures/training_progression.json (plan 13-03, INTRO-01)"
-  - "revision/results/figures/param_trajectory.json (plan 13-03, INTRO-02)"
-  - "revision/results/figures/entanglement_trajectory.json (plan 13-03, INTRO-03)"
+  - "results/figures/training_progression.json (plan 13-03, INTRO-01)"
+  - "results/figures/param_trajectory.json (plan 13-03, INTRO-02)"
+  - "results/figures/entanglement_trajectory.json (plan 13-03, INTRO-03)"
 provides:
-  - "revision/run_introspect_figures.py — render-only matplotlib renderer"
-  - "revision/results/figures/training_progression.{png,pdf} — INTRO-01 figure"
-  - "revision/results/figures/param_trajectory.{png,pdf} — INTRO-02 figure"
-  - "revision/results/figures/entanglement_trajectory.{png,pdf} — INTRO-03 figure"
+  - "run_introspect_figures.py — render-only matplotlib renderer"
+  - "results/figures/training_progression.{png,pdf} — INTRO-01 figure"
+  - "results/figures/param_trajectory.{png,pdf} — INTRO-02 figure"
+  - "results/figures/entanglement_trajectory.{png,pdf} — INTRO-03 figure"
 affects:
   - "Phase 14 (paper) consumes these 6 figure files for the R2-6 black-box rebuttal"
 tech-stack:
@@ -22,13 +22,13 @@ tech-stack:
     - "loud FileNotFoundError on any missing companion JSON (no silent partial figure)"
 key-files:
   created:
-    - "revision/run_introspect_figures.py"
-    - "revision/results/figures/training_progression.png"
-    - "revision/results/figures/training_progression.pdf"
-    - "revision/results/figures/param_trajectory.png"
-    - "revision/results/figures/param_trajectory.pdf"
-    - "revision/results/figures/entanglement_trajectory.png"
-    - "revision/results/figures/entanglement_trajectory.pdf"
+    - "run_introspect_figures.py"
+    - "results/figures/training_progression.png"
+    - "results/figures/training_progression.pdf"
+    - "results/figures/param_trajectory.png"
+    - "results/figures/param_trajectory.pdf"
+    - "results/figures/entanglement_trajectory.png"
+    - "results/figures/entanglement_trajectory.pdf"
   modified: []
 decisions:
   - "Per-row shared x-range (0.5/99.5 percentile clip) for training_progression so quantum-vs-classical distribution shapes are visually comparable within a target row (D-13 figure discretion)"
@@ -46,7 +46,7 @@ Render-only matplotlib script that turns the three plan-03 reproducibility JSON 
 
 ## What Was Built
 
-`revision/run_introspect_figures.py` — a single render-only entry point that:
+`run_introspect_figures.py` — a single render-only entry point that:
 
 - Loads the three companion JSON (`training_progression.json`, `param_trajectory.json`, `entanglement_trajectory.json`) and raises a clear `FileNotFoundError` if any is absent (T-13-13 mitigation).
 - **INTRO-01 `training_progression.{png,pdf}`** — 4×5 grid: one row per target (quantum + `wgan_mlp`/`wgan_cnn`/`wgan_lstm`), one column per snapshot epoch {0,250,500,750,1000}; each cell a density histogram of that target's generated samples, all four targets visually side-by-side (D-13-08).

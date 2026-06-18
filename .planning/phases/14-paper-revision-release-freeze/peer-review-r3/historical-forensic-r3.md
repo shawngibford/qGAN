@@ -21,7 +21,7 @@ Specifically:
 1. The headline `EMD = 0.0015` (Figure_10, bottom-middle distance-metrics bar) is
    a **histogram-density Wasserstein on a 51-bin PMF over standardized
    log-returns** — a degenerate metric scaled by the bin width (~0.002) that the
-   v1.0 code-freeze (`revision/core/eval.py:25-36`) deliberately retired in favor
+   v1.0 code-freeze (`core/eval.py:25-36`) deliberately retired in favor
    of raw-sample Wasserstein. Phase 14-15 has already added a parallel
    histogram-density column to `distribution_emd.json` whose IQP:SEL repro mean
    on log-return scale is `0.0365 ± 0.0041` (5-seed) — within an order of
@@ -37,7 +37,7 @@ Specifically:
    reproduce serial dependence — this is *agreement*, not regression.
 
 **Confidence: HIGH.** The 0.0015 → 0.121 trajectory is a metric redefinition
-already disclosed in `revision/docs/reconciliation_note.md` (Phase 14-13 C-3
+already disclosed in `docs/reconciliation_note.md` (Phase 14-13 C-3
 disclosure) and re-grounded with a directly comparable histogram-density column
 in Phase 14-15.
 
@@ -84,7 +84,7 @@ on a single held-out batch. It is *not* a calibrated EMD against the full held-o
 log-return distribution; the orig_np / fake_np in the loss helper are batch tensors
 of standardized residuals.
 
-**v1.0 retirement.** `revision/core/eval.py:25-36` (cited in `peer_review_remediation.md:46`
+**v1.0 retirement.** `core/eval.py:25-36` (cited in `peer_review_remediation.md:46`
 and `reconciliation_note.md:28-29`) switched to:
 ```python
 emd = scipy.stats.wasserstein_distance(real_samples, fake_samples)  # raw 1-D samples
@@ -94,7 +94,7 @@ support*. On log-return scale it gives 0.1212 for the frozen checkpoint and
 0.1229 ± 0.0026 for the 5-seed matched-2000ep IQP:SEL repro. Disclosed as
 NOT-COMMENSURATE with the pre-v1.0 0.0015 (Phase 14-13 C-3 disclosure paragraph).
 
-**Phase 14-15 reintroduction.** `revision/results/distribution_emd.json` re-emits
+**Phase 14-15 reintroduction.** `results/distribution_emd.json` re-emits
 the legacy 50-bin histogram-density Wasserstein *with the correct
 `wasserstein_distance(bin_centers, bin_centers, real_density, fake_density)`
 formulation* (`metric_formulation` field). 5-seed IQP:SEL repro means:
@@ -145,7 +145,7 @@ equivalent in matched-2000ep aggregates → ratio/delta → regression flag.
 | Metric definition | Pre-v1.0 (Figure_10) | v1.0 release (raw-sample) | matched-2000ep histogram-density (Phase 14-15) |
 |---|---|---|---|
 | Formulation | `wasserstein_distance(PMF_real, PMF_fake)` — degenerate, units are PMF differences | `wasserstein_distance(real_samples, fake_samples)` — units are sample-space (OD or log-return) | `wasserstein_distance(bin_centers, bin_centers, real_density, fake_density)` — units are sample-space, restored to the legacy 50-bin convention |
-| Implementation | `qgan_pennylane.ipynb:1554-1572` | `revision/core/eval.py:25-36` | `revision/results/distribution_emd.json#metric_formulation` |
+| Implementation | `qgan_pennylane.ipynb:1554-1572` | `core/eval.py:25-36` | `results/distribution_emd.json#metric_formulation` |
 | IQP:SEL value | **0.0015** (Best, epoch 501 of 1001) | log-return 0.121 (frozen), 0.1229 ± 0.0026 (repro); OD 0.0231 (frozen), 0.0275 ± 0.0051 (repro) | OD 0.0638 ± 0.0051; log-return 0.0365 ± 0.0041 |
 | Commensurate with 0.0015? | self | NO (different metric, different support) | YES — same 50-bin convention; ~24-43× scale difference attributable to formulation correction (proper bin-center weighting vs PMF-as-samples) |
 
@@ -159,7 +159,7 @@ equivalent in matched-2000ep aggregates → ratio/delta → regression flag.
 `wasserstein_distance(empirical_real, empirical_fake)` where both args are
 51-element PMF vectors (renormalized to sum to 1). SciPy treats these as samples,
 yielding a metric scaled by `bin_width ≈ 0.002`. The v1.0 freeze
-(`revision/core/eval.py:25-36`) corrected this to `wasserstein_distance(real_samples, fake_samples)` on raw 1-D arrays. Phase 14-13 C-3 disclosure paragraph
+(`core/eval.py:25-36`) corrected this to `wasserstein_distance(real_samples, fake_samples)` on raw 1-D arrays. Phase 14-13 C-3 disclosure paragraph
 already cites this. Phase 14-15 re-emits the histogram-density variant correctly
 in `distribution_emd.json` and lands within 24-43× of 0.0015 — consistent with
 the formulation correction (the legacy code did not weight by bin centers, so
@@ -210,5 +210,5 @@ true now, not a regression.
 The user's concern that "the historical IQP:SEL was better" is based on
 comparing numbers across metric definitions that the Phase 14 audit has already
 shown to be non-commensurate. The reviewer-facing paper trail is already
-complete in `revision/docs/reconciliation_note.md` (Phase 14-13 C-3) and
-`revision/results/distribution_emd.json` (Phase 14-15).
+complete in `docs/reconciliation_note.md` (Phase 14-13 C-3) and
+`results/distribution_emd.json` (Phase 14-15).

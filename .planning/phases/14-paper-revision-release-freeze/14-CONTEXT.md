@@ -130,9 +130,9 @@ Outlook only.
   55-param IQP:SEL, ansatz V1/V2/V3, wgan_mlp/cnn/lstm, VAE, AR). Columns
   (Claude discretion): params, epochs, early-stop state, optimizer/LR/betas,
   batch, N_CRITIC, λ, seeds, device/dtype, window config, data hash, wall-time.
-- **D-14-16:** New `revision/run_model_info.py` introspects each model's actual
-  training config + run artifacts → emits `revision/results/model_info.json`
-  (long-form schema + `data_hash`). The paper table AND `revision/docs/*.md`
+- **D-14-16:** New `run_model_info.py` introspects each model's actual
+  training config + run artifacts → emits `results/model_info.json`
+  (long-form schema + `data_hash`). The paper table AND `docs/*.md`
   are regenerated FROM that JSON. **No hand-typed numbers** (success criterion
   5); the markdown docs stop being hand-maintained.
 
@@ -157,7 +157,7 @@ Outlook only.
   edited**. PAPER-01..11 edits are delivered as **copy-paste LaTeX blocks keyed
   to section/`\label`/anchor sentence** + a one-line reviewer-comment rationale
   per change.
-- **D-14-19:** `revision/docs/reviewer_response.md` — **per-reviewer sections**;
+- **D-14-19:** `docs/reviewer_response.md` — **per-reviewer sections**;
   each row = comment ID → verbatim concern → change made → manuscript location
   (section/table/fig) → supporting artifact (JSON/figure path). Maps to success
   criterion 1 and AIChE point-by-point rebuttal format.
@@ -173,7 +173,7 @@ Outlook only.
   results JSON, docs, figures) + the `.tex` reference files + `.planning`.
   Excludes `qgan_env/` and large checkpoints (referenced by hash, not committed);
   `data.csv` included (small, needed for reproducibility). Zenodo DOI minted
-  from the GitHub release of the tag; `revision/docs/release.md` records tag SHA
+  from the GitHub release of the tag; `docs/release.md` records tag SHA
   + DOI + reproduce steps.
 - **D-14-22:** **Strict gated pipeline, release freeze LAST.** Hard order:
   (1) recover+lock 55-param config → (2) equivalence assert + freeze
@@ -230,30 +230,30 @@ Outlook only.
   refs; ~11 `savefig` plot routines to port); corroborating config source
 
 ### Training/dataset protocol (regenerate from JSON per D-14-16)
-- `revision/docs/training_protocol.md` — HPO hyperparameters (N_CRITIC=9,
+- `docs/training_protocol.md` — HPO hyperparameters (N_CRITIC=9,
   λ=2.16, LR_C=1.8046e-5, LR_G=6.9173e-5, NUM_EPOCHS=2000, batch=12,
   betas=(0,0.9)); EarlyStopping semantics
-- `revision/docs/dataset_stats.md` — 778 raw rows → 777 log-returns → 384
+- `docs/dataset_stats.md` — 778 raw rows → 777 log-returns → 384
   windows; single-campaign LUCY; data hash basis
 
 ### Core implementation
-- `revision/core/models/quantum.py` — current IQP:SEL impl (Hadamard → IQP RZ →
+- `core/models/quantum.py` — current IQP:SEL impl (Hadamard → IQP RZ →
   IQP noise → Strongly Entangled Layers → final RX/RY); 75-param default;
   `_TOPOLOGIES = ("range","linear")`
-- `revision/core/__init__.py` — `NUM_QUBITS=5, NUM_LAYERS=4, WINDOW_LENGTH=10`
-- `revision/core/training.py` — training loop, device auto-select
+- `core/__init__.py` — `NUM_QUBITS=5, NUM_LAYERS=4, WINDOW_LENGTH=10`
+- `core/training.py` — training loop, device auto-select
   (cuda→mps→cpu), `compute_dtype` float32-on-mps, `EarlyStopping`, dormant
   `callback(epoch, metrics)` hook
-- `revision/results/parity_check.json` — Phase 8 zero-drift parity baseline
+- `results/parity_check.json` — Phase 8 zero-drift parity baseline
 
 ### Manuscript (READ-ONLY — never edit in-repo)
 - `main (4) copy.tex` — manuscript main source (note literal spaces in filename)
 - `supp_material.tex` — supplementary material source
 
 ### Execution patterns
-- `revision/run_ansatz_sweep.sh`, `revision/run_baselines_sweep.sh`,
-  `revision/run_sensitivity_sweep.sh` — `xargs -P2` resumable sweep pattern
-- `revision/results/baselines/sweep_status.json` — resumable sweep-state schema
+- `run_ansatz_sweep.sh`, `run_baselines_sweep.sh`,
+  `run_sensitivity_sweep.sh` — `xargs -P2` resumable sweep pattern
+- `results/baselines/sweep_status.json` — resumable sweep-state schema
 
 </canonical_refs>
 
@@ -261,7 +261,7 @@ Outlook only.
 ## Existing Code Insights
 
 ### Reusable Assets
-- `revision/run_*.py` + `*_sweep.sh` `xargs -P2` resumable drivers — the
+- `run_*.py` + `*_sweep.sh` `xargs -P2` resumable drivers — the
   established pattern for the new 2000ep sweep + `run_model_info.py`
 - `sweep_status.json` resumable state (skip-already-done) — reuse for
   run-to-completion / tier resumption
@@ -269,7 +269,7 @@ Outlook only.
   Phase 13 introspection; reuse for any per-epoch capture
 - Notebook plot routines (`results/run_*/` shows the 8 canonical figure types) —
   port into the new `revision/` figure module
-- `revision/run_introspect_figures.py` — existing PNG+PDF+reproducibility-JSON
+- `run_introspect_figures.py` — existing PNG+PDF+reproducibility-JSON
   figure pattern to follow for the full suite
 - Phase-8 parity-check harness — model for the config-equivalence assertion
 
@@ -287,7 +287,7 @@ Outlook only.
   topology/variant selection (config-selectable, like ARCH-01 topology)
 - New sweep driver(s) feed the existing eval modules
   (`revision.core.eval`) → regenerated long-form JSON → table + figures
-- `revision/docs/{training_protocol,dataset_stats,release,reviewer_response}.md`
+- `docs/{training_protocol,dataset_stats,release,reviewer_response}.md`
   generated/updated from artifacts
 
 </code_context>

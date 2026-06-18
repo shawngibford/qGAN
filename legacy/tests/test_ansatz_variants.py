@@ -16,7 +16,7 @@ import math
 import pytest
 import torch
 
-from revision.core.models.quantum import QuantumGenerator
+from core.models.quantum import QuantumGenerator
 
 # Reference forward vector captured from the PRE-CHANGE quantum.py default path
 # (torch.manual_seed(0); noise = torch.linspace(0.1, 1.3, 5, float32)).

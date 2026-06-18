@@ -24,14 +24,14 @@
 **Source reality:**
 
 ```
-$ grep -nc "1-80" revision/run_methods_full.py
+$ grep -nc "1-80" run_methods_full.py
 3            ← only 3 occurrences, not 4
-$ grep -n "1-80" revision/run_methods_full.py
+$ grep -n "1-80" run_methods_full.py
 152:# Docstring slicer for run_matched2000.py:1-80 — captures the leading module
 265:    # ── Verbatim docstring slice from run_matched2000.py:1-80 ─────────
-524:            "revision/run_matched2000.py:1-80 (module docstring; preserved "
-$ sed -n '560,575p' revision/run_methods_full.py     ← line 566 area
-            "revision/run_matched2000.py": (
+524:            "run_matched2000.py:1-80 (module docstring; preserved "
+$ sed -n '560,575p' run_methods_full.py     ← line 566 area
+            "run_matched2000.py": (
                 "text-only docstring slice (no execution)"
             ),
 ```
@@ -66,10 +66,10 @@ After T4 correctly flips the three actual `1-80` sites to `1-69`, `rmf.count('1-
 **Source reality:**
 
 ```
-$ grep -n "1-80" revision/docs/methods_full.md
-431:`revision/run_matched2000.py` (lines 1-80) — preserved character-for-character
-455:Source: `revision/run_matched2000.py:1-80` (module docstring; preserved
-536:  `revision/run_matched2000.py:1-80` (module docstring) by
+$ grep -n "1-80" docs/methods_full.md
+431:`run_matched2000.py` (lines 1-80) — preserved character-for-character
+455:Source: `run_matched2000.py:1-80` (module docstring; preserved
+536:  `run_matched2000.py:1-80` (module docstring) by
 ```
 
 Three sites in `methods_full.md`, but the plan claims only two: `methods_full.md:455, 536`. Line 431 is missed.
@@ -131,7 +131,7 @@ The OD sensor operates at 880~nm
 Direct file verification:
 
 ```
-$ python3 -c "import json; d=json.load(open('revision/results/ansatz_comparison.json')); print('data_hash:', d.get('data_hash'))"
+$ python3 -c "import json; d=json.load(open('results/ansatz_comparison.json')); print('data_hash:', d.get('data_hash'))"
 data_hash: None
 ```
 
@@ -141,7 +141,7 @@ The plan adds `data_hash: 91e447d4624e25b3` to two of three (noise_model_sensiti
 
 **Note:** The reviewer's text marks REPRO-LOW-1 as LOW because "the resolution chain back-resolves through audited artifacts that do carry the hash". So shipping without ansatz_comparison.json is defensible, but the plan should EITHER (a) explicitly OOS-mark `ansatz_comparison.json` in T1 + the R2 follow-up table, with rationale, OR (b) add it to T1's file list. Currently the plan silently omits it.
 
-**Fix:** Add `revision/results/ansatz_comparison.json` to T1's files list, action Step E, and verify block, OR add an explicit OOS line in T5's `## R2 follow-up sweep` table with rationale (per reviewer's "back-resolves through audited artifacts" framing).
+**Fix:** Add `results/ansatz_comparison.json` to T1's files list, action Step E, and verify block, OR add an explicit OOS line in T5's `## R2 follow-up sweep` table with rationale (per reviewer's "back-resolves through audited artifacts" framing).
 
 ---
 
@@ -182,7 +182,7 @@ m = re.search(r'"generator_to_compute_dtype":\s*"([^"]+)"', rmf)
 **Source reality:**
 
 ```
-$ grep -c "training_time_device" revision/run_matched2000.py
+$ grep -c "training_time_device" run_matched2000.py
 4   (in the existing _device_manifest implementation from 14-13 T4)
 ```
 
@@ -197,7 +197,7 @@ The provenance-review-r2 R2-prov-HIGH-1 recommended `(?<![\d.\-+])` (both `-` an
 ### LOW-3 — VAE β derivation: math is correct, but the derivation collapses the batch dimension
 
 **Plan lines:** 66, 595–615 (action Step A), 665–667 (acceptance criteria)
-**Source:** `revision/run_baselines.py:315-319` actually uses `F.mse_loss(x_hat, x)` (default `reduction='mean'`) which averages over `B × W × F`, and `torch.mean(1 + logvar - mu² - exp(logvar))` averages over `B × L`. The math reviewer's derivation at math-review-r2.md:122–124 correctly includes the batch factor: `loss = (1/(B×W)) Σ_b recon_sum_b + (β/(B×L)) Σ_b kld_sum_b`, leading to `W·B·loss = Σ_b (recon_sum_b + (W/L)·β·kld_sum_b)`, so β_eff = W/L·β = 2.5·1 = 2.5. The plan's derivation collapses to `sum_MSE/10 + sum_KLD/4` (no batch factor); the conclusion β_eff = 2.5 is correct because B cancels symmetrically, but the per-element-mean derivation as written is mathematically loose. Not a blocker; a careful reader would note the missing 1/B in both terms cancels.
+**Source:** `run_baselines.py:315-319` actually uses `F.mse_loss(x_hat, x)` (default `reduction='mean'`) which averages over `B × W × F`, and `torch.mean(1 + logvar - mu² - exp(logvar))` averages over `B × L`. The math reviewer's derivation at math-review-r2.md:122–124 correctly includes the batch factor: `loss = (1/(B×W)) Σ_b recon_sum_b + (β/(B×L)) Σ_b kld_sum_b`, leading to `W·B·loss = Σ_b (recon_sum_b + (W/L)·β·kld_sum_b)`, so β_eff = W/L·β = 2.5·1 = 2.5. The plan's derivation collapses to `sum_MSE/10 + sum_KLD/4` (no batch factor); the conclusion β_eff = 2.5 is correct because B cancels symmetrically, but the per-element-mean derivation as written is mathematically loose. Not a blocker; a careful reader would note the missing 1/B in both terms cancels.
 
 **Note:** This matches what the prompt told me to verify — "β_eff = W/L = 10/4 = 2.5 (KL up-weighted)". The conclusion is sound. Flagging only because the prompt requested rigorous derivation cross-check.
 
@@ -212,7 +212,7 @@ Plan line 1191's verify uses `--differential-test` flag invocation; the gate's a
 Per the prompt's "Locked decisions to honor" list, the following were considered for flagging and correctly NOT flagged:
 
 - **D-14-16 LIFTED for T1 only** — one-character regex fix; v2.1 schema bump; back to byte-freeze after T1. Reviewer recommended both `-` and `+` in lookbehind; plan scope is `-` only. User-locked, not flagged.
-- **D-14-22 PRESERVED** — every task verify asserts `[ -z "$(git diff --stat revision/core/)" ]`. Verified across all 5 task verify blocks. Not flagged (correctly enforced).
+- **D-14-22 PRESERVED** — every task verify asserts `[ -z "$(git diff --stat core/)" ]`. Verified across all 5 task verify blocks. Not flagged (correctly enforced).
 - **D-14-13 PRESERVED** — T2 corrects only capture site; `_strict_accept` equality check semantics unchanged. Plan's action Step E (line 537–542) is explicit. Not flagged.
 - **R2-code-HIGH-2 (ε-neighborhood broad coincidences) DOCUMENTED, NOT TIGHTENED** — T5 Step C appends `## Gate v2.1 known limitations` to peer_review_remediation.md with the `-0.26 → -0.2570036` concrete example. User-locked disclosure-not-tighten path. Not flagged.
 - **Apparatus dimensions JSON restructure** — user-locked to "per-unit subfields", with execution-time LaTeX verification. The proposed field-name template is wrong vs LaTeX semantics, BUT the user locked the *approach* not the *literal names*. Flagged as HIGH-1 above (downgraded from BLOCKER) because executor discretion is preserved by the "verify at execution time" instruction.
@@ -237,7 +237,7 @@ For each of T5's final 12 checks, traced back to the task that establishes it:
 | 9 | `requirements-pinned.txt` includes `statsmodels==0.14.5` | T4 Step E ✓ |
 | 10 | `REPRODUCE.md` exists at repo root, links to methods_full.md §5.2 + completeness_sweep_manifest.md | T4 Step F ✓ |
 | 11 | `peer_review_remediation.md` carries v2.1-limitations + r2-follow-up sections; every r2 finding mapped | T5 Steps C+D ✓ |
-| 12 | `git diff` against pre-14-14 main shows zero `revision/core/` changes | every task verify asserts this ✓ |
+| 12 | `git diff` against pre-14-14 main shows zero `core/` changes | every task verify asserts this ✓ |
 
 All 12 checks trace to concrete establishing tasks. The only goal-backward gap is the `ansatz_comparison.json` data_hash (MEDIUM-1) which is not in the 12-check list but is in the reviewer's REPRO-LOW-1 — minor.
 

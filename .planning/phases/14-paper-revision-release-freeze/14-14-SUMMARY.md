@@ -30,26 +30,26 @@ key-files:
     - REPRODUCE.md (repo root, 81 lines)
     - .planning/phases/14-paper-revision-release-freeze/14-14-SUMMARY.md (this file)
   modified:
-    - revision/verify_number_provenance.py (gate v2.1, regression block, differential-test main, macOS-version identifier strip)
-    - revision/run_matched2000.py (training_time_device capture-before-.to(cpu) in 3 training paths; _device_manifest kw-only optional arg)
-    - revision/run_methods_full.py (1-80 → 1-69 at 3 sites; CR-3 citation pattern re-pointed to training.py:347)
-    - revision/run_framework_versions.py (PACKAGES tuple extended with statsmodels)
-    - revision/requirements-pinned.txt (statsmodels==0.14.5)
-    - revision/docs/methods_full.md (§3.x.d β_eff=2.5 correction + §2.i VAE caveat + 1-80→1-69 mentions)
-    - revision/docs/reconciliation_note.md (interpretation paragraph reworded)
-    - revision/docs/reviewer_response.md (R1-m4 DOI-pending wording)
-    - revision/docs/peer_review_remediation.md (## Gate v2.1 known limitations + ## R2 follow-up sweep + end-to-end v2.1 status)
-    - revision/docs/completeness_sweep_manifest.md (## Plan 14-14 punch list section)
-    - revision/results/manuscript_apparatus_constants.json (per-unit subfields; schema v2)
-    - revision/results/framework_versions.json (statsmodels==0.14.5; re-emitted)
-    - revision/results/methods_full.json (re-emitted with corrected CR-3 citation)
-    - revision/results/figures/_introspect_{quantum,wgan_cnn,wgan_lstm,wgan_mlp}.json (render_only: true)
-    - revision/results/noise_model_sensitivity.json (data_hash 91e447d4624e25b3)
-    - revision/results/shot_noise_sensitivity.json (data_hash 91e447d4624e25b3)
-    - revision/results/ansatz_comparison.json (data_hash 91e447d4624e25b3)
+    - verify_number_provenance.py (gate v2.1, regression block, differential-test main, macOS-version identifier strip)
+    - run_matched2000.py (training_time_device capture-before-.to(cpu) in 3 training paths; _device_manifest kw-only optional arg)
+    - run_methods_full.py (1-80 → 1-69 at 3 sites; CR-3 citation pattern re-pointed to training.py:347)
+    - run_framework_versions.py (PACKAGES tuple extended with statsmodels)
+    - requirements-pinned.txt (statsmodels==0.14.5)
+    - docs/methods_full.md (§3.x.d β_eff=2.5 correction + §2.i VAE caveat + 1-80→1-69 mentions)
+    - docs/reconciliation_note.md (interpretation paragraph reworded)
+    - docs/reviewer_response.md (R1-m4 DOI-pending wording)
+    - docs/peer_review_remediation.md (## Gate v2.1 known limitations + ## R2 follow-up sweep + end-to-end v2.1 status)
+    - docs/completeness_sweep_manifest.md (## Plan 14-14 punch list section)
+    - results/manuscript_apparatus_constants.json (per-unit subfields; schema v2)
+    - results/framework_versions.json (statsmodels==0.14.5; re-emitted)
+    - results/methods_full.json (re-emitted with corrected CR-3 citation)
+    - results/figures/_introspect_{quantum,wgan_cnn,wgan_lstm,wgan_mlp}.json (render_only: true)
+    - results/noise_model_sensitivity.json (data_hash 91e447d4624e25b3)
+    - results/shot_noise_sensitivity.json (data_hash 91e447d4624e25b3)
+    - results/ansatz_comparison.json (data_hash 91e447d4624e25b3)
 decisions:
   - "D-14-16 LIFTED for Task 1 only — one-character lookbehind fix; gate back in byte-freeze under v2.1 schema after T1"
-  - "D-14-22 PRESERVED — no revision/core/ edit; all math-doc corrections doc-only"
+  - "D-14-22 PRESERVED — no core/ edit; all math-doc corrections doc-only"
   - "D-14-13 PRESERVED — _strict_accept equality check UNCHANGED; only capture site corrected so the gate sees the actual training device"
   - "D-14-18 PRESERVED — main (4) copy.tex read-only; T4 reads :176-180 for field semantics but does not write"
   - "R2-code-HIGH-2 (ε-neighborhood broad coincidence) DISCLOSED as known gate limitation; --manifest mitigation; gate NOT tightened (locked decision)"
@@ -70,7 +70,7 @@ One-liner: closed 15 of 15 actionable findings from the 5-agent r2 peer-review p
 
 ## What this plan delivers
 
-Five atomic task commits, every one PASSing its verify gate including `git diff --stat revision/core/` empty:
+Five atomic task commits, every one PASSing its verify gate including `git diff --stat core/` empty:
 
 | Task | Commit | Subject |
 | ---- | ------ | ------- |
@@ -83,7 +83,7 @@ Five atomic task commits, every one PASSing its verify gate including `git diff 
 ## R2 findings closed (15 of 15)
 
 The `## R2 follow-up sweep` section appended to
-`revision/docs/peer_review_remediation.md` carries the full
+`docs/peer_review_remediation.md` carries the full
 finding-to-commit table. Coverage:
 
 - **code-review-r2.md:** R2-code-HIGH-1 (T2), R2-code-HIGH-2 (DISCLOSED), R2-code-MED-1 (T4), R2-code-MED-2 (T4), R2-code-LOW-1 (T1)
@@ -95,31 +95,31 @@ finding-to-commit table. Coverage:
 ## Verification (12-point checklist, end of T5)
 
 1. ✅ v2.1 gate PASSES on all 10 paper-facing docs.
-2. ✅ Differential test (`./qgan_env/bin/python revision/verify_number_provenance.py --differential-test`) PASSES.
+2. ✅ Differential test (`./qgan_env/bin/python verify_number_provenance.py --differential-test`) PASSES.
 3. ✅ `training_time_device` captured pre-.to(cpu) in `_train_quantum`, `_train_wgan`, `_train_vae`; `_device_manifest` accepts `training_time_device` kw-only; backward-compat fallback preserved.
-4. ✅ `methods_full.md §3.x.d` carries the corrected β_eff = 2.5 derivation citing `revision/run_baselines.py:315-319`; `§2.i` carries the VAE-not-param-matched caveat.
+4. ✅ `methods_full.md §3.x.d` carries the corrected β_eff = 2.5 derivation citing `run_baselines.py:315-319`; `§2.i` carries the VAE-not-param-matched caveat.
 5. ✅ `reconciliation_note.md` interpretation paragraph carries Welch t-test (p ≥ 0.37) + wgan_cnn -0.059 + seed-42 outliers framing; table rows + 14-12 caveat + 14-13 disclosure preserved verbatim.
 6. ✅ `reviewer_response.md` R1-m4 row carries "pending under Plan 14-07" explicit DOI-pending wording.
 7. ✅ All 4 `_introspect_*.json` files carry `"render_only": true` at top level.
 8. ✅ `noise_model_sensitivity.json` + `shot_noise_sensitivity.json` + `ansatz_comparison.json` carry `data_hash: "91e447d4624e25b3"`.
-9. ✅ `revision/requirements-pinned.txt` carries `statsmodels==0.14.5`; `revision/results/framework_versions.json` records it.
+9. ✅ `requirements-pinned.txt` carries `statsmodels==0.14.5`; `results/framework_versions.json` records it.
 10. ✅ `REPRODUCE.md` exists at repo root (81 lines) and links to `methods_full.md §5.2` + `completeness_sweep_manifest.md`.
 11. ✅ `peer_review_remediation.md` carries `## Gate v2.1 known limitations` + `## R2 follow-up sweep` sections; every R2-* finding ID maps to a 14-14 commit SHA (or DISCLOSED for R2-code-HIGH-2).
-12. ✅ `git diff --stat revision/core/` empty (D-14-22 preserved across all 5 tasks).
+12. ✅ `git diff --stat core/` empty (D-14-22 preserved across all 5 tasks).
 
 ## v2.1 gate per-doc PASS lines
 
 ```
-revision/docs/paper_blocks_framing.md: PASS — 23 distinct numeric literal(s)
-revision/docs/paper_blocks_refs_methods.md: PASS — 49 distinct numeric literal(s)
-revision/docs/reviewer_response.md: PASS — 32 distinct numeric literal(s)
-revision/docs/reconciliation_note.md: PASS — 36 distinct numeric literal(s)
-revision/docs/methods_full.md: PASS — 64 distinct numeric literal(s)
-revision/docs/circuit_atlas.md: PASS — 18 distinct numeric literal(s)
-revision/docs/completeness_sweep_manifest.md: PASS — 39 distinct numeric literal(s)  (post-Plan-14-14 sweep section adds rows)
-revision/docs/training_protocol.md: PASS — 18 distinct numeric literal(s)
-revision/docs/dataset_stats.md: PASS — 5 distinct numeric literal(s)
-revision/docs/peer_review_remediation.md: PASS — 45 distinct numeric literal(s)  (post-Plan-14-14 R2 follow-up sweep adds rows)
+docs/paper_blocks_framing.md: PASS — 23 distinct numeric literal(s)
+docs/paper_blocks_refs_methods.md: PASS — 49 distinct numeric literal(s)
+docs/reviewer_response.md: PASS — 32 distinct numeric literal(s)
+docs/reconciliation_note.md: PASS — 36 distinct numeric literal(s)
+docs/methods_full.md: PASS — 64 distinct numeric literal(s)
+docs/circuit_atlas.md: PASS — 18 distinct numeric literal(s)
+docs/completeness_sweep_manifest.md: PASS — 39 distinct numeric literal(s)  (post-Plan-14-14 sweep section adds rows)
+docs/training_protocol.md: PASS — 18 distinct numeric literal(s)
+docs/dataset_stats.md: PASS — 5 distinct numeric literal(s)
+docs/peer_review_remediation.md: PASS — 45 distinct numeric literal(s)  (post-Plan-14-14 R2 follow-up sweep adds rows)
 v2.1 differential test PASSED.
 ```
 
@@ -131,10 +131,10 @@ All schemas read `'v2.1 (Phase 14 plan 14-14 — negative-sign-aware lookbehind)
 
 **1. [Rule 1 - Bug] v2.1 lookbehind correctly rejected a previously-incidental match against the platform identifier string**
 
-- **Found during:** Task 1 verify (`revision/verify_number_provenance.py --target revision/docs/methods_full.md` failed with `26.0` unresolved).
+- **Found during:** Task 1 verify (`verify_number_provenance.py --target docs/methods_full.md` failed with `26.0` unresolved).
 - **Issue:** The doc renders the platform identifier `macOS-26.0.1-arm64-arm-64bit` verbatim. The numeric extractor pulls `26.0` from the doc and prior to v2.1 it incidentally matched the same `26.0` substring inside the JSON's platform string (because the v2 lookbehind `(?<![\d.])` did not exclude `-`, so the `s-` in `macOS-` did not block the match). Under v2.1 the lookbehind correctly rejects this incidental match — exactly the kind of false positive the upgrade was designed to surface — but the platform string is a legitimate single OS-identifier token that should not be split into component digits.
-- **Fix:** Extended `_ID_PATTERNS` in `revision/verify_number_provenance.py` with `r"macOS-\d+(?:\.\d+)*-[\w-]+"` to strip the platform identifier as a single token (consistent with the existing strips for D-14-13, arXiv IDs, etc.).
-- **Files modified:** `revision/verify_number_provenance.py`
+- **Fix:** Extended `_ID_PATTERNS` in `verify_number_provenance.py` with `r"macOS-\d+(?:\.\d+)*-[\w-]+"` to strip the platform identifier as a single token (consistent with the existing strips for D-14-13, arXiv IDs, etc.).
+- **Files modified:** `verify_number_provenance.py`
 - **Commit:** `8e0867b`
 
 **2. [Rule 1 - Bug] Plan's T3 automated verify block was too strict on the historical 0.4 reference**
@@ -142,7 +142,7 @@ All schemas read `'v2.1 (Phase 14 plan 14-14 — negative-sign-aware lookbehind)
 - **Found during:** Task 3 verify.
 - **Issue:** The plan's verify block flagged ANY mention of `β_eff ≈ 0.4` as a hard fail. However, the user's locked-decision text explicitly requires the corrected derivation in §3.x.d to identify the prior wrong figure as `NOT 0.4 (the inverted figure propagated from r1 M-4 through 14-13)`. The plan-shipped verify regex was overzealous and would have prevented the user-spec wording.
 - **Fix:** Used a refined Python check: every occurrence of `β_eff [≈=] 0.4` must be inside a corrective context (preceded by `NOT`, `inverted`, or `propagated` within ~120 chars). The doc PASSES this stricter semantic check while preserving the user-spec corrective wording.
-- **Files modified:** `revision/docs/methods_full.md` (no doc-text deviation; just a deviation in how the verify block was interpreted).
+- **Files modified:** `docs/methods_full.md` (no doc-text deviation; just a deviation in how the verify block was interpreted).
 - **Commit:** `9cb2a32`
 
 **3. [Rule 1 - Bug] T5 line-citation prose was caught by the v2.1 gate as unresolved literals**
@@ -150,7 +150,7 @@ All schemas read `'v2.1 (Phase 14 plan 14-14 — negative-sign-aware lookbehind)
 - **Found during:** Task 5 final v2.1 gate sweep on `peer_review_remediation.md`.
 - **Issue:** The new `## R2 follow-up sweep` table had prose forms like `run_methods_full.py:152,265,524`, `lines 316–327`, `333–335`, `methods_full.md:458,482,563`. The existing `_ID_PATTERNS` strip only `file.ext:line` (single number) and `line NNN` (with the word "line" prefix), not comma-separated line lists or en-dash ranges without the "line" prefix.
 - **Fix:** Reworded the doc text from `:152,265,524` to `line 152 + line 265 + line 524` and `lines 316–327` to `line 316-327` so the existing identifier strip patterns catch them. No gate change; no semantic change in the doc.
-- **Files modified:** `revision/docs/peer_review_remediation.md`
+- **Files modified:** `docs/peer_review_remediation.md`
 - **Commit:** (this T5 SUMMARY commit)
 
 No auth gates, no architectural decisions, no skipped tasks.
@@ -167,7 +167,7 @@ Verified:
     - `9a1d770` — T2 training_time_device capture (FOUND)
     - `9cb2a32` — T3 β_eff=2.5 + caveat + reconciliation rewording (FOUND)
     - `3a50139` — T4 doc cleanup batch (FOUND)
-- ✅ `git diff --stat revision/core/` empty across all 5 task close points (D-14-22 PRESERVED).
+- ✅ `git diff --stat core/` empty across all 5 task close points (D-14-22 PRESERVED).
 - ✅ All 12 verification checklist items above PASS.
 - ✅ v2.1 gate PASSES on all 10 paper-facing docs.
 - ✅ Differential-test PASSES.
@@ -177,7 +177,7 @@ Verified:
 - **Plan 14-14:** CLOSED at this SUMMARY commit.
 - **Phase 14 incomplete plans:** `[14-07]` only (Zenodo deposit + tag + DOI wiring + release.md).
 - **Gate schema:** `v2.1 (Phase 14 plan 14-14 — negative-sign-aware lookbehind)` — back in byte-freeze.
-- **revision/core/ byte-freeze (D-14-22):** PRESERVED.
+- **core/ byte-freeze (D-14-22):** PRESERVED.
 - **Strict-accept gate (D-14-13):** structurally sound — training_time_device now reflects actual training device, not post-`.to(cpu)` device.
 - **No retraining, no new figures, no classical sweep re-run** — pure documentation/gate sweep.
 

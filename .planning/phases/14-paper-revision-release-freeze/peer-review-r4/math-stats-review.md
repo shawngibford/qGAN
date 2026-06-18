@@ -19,16 +19,16 @@
 
 ## PART A — Metric implementation correctness
 
-### A1. Wasserstein/EMD (raw-sample) — CORRECT — `revision/core/eval.py:25-36`
+### A1. Wasserstein/EMD (raw-sample) — CORRECT — `core/eval.py:25-36`
 `compute_emd` calls `scipy.stats.wasserstein_distance(real, fake)` on raveled raw samples. This is the mathematically correct 1-D EMD (L1 Wasserstein-1 between empirical CDFs). No issue.
 
-### A2. R3-CR-2 un-standardize-fake recipe — MATHEMATICALLY CORRECT — `revision/run_matched2000_dualscale.py:384-387`
+### A2. R3-CR-2 un-standardize-fake recipe — MATHEMATICALLY CORRECT — `run_matched2000_dualscale.py:384-387`
 `trans_flat_raw = trans_flat * r["sigma"] + r["mu"]` un-standardizes the fake log-returns to raw units before `compute_emd(real_log_delta, trans_flat_raw)`. Both sides are now in the same (raw log-return) units. **Verified:** the post-fix LR-EMD aggregates (AR 0.00294, iqp_sel_55 0.01497, VAE 0.01583) match the magnitudes the docs anchor to. The fix is sound. **MEDIUM caveat (M3 below):** un-standardize-fake and standardize-real are *both* valid scale-matched recipes but produce EMD in different units; the choice of un-standardize-fake is unit-convention, not correctness — adequately disclosed at `methods_full.md:381-383`.
 
-### A3. R3-CR-1 shared-edges histogram-density EMD — CORRECT, with a self-undermining finding — `revision/run_distribution_emd.py:124-172`
+### A3. R3-CR-1 shared-edges histogram-density EMD — CORRECT, with a self-undermining finding — `run_distribution_emd.py:124-172`
 The v2 formulation (`density=False`, edges from real only, both histograms normalized to total-mass=1 over the same edge set, out-of-range mass disclosed via `fake_in_range_mass`) is mathematically sound and fixes the renormalization bias. The self-test (`self_emd == 0.0`, `self_fim == 1.0`, lines 341-350) is a valid invariant. **However** `methods_full.md:410-416` itself states that with shared edges, `density=True` vs `density=False` is *numerically inert* for `scipy.stats.wasserstein_distance` (which renormalizes weights internally) and the OD-scale v1→v2 aggregates are byte-identical — i.e. the *only* genuine R3-CR-1 contribution is the `fake_in_range_mass` disclosure stat. This is honestly disclosed; not a defect, but it means the "R3-CR-1 bug fix" is largely a disclosure-stat addition rather than a value correction. No action required — flagged only so the swarm does not over-credit it.
 
-### A4. DTW — CORRECT implementation, but see C1 on the claim — `revision/core/eval.py:78-90`
+### A4. DTW — CORRECT implementation, but see C1 on the claim — `core/eval.py:78-90`
 `fastdtw` with Euclidean metric on `(-1,1)`-reshaped windows is a standard DTW. The `min`-over-64-real-windows / 100-synth subsampling recipe (`run_matched2000_dualscale.py:334-352, 403-426`) with `np.random.default_rng(s*31)` is reproducible. Implementation is fine. The *claim* built on it has issues (C1).
 
 ### A5. Moments / ACF ddof — CORRECT and consistently applied
@@ -43,7 +43,7 @@ I recomputed all 20 OD-EMD pairs from `matched2000_dualscale.json` source rows: 
 
 ### B1. CRITICAL — The OD-EMD "parametric-efficiency equivalence" claim is **not statistically defensible as stated**: it equates a non-significant difference test with positive evidence of equivalence.
 
-**Where:** `revision/docs/reviewer_response.md:269-272, 283-323`; `revision/docs/methods_full.md:398-399`; `revision/run_welch_aggregator.py:138-182` (the `strong_claim_thresholds` gate).
+**Where:** `docs/reviewer_response.md:269-272, 283-323`; `docs/methods_full.md:398-399`; `run_welch_aggregator.py:138-182` (the `strong_claim_thresholds` gate).
 
 **The claim verbatim** (`reviewer_response.md:269-272`):
 > "55 quantum parameters achieve OD-scale EMD **statistically equivalent** to classical generators of 73-562 generator params ... (Welch p > 0.36, |d| ≤ 0.65, n=5)."

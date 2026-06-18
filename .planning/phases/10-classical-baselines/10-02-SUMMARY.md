@@ -4,14 +4,14 @@ plan: 02
 subsystem: revision
 tags: [baselines, cli-driver, wgan-gp, vae, autoregressive, artifact-bundle]
 requires:
-  - revision/run_ablation.py (verbatim A/B + bundle template)
-  - revision/core/training.py::train_wgan_gp (WGAN branch, UNCHANGED — D-10-08)
-  - revision/core/models/classical.py (WGAN{MLP,CNN,LSTM}Generator — plan 01)
-  - revision/core/models/nonadversarial.py (VAEBaseline, ARBaseline — plan 01)
-  - revision/core/models/critic.py (shared Critic — D-10-08)
-  - revision/core/preprocessing.py (forward_logreturns/minmax + inverse_logreturns)
+  - run_ablation.py (verbatim A/B + bundle template)
+  - core/training.py::train_wgan_gp (WGAN branch, UNCHANGED — D-10-08)
+  - core/models/classical.py (WGAN{MLP,CNN,LSTM}Generator — plan 01)
+  - core/models/nonadversarial.py (VAEBaseline, ARBaseline — plan 01)
+  - core/models/critic.py (shared Critic — D-10-08)
+  - core/preprocessing.py (forward_logreturns/minmax + inverse_logreturns)
 provides:
-  - revision/run_baselines.py (per-(model,pipeline,seed) CLI driver, 5-file bundle + data_hash)
+  - run_baselines.py (per-(model,pipeline,seed) CLI driver, 5-file bundle + data_hash)
   - cross-family sample-space comparability gate (RESEARCH Pitfall 3) — GREEN
 affects:
   - Wave 3 (50-run sweep) — invokes this driver per (model,pipeline,seed)
@@ -23,7 +23,7 @@ tech-stack:
     - model-family dispatch (WGAN via shared loop / VAE local ELBO / AR lstsq)
 key-files:
   created:
-    - revision/run_baselines.py
+    - run_baselines.py
   modified: []
 decisions:
   - "Task 2 plan verify snippet (inverse_logreturns(s, **ik)) is incompatible with the actual inverse_logreturns(r_norm, od_start, mu, sigma) signature; implemented the gate via the notebook reconstruct_od B-branch logic (the identical Wave-4 inverse path the plan mandates) instead [Rule 1]"
@@ -38,12 +38,12 @@ metrics:
 
 # Phase 10 Plan 02: run_baselines.py CLI Driver Summary
 
-Built `revision/run_baselines.py` — the idempotent per-(model,pipeline,seed) Phase 10 driver with three model-family branches (WGAN-GP via the unchanged shared `train_wgan_gp` loop + shared `Critic`, VAE via a local ELBO loop, AR via closed-form lstsq), emitting the same 5-file artifact bundle as Phase 09.1 plus a NEW `data_hash` field — and verified the cross-family sample-space comparability gate (RESEARCH Pitfall 3, the top BASE-03 risk control) is GREEN before any sweep.
+Built `run_baselines.py` — the idempotent per-(model,pipeline,seed) Phase 10 driver with three model-family branches (WGAN-GP via the unchanged shared `train_wgan_gp` loop + shared `Critic`, VAE via a local ELBO loop, AR via closed-form lstsq), emitting the same 5-file artifact bundle as Phase 09.1 plus a NEW `data_hash` field — and verified the cross-family sample-space comparability gate (RESEARCH Pitfall 3, the top BASE-03 risk control) is GREEN before any sweep.
 
 ## What Was Built
 
-**Task 1 — `revision/run_baselines.py`** (commit `33b8f71`)
-- `argparse`: `--model {wgan_mlp,wgan_cnn,wgan_lstm,vae,ar}`, `--pipeline {A,B}` (C dropped, D-10-05), `--seed int`, `--epochs int`, `--out-root` default `revision/results/baselines`, `--csv-path` default `./data.csv`.
+**Task 1 — `run_baselines.py`** (commit `33b8f71`)
+- `argparse`: `--model {wgan_mlp,wgan_cnn,wgan_lstm,vae,ar}`, `--pipeline {A,B}` (C dropped, D-10-05), `--seed int`, `--epochs int`, `--out-root` default `results/baselines`, `--csv-path` default `./data.csv`.
 - `build_dataset_for_pipeline`: A and B branches copied VERBATIM from `run_ablation.py` (D-10-07 — identical windowed data + `inverse_kwargs` contract + identical `DataLoader(ds, batch_size=BATCH_SIZE, shuffle=False, drop_last=True)`); C branch deleted (D-10-05). `_save_inverse_kwargs` copied verbatim.
 - HPO constants imported from `revision.core` (BATCH_SIZE, EVAL_EVERY, LAMBDA, LR_CRITIC, LR_GENERATOR, N_CRITIC, NOISE_HIGH, NOISE_LOW, NUM_LAYERS, NUM_QUBITS, WINDOW_LENGTH) — never hardcoded (D-10-08).
 - **WGAN branch** (wgan_mlp/wgan_cnn/wgan_lstm): `torch.manual_seed(seed)` → matching generator → `Critic(window_length=WINDOW_LENGTH)` → `train_wgan_gp(...)` called UNCHANGED with the HPO constants (D-10-08) → samples via `generator(noise=(NUM_QUBITS,bs)).to(float64) * 0.1` (the `*0.1` is mandatory WGAN/quantum-output scaling) → `checkpoint.pt = {gen_state_dict, critic_state_dict}`, `metrics.json` = per-epoch dict from `train_wgan_gp`.
@@ -96,4 +96,4 @@ None. All three model-family branches are fully implemented and produce verified
 
 ## Self-Check: PASSED
 
-`revision/run_baselines.py` exists on disk; commit `33b8f71` present in `git log`.
+`run_baselines.py` exists on disk; commit `33b8f71` present in `git log`.

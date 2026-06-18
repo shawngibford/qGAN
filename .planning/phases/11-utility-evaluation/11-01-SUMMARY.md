@@ -11,9 +11,9 @@ requires:
   - phase: 09.1-preprocessing-ablation
     provides: "10 frozen quantum transform_ablation samples.npy (Pipelines A/B x seeds 42-46)"
 provides:
-  - "revision/run_utility.py — EVAL-01 TSTR + EVAL-04 augmentation driver (verbatim reconstruct_od + train_eval_tstr reuse)"
-  - "revision/results/tstr.json — TSTR R2/MAE/RMSE long-form rows + real_only_baseline anchor (R2=-13.3542, exact Phase-10 reproduction)"
-  - "revision/results/augmentation.json — Orlandi-style mixing-ratio lift table (real_only/+25%/+50%/+100%/synthetic_only) with delta metrics"
+  - "run_utility.py — EVAL-01 TSTR + EVAL-04 augmentation driver (verbatim reconstruct_od + train_eval_tstr reuse)"
+  - "results/tstr.json — TSTR R2/MAE/RMSE long-form rows + real_only_baseline anchor (R2=-13.3542, exact Phase-10 reproduction)"
+  - "results/augmentation.json — Orlandi-style mixing-ratio lift table (real_only/+25%/+50%/+100%/synthetic_only) with delta metrics"
 affects: [12-sensitivity, 14-paper-revision]
 
 # Tech tracking
@@ -26,9 +26,9 @@ tech-stack:
 
 key-files:
   created:
-    - revision/run_utility.py
-    - revision/results/tstr.json
-    - revision/results/augmentation.json
+    - run_utility.py
+    - results/tstr.json
+    - results/augmentation.json
   modified: []
 
 key-decisions:
@@ -62,10 +62,10 @@ completed: 2026-05-17
 
 ## Accomplishments
 
-- `revision/run_utility.py`: a single CLI driver patterned on `run_baselines.py`, copying `_run_base`/`reconstruct_od` and `TSTRLiteLSTM`/`r2_score_inline`/`train_eval_tstr` **verbatim** from `_build_baseline_notebook.py` (the Pipeline-B `np.random.default_rng(seed*7919+1)` od_start draw is preserved; MAE/RMSE added inline since sklearn is absent).
+- `run_utility.py`: a single CLI driver patterned on `run_baselines.py`, copying `_run_base`/`reconstruct_od` and `TSTRLiteLSTM`/`r2_score_inline`/`train_eval_tstr` **verbatim** from `_build_baseline_notebook.py` (the Pipeline-B `np.random.default_rng(seed*7919+1)` od_start draw is preserved; MAE/RMSE added inline since sklearn is absent).
 - **EVAL-01 (`tstr.json`)**: 144 long-form rows + 12 (model|pipeline) aggregate blocks. `real_only_baseline` reproduces the Phase-10 anchor **exactly**: R2 = -13.3542 ± 0.5833 (anchor: -13.354 ± 0.583), n_train_real=65, n_eval_real=320. Pipeline-B headline TSTR R2 is strong (ar|B 0.998, wgan_mlp|B 0.997, quantum|B in the high-0.99 band); Pipeline A is the expected weak raw-OD control (negative R2 for several models).
 - **EVAL-04 (`augmentation.json`)**: 180 long-form rows + 12 lift blocks across conditions {real_only, +25%, +50%, +100%, synthetic_only}, with `r2_delta`/`mae_delta`/`rmse_delta` vs the real-only anchor. All 12 real_only R2 are negative (leakage sentinel clean). Largest lift is `synthetic_only` on Pipeline B (r2_delta ≈ +14.35), consistent with the ~60× synthetic-budget advantage documented in metadata as a lower-bound caveat.
-- **Invariants held:** recomputed `data_hash == 91e447d4624e25b3` and equals all 50 baseline `config.yaml` hashes; `git diff --stat revision/core/` empty after every task (D-11-10).
+- **Invariants held:** recomputed `data_hash == 91e447d4624e25b3` and equals all 50 baseline `config.yaml` hashes; `git diff --stat core/` empty after every task (D-11-10).
 
 ## Task Commits
 
@@ -77,14 +77,14 @@ Each task was committed atomically:
 
 ## Files Created/Modified
 
-- `revision/run_utility.py` - Phase 11 driver: EVAL-01 TSTR + EVAL-04 augmentation; verbatim recon/TSTR reuse; repo-root resolver; data-hash invariant + leakage guard.
-- `revision/results/tstr.json` - 144 long-form R2/MAE/RMSE rows + per-(model|pipeline) aggregates + `real_only_baseline` anchor block.
-- `revision/results/augmentation.json` - 180 long-form delta rows + per-generator lift blocks + ~60× lower-bound caveat metadata.
+- `run_utility.py` - Phase 11 driver: EVAL-01 TSTR + EVAL-04 augmentation; verbatim recon/TSTR reuse; repo-root resolver; data-hash invariant + leakage guard.
+- `results/tstr.json` - 144 long-form R2/MAE/RMSE rows + per-(model|pipeline) aggregates + `real_only_baseline` anchor block.
+- `results/augmentation.json` - 180 long-form delta rows + per-generator lift blocks + ~60× lower-bound caveat metadata.
 
 ## Decisions Made
 
-- **One driver, two flags** (`--tstr-only` / `--augmentation-only`): the plan named one file `revision/run_utility.py` for both EVAL-01 and EVAL-04; a single cohesive driver keeps the verbatim recon/TSTR code defined once and shared by both, matching the plan's stated artifact list.
-- **`base` path anchored at resolved `REPO` root** (vs the notebook's relative `Path("revision/results/...")`): required so the driver produces identical numbers whether invoked from the worktree or the main repo. This is a faithfulness-preserving adaptation, not a logic change — the seeded RNG draw, branch math, and inverse-transform calls are byte-identical to `_build_baseline_notebook.py:167-208`.
+- **One driver, two flags** (`--tstr-only` / `--augmentation-only`): the plan named one file `run_utility.py` for both EVAL-01 and EVAL-04; a single cohesive driver keeps the verbatim recon/TSTR code defined once and shared by both, matching the plan's stated artifact list.
+- **`base` path anchored at resolved `REPO` root** (vs the notebook's relative `Path("results/...")`): required so the driver produces identical numbers whether invoked from the worktree or the main repo. This is a faithfulness-preserving adaptation, not a logic change — the seeded RNG draw, branch math, and inverse-transform calls are byte-identical to `_build_baseline_notebook.py:167-208`.
 - **Reused Phase-10 `TSTRLiteLSTM` verbatim** (Open Question 2 RESOLVED in RESEARCH): lowest-risk, maximally comparable to the already-published Phase-10 scaffolding; only MAE/RMSE added to the return dict.
 
 ## Deviations from Plan
@@ -98,14 +98,14 @@ None - plan executed exactly as written. The repo-root path anchoring is an expl
 
 ## Verification Results
 
-- `ast.parse` of `revision/run_utility.py`: ok
+- `ast.parse` of `run_utility.py`: ok
 - `_compute_data_hash(data.csv) == "91e447d4624e25b3"`: PASS (and == all 50 baseline config.yaml hashes)
 - `reconstruct_od('wgan_mlp','B',42)["od_samples"].shape == (3840,10)`, dtype float64: PASS
 - `reconstruct_od('quantum','B',42)`: PASS (no KeyError; no data_hash assert on quantum)
 - `_run_base('quantum','B',42)` resolves to `transform_ablation/runs/B/42`: PASS
 - `tstr.json`: data_hash OK; real_only_baseline n_train_real=65, n_eval_real=320, R2=-13.354 (negative — no leakage); rows cover {r2,mae,rmse} at scale=OD; exact 6-key long-form schema; 6×2 aggregate coverage
 - `augmentation.json`: 180 rows; injection_ratio covers {real_only,+25%,+50%,+100%,synthetic_only}; metric_name covers {r2_delta,mae_delta,rmse_delta}; scale=OD; all 12 real_only R2 negative; 6×2 covered; ~60× lower-bound caveat present in metadata
-- `git diff --stat revision/core/`: empty after every task (D-11-10 invariant held)
+- `git diff --stat core/`: empty after every task (D-11-10 invariant held)
 
 ## Next Phase Readiness
 
@@ -115,9 +115,9 @@ None - plan executed exactly as written. The repo-root path anchoring is an expl
 
 ## Self-Check: PASSED
 
-- FOUND: revision/run_utility.py
-- FOUND: revision/results/tstr.json
-- FOUND: revision/results/augmentation.json
+- FOUND: run_utility.py
+- FOUND: results/tstr.json
+- FOUND: results/augmentation.json
 - FOUND: .planning/phases/11-utility-evaluation/11-01-SUMMARY.md
 - FOUND commit 14699e7 (Task 1)
 - FOUND commit 98d1e0e (Task 2)

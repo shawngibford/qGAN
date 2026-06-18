@@ -72,7 +72,7 @@
 
 **Current prose:** "Pipeline C: Pipeline B followed by inverse Lambert W"
 
-**Code reality (`revision/core/data.py:269-282`):** Pipeline C inserts Lambert W **between** standardize and rescale: `log-returns → standardize → inverse_lambert_w → rescale to [-1,1]`. The current prose implies Lambert W is appended **after** rescale-to-[-1,1] — a literal reproduction would build a different transform.
+**Code reality (`core/data.py:269-282`):** Pipeline C inserts Lambert W **between** standardize and rescale: `log-returns → standardize → inverse_lambert_w → rescale to [-1,1]`. The current prose implies Lambert W is appended **after** rescale-to-[-1,1] — a literal reproduction would build a different transform.
 
 **Fix:** Reword as "Pipeline C: log-return → standardize → **inverse Lambert W** → rescale to [-1, 1] (i.e., Pipeline B with an inverse Lambert W step inserted between standardization and rescaling, matching the v1.1 published pipeline)".
 
@@ -112,7 +112,7 @@
 
 **Drift:** Caption attributes the entire 4-panel figure to `metrics.csv`, but the TSTR-lite R² panel actually renders from `tstr_lite.json` per sidecar metadata.
 
-**Fix:** Append to caption: "; TSTR-lite R² panel from `revision/results/transform_ablation/tstr_lite.json` (per `summary.md` fallback)."
+**Fix:** Append to caption: "; TSTR-lite R² panel from `results/transform_ablation/tstr_lite.json` (per `summary.md` fallback)."
 
 ---
 

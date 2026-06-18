@@ -1,6 +1,6 @@
 # R3 Forensic Investigation — Cross-Agent Synthesis
 
-> **Addendum (2026-05-24):** The VAE "posterior collapse (sample std ≈ 0.0004)" characterization in this document was NOT supported by the matched-budget data. The actual matched-budget VAE log-return std is 0.0186 (≈ 1.17× narrower than real 0.0217, not 54× narrower). The VAE's anomalously low LR-DTW = 0.088 reflects a degenerate generation regime (marginal well-aligned, log-return lag-1 ACF = −0.648 vs real −0.064, matched-pipeline reference) rather than posterior collapse. See `revision/docs/peer_review_remediation.md` for the corrected characterization. This document is preserved unchanged below as a record of the prior belief and the bug-discovery timeline.
+> **Addendum (2026-05-24):** The VAE "posterior collapse (sample std ≈ 0.0004)" characterization in this document was NOT supported by the matched-budget data. The actual matched-budget VAE log-return std is 0.0186 (≈ 1.17× narrower than real 0.0217, not 54× narrower). The VAE's anomalously low LR-DTW = 0.088 reflects a degenerate generation regime (marginal well-aligned, log-return lag-1 ACF = −0.648 vs real −0.064, matched-pipeline reference) rather than posterior collapse. See `docs/peer_review_remediation.md` for the corrected characterization. This document is preserved unchanged below as a record of the prior belief and the bug-discovery timeline.
 
 ---
 
@@ -29,7 +29,7 @@ This is a real, defensible claim that the current docs do NOT make. The "quantum
 | **(A) Apples-to-oranges metric** | SUPPORTED | Pre-v1.0 used `wasserstein_distance(PMF_real, PMF_fake)` over 51-bin PMFs treated as samples — a degenerate scaling that gives values ~`bin_width≈0.002`. The 0.0015 headline is provenance-traced to `qgan_pennylane.ipynb:1554-1572` (Agent 1, HIGH confidence). |
 | **(A') Apples-to-oranges seed/slice** | SUPPORTED | Historical `iqp_sel_55_headline` was a best-checkpoint-via-early-stopping pick on in-loop training-batch EMD; current matched-2000ep takes final-epoch on full held-out series (Agents 1+3, HIGH). Slice-size empirical test: random-half-real reproduces ~0.003 EMD; full-real gives ~0.12 (Agent 4). |
 | **(B) Real code bug — log_return EMD scale mismatch** | **SUPPORTED (CRITICAL)** | `matched2000_dualscale.json` log_return column compares STANDARDIZED synth (std≈1) against UNNORMALIZED real_log_delta (std=0.022). 50× scale inflation. Rankings INVERT on the corrected scale: AR best at 0.003, quantum V1 at 0.015, VAE worst at 0.016 (Agent 2). |
-| **(B') Real code bug — histogram-density structural bias** | **SUPPORTED (CRITICAL)** | `revision/run_distribution_emd.py:94-141` (NEW from 14-15) — `density=True` re-normalizes each histogram independently over in-range portion, silently dropping out-of-range mass. Rewards narrow distributions (VAE posterior collapse: std=0.0004) and uncapped-range distributions (WGAN-CNN: 94% out-of-range, in-range 6% gets renormalized into coincidental alignment). Rankings INVERT vs raw-sample EMD: VAE jumps 6th→1st, quantum drops 3rd→7th, samples unchanged (Agent 5, HIGH confidence). |
+| **(B') Real code bug — histogram-density structural bias** | **SUPPORTED (CRITICAL)** | `run_distribution_emd.py:94-141` (NEW from 14-15) — `density=True` re-normalizes each histogram independently over in-range portion, silently dropping out-of-range mass. Rewards narrow distributions (VAE posterior collapse: std=0.0004) and uncapped-range distributions (WGAN-CNN: 94% out-of-range, in-range 6% gets renormalized into coincidental alignment). Rankings INVERT vs raw-sample EMD: VAE jumps 6th→1st, quantum drops 3rd→7th, samples unchanged (Agent 5, HIGH confidence). |
 | **(C) Headline-vs-repro alone explains gap** | PARTIAL / WEAK | Headline OD-EMD 0.0231 vs repro mean 0.0275 = 0.9σ gap; not large enough to fully explain (Agent 3). |
 | **(D) Checkpoint integrity issue** | RULED OUT | sha256 matches; 55 params; epoch 1969; all hyperparams match notebook (Agent 3). |
 | **(E) Quantum-specific precision regression** | RULED OUT | PennyLane returns float64 throughout; `.to(torch.float64)` is no-op for quantum, upcast for classical — quantum remains MORE precise (Agent 3 + 5). |
@@ -43,7 +43,7 @@ This is a real, defensible claim that the current docs do NOT make. The "quantum
 
 Source: Agent 5 (code review) + Agent 2 (pipeline).
 
-**Mechanism.** `revision/run_distribution_emd.py:94-141` computes `wasserstein_distance(bin_centers, bin_centers, real_hist_density, fake_hist_density)` with `np.histogram(..., density=True)`. The `density=True` flag re-normalizes the histogram so that the area under the curve sums to 1.0 — but if the model's samples have any out-of-range mass, that mass gets silently truncated AND the remaining in-range portion is renormalized.
+**Mechanism.** `run_distribution_emd.py:94-141` computes `wasserstein_distance(bin_centers, bin_centers, real_hist_density, fake_hist_density)` with `np.histogram(..., density=True)`. The `density=True` flag re-normalizes the histogram so that the area under the curve sums to 1.0 — but if the model's samples have any out-of-range mass, that mass gets silently truncated AND the remaining in-range portion is renormalized.
 
 This rewards two pathological behaviors:
 - **Narrow/collapsed distributions** (VAE with posterior collapse, std=0.0004): all mass is densely concentrated at the mean, histogram density is sharp and high, EMD against real's broad density is small relative to a quantum model that distributes correctly.
@@ -69,7 +69,7 @@ Quantum models drop 1-5 ranks; AR jumps +6. **The histogram-density column does 
 
 Source: Agent 2 (pipeline) + Agent 5 (code review).
 
-**Mechanism.** `revision/run_matched2000_dualscale.py:368-372` computes `wasserstein_distance(synth_log_returns, real_log_delta)` where:
+**Mechanism.** `run_matched2000_dualscale.py:368-372` computes `wasserstein_distance(synth_log_returns, real_log_delta)` where:
 - `synth_log_returns` are standardized (model outputs * 0.1, then implicitly on the [-0.1, +0.1] scale matched to the standardized training data with std ≈ 1)
 - `real_log_delta` are RAW log-returns of OD with std ≈ 0.022 — never standardized
 
@@ -175,4 +175,4 @@ The 5 individual reports:
 
 This synthesis at `peer-review-r3/SYNTHESIS.md`.
 
-D-14-22 byte-freeze of `revision/core/` preserved across the entire investigation (read-only audit).
+D-14-22 byte-freeze of `core/` preserved across the entire investigation (read-only audit).

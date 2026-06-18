@@ -1,4 +1,4 @@
-"""ARCH-02 schema regression: revision/results/ansatz_comparison.json.
+"""ARCH-02 schema regression: results/ansatz_comparison.json.
 
 Validates the extended long-form ``rows[]`` + ``models[]`` schema (D-10-16)
 extended with ``ansatz``/``depth``/``topology`` dims (Phase 13). Skips cleanly
@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-_JSON_PATH = _REPO_ROOT / "revision" / "results" / "ansatz_comparison.json"
+_JSON_PATH = _REPO_ROOT / "results" / "ansatz_comparison.json"
 
 # The 9 required fields on every long-form row (D-10-16 + Phase-13 dims).
 _REQUIRED_ROW_FIELDS = {
@@ -41,7 +41,7 @@ def comparison_doc() -> dict:
     if not _JSON_PATH.exists():
         pytest.skip(
             f"{_JSON_PATH} not present yet — run "
-            "`python -m revision.run_ansatz_comparison` after the sweep."
+            "`python -m run_ansatz_comparison` after the sweep."
         )
     return json.loads(_JSON_PATH.read_text())
 

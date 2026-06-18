@@ -1,39 +1,39 @@
 # Peer Review r4 — Agent 2: Code Correctness Review
 
 Scope: bug-hunt the qGAN revision pipeline emitters + core eval modules, run the
-`revision/tests/` suite, hunt scale/off-by-one/RNG/dtype/shape/histogram bugs.
+`tests/` suite, hunt scale/off-by-one/RNG/dtype/shape/histogram bugs.
 Last gate before the `v2.0-revision` Zenodo DOI freeze.
 
 ## Environment note
 
 The assigned git worktree is checked out at an OLD commit (`c82169c`, phase 8) far
-behind `main` (`8180a5e`); at that commit only `revision/core/{data,eval,training}.py`
+behind `main` (`8180a5e`); at that commit only `core/{data,eval,training}.py`
 exist. The named review targets (`run_matched2000_dualscale.py`,
 `run_distribution_emd.py`, `run_welch_aggregator.py`, `run_matched2000.py`,
-`verify_freeze_ready.py`, `verify_number_provenance.py`, `revision/tests/`,
-`revision/core/preprocessing.py`, `revision/core/models/`) are tracked in the
+`verify_freeze_ready.py`, `verify_number_provenance.py`, `tests/`,
+`core/preprocessing.py`, `core/models/`) are tracked in the
 main repo at a later commit but absent from the worktree HEAD. They were copied
 read-only into `/tmp/peer-review-r4/code/` (a permitted working directory) along
-with `data.csv` and the full `revision/results/` artifact tree (311 JSONs, 45
+with `data.csv` and the full `results/` artifact tree (311 JSONs, 45
 matched2000 sample bundles, 18 transform_ablation bundles) to review and test in
 isolation. The main repo was used READ-ONLY (git status / git diff queries and
 in-place pytest with `PYTHONDONTWRITEBYTECODE=1`, `-p no:cacheprovider`,
 `--basetemp=/tmp/...`). Nothing was written into the main repo.
 
-## Test suite result — `revision/tests/`
+## Test suite result — `tests/`
 
 **23 passed / 0 genuine failures.**
 
 - Run in the main-repo environment (the documented verification env, with
-  `revision/results/` artifacts + frozen `samples.npy` bundles present):
+  `results/` artifacts + frozen `samples.npy` bundles present):
   **23 passed in 8.81s.**
 - Run in the isolated `/tmp` copy: **22 passed, 1 failed.** The single failure
   is `test_utility.py::test_core_untouched`, which shells out to
-  `git diff --stat -- revision/core/__init__.py`; in `/tmp` there is no `.git`
+  `git diff --stat -- core/__init__.py`; in `/tmp` there is no `.git`
   so git exits 129 and the test's `assert out.returncode == 0` trips. This is a
   pure worktree-environment artifact, NOT a code bug — verified independently:
-  in the main repo `git diff --stat -- revision/core/` and
-  `... revision/core/__init__.py` both return empty with exit 0, i.e. the core
+  in the main repo `git diff --stat -- core/` and
+  `... core/__init__.py` both return empty with exit 0, i.e. the core
   module IS byte-clean and the test PASSES there. The qgan_env interpreter does
   ship pytest 9.0.3 (the test docstrings claiming "qgan_env ships no pytest" are
   stale, but the dual-mode shim is harmless).
@@ -61,9 +61,9 @@ draws are reproducible and the pipeline is bit-stable.
 ## Findings
 
 ### LOW-1 — `verify_number_provenance.py` Pass-1 text-match is a known weak gate (disclosed)
-File: `revision/verify_number_provenance.py:208-227`, `:254-267`
+File: `verify_number_provenance.py:208-227`, `:254-267`
 The gate resolves a literal if it appears as a boundary-delimited substring in
-ANY `revision/results/*.json` blob (the `<text-match>` path), and Pass 2's
+ANY `results/*.json` blob (the `<text-match>` path), and Pass 2's
 ε-neighborhood can resolve a literal to a numerically-close-but-semantically-
 unrelated JSON value. This is the gate-v2 false-positive class disclosed in r2/r3
 (sign-flip lookbehind + ε-neighborhood). It only weakens the gate (could PASS a
@@ -75,7 +75,7 @@ v2.1 differential-test for the negative-sign lookbehind passes. No regression;
 documented item — flagged for completeness only.
 
 ### LOW-2 — `run_distribution_emd.py` self-test uses bare `assert` (python -O strips it)
-File: `revision/run_distribution_emd.py:344-350`
+File: `run_distribution_emd.py:344-350`
 `emit()` self-tests via `assert self_emd == 0.0` / `assert self_fim == 1.0`.
 Every other gate in the codebase deliberately uses `raise AssertionError` for
 `python -O` safety (the explicit-raise idiom is cited throughout
@@ -85,7 +85,7 @@ histogram-EMD regression, and the metric is exercised by the real rows anyway),
 so impact is minor. Cosmetic consistency fix; not freeze-blocking.
 
 ### LOW-3 — Welch OD strong-claim thresholds clear by very thin margins
-File: `revision/run_welch_aggregator.py:138-141`, summaries at runtime
+File: `run_welch_aggregator.py:138-141`, summaries at runtime
 `OD_floor_welch_p = 0.36521` vs threshold `> 0.36` (margin 0.0014) and
 `OD_ceiling_abs_cohen_d = 0.64417` vs threshold `<= 0.65` (margin 0.0058). The
 gate passes correctly and the thresholds are legitimate, but the margins are

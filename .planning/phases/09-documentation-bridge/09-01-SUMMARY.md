@@ -7,7 +7,7 @@ tags: [pytorch, autograd, scipy, lambert-w, differentiable-transform, eval-06]
 # Dependency graph
 requires:
   - phase: 08-core-module-extraction
-    provides: revision/core/data.py with inverse_lambert_w_transform at Phase-8 parity baseline = 0.0
+    provides: core/data.py with inverse_lambert_w_transform at Phase-8 parity baseline = 0.0
 provides:
   - Differentiable inverse_lambert_w_transform via torch.autograd.Function
   - _InverseLambertW class with closed-form backward (dW/dz = W/(z·(1+W)))
@@ -27,7 +27,7 @@ tech-stack:
 key-files:
   created: []
   modified:
-    - revision/core/data.py
+    - core/data.py
 
 key-decisions:
   - "D-03 honored: in-place replacement of inverse_lambert_w_transform (no parallel function)"
@@ -50,7 +50,7 @@ completed: 2026-05-15
 
 # Phase 09 Plan 01: Differentiable inverse Lambert W via torch.autograd.Function Summary
 
-**Replaced `revision/core/data.py::inverse_lambert_w_transform` with a custom `torch.autograd.Function` (`_InverseLambertW`) — forward path is bit-identical to the legacy scipy-only code (Phase 8 parity = 0.0 preserved verbatim), backward path is pure torch using the closed-form identity `dW/dz = W/(z·(1+W))` (Corless et al. 1996), delivering EVAL-06.**
+**Replaced `core/data.py::inverse_lambert_w_transform` with a custom `torch.autograd.Function` (`_InverseLambertW`) — forward path is bit-identical to the legacy scipy-only code (Phase 8 parity = 0.0 preserved verbatim), backward path is pure torch using the closed-form identity `dW/dz = W/(z·(1+W))` (Corless et al. 1996), delivering EVAL-06.**
 
 ## Performance
 
@@ -62,7 +62,7 @@ completed: 2026-05-15
 
 ## Accomplishments
 
-- Added private `class _InverseLambertW(torch.autograd.Function)` immediately under the existing "Cell 17 — Lambert W transforms" banner in `revision/core/data.py`, preserving the section structure.
+- Added private `class _InverseLambertW(torch.autograd.Function)` immediately under the existing "Cell 17 — Lambert W transforms" banner in `core/data.py`, preserving the section structure.
 - Forward path is a **verbatim** preservation of the legacy code at the old `data.py:80-86` (`data.double()` → `sign` → `data²` → `scipy.special.lambertw(.real)` → `torch.tensor(..., dtype=float64, device=data.device)` → `sign * sqrt(W/δ)`). Verified bit-identical against a pre-edit baseline: `max_abs_diff = 0.0` on a 20-element float64 randn sample.
 - Backward path is pure torch on `ctx.saved_tensors = (data64, W, out)` with `ctx.delta` for the non-tensor argument; `scipy` is **not** called in backward (D-05 honored).
 - Zero-input safety: `torch.where(data64.abs() < 1e-300, ones_like(data64), W / safe_denom)` returns the analytic limit value `1` at `x = 0`, eliminating 0/0 NaN gradients.
@@ -160,12 +160,12 @@ Phase 8 parity baseline (EMD delta = 0.0, moments delta = 0.0) is preserved bit-
 
 | Gate | Expected | Actual |
 |---|---|---|
-| `grep -c 'class _InverseLambertW(torch.autograd.Function)' revision/core/data.py` | 1 | 1 |
-| `grep -c 'return _InverseLambertW.apply(data, delta)' revision/core/data.py` | 1 | 1 |
-| `grep -c 'def inverse_lambert_w_transform' revision/core/data.py` | 1 | 1 |
-| `grep -c 'ctx.save_for_backward' revision/core/data.py` | ≥ 1 | 1 |
-| `grep -c 'Non-differentiable' revision/core/data.py` | 0 | 0 |
-| `grep -c 'torch.where' revision/core/data.py` | ≥ 1 | 3 |
+| `grep -c 'class _InverseLambertW(torch.autograd.Function)' core/data.py` | 1 | 1 |
+| `grep -c 'return _InverseLambertW.apply(data, delta)' core/data.py` | 1 | 1 |
+| `grep -c 'def inverse_lambert_w_transform' core/data.py` | 1 | 1 |
+| `grep -c 'ctx.save_for_backward' core/data.py` | ≥ 1 | 1 |
+| `grep -c 'Non-differentiable' core/data.py` | 0 | 0 |
+| `grep -c 'torch.where' core/data.py` | ≥ 1 | 3 |
 | No new third-party imports | — | None added |
 | `gradcheck` exits 0 | True | True |
 | `import revision.core.data` clean (no warnings) | OK | OK |
@@ -176,7 +176,7 @@ Phase 8 parity baseline (EMD delta = 0.0, moments delta = 0.0) is preserved bit-
 
 ## Files Created/Modified
 
-- `revision/core/data.py` — Inserted `class _InverseLambertW(torch.autograd.Function)` under the existing "Cell 17 — Lambert W transforms" banner; rewrote `def inverse_lambert_w_transform` body to a one-line dispatch `return _InverseLambertW.apply(data, delta)`; updated public-wrapper docstring (removed "Non-differentiable" note, added closed-form-derivative reference); updated module-level docstring to drop the stale "Phase 9 will replace... non-differentiable" forward reference (Rule 2 deviation — documentation now matches code).
+- `core/data.py` — Inserted `class _InverseLambertW(torch.autograd.Function)` under the existing "Cell 17 — Lambert W transforms" banner; rewrote `def inverse_lambert_w_transform` body to a one-line dispatch `return _InverseLambertW.apply(data, delta)`; updated public-wrapper docstring (removed "Non-differentiable" note, added closed-form-derivative reference); updated module-level docstring to drop the stale "Phase 9 will replace... non-differentiable" forward reference (Rule 2 deviation — documentation now matches code).
 
 ## Decisions Made
 
@@ -189,10 +189,10 @@ Phase 8 parity baseline (EMD delta = 0.0, moments delta = 0.0) is preserved bit-
 
 **1. [Rule 2 - Documentation Correctness] Module docstring updated to remove stale "non-differentiable" claim**
 - **Found during:** Task 1 (post-implementation file scan)
-- **Issue:** The plan's `<action>` Step 3 instructed updating the public wrapper's docstring but did not specify updating the module-level docstring at `data.py:1-10`, which contained the same stale claim: "Phase 9 (EVAL-06) will replace `inverse_lambert_w_transform` with a fully differentiable alternative; the present implementation is a scalar round-trip using `scipy.special.lambertw` and therefore non-differentiable." After Task 1, that text became factually incorrect (the present implementation IS differentiable). Leaving it would directly contradict the new code and violate the acceptance criterion `grep -c 'Non-differentiable' revision/core/data.py == 0`.
+- **Issue:** The plan's `<action>` Step 3 instructed updating the public wrapper's docstring but did not specify updating the module-level docstring at `data.py:1-10`, which contained the same stale claim: "Phase 9 (EVAL-06) will replace `inverse_lambert_w_transform` with a fully differentiable alternative; the present implementation is a scalar round-trip using `scipy.special.lambertw` and therefore non-differentiable." After Task 1, that text became factually incorrect (the present implementation IS differentiable). Leaving it would directly contradict the new code and violate the acceptance criterion `grep -c 'Non-differentiable' core/data.py == 0`.
 - **Fix:** Replaced with: "Phase 9 (EVAL-06) implements `inverse_lambert_w_transform` as a custom `torch.autograd.Function` (`_InverseLambertW`): `scipy.special.lambertw` is called only in the forward path (Phase 8 parity preserved bit-identically), and the backward path is pure torch using the closed-form identity `dW/dz = W/(z·(1+W))`."
-- **Files modified:** `revision/core/data.py` (lines 1-12)
-- **Verification:** `grep -c 'Non-differentiable' revision/core/data.py == 0` (passes); `grep -in 'non-differentiable' revision/core/data.py` returns no matches; re-ran full Task 1 verification suite (gradcheck, parity, dtype, NaN-at-zero) — all still pass.
+- **Files modified:** `core/data.py` (lines 1-12)
+- **Verification:** `grep -c 'Non-differentiable' core/data.py == 0` (passes); `grep -in 'non-differentiable' core/data.py` returns no matches; re-ran full Task 1 verification suite (gradcheck, parity, dtype, NaN-at-zero) — all still pass.
 - **Committed in:** `e702bd4` (Task 1 commit, same file)
 
 ---
@@ -208,11 +208,11 @@ None. The plan was prescriptive and the verification script in `<verify>` caught
 
 The following are explicitly out of scope for plan 09-01 and scheduled for plan 09-05 (round-trip notebook + smoke-test harness) per phase scope:
 
-- **Round-trip 1e-8 verification** on (a) `torch.randn(777, dtype=float64)` synthetic input and (b) real `log_delta` (777 elements live count) via `revision/02_eval06_roundtrip.ipynb` (D-04).
+- **Round-trip 1e-8 verification** on (a) `torch.randn(777, dtype=float64)` synthetic input and (b) real `log_delta` (777 elements live count) via `02_eval06_roundtrip.ipynb` (D-04).
 - **`full_denorm_pipeline` end-to-end smoke** — gradient-flow check on `gen_windows.grad` after `od_out.sum().backward()` (D-04b looser ≤1e-6 tolerance to absorb rolling-window un-stitching).
-- **`revision/01_parity_check.ipynb` re-run** to confirm parity_check.json still shows `pass=true` after the in-place replacement (regression check on Phase 8 baseline; expected to pass because the forward output is bit-identical).
-- **Phase 09.1 scaffolding** (`revision/core/preprocessing.py` with `forward_lambert`/`inverse_lambert` re-exports + `NotImplementedError` stubs) — separate plan (D-06).
-- **Documentation deliverables** (`revision/docs/training_protocol.md`, `revision/docs/dataset_stats.md`) — separate plans (DOC-01, DOC-02).
+- **`01_parity_check.ipynb` re-run** to confirm parity_check.json still shows `pass=true` after the in-place replacement (regression check on Phase 8 baseline; expected to pass because the forward output is bit-identical).
+- **Phase 09.1 scaffolding** (`core/preprocessing.py` with `forward_lambert`/`inverse_lambert` re-exports + `NotImplementedError` stubs) — separate plan (D-06).
+- **Documentation deliverables** (`docs/training_protocol.md`, `docs/dataset_stats.md`) — separate plans (DOC-01, DOC-02).
 
 ## Threat Model Mitigations Applied
 
@@ -232,9 +232,9 @@ None — no new security-relevant surface introduced beyond the threat-model cov
 ## Self-Check
 
 **Files claimed created/modified:**
-- `revision/core/data.py` — `[ -f revision/core/data.py ] && echo FOUND` → FOUND
-- `_InverseLambertW` class present → `grep -c 'class _InverseLambertW' revision/core/data.py` → 1
-- public wrapper present → `grep -c 'def inverse_lambert_w_transform' revision/core/data.py` → 1
+- `core/data.py` — `[ -f core/data.py ] && echo FOUND` → FOUND
+- `_InverseLambertW` class present → `grep -c 'class _InverseLambertW' core/data.py` → 1
+- public wrapper present → `grep -c 'def inverse_lambert_w_transform' core/data.py` → 1
 
 **Commit claimed:**
 - `e702bd4` → `git log --oneline | grep e702bd4` → `e702bd4 feat(09-01): differentiable inverse_lambert_w_transform via torch.autograd.Function` → FOUND

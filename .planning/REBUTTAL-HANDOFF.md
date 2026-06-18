@@ -27,7 +27,7 @@ status: 3 of N reviewer comments drafted (R1-M1, R1-M2, R1-M4); resubmission pen
 
 ## 2. Rebuttal drafts produced this session
 
-All three drafts below are the **final iterated versions** the user signed off on (tightened from 950 → 540-770 word ranges; no fabricated content; every numeric literal traces to `revision/results/*.json`).
+All three drafts below are the **final iterated versions** the user signed off on (tightened from 950 → 540-770 word ranges; no fabricated content; every numeric literal traces to `results/*.json`).
 
 ### 2.1 R1-M1 — Matched classical baseline
 
@@ -120,7 +120,7 @@ All three drafts below are the **final iterated versions** the user signed off o
 > | Seeds | {42, 43, 44, 45, 46} (n = 5 per cell) |
 > | Latent noise distribution | Uniform[0, 4π] |
 >
-> Every value renders from `revision/results/methods_full.json` / `model_info.json` / the config-lock JSONs; file-and-line citations are in `methods_full.md` Section 3. The matched-budget contract runs the full 2000 epochs deliberately — the headline-vs-reproduction distinction is reconciled under R1-M1.
+> Every value renders from `results/methods_full.json` / `model_info.json` / the config-lock JSONs; file-and-line citations are in `methods_full.md` Section 3. The matched-budget contract runs the full 2000 epochs deliberately — the headline-vs-reproduction distinction is reconciled under R1-M1.
 >
 > *Simulation regime.* The quantum-circuit outputs are computed as **analytic expectation values** under PennyLane's `default.qubit` device with `diff_method = "backprop"` — exact statevector simulation, no finite-shot estimates. (`backprop` was chosen over parameter-shift due to PennyLane issue #4462, which produced incorrect parameter-shift gradients on the present circuit's input-broadcast shape; `backprop` returns exact gradients on the same statevector.)
 >
@@ -140,7 +140,7 @@ All three drafts below are the **final iterated versions** the user signed off o
 
 ## 3. Remaining reviewer comments to draft
 
-The original reviewer set includes (look at `revision/docs/reviewer_response.md` summary tables — lines 30–110 — for the full inventory):
+The original reviewer set includes (look at `docs/reviewer_response.md` summary tables — lines 30–110 — for the full inventory):
 
 - **R1-M3** — Preprocessing-pipeline ablation. *Partly addressed at 1000-epoch budget by phase 09.1; the matched-budget context is already in the manuscript. May need a brief letter response noting that the matched-budget protocol settled on Pipeline B per the 09.1 finding.*
 - **R1-m1** — Misplaced/weak references (citation surgery, PAPER-06)
@@ -213,9 +213,9 @@ What worked, in order of importance:
 ## 6. Files of record
 
 - **Drafts above** are the canonical text. Quote them verbatim into the rebuttal letter.
-- **`revision/docs/reviewer_response.md`** is the in-repo provenance trail; its R1-M2 section was rewritten by Plan 14-20 to match the matched-budget data — verbatim-consistent with the R1-M2 draft above.
-- **`revision/docs/methods_full.md` §3.y** documents the matched-budget utility protocol with full per-variant numbers and the data_hash invariance.
-- **`revision/docs/completeness_sweep_manifest.md`** is the artefact-inventory ledger; matched-budget rows added by 14-20.
+- **`docs/reviewer_response.md`** is the in-repo provenance trail; its R1-M2 section was rewritten by Plan 14-20 to match the matched-budget data — verbatim-consistent with the R1-M2 draft above.
+- **`docs/methods_full.md` §3.y** documents the matched-budget utility protocol with full per-variant numbers and the data_hash invariance.
+- **`docs/completeness_sweep_manifest.md`** is the artefact-inventory ledger; matched-budget rows added by 14-20.
 - **Manuscript files** `main (4) copy.tex` + `supp_material.tex` carry the PAPER-* blocks integrated by Plan 14-17; abstract is de-overclaimed; circuit-design subsection + Outlook subsection added.
 
 ## 7. Resubmission packaging checklist

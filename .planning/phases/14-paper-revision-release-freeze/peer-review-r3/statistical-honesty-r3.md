@@ -20,7 +20,7 @@ The most-favorable HONEST framing for the manuscript: *"On OD-scale EMD the four
 
 ## 1. Per-seed numerical tables
 
-All numbers from `revision/results/matched2000_dualscale.json#rows` (Welch EMD on raw samples, scipy `wasserstein_distance`) and `revision/results/distribution_emd.json#rows` (50-bin histogram-density EMD, OD- and LR-scale). 5 seeds per model: {42, 43, 44, 45, 46}.
+All numbers from `results/matched2000_dualscale.json#rows` (Welch EMD on raw samples, scipy `wasserstein_distance`) and `results/distribution_emd.json#rows` (50-bin histogram-density EMD, OD- and LR-scale). 5 seeds per model: {42, 43, 44, 45, 46}.
 
 ### 1a. EMD, OD-scale (raw-sample Wasserstein)
 
@@ -193,7 +193,7 @@ VAE, WGAN-MLP, WGAN-CNN, AR all beat iqp/V1/V2/V3 at p ≤ 0.003. Only V3 someti
 
 ## 4. Headline-vs-repro reporting-bias quantification
 
-The headline number reported in the manuscript is **OD-EMD = 0.0231**, sourced as follows (from `revision/results/headline_canonical.json` and `canonical_recovery.json`):
+The headline number reported in the manuscript is **OD-EMD = 0.0231**, sourced as follows (from `results/headline_canonical.json` and `canonical_recovery.json`):
 
 - `model_kind`: `quantum` (a.k.a. `frozen_checkpoint_headline` in long-form dualscale rows).
 - `source`: `frozen_checkpoint_epoch_1969` — params loaded from `best_checkpoint.pt` (epoch 1969 of the original v1.0 training, sha256 `f7cceb52…`).

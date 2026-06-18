@@ -36,7 +36,7 @@ because it directly affects a manuscript headline figure.
 ### CRITICAL (blocks publication)
 
 #### CR-1: Non-deterministic figure-window selection seed in `render_time_series_comparison`
-**File:** `revision/run_figure_suite.py:382`
+**File:** `run_figure_suite.py:382`
 **Problem:** `rng = np.random.default_rng(model.__hash__() & 0xFFFF)`. Here
 `model` is a Python `str` and Python 3 randomizes string hashes per
 interpreter invocation (PYTHONHASHSEED defaults to "random"). Verified
@@ -58,7 +58,7 @@ or even better, key off PRIMARY_SEED + model index so all panels in the
 suite use comparable RNGs.
 
 #### CR-2: Cross-model EMD figure silently merges two distinct EMD metrics
-**File:** `revision/run_figure_suite.py:620-654`
+**File:** `run_figure_suite.py:620-654`
 **Problem:** `render_cross_model_emd` builds bars from
 `np.min(metrics["emd_avg"])` per model (line 630) — i.e., **best
 training-window EMD over the eval trajectory**, computed by
@@ -90,13 +90,13 @@ sources from that JSON). Until the metric mismatch is reconciled, this
 figure SHOULD NOT ship.
 
 #### CR-3: Hardcoded line citations in methods_full.py contradict the docstring's anti-drift contract
-**File:** `revision/run_methods_full.py:466-468`
+**File:** `run_methods_full.py:466-468`
 **Problem:**
 ```python
 "dtype_samples": (
     "torch.float64 (sample-generation pipeline: "
     f"{cits['compute_dtype_split']} compute_dtype = torch.float64 on "
-    "CPU/CUDA; revision/core/training.py:347 generator output cast "
+    "CPU/CUDA; core/training.py:347 generator output cast "
     ".to(compute_dtype) * 0.1; MPS path falls back to float32 "
     "because MPS lacks float64 — see training.py:259-268)"
 ),
@@ -108,7 +108,7 @@ literals** in the f-string. The whole point of `_citations` and
 at lines 132-134 says "training.py may have been refactored; regenerate
 methods_full.json on every emitter run so citations cannot go stale".
 The two hardcoded line numbers undermine that guarantee.
-**Impact:** A future edit to `revision/core/training.py` (e.g., adding
+**Impact:** A future edit to `core/training.py` (e.g., adding
 a docstring line above line 268) silently makes the methods JSON cite the
 wrong code. The number-provenance gate would not catch this — it only
 checks that the number resolves to SOME JSON, not that the citation
@@ -122,9 +122,9 @@ line points to the correct source.
 and replace the f-string with `{cits['...']}` substitutions.
 
 #### CR-4: Strict-accept gate cannot detect classical-WGAN silent MPS fallback
-**File:** `revision/run_matched2000.py:434-492` (`_train_wgan`),
-`revision/run_matched2000.py:255-314` (`_device_manifest`),
-`revision/run_matched2000.py:661-668` (gate check 4)
+**File:** `run_matched2000.py:434-492` (`_train_wgan`),
+`run_matched2000.py:255-314` (`_device_manifest`),
+`run_matched2000.py:661-668` (gate check 4)
 **Problem:** `_train_quantum` (line 372-389) wraps `train_wgan_gp` with a
 `torch.backends.mps.is_available = lambda: False` patch so quantum
 training runs CPU-only. `_train_wgan` does **not** apply the same patch
@@ -152,9 +152,9 @@ the generator/critic AFTER training, and have the strict-accept gate
 require equality across all models in the matched-budget sweep.
 
 #### CR-5: `_resolves` substring match in verify_number_provenance.py admits trivial false positives
-**File:** `revision/verify_number_provenance.py:118-141`
+**File:** `verify_number_provenance.py:118-141`
 **Problem:** The resolver first tries `if token in blob` (line 119) where
-`blob` is the concatenated text of every `revision/results/*.json`. A
+`blob` is the concatenated text of every `results/*.json`. A
 literal like `"42"` resolves to **any** JSON containing the digits "42"
 in any position — including in larger numbers (`"data_hash":
 "91e447d4624e25b3"` contains 4, 2, 5 in many places; `"timestamp":
@@ -180,7 +180,7 @@ ambiguous resolutions for the same token.
 ### HIGH (must address before resubmission)
 
 #### HI-1: Hardcoded DTW RNG seed in `run_canonical_headline` ignores `--generation-seed`
-**File:** `revision/run_canonical_headline.py:280, 334`
+**File:** `run_canonical_headline.py:280, 334`
 **Problem:** Both `_od_scale_rows` and `_log_return_rows` use
 `np.random.default_rng(42 * 31)` for DTW pair selection — the literal `42`
 is hardcoded, not the `--generation-seed` CLI argument. The CLI default
@@ -195,7 +195,7 @@ recorded in the JSON but it does NOT fully parameterize the metric run.
 seed through `_od_scale_rows` / `_log_return_rows`.
 
 #### HI-2: `model_info.optimizer_betas` is hardcoded for every model, including VAE/AR
-**File:** `revision/run_model_info.py:158`
+**File:** `run_model_info.py:158`
 **Problem:** `"optimizer_betas": [0.0, 0.9]` is written for every model
 row including VAE (Adam at lr=1e-3 with DEFAULT betas 0.9/0.999) and AR
 (closed-form np.linalg.lstsq — no optimizer at all). The companion
@@ -213,7 +213,7 @@ contradict.
 extract from a config field that was actually persisted at train time.
 
 #### HI-3: Cross-artifact data_hash gate in run_model_info checks mutual equality but not the expected literal
-**File:** `revision/run_model_info.py:642-649`
+**File:** `run_model_info.py:642-649`
 **Problem:** The gate collects `data_hash` from headline + 9 sweep configs
 and only checks `len(set(hashes.values())) != 1`. It does NOT compare
 against the canonical literal `"91e447d4624e25b3"`. If every consumed
@@ -231,7 +231,7 @@ is asymmetric across emitters.
 AssertionError(...)`.
 
 #### HI-4: Hardcoded `topology = "range"` overrides the canonical lock JSON in iqp_sel_55_repro path
-**File:** `revision/run_matched2000.py:337-347`
+**File:** `run_matched2000.py:337-347`
 **Problem:** For `_REPRO_MODEL`, the function reads the lock JSON
 (`canonical_config_lock.json`), pulls `circuit_id` and `num_layers` from
 it, but **hardcodes** `topology = "range"` at line 344 instead of
@@ -247,7 +247,7 @@ topology = str(decomp.get("gate_layout", {}).get("entangler", "range"))
 ```
 
 #### HI-5: `model_kinds` field in matched2000_dualscale.json excludes the headline
-**File:** `revision/run_matched2000_dualscale.py:103-113, 595`
+**File:** `run_matched2000_dualscale.py:103-113, 595`
 **Problem:** `MODEL_KINDS` is the 9-model list. The `rows[]` and
 `aggregates[]` arrays include rows under
 `model_kind="frozen_checkpoint_headline"`, but
@@ -266,13 +266,13 @@ JSON's self-description is wrong.
 or add `"headline_model_kind": HEADLINE_MODEL_KIND` (already done at
 line 600) and document that `model_kinds` excludes it.
 
-#### HI-6: `verify_freeze_ready` gates only top-level `revision/results/*.json` while `verify_number_provenance` walks rglob
-**File:** `revision/verify_freeze_ready.py:82, 116` vs
-`revision/verify_number_provenance.py:99`
+#### HI-6: `verify_freeze_ready` gates only top-level `results/*.json` while `verify_number_provenance` walks rglob
+**File:** `verify_freeze_ready.py:82, 116` vs
+`verify_number_provenance.py:99`
 **Problem:** Freeze gate uses `RESULTS_DIR.glob("*.json")` — one level
 only. The number-provenance gate uses `RESULTS.rglob("*.json")` —
 recursive. Paper literals may resolve to a NESTED JSON (e.g.,
-`revision/results/matched2000/runs/<m>/<s>/metrics.json`) that the
+`results/matched2000/runs/<m>/<s>/metrics.json`) that the
 verifier sees, but the freeze gate doesn't audit / force-stage. If the
 nested JSON is gitignored (default per the broad `results/` rule on
 line 62 of `.gitignore`), the verifier passes pre-tag and the DOI'd
@@ -282,10 +282,10 @@ archive ships without those numbers' source artifacts.
 verifier it gates.
 **Fix:** Change `RESULTS_DIR.glob` to `RESULTS_DIR.rglob` at lines 82
 and 116. Also fix the negation self-heal to write
-`!revision/results/**/*.json`.
+`!results/**/*.json`.
 
 #### HI-7: `_train_vae` does not seed numpy or random
-**File:** `revision/run_matched2000.py:503`
+**File:** `run_matched2000.py:503`
 **Problem:** Only `torch.manual_seed(seed)` is set. `np.random.seed` and
 `random.seed` are NOT set inside `_train_vae`. The DataLoader uses
 `shuffle=False` so iteration order is deterministic, and VAE
@@ -301,7 +301,7 @@ introduces numpy random usage, results become irreproducible silently.
 top, mirroring `train_wgan_gp`'s seed block.
 
 #### HI-8: `default=float` in json.dumps converts NaN/Inf to invalid JSON tokens
-**File:** `revision/run_matched2000.py:796`, `revision/run_figure_suite.py:191`
+**File:** `run_matched2000.py:796`, `run_figure_suite.py:191`
 **Problem:** `json.dumps(metrics, indent=2, default=float)` emits
 `NaN` / `Infinity` / `-Infinity` for non-finite floats. These are NOT
 valid JSON per RFC 8259 (Python's `json` accepts them due to a
@@ -316,7 +316,7 @@ doesn't validate finiteness.
 an explicit raise if more than a threshold of metrics are non-finite.
 
 #### HI-9: Lazy-evaluating `is_complete` re-runs the strict gate via subprocess on EVERY worklist entry
-**File:** `revision/run_matched2000_sweep.sh:194-209`
+**File:** `run_matched2000_sweep.sh:194-209`
 **Problem:** `is_complete` shells out to `${PYTHON} -m
 ${RUN_MODULE} --accept ...` for each (m, s) pair on every sweep
 invocation — including during `--dry-run`, which calls `is_complete`
@@ -334,7 +334,7 @@ materially affects iteration time.)
 ### MEDIUM (should address)
 
 #### MD-1: Stale `real_log_returns` reference in eval phase creates noisy per-epoch EMD trajectory
-**File:** `revision/core/training.py:418`
+**File:** `core/training.py:418`
 **Problem:** `real_log_returns` in the eval phase (line 418) is the LAST
 critic-phase iteration's batch — a single batch of 12 real samples
 that varies across epochs due to `torch.randint` re-sampling
@@ -351,7 +351,7 @@ out-of-scope, but worth disclosing in the manuscript.
 fix to a held-out reference set computed once outside the loop).
 
 #### MD-2: `compute_dtype` only exists for the WGAN-GP path; VAE training uses default torch dtype
-**File:** `revision/run_matched2000.py:511-531`
+**File:** `run_matched2000.py:511-531`
 **Problem:** The VAE training loop has no `compute_dtype` switching,
 unlike `train_wgan_gp` (training.py:268). It runs at whatever the
 default torch dtype is — float32 on MPS, float32 on CPU. The
@@ -370,7 +370,7 @@ in `dtype_samples` documentation, OR force VAE training to compute_dtype
 to match WGAN.
 
 #### MD-3: `head_epoch != 1969` hardcoded assertion in figure renderer
-**File:** `revision/run_figure_suite.py:1117`
+**File:** `run_figure_suite.py:1117`
 **Problem:** `if head_epoch != 1969: raise ValueError(...)`. The
 canonical checkpoint epoch IS 1969 today, but if the recovery
 provenance ever shifts (e.g., a different `best_checkpoint.pt` is
@@ -381,7 +381,7 @@ should reference the lock JSON, not a literal.
 with a different message.
 
 #### MD-4: `_slice_module_docstring` would silently truncate on triple-quoted strings inside the docstring
-**File:** `revision/run_methods_full.py:144-162`
+**File:** `run_methods_full.py:144-162`
 **Problem:** The slicer finds the FIRST `"""` and the NEXT `"""`. If the
 docstring contained an embedded triple-quoted code example (e.g.,
 ``"""\n>>> '''\nfoo\n'''\n"""``), the slice would terminate prematurely.
@@ -393,7 +393,7 @@ functional.
 extraction.
 
 #### MD-5: `_check_ignored_json` and gate (a) silently mutate `.gitignore` + stage files as a "verify" step
-**File:** `revision/verify_freeze_ready.py:101-117`
+**File:** `verify_freeze_ready.py:101-117`
 **Problem:** Gate (a) appends to `.gitignore` and runs `git add -f`. A
 "verify" script should NOT mutate the working tree — operators expect
 verifiers to be observe-only. The self-heal pattern is documented but
@@ -405,7 +405,7 @@ spurious change.
 disables remediation and exits non-zero with an actionable message.
 
 #### MD-6: `verify_freeze_ready.gate_c` only checks `*.pt` / `*.pth` for size; misses large `.npz` / data files
-**File:** `revision/verify_freeze_ready.py:192-204`
+**File:** `verify_freeze_ready.py:192-204`
 **Problem:** The large-file check filters by extension (`.pt`, `.pth`).
 A 500MB `.npz` or `.npy` would pass. D-14-21 says "large checkpoints
 referenced by hash, not committed" — but a large dataset committed as
@@ -416,7 +416,7 @@ regardless of extension. Whitelist `data.csv` and a few known-large
 allowed paths.
 
 #### MD-7: `_train_quantum` monkey-patches `torch.backends.mps.is_available` globally
-**File:** `revision/run_matched2000.py:372-389`
+**File:** `run_matched2000.py:372-389`
 **Problem:** `torch.backends.mps.is_available = lambda: False` mutates a
 module-level attribute. If anything inside `train_wgan_gp` queries this
 in a thread that isn't waiting on the try/finally (e.g., a callback
@@ -431,9 +431,9 @@ override argument so callers can force CPU without global patching.
 (Out-of-scope per byte-freeze, but document the patch in a `THREADSAFETY.md`.)
 
 #### MD-8: `framework_versions.json`, `classical_architectures.json` use deprecated `datetime.utcnow()`
-**File:** `revision/run_circuit_diagrams.py:564`,
-`revision/run_classical_arch_extract.py:388`,
-`revision/run_framework_versions.py:82`
+**File:** `run_circuit_diagrams.py:564`,
+`run_classical_arch_extract.py:388`,
+`run_framework_versions.py:82`
 **Problem:** `datetime.datetime.utcnow()` is deprecated in Python 3.12+
 (PEP 685, DeprecationWarning since 3.12, scheduled for removal). On
 modern interpreters this emits a warning that could pollute stdout in
@@ -442,7 +442,7 @@ CI.
 **Fix:** Use `datetime.datetime.now(datetime.timezone.utc)`.
 
 #### MD-9: `_log_return_rows` in headline uses overlapping rolling-window stride for ACF references but non-overlapping for DTW
-**File:** `revision/run_canonical_headline.py:325, 333-339`
+**File:** `run_canonical_headline.py:325, 333-339`
 **Problem:** `acfs = np.stack([compute_acf(w, nlags=NLAGS) for w in win])`
 operates on `win` (synth log_return windows, generated). The
 **real-log-return ACF reference** in `run_figure_suite.render_acf_comparison`
@@ -458,13 +458,13 @@ choice; the manuscript should disclose.
 rationale (DTW pairs avoid overlap; ACF benefits from more windows).
 
 #### MD-10: `RESULTS.mkdir(parents=True, exist_ok=True)` is missing from several emitters
-**File:** `revision/run_model_info.py:765, 776, 779`,
-`revision/run_classical_arch_extract.py:482`,
-`revision/run_framework_versions.py:94`,
-`revision/run_methods_full.py:568`
+**File:** `run_model_info.py:765, 776, 779`,
+`run_classical_arch_extract.py:482`,
+`run_framework_versions.py:94`,
+`run_methods_full.py:568`
 **Problem:** These emitters write to `RESULTS / "*.json"` or `DOCS /
 "*.md"` without first ensuring the directory exists. On a fresh
-clone where neither `revision/results/` nor `revision/docs/` exists,
+clone where neither `results/` nor `docs/` exists,
 the writes raise `FileNotFoundError`. The peer drivers
 (`run_canonical_headline.py:581`, `run_matched2000_dualscale.py:589`,
 `run_recover_canonical.py:273`) DO `mkdir`.
@@ -476,27 +476,27 @@ fails.
 ### LOW / Style (nice to have)
 
 #### LO-1: `quantum.py:87` uses bare `assert`
-**File:** `revision/core/models/quantum.py:87`
+**File:** `core/models/quantum.py:87`
 **Problem:** `assert window_length == 2 * num_qubits, ...` — under
 `python -O`, this is stripped. The repo's stated discipline is explicit
 `raise AssertionError`. File is byte-frozen so out-of-scope for change,
 but worth flagging as a PRE-EXISTING WEAKNESS.
 
 #### LO-2: methods_full.py docstring claims `import yaml` is the only non-stdlib top-level — but yaml is never imported
-**File:** `revision/run_methods_full.py:38-42`
+**File:** `run_methods_full.py:38-42`
 **Problem:** Comment block lines 38-42 documents `import yaml` as the
 non-stdlib allowance. The file does NOT actually `import yaml`. Comment
 is misleading.
 **Fix:** Remove the comment block or remove the yaml claim.
 
 #### LO-3: `_resolves` is O(N×M) over JSON-blob text and unresolved tokens
-**File:** `revision/verify_number_provenance.py:118-141`
+**File:** `verify_number_provenance.py:118-141`
 **Problem:** For each token, iterates every JSON blob's text and every
 numeric in it. Out-of-scope per v1 review (performance), flagged
 because of CR-5 — tightening resolution may exacerbate cost.
 
 #### LO-4: `head_OD_mean` reference line drawn vertically in OD-distribution overlay panel
-**File:** `revision/run_figure_suite.py:1494-1495`
+**File:** `run_figure_suite.py:1494-1495`
 **Problem:** `axA.axvline(head_OD_mean, ...)` at the headline's OD-scale
 **moment_mean**. The panel x-axis is OD value (distribution). The
 vertical line marks the headline's MEAN OD — sensible — but the legend
@@ -506,7 +506,7 @@ reader to expect the line marks an EMD value.
 the headline OD mean, not EMD.
 
 #### LO-5: `_strip_identifiers` does not handle citations without trailing paren
-**File:** `revision/verify_number_provenance.py:73`
+**File:** `verify_number_provenance.py:73`
 **Problem:** `r"\b\d{4}\b(?=\s*\))"` only strips years followed by `)`.
 Inline references like `Gulrajani et al. 2017,` would not strip 2017,
 and the gate then requires 2017 to resolve to a JSON.
@@ -514,7 +514,7 @@ and the gate then requires 2017 to resolve to a JSON.
 followed by any reference punctuation are stripped.
 
 #### LO-6: `top-level "dtype" in headline_canonical.json` is param dtype, not sample dtype
-**File:** `revision/run_canonical_headline.py:558`
+**File:** `run_canonical_headline.py:558`
 **Problem:** `"dtype": actual_dtype` where `actual_dtype = "torch.float32"`
 (the param dtype). The methods_full.py docstring explicitly states
 `dtype_params` and `dtype_samples` are DISTINCT. The headline JSON only
@@ -524,7 +524,7 @@ emits one `dtype` field — ambiguous.
 (`run_model_info.py:689`).
 
 #### LO-7: `r_min` / `r_max` claim "pipeline-shape constants, not standardization stats" — technically false
-**File:** `revision/run_canonical_headline.py:492-498`
+**File:** `run_canonical_headline.py:492-498`
 **Problem:** Comment claims `r_min`/`r_max` are pipeline-shape constants.
 They are downstream of `forward_logreturns(od)`'s mu/sigma — they DO
 depend on the standardization stats. They only happen to equal the
@@ -634,7 +634,7 @@ catch a doc that cites one and renders the other.
 
 ## File-by-file notes
 
-**`revision/run_recover_canonical.py`** — Sound. The decomposition arithmetic
+**`run_recover_canonical.py`** — Sound. The decomposition arithmetic
 gate (line 226-234), the shape gate (line 220-224), and the equivalence
 gate (line 286-389) all use the explicit-raise idiom. The repo-root +
 gitignored-checkpoint resolver is robust (handles main checkout + git
@@ -642,7 +642,7 @@ worktree). Only nitpick: `_provenance` reads `g_pg["lr"]` etc. unguarded
 — if `c_optimizer.state_dict()` is malformed, `KeyError` is raised
 without a clear message.
 
-**`revision/run_canonical_headline.py`** — Mostly sound; the headline is
+**`run_canonical_headline.py`** — Mostly sound; the headline is
 properly gated by checkpoint sha256 equality, mu/sigma equality, shape
 equality, structural forward-pass equality, and explicit device/dtype
 manifest. **HI-1** (hardcoded DTW seed), **LO-6** (param dtype recorded
@@ -650,7 +650,7 @@ as just `dtype`), and **LO-7** (misleading r_min/r_max comment) are the
 real defects. The `_log_return_rows` DTW non-overlapping windowing is
 mathematically equivalent to the matched2000_dualscale driver — good.
 
-**`revision/run_matched2000.py`** — The classical/quantum
+**`run_matched2000.py`** — The classical/quantum
 asymmetric device handling is **CR-4**, the dominant finding. The
 strict-accept gate is otherwise well-engineered: explicit-raise on every
 check, bundle file presence check, schema completeness check. **HI-4**
@@ -659,7 +659,7 @@ gate (D-14-13) is honest about being 7 checks but **check #4 is shallow**
 — the manifest's `backend_assertion` field is unconditionally PASSED for
 the classical branch.
 
-**`revision/run_matched2000_sweep.sh`** — Strong. The flock/xargs/atomic
+**`run_matched2000_sweep.sh`** — Strong. The flock/xargs/atomic
 status pattern is correct (IN-2). The `is_complete` call inside
 `is_complete` (line 207-208) effectively re-runs the python strict gate
 for every check — performance concern (HI-9) not correctness. The
@@ -667,14 +667,14 @@ guardrail at line 169-177 correctly rejects `--parallel >= 3`. The
 sweep_status.json is rebuilt from scratch per write (line 261-264), so
 partial-writes are safe.
 
-**`revision/run_model_info.py`** — The cross-artifact data_hash gate
+**`run_model_info.py`** — The cross-artifact data_hash gate
 is WEAKER than peer emitters (**HI-3**). The hardcoded `optimizer_betas`
 field for VAE/AR (**HI-2**) is a provenance lie. The `_dataset_block`
 derivation (line 355-391) is honest — every count is derived from
 data.csv + the locked window config, never hand-typed. The reconciliation
 note is correctly built FROM JSON only (no recompute).
 
-**`revision/run_figure_suite.py`** — The biggest single source of
+**`run_figure_suite.py`** — The biggest single source of
 findings. CR-1 (non-deterministic seed), CR-2 (scale conflation), and
 MD-3 (hardcoded epoch). The Plan 14-10 figures (lines 1064-2214) are
 mostly defensive — loud-fail on missing input, distinct headline
@@ -684,30 +684,30 @@ makes them hard to review in a single pass. The pattern of using
 and good. The companion JSON-per-figure scheme is well-executed (every
 plotted value is recorded, every source artifact is named).
 
-**`revision/run_matched2000_dualscale.py`** — Strong. Cross-artifact
+**`run_matched2000_dualscale.py`** — Strong. Cross-artifact
 data_hash gate is the strongest of any emitter (verifies recomputed
 hash + every config + headline). The headline rows ARE emitted as a
 distinct model_kind. **HI-5** (model_kinds list excludes headline) is
 the only finding here. The DTW recipe is verbatim with
 `run_dualscale_fidelity` so 1000ep/2000ep numbers reconcile.
 
-**`revision/run_circuit_diagrams.py`** — Sound. The param-count
+**`run_circuit_diagrams.py`** — Sound. The param-count
 consistency gate (build_config_locks) collects ALL mismatches into a
 single explicit raise — operator sees every offending variant.
 qml.draw_mpl under torch.no_grad is the right render-only pattern.
 MD-8 (utcnow deprecation) is the only finding.
 
-**`revision/run_classical_arch_extract.py`** — Sound. The drift gate
+**`run_classical_arch_extract.py`** — Sound. The drift gate
 against model_info.json IS implemented (line 303-328), with the
 functional-API docstring fallback for WGAN-MLP/CNN/LSTM (IN-3). The
 extractor never calls model fit / sample / checkpoint reload — pure
 introspection. MD-8 (utcnow) is the only nit.
 
-**`revision/run_framework_versions.py`** — Trivial and correct. Pure
+**`run_framework_versions.py`** — Trivial and correct. Pure
 introspection over `importlib.metadata`. Handles
 `PackageNotFoundError` by emitting None. MD-8 (utcnow) applies.
 
-**`revision/run_methods_full.py`** — **CR-3** (hardcoded line citations)
+**`run_methods_full.py`** — **CR-3** (hardcoded line citations)
 is the only critical defect. The text-only citation extraction
 (`_first_lineno` + `_citations`) is otherwise the right pattern. The
 dtype_params / dtype_samples split into TWO DISTINCT fields is good
@@ -717,13 +717,13 @@ number-provenance gate on numerals but rely on the gate's
 identifier-strip patterns. LO-2 (misleading docstring about yaml) is
 the only stylistic nit. MD-10 (no `RESULTS.mkdir`) applies.
 
-**`revision/verify_freeze_ready.py`** — **HI-6** (glob depth mismatch
+**`verify_freeze_ready.py`** — **HI-6** (glob depth mismatch
 with verifier) and **MD-5** (verify script mutates working tree) are
 the meaningful findings. MD-6 (only *.pt/*.pth size-checked) is a
 hardening gap. The git subprocess wrapper ignores returncode/stderr —
 silent failure if git is unavailable or the repo is corrupt.
 
-**`revision/verify_number_provenance.py`** — **CR-5** (false-positive
+**`verify_number_provenance.py`** — **CR-5** (false-positive
 resolution) is the dominant finding. The substring match + truncated-string
 float comparison admit broad false positives that materially weaken the
 "every number traces to a JSON" guarantee. The gate is the executable
@@ -731,20 +731,20 @@ enforcement of success-criterion 5, but its current resolution model is
 too lax. LO-5 (citation-year strip pattern) and LO-3 (O(N×M) complexity)
 are secondary.
 
-**`revision/core/models/quantum.py`** (byte-frozen, pre-existing only)
+**`core/models/quantum.py`** (byte-frozen, pre-existing only)
 — LO-1 (bare assert). The bounds-check arithmetic for both circuit
 variants is correct (IN-9). The `_introspect_circuit` mirrors
 `generator_circuit` Steps 1-5 verbatim. The `par_light` hook is a
 documented no-op.
 
-**`revision/core/models/classical.py`** (byte-frozen, pre-existing only)
+**`core/models/classical.py`** (byte-frozen, pre-existing only)
 — Sound. The `params_pqc` flat-tensor pattern with manual slicing into
 F.linear / F.conv_transpose1d / functional LSTM is the right way to
 satisfy the `optim.Adam([generator.params_pqc])` single-tensor contract
 (training.py:297). Param counts (74/73/78) are consistent with the
 docstring layouts and with the classical_architectures.json extractor.
 
-**`revision/core/training.py`** (byte-frozen, pre-existing only) —
+**`core/training.py`** (byte-frozen, pre-existing only) —
 MD-1 (stale `real_log_returns` reference in eval phase). The
 `compute_dtype` split (line 268) is the canonical CPU-float64 /
 MPS-float32 source of truth. The `_load_checkpoint` device/dtype
@@ -754,7 +754,7 @@ delta is disclosed in the docstring. The `_spectral_psd_loss`
 device-fix (CR-01 at lines 504-549) IS correct and gated by
 `spectral_loss_weight > 0` (default OFF).
 
-**`revision/core/eval.py`** (byte-frozen, pre-existing only) — Sound.
+**`core/eval.py`** (byte-frozen, pre-existing only) — Sound.
 The notebook-parity decisions (Fisher kurtosis, ddof=0 std, raw-samples
 EMD) are documented and traced to notebook cell numbers. `compute_dtw`
 uses fastdtw + euclidean. All functions are pure / stateless. No

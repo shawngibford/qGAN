@@ -9,7 +9,7 @@ requires:
   - phase: 11-utility-evaluation
     provides: "11-01 run_utility.py (EVAL-01 TSTR + EVAL-04 augmentation driver)"
 provides:
-  - "revision/run_utility.py — hardened: derived shape comment, NaN-on-degenerate r2, collision-free (mk,p,label)-qualified subsample seed, grid-collapse assertion"
+  - "run_utility.py — hardened: derived shape comment, NaN-on-degenerate r2, collision-free (mk,p,label)-qualified subsample seed, grid-collapse assertion"
 affects: [14-paper-revision]
 
 # Tech tracking
@@ -22,7 +22,7 @@ tech-stack:
 key-files:
   created: []
   modified:
-    - revision/run_utility.py
+    - run_utility.py
 
 key-decisions:
   - "WR-02 assert written as eval_windows[:, 9:10].std() > 0.0 (no float() wrapper) to satisfy the plan's own verify regex; numpy float comparison is semantically identical (Rule-4 minor, plan-internal-consistency)"
@@ -40,7 +40,7 @@ completed: 2026-05-18
 
 # Phase 11 Plan 05: WR-01..04 Correctness/Reproducibility Hardening
 
-**Closed the four localized correctness/reproducibility warnings in `revision/run_utility.py` (stale shape comment, degenerate-R2 masking, lossy subsample seed, unguarded injection-grid collapse) with the data_hash invariant and the 22-test suite preserved.**
+**Closed the four localized correctness/reproducibility warnings in `run_utility.py` (stale shape comment, degenerate-R2 masking, lossy subsample seed, unguarded injection-grid collapse) with the data_hash invariant and the 22-test suite preserved.**
 
 ## Performance
 
@@ -48,7 +48,7 @@ completed: 2026-05-18
 - **Started:** 2026-05-18 (base 1f1c186)
 - **Completed:** 2026-05-18
 - **Tasks:** 2
-- **Files modified:** 1 (`revision/run_utility.py`)
+- **Files modified:** 1 (`run_utility.py`)
 
 ## Accomplishments
 
@@ -56,7 +56,7 @@ completed: 2026-05-18
 - **WR-02:** `r2_score_inline` now returns `float("nan")` (matching sklearn `r2_score`) instead of a plausible-looking `0.0` that defeats the strict `<0` leakage sentinel; `train_eval_tstr` asserts `eval_windows[:, 9:10].std() > 0.0` before training so a future degenerate slice fails at its true cause. Current data is non-degenerate → every produced number is byte-identical.
 - **WR-03:** Subsample RNG is now `np.random.default_rng(zlib.crc32(f"augsub|{mk}|{p}|{label}".encode()) & 0xFFFFFFFF)` — collision-free and fully qualified by run identity, replacing the lossy `int(ratio*1000)+1`. The exact integer is recorded in `subsample_rng_seed` with a new self-describing `subsample_rng_seed_derivation` sibling field.
 - **WR-04:** `assert n_synth < synth_pool.shape[0]` inside the `_INJECTION_GRID` loop makes a shrunken pool fail loudly instead of silently collapsing `+100%` into `synthetic_only`. Always passes at the documented pool size (~3840).
-- **Invariants held:** `git diff --stat -- revision/core/` empty after every task; `tstr.json`/`augmentation.json` on-disk `data_hash` still `91e447d4624e25b3` (seed governs only synthetic subsampling, not any data_hash input); `pytest revision/tests/ -q` → 22 passed incl. `test_no_leakage_sentinel`.
+- **Invariants held:** `git diff --stat -- core/` empty after every task; `tstr.json`/`augmentation.json` on-disk `data_hash` still `91e447d4624e25b3` (seed governs only synthetic subsampling, not any data_hash input); `pytest tests/ -q` → 22 passed incl. `test_no_leakage_sentinel`.
 
 ## Task Commits
 
@@ -67,7 +67,7 @@ Each task was committed atomically:
 
 ## Files Created/Modified
 
-- `revision/run_utility.py` - Hardened: derived shape comment; NaN-on-degenerate `r2_score_inline` + pre-train non-degeneracy assert; crc32 `(mk,p,label)`-qualified subsample seed + derivation field; injection-grid-collapse assert.
+- `run_utility.py` - Hardened: derived shape comment; NaN-on-degenerate `r2_score_inline` + pre-train non-degeneracy assert; crc32 `(mk,p,label)`-qualified subsample seed + derivation field; injection-grid-collapse assert.
 
 ## Decisions Made
 
@@ -85,6 +85,6 @@ Each task was committed atomically:
 - `grep 'eval_windows[:, 9:10].std() > 0'` → present (line 233) ✓
 - `grep crc32 augsub derivation` + `! grep 'int(ratio * 1000) + 1'` → present / absent ✓
 - `grep 'assert n_synth < synth_pool.shape[0]'` → present (line 457) ✓
-- `git diff --stat -- revision/core/` → empty ✓
+- `git diff --stat -- core/` → empty ✓
 - `data_hash` in tstr.json + augmentation.json → `91e447d4624e25b3` ✓
-- `pytest revision/tests/ -q` → 22 passed ✓
+- `pytest tests/ -q` → 22 passed ✓

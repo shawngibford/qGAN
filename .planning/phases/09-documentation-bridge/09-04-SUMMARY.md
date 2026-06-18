@@ -7,9 +7,9 @@ tags: [paper-methods, dataset-stats, doc-02, lucy-photobioreactor, single-campai
 # Dependency graph
 requires:
   - phase: 08-core-module-extraction
-    provides: revision/core/data.py::load_and_preprocess as canonical pipeline whose live output (778/777/384) anchors the doc counts
+    provides: core/data.py::load_and_preprocess as canonical pipeline whose live output (778/777/384) anchors the doc counts
 provides:
-  - revision/docs/dataset_stats.md (paper-ready Methods content for Phase 14 PAPER-08)
+  - docs/dataset_stats.md (paper-ready Methods content for Phase 14 PAPER-08)
   - explicit train:val:test ratio row (100% : 0% : 0%) satisfying ROADMAP DOC-02 success criterion
   - Single-Campaign Limitation prose block addressing R1-M5 calibration honesty
   - PAR_LIGHT disabled-conditioning note for unconditioned_wgan baseline
@@ -20,12 +20,12 @@ tech-stack:
   added: []
   patterns:
     - "D-08 hybrid doc format: tables for numeric content + 1-paragraph prose for justifications"
-    - "D-09 traceability: every count cites source file:line in revision/core/data.py"
+    - "D-09 traceability: every count cites source file:line in core/data.py"
     - "Live-verified counts (NOT CONTEXT.md prose) — reconciles RESEARCH OQ-1/2/3"
 
 key-files:
   created:
-    - revision/docs/dataset_stats.md
+    - docs/dataset_stats.md
   modified: []
 
 key-decisions:
@@ -48,7 +48,7 @@ completed: 2026-05-15
 
 # Phase 09 Plan 04: Dataset Statistics Documentation Summary
 
-**Paper-ready `revision/docs/dataset_stats.md` (82 lines) with live-verified counts 778/777/384, single-campaign limitation prose addressing R1-M5, and explicit 100%:0%:0% split-ratio row satisfying ROADMAP DOC-02**
+**Paper-ready `docs/dataset_stats.md` (82 lines) with live-verified counts 778/777/384, single-campaign limitation prose addressing R1-M5, and explicit 100%:0%:0% split-ratio row satisfying ROADMAP DOC-02**
 
 ## Performance
 
@@ -59,7 +59,7 @@ completed: 2026-05-15
 - **Files modified:** 1 (created)
 
 ## Accomplishments
-- Wrote `revision/docs/dataset_stats.md` end-to-end as drop-in Methods content for Phase 14 PAPER-08
+- Wrote `docs/dataset_stats.md` end-to-end as drop-in Methods content for Phase 14 PAPER-08
 - Reconciled live-pipeline counts (778 raw OD / 777 log_delta / 384 rolling windows) — explicitly rejecting the CONTEXT.md prose values of 777/384 per RESEARCH OQ-1/2/3
 - Resolved end-date discrepancy: live `data.csv` confirms last row is `1/4/24 23:42` (2024-04-01 23:42), giving a corrected ~5.4-day duration (RESEARCH-era estimate of "~4.5 days, 2024-03-31 23:52" was based on an earlier snapshot)
 - Added explicit Split Convention table row reporting "100% : 0% : 0% (384 : 0 : 0 windows)" to literally satisfy ROADMAP DOC-02 success criterion "split ratios and counts" while honoring D-01 (no held-out split)
@@ -71,18 +71,18 @@ completed: 2026-05-15
 
 Each task was committed atomically:
 
-1. **Task 1: Write revision/docs/dataset_stats.md (5 sections, hybrid table+prose)** — `c50d281` (docs)
+1. **Task 1: Write docs/dataset_stats.md (5 sections, hybrid table+prose)** — `c50d281` (docs)
 
 ## Files Created/Modified
-- `revision/docs/dataset_stats.md` — 82 lines, 5 sections (Counts, Sampling & Date Range, Split Convention, Preprocessing Pipeline, PAR_LIGHT Note) + Single-Campaign Limitation prose anchor under Split Convention; hybrid table-plus-prose format per D-08
+- `docs/dataset_stats.md` — 82 lines, 5 sections (Counts, Sampling & Date Range, Split Convention, Preprocessing Pipeline, PAR_LIGHT Note) + Single-Campaign Limitation prose anchor under Split Convention; hybrid table-plus-prose format per D-08
 
 ## Verified Live Numbers (RESEARCH OQ-1/2/3 reconciled)
 
 | Quantity | Live value | Source |
 |---|---|---|
 | Raw CSV data rows | 778 | `python: len(open('data.csv').readlines()) - 1 == 778` |
-| Log-return rows (N−1) | 777 | `revision/core/data.py:62` (`log_od[1:] - log_od[:-1]`) |
-| Rolling windows (m=10, s=2) | 384 | `(777 − 10) // 2 + 1 = 384`; `revision/core/data.py:110-118` |
+| Log-return rows (N−1) | 777 | `core/data.py:62` (`log_od[1:] - log_od[:-1]`) |
+| Rolling windows (m=10, s=2) | 384 | `(777 − 10) // 2 + 1 = 384`; `core/data.py:110-118` |
 | Start date | 2024-03-27 13:12 | first row of `data.csv` (`27/03/2024 13:12`) |
 | End date | 2024-04-01 23:42 | last row of `data.csv` (`1/4/24 23:42`) |
 | Duration | ~5.4 days (5.4375 d = 5 d 10 h 30 min) | computed from start → end |
@@ -133,7 +133,7 @@ None — no external service configuration required. This is a documentation del
 
 ## Next Phase Readiness
 
-**Phase 14 PAPER-08 (Methods § Dataset details):** `revision/docs/dataset_stats.md` is the upstream artifact and is drop-in ready. The doc:
+**Phase 14 PAPER-08 (Methods § Dataset details):** `docs/dataset_stats.md` is the upstream artifact and is drop-in ready. The doc:
 - Reports all reviewer-required counts (R1-m2: dataset details) with file:line citations
 - Acknowledges the single-campaign / no-split methodological constraint per R1-M5 (calibration honesty)
 - Defers multi-campaign generalization to Phase 14 Outlook (not a current-scope claim)
@@ -147,7 +147,7 @@ No blockers.
 
 ## Self-Check: PASSED
 
-- `revision/docs/dataset_stats.md` — FOUND (82 lines)
+- `docs/dataset_stats.md` — FOUND (82 lines)
 - Commit `c50d281` — FOUND in git log
 - All 19 acceptance-criteria grep gates — PASSED
 

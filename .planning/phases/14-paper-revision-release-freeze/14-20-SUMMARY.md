@@ -26,7 +26,7 @@ the R1-M2 utility evaluation shares R1-M1's matched-budget evidence base.
 
 No retraining was required — the matched2000 sweep was already complete in
 phase 14-02 (9 trainable model_kinds × 5 generator seeds × 2000 epochs ×
-Pipeline B, samples.npy on disk under `revision/results/matched2000/runs/`).
+Pipeline B, samples.npy on disk under `results/matched2000/runs/`).
 Only the post-hoc utility nets (1-layer LSTM soft sensor; TimeGAN-convention
 predictive + discriminative GRU pairs; Orlandi-style augmentation evaluator)
 were re-trained — generators were not touched.
@@ -37,22 +37,22 @@ were re-trained — generators were not touched.
 
 | File | Rows | Aggregate blocks | Scope |
 |---|---|---|---|
-| `revision/results/tstr_matched2000.json` | 108 | 10 (9 variants + real_only_baseline) | TSTR R²/MAE/RMSE, 9 model_kinds × Pipeline B × 5 seeds × 3 init seeds |
-| `revision/results/predictive_discriminative_matched2000.json` | 90 | 9 | TimeGAN predictive + discriminative (\|acc−0.5\| convention) |
-| `revision/results/augmentation_matched2000.json` | 135 | 9 | Orlandi-style real-only vs +25%/+50%/+100% synthetic augmentation lift |
-| `revision/results/figures/tstr_crossmodel_matched2000.{png,pdf,json}` | — | — | 9-variant Pipeline-B cross-model TSTR bars + real-only dashed reference |
+| `results/tstr_matched2000.json` | 108 | 10 (9 variants + real_only_baseline) | TSTR R²/MAE/RMSE, 9 model_kinds × Pipeline B × 5 seeds × 3 init seeds |
+| `results/predictive_discriminative_matched2000.json` | 90 | 9 | TimeGAN predictive + discriminative (\|acc−0.5\| convention) |
+| `results/augmentation_matched2000.json` | 135 | 9 | Orlandi-style real-only vs +25%/+50%/+100% synthetic augmentation lift |
+| `results/figures/tstr_crossmodel_matched2000.{png,pdf,json}` | — | — | 9-variant Pipeline-B cross-model TSTR bars + real-only dashed reference |
 
 ### Code changes
 
-- `revision/run_utility.py` — `MODEL_KINDS` replaced with the matched-budget 9-list (`iqp_sel_55_repro`, `V1`, `V2`, `V3`, `wgan_mlp`, `wgan_cnn`, `wgan_lstm`, `vae`, `ar`); `PIPELINES = ["B"]`; `_run_base()` collapsed to single matched2000-routed branch; `_assert_data_hash_invariant()` adjusted to iterate all 45 cells (no quantum-by-construction shortcut — all matched-budget configs carry `91e447d4624e25b3` directly); `reconstruct_od()` raises `NotImplementedError` for Pipeline A in matched-budget driver mode; output filenames retargeted to `*_matched2000.json` siblings.
-- `revision/run_timegan_scores.py` — identical shape of edits.
-- `revision/run_figure_suite.py` — new sibling renderer `render_tstr_crossmodel_matched2000()` added (no special-case "quantum" label collapse; four quantum variants labeled explicitly via `MODEL_LABELS`; single Pipeline-B panel; real-only baseline plotted as dashed reference; negative-R² treatment retained for safety).
+- `run_utility.py` — `MODEL_KINDS` replaced with the matched-budget 9-list (`iqp_sel_55_repro`, `V1`, `V2`, `V3`, `wgan_mlp`, `wgan_cnn`, `wgan_lstm`, `vae`, `ar`); `PIPELINES = ["B"]`; `_run_base()` collapsed to single matched2000-routed branch; `_assert_data_hash_invariant()` adjusted to iterate all 45 cells (no quantum-by-construction shortcut — all matched-budget configs carry `91e447d4624e25b3` directly); `reconstruct_od()` raises `NotImplementedError` for Pipeline A in matched-budget driver mode; output filenames retargeted to `*_matched2000.json` siblings.
+- `run_timegan_scores.py` — identical shape of edits.
+- `run_figure_suite.py` — new sibling renderer `render_tstr_crossmodel_matched2000()` added (no special-case "quantum" label collapse; four quantum variants labeled explicitly via `MODEL_LABELS`; single Pipeline-B panel; real-only baseline plotted as dashed reference; negative-R² treatment retained for safety).
 
 ### Doc updates
 
-- `revision/docs/reviewer_response.md` — R1-M2 row in summary table updated to cite matched-budget JSONs + matched-budget figure; "R1-M2 — Utility-oriented evaluation — matched-budget re-run (Plan 14-20)" section completely rewritten with per-variant 9-model table (TSTR R²/MAE/RMSE + predictive + discriminative + +100% augmented R²), cross-generator convergence reading, structural-utility-from-cumulative-sum interpretation, scope note documenting Pipeline-B-only matched-budget protocol.
-- `revision/docs/methods_full.md` — new §3.y "Utility-oriented evaluation at matched-budget Pipeline B (Plan 14-20)" added between the DTW historical-context block and §4.
-- `revision/docs/completeness_sweep_manifest.md` — legacy `tstr_crossmodel` row annotated as 1000-epoch / not-cited; 4 new rows added for matched-budget artefacts.
+- `docs/reviewer_response.md` — R1-M2 row in summary table updated to cite matched-budget JSONs + matched-budget figure; "R1-M2 — Utility-oriented evaluation — matched-budget re-run (Plan 14-20)" section completely rewritten with per-variant 9-model table (TSTR R²/MAE/RMSE + predictive + discriminative + +100% augmented R²), cross-generator convergence reading, structural-utility-from-cumulative-sum interpretation, scope note documenting Pipeline-B-only matched-budget protocol.
+- `docs/methods_full.md` — new §3.y "Utility-oriented evaluation at matched-budget Pipeline B (Plan 14-20)" added between the DTW historical-context block and §4.
+- `docs/completeness_sweep_manifest.md` — legacy `tstr_crossmodel` row annotated as 1000-epoch / not-cited; 4 new rows added for matched-budget artefacts.
 
 ## Headline matched-budget result (Pipeline B, 2000 epochs)
 
@@ -130,7 +130,7 @@ the active reference.
 ## Constraints honored
 
 - **No retraining.** Generators trained in phase 14-02 were re-used unchanged.
-- **No `revision/core/` edits** (D-11-10 metric-math invariant preserved).
+- **No `core/` edits** (D-11-10 metric-math invariant preserved).
 - **No mutation of legacy 1000-epoch utility JSONs** (`tstr.json`, `predictive_discriminative.json`, `augmentation.json` retain their May 17 timestamps and byte contents; they remain on disk as provenance reference).
 - **No mutation of pre-14-20 numbers in paper-facing docs** (only the R1-M2 row + R1-M2 strengthened section in `reviewer_response.md`, the new §3.y in `methods_full.md`, and the manifest rows in `completeness_sweep_manifest.md` were edited; provenance gate confirms no literal regression in the previously-certified docs).
 

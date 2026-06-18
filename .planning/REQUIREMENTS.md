@@ -11,8 +11,8 @@
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: `revision/core/` package exists with importable modules (`data.py`, `eval.py`, `training.py`, `models/quantum.py`, `models/critic.py`, `models/classical_wgan.py`, `models/vae.py`). All logic lives in modules; revision notebooks only orchestrate + plot + write JSON.
-- [ ] **INFRA-02**: Extracted modules reproduce main-notebook behavior — EMD and moment metrics match within numerical tolerance when `qgan_pennylane.ipynb` is re-run using the imported `revision/core/` modules (sanity check, no behavior change).
+- [ ] **INFRA-01**: `core/` package exists with importable modules (`data.py`, `eval.py`, `training.py`, `models/quantum.py`, `models/critic.py`, `models/classical_wgan.py`, `models/vae.py`). All logic lives in modules; revision notebooks only orchestrate + plot + write JSON.
+- [ ] **INFRA-02**: Extracted modules reproduce main-notebook behavior — EMD and moment metrics match within numerical tolerance when `qgan_pennylane.ipynb` is re-run using the imported `core/` modules (sanity check, no behavior change).
 - [x] **INFRA-03**: Repository frozen via tagged release (`v2.0-revision`) and Zenodo DOI minted; DOI cited in manuscript.
 
 ### Baselines (addresses R1-M1, R2-1)
@@ -28,13 +28,13 @@
 - [x] **EVAL-03**: TimeGAN-style discriminative score computed for the same three models.
 - [x] **EVAL-04**: Real-only vs. synthetic-augmented training comparison (Orlandi et al. [26] style).
 - [x] **EVAL-05**: All fidelity metrics (EMD, ACF, moments, DTW) reported on both transformed (log-return) and original OD scales.
-- [ ] **EVAL-06**: Differentiable `inverse_transform` exposed in `revision/core/data.py` (log-return + Lambert W back-transform to OD).
+- [ ] **EVAL-06**: Differentiable `inverse_transform` exposed in `core/data.py` (log-return + Lambert W back-transform to OD).
 
 ### Preprocessing Ablation (addresses R1-M3, Phase 09.1)
 
-- [x] **ABL-01**: Three preprocessing pipelines implemented as `forward_X` / `inverse_X` pairs in `revision/core/preprocessing.py` — A (raw normalized OD), B (log-returns only), C (log-returns + Lambert W, current paper). Each pair has a verified ≤float-eps round-trip on a real trajectory.
-- [x] **ABL-02**: All three pipelines trained ≥5 seeds with identical circuit architecture, hyperparameters, optimizer, schedule, and seed set; per-seed checkpoints, generated samples, and run config YAML written to `revision/results/transform_ablation/runs/<pipeline>/<seed>/`.  _Partial: Wave 2 smoke (1 seed × 100 epochs) complete via plan 09.1-02 (structural_pass=true); full 5-seed × 1000-epoch sweep is Wave 3 (plan 09.1-03)._
-- [x] **ABL-03**: OD-scale comparison artifacts (`metrics.csv` + 6 figures: trajectories, ACF (OD + transformed supplementary), Q-Q, PDF/CDF, DTW + `summary.md`) answering the four R1-M3 rebuttal questions; written to `revision/results/transform_ablation/`.
+- [x] **ABL-01**: Three preprocessing pipelines implemented as `forward_X` / `inverse_X` pairs in `core/preprocessing.py` — A (raw normalized OD), B (log-returns only), C (log-returns + Lambert W, current paper). Each pair has a verified ≤float-eps round-trip on a real trajectory.
+- [x] **ABL-02**: All three pipelines trained ≥5 seeds with identical circuit architecture, hyperparameters, optimizer, schedule, and seed set; per-seed checkpoints, generated samples, and run config YAML written to `results/transform_ablation/runs/<pipeline>/<seed>/`.  _Partial: Wave 2 smoke (1 seed × 100 epochs) complete via plan 09.1-02 (structural_pass=true); full 5-seed × 1000-epoch sweep is Wave 3 (plan 09.1-03)._
+- [x] **ABL-03**: OD-scale comparison artifacts (`metrics.csv` + 6 figures: trajectories, ACF (OD + transformed supplementary), Q-Q, PDF/CDF, DTW + `summary.md`) answering the four R1-M3 rebuttal questions; written to `results/transform_ablation/`.
 
 ### Sensitivity (addresses R1-M4, R2-1)
 
@@ -55,8 +55,8 @@
 
 ### Documentation Bridge (addresses R1-M4, R1-m2)
 
-- [ ] **DOC-01**: Full training protocol extracted from code into `revision/docs/training_protocol.md` — N_CRITIC, λ, optimizer, LRs, epochs, stopping rule, seeds, shot/analytic clarification.
-- [ ] **DOC-02**: Dataset statistics — raw time points, rolling windows, train/val/test split ratios and counts, number of independent runs — written to `revision/docs/dataset_stats.md`.
+- [ ] **DOC-01**: Full training protocol extracted from code into `docs/training_protocol.md` — N_CRITIC, λ, optimizer, LRs, epochs, stopping rule, seeds, shot/analytic clarification.
+- [ ] **DOC-02**: Dataset statistics — raw time points, rolling windows, train/val/test split ratios and counts, number of independent runs — written to `docs/dataset_stats.md`.
 
 ---
 
@@ -119,7 +119,7 @@ All 19 reviewer items mapped.
 | Hardware (QPU) execution | Simulator-only stated honestly per R1-M5; not a reviewer ask |
 | Closed-loop decision pipeline implementation | Reviewer accepted Outlook-only treatment per R2-3 |
 | First-principles Hybrid-GAN implementation | Reviewer accepted "proposed extension" label per R2-5a |
-| Refactoring main notebook into full .py package | `revision/core/` covers shared modules only; main notebook stays as-is |
+| Refactoring main notebook into full .py package | `core/` covers shared modules only; main notebook stays as-is |
 | New training variance-collapse remediation | v2.0 reports honestly against classical baselines, not a fresh attempt |
 | Full automated circuit architecture search | Manual ansatz comparison (ARCH-01) is sufficient for reviewer |
 | Additional datasets / multi-campaign data | Reviewer accepts single-campaign scope if acknowledged |

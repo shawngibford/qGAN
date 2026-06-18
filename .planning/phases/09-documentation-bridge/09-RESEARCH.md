@@ -6,7 +6,7 @@
 
 ## Summary
 
-Phase 9 has three concrete deliverables — two markdown documentation files (`training_protocol.md`, `dataset_stats.md`) and one in-place code replacement (`inverse_lambert_w_transform` → custom `torch.autograd.Function`) — plus a scaffold for Phase 09.1 (`revision/core/preprocessing.py`). Every locked decision in CONTEXT.md (D-01 through D-10) is resolvable from existing code: numerical constants live in `revision/core/__init__.py`, the Lambert W math has a well-known closed-form derivative, and the round-trip verification pattern already exists in `revision/01_parity_check.ipynb`. The only **non-trivial** engineering is the autograd Function and its `gradcheck` validation — the rest is content assembly with strict citation discipline.
+Phase 9 has three concrete deliverables — two markdown documentation files (`training_protocol.md`, `dataset_stats.md`) and one in-place code replacement (`inverse_lambert_w_transform` → custom `torch.autograd.Function`) — plus a scaffold for Phase 09.1 (`core/preprocessing.py`). Every locked decision in CONTEXT.md (D-01 through D-10) is resolvable from existing code: numerical constants live in `core/__init__.py`, the Lambert W math has a well-known closed-form derivative, and the round-trip verification pattern already exists in `01_parity_check.ipynb`. The only **non-trivial** engineering is the autograd Function and its `gradcheck` validation — the rest is content assembly with strict citation discipline.
 
 **Three discrepancies between CONTEXT.md and live code were discovered during research and must be reconciled by the planner** (see Open Questions):
 1. CONTEXT.md states the tensor length is `776` ("torch.randn(776, dtype=float64)" in D-04). Live pipeline produces `log_delta` of length **777** (verified by running `load_and_preprocess` on `./data.csv`).
@@ -20,9 +20,9 @@ Phase 9 has three concrete deliverables — two markdown documentation files (`t
 
 | ID | Description | Research Support |
 |----|-------------|------------------|
-| DOC-01 | `revision/docs/training_protocol.md` documents N_CRITIC, λ, optimizer, both LRs, epochs, early-stopping rule, seeds, shot/analytic — traceable to `revision/core/__init__.py` | All 17 constants verified in `__init__.py:1-45`; Adam betas=(0.0,0.9) at `training.py:233-234`; EarlyStopping(patience=50, warmup_epochs=100) at `training.py:96-98` and notebook line 3983; seed=42 default at `training.py:188`; shots=None at `models/quantum.py:64` |
-| DOC-02 | `revision/docs/dataset_stats.md` reports raw time-point count, rolling-window count, split convention, campaign count | Live pipeline verified: OD=778, log_delta=777, windows=384 (stride=2, WINDOW_LENGTH=10); single campaign starting 2024-03-27; sampling cadence 10-min (consecutive DATE deltas in `data.csv`) |
-| EVAL-06 | `revision/core/data.py` exposes differentiable `inverse_transform`, ≤1e-8 round-trip | Closed-form `dW/dz = W/(z(1+W))` verified numerically to ~1e-10 against `lambertw`; `torch.autograd.Function` is the canonical pattern; `torch.autograd.gradcheck` validates implementation; Phase 8 parity baseline gives 0.0 EMD/moment drift, so the 1e-8 tolerance has full headroom |
+| DOC-01 | `docs/training_protocol.md` documents N_CRITIC, λ, optimizer, both LRs, epochs, early-stopping rule, seeds, shot/analytic — traceable to `core/__init__.py` | All 17 constants verified in `__init__.py:1-45`; Adam betas=(0.0,0.9) at `training.py:233-234`; EarlyStopping(patience=50, warmup_epochs=100) at `training.py:96-98` and notebook line 3983; seed=42 default at `training.py:188`; shots=None at `models/quantum.py:64` |
+| DOC-02 | `docs/dataset_stats.md` reports raw time-point count, rolling-window count, split convention, campaign count | Live pipeline verified: OD=778, log_delta=777, windows=384 (stride=2, WINDOW_LENGTH=10); single campaign starting 2024-03-27; sampling cadence 10-min (consecutive DATE deltas in `data.csv`) |
+| EVAL-06 | `core/data.py` exposes differentiable `inverse_transform`, ≤1e-8 round-trip | Closed-form `dW/dz = W/(z(1+W))` verified numerically to ~1e-10 against `lambertw`; `torch.autograd.Function` is the canonical pattern; `torch.autograd.gradcheck` validates implementation; Phase 8 parity baseline gives 0.0 EMD/moment drift, so the 1e-8 tolerance has full headroom |
 </phase_requirements>
 
 <user_constraints>
@@ -40,12 +40,12 @@ Phase 9 has three concrete deliverables — two markdown documentation files (`t
 - **D-05: scipy stays in the forward path, removed from autograd.** `scipy.special.lambertw` is called once inside the `torch.autograd.Function.forward`; the backward path uses only torch ops on the cached `W` value. No new third-party dependencies.
 
 **Phase 09.1 Scaffolding**
-- **D-06: Add `revision/core/preprocessing.py` in Phase 9.** Exposes the full ablation contract: `forward_logreturns`/`inverse_logreturns`, `forward_lambert`/`inverse_lambert`, `forward_minmax_od`/`inverse_minmax_od`. Phase 9 implements only the Lambert pair (it IS EVAL-06); the other four raise `NotImplementedError("Phase 09.1")` with one-line docstrings describing the expected behavior.
-- **D-07: `revision/core/data.py` keeps existing functions.** No symbol renames, no removals. The differentiable Lambert W implementation lives in `data.py` (where `inverse_lambert_w_transform` currently is); `preprocessing.py` re-exports it under the `inverse_lambert` name to satisfy the unified contract. Single source of truth in `data.py`.
+- **D-06: Add `core/preprocessing.py` in Phase 9.** Exposes the full ablation contract: `forward_logreturns`/`inverse_logreturns`, `forward_lambert`/`inverse_lambert`, `forward_minmax_od`/`inverse_minmax_od`. Phase 9 implements only the Lambert pair (it IS EVAL-06); the other four raise `NotImplementedError("Phase 09.1")` with one-line docstrings describing the expected behavior.
+- **D-07: `core/data.py` keeps existing functions.** No symbol renames, no removals. The differentiable Lambert W implementation lives in `data.py` (where `inverse_lambert_w_transform` currently is); `preprocessing.py` re-exports it under the `inverse_lambert` name to satisfy the unified contract. Single source of truth in `data.py`.
 
 **Documentation Style**
 - **D-08: Hybrid format — tables for numbers + 1-paragraph prose for justifications.** Both `training_protocol.md` and `dataset_stats.md` follow this pattern.
-- **D-09: Numbers traceable to `revision/core/__init__.py`.** Every constant is sourced from `__init__.py`. Doc cites the source file once at the top.
+- **D-09: Numbers traceable to `core/__init__.py`.** Every constant is sourced from `__init__.py`. Doc cites the source file once at the top.
 - **D-10: shot/analytic distinction stated explicitly.** training_protocol.md states clearly: "All Phase 9 results use analytic statevector simulation (PennyLane `default.qubit` with `shots=None`); shot-noise sweeps are reported separately in Phase 12."
 
 ### Claude's Discretion
@@ -74,10 +74,10 @@ Phase 9 has three concrete deliverables — two markdown documentation files (`t
 |------------|-------------|----------------|-----------|
 | Numerical kernel: `lambertw` evaluation | scipy (forward only, per D-05) | — | scipy is the project-standard SciPy 1.x library for special functions; no in-tree dep change |
 | Autograd graph: backward gradient | PyTorch `torch.autograd.Function` | — | Closed-form `dW/dz = W/(z(1+W))` is fast, exact, and avoids re-entering scipy in backward — D-05 mandates this |
-| Public API surface | `revision/core/data.py::inverse_lambert_w_transform` (in-place per D-03) | `revision/core/preprocessing.py::inverse_lambert` (re-export per D-07) | data.py = single source of truth; preprocessing.py is the unified-API facade Phase 09.1 will fill out |
-| Verification harness | New `revision/02_eval06_roundtrip.ipynb` (notebook-orchestrates pattern, INFRA-01 convention) | `revision/results/eval06_roundtrip.json` (JSON artifact) | Established pattern from `01_parity_check.ipynb`: notebook loads → calls modules → asserts → writes JSON |
-| Documentation | `revision/docs/training_protocol.md`, `revision/docs/dataset_stats.md` | — | Plain markdown files; consumed by Phase 14 paper drafting |
-| Number lineage | `revision/core/__init__.py` (citation target) | docs (citation source) | D-09: single source of truth so future HPO change updates one file |
+| Public API surface | `core/data.py::inverse_lambert_w_transform` (in-place per D-03) | `core/preprocessing.py::inverse_lambert` (re-export per D-07) | data.py = single source of truth; preprocessing.py is the unified-API facade Phase 09.1 will fill out |
+| Verification harness | New `02_eval06_roundtrip.ipynb` (notebook-orchestrates pattern, INFRA-01 convention) | `results/eval06_roundtrip.json` (JSON artifact) | Established pattern from `01_parity_check.ipynb`: notebook loads → calls modules → asserts → writes JSON |
+| Documentation | `docs/training_protocol.md`, `docs/dataset_stats.md` | — | Plain markdown files; consumed by Phase 14 paper drafting |
+| Number lineage | `core/__init__.py` (citation target) | docs (citation source) | D-09: single source of truth so future HPO change updates one file |
 
 ## Standard Stack
 
@@ -149,13 +149,13 @@ python3 -c "import torch; import scipy.special; import pennylane; print(torch.__
         │                           │                                      │
         │                           ▼                                      │
         │                    [Verification harness]                        │
-        │                    revision/02_eval06_roundtrip.ipynb            │
+        │                    02_eval06_roundtrip.ipynb            │
         │                           │                                      │
         │                           ├──> gradcheck (analytic vs numerical) │
         │                           ├──> round-trip on synthetic randn     │
         │                           ├──> round-trip on real log_delta      │
         │                           ├──> end-to-end full_denorm_pipeline   │
-        │                           └──> revision/results/                 │
+        │                           └──> results/                 │
         │                                  eval06_roundtrip.json           │
         ▼                                                                  ▼
    Phase 14 (Paper)                                                   Phase 09.1
@@ -286,14 +286,14 @@ def test_gradcheck():
 
 ### Pattern 3: Notebook-orchestrates verification (mirrors `01_parity_check.ipynb`)
 
-**What:** Notebooks load modules, run experiments, write JSON to `revision/results/`. No business logic in notebooks. The `01_parity_check.ipynb` cell pattern is `load → forward → inverse → assert → json.dump(artifact)`.
+**What:** Notebooks load modules, run experiments, write JSON to `results/`. No business logic in notebooks. The `01_parity_check.ipynb` cell pattern is `load → forward → inverse → assert → json.dump(artifact)`.
 
-**Verified pattern (from `revision/01_parity_check.ipynb`):**
-1. **Repo-root finder cell** — walks up CWD until it finds `data.csv` + `revision/core/`; inserts to `sys.path`. Required because `nbconvert --execute` sets CWD to notebook dir.
+**Verified pattern (from `01_parity_check.ipynb`):**
+1. **Repo-root finder cell** — walks up CWD until it finds `data.csv` + `core/`; inserts to `sys.path`. Required because `nbconvert --execute` sets CWD to notebook dir.
 2. **Seeded RNG setup** — `torch.manual_seed(SEED); np.random.seed(SEED)`.
 3. **Module imports** — `from revision.core.data import load_and_preprocess, inverse_lambert_w_transform, lambert_w_transform, full_denorm_pipeline`.
 4. **Assertion cell** — explicit `assert max_abs_error <= 1e-8, f"..."` with informative failure message.
-5. **JSON artifact** — `Path("revision/results/eval06_roundtrip.json").write_text(json.dumps(artifact, indent=2))`.
+5. **JSON artifact** — `Path("results/eval06_roundtrip.json").write_text(json.dumps(artifact, indent=2))`.
 6. **Closing print** — `print("EVAL-06 round-trip PASSED")`.
 
 ### Pattern 4: `preprocessing.py` skeleton with `NotImplementedError` stubs
@@ -359,7 +359,7 @@ __all__ = [
 - **DO NOT** create a parallel `inverse_lambert_w_differentiable` function. D-03 mandates in-place replacement. Two code paths invite divergence.
 - **DO NOT** rename or remove any symbol in `data.py`. D-07 mandates single source of truth; downstream code (including `01_parity_check.ipynb` at line `from revision.core.data import ...`) already imports by name.
 - **DO NOT** implement the other four `forward_*`/`inverse_*` pairs in Phase 9. D-06 reserves them for Phase 09.1 — implementing now risks contract drift.
-- **DO NOT** hand-type numbers in `training_protocol.md`. D-09 mandates traceability to `__init__.py`. Format: "N_CRITIC=9 (`revision/core/__init__.py:11`)".
+- **DO NOT** hand-type numbers in `training_protocol.md`. D-09 mandates traceability to `__init__.py`. Format: "N_CRITIC=9 (`core/__init__.py:11`)".
 - **DO NOT** claim "multi-campaign" or "train/val/test split" anywhere in the docs. D-01, D-02 explicitly lock these. The honest framing is "single-campaign, no held-out split, EMD early-stop limitation acknowledged".
 - **DO NOT** make `inverse_lambert_w_transform` accept `requires_grad=False` tensors with no autograd path. The forward must register the saved tensors via `ctx.save_for_backward` even when the caller doesn't request grad — PyTorch handles the grad-disabled fast path internally.
 
@@ -371,7 +371,7 @@ __all__ = [
 | Numerical gradient validation | Hand-rolled finite-difference test | `torch.autograd.gradcheck` | Handles complex-step where applicable, integrates with PyTorch's grad system, has documented tolerances |
 | float64 promotion at autograd boundary | Manual `.double()`/`.float()` casts everywhere | Promote on entry, cast back to `grad_output.dtype` in backward | Matches existing pattern at `data.py:80, 101`; the 1e-8 tolerance is unreachable in float32 |
 | Closed-form Lambert W derivative | Look it up or derive manually each time | `dW/dz = W / (z·(1+W))` (this is the IFT identity for the principal branch) | Well-known identity since Corless et al. 1996; verified numerically in this research session to ~1e-10 against `scipy.special.lambertw` finite-diff |
-| Markdown table numbers | Type values manually | Cite `revision/core/__init__.py:LINE` for each | Tables become drop-in Methods content for Phase 14; one update site for any future HPO change |
+| Markdown table numbers | Type values manually | Cite `core/__init__.py:LINE` for each | Tables become drop-in Methods content for Phase 14; one update site for any future HPO change |
 
 **Key insight:** The whole phase is glue — the math is trivial, the scipy and torch APIs are stable, and the project-internal infrastructure (notebook pattern, JSON artifacts, module imports) already exists from Phase 8. The principal risk is **mis-typing** a constant in the markdown docs or **mis-deriving** the chain-rule term in backward. `gradcheck` neutralizes the second risk; the "cite `__init__.py` line" rule neutralizes the first.
 
@@ -385,9 +385,9 @@ __all__ = [
 | **Live service config** | None — no external services. | None |
 | **OS-registered state** | None — no daemons, schedulers, or system services. | None |
 | **Secrets and env vars** | None — no API keys or env vars used by `data.py`. | None |
-| **Build artifacts / installed packages** | `revision/core/__pycache__/` — bytecode for `data.py`. Will auto-regenerate on next import after the in-place replacement. `revision/__pycache__/` likewise. No installed wheel — this is a project-local package, not a pip-installed dependency. | None — Python auto-invalidates `.pyc` by mtime. |
+| **Build artifacts / installed packages** | `core/__pycache__/` — bytecode for `data.py`. Will auto-regenerate on next import after the in-place replacement. `revision/__pycache__/` likewise. No installed wheel — this is a project-local package, not a pip-installed dependency. | None — Python auto-invalidates `.pyc` by mtime. |
 
-**Callers of `inverse_lambert_w_transform`:** grepped — only `revision/core/data.py::load_and_preprocess` (line 234) and `revision/01_parity_check.ipynb` (the inline path) call it. The Phase 8 parity check uses an **inline copy** of the function, so it will NOT pick up the differentiable version. **This is OK** because the parity check's purpose is to verify Path A (inline) vs Path B (module), and the module's forward output must still match the inline forward exactly to within the locked tolerance. **Verify after change:** rerun `01_parity_check.ipynb` to confirm parity_check.json still shows pass=true.
+**Callers of `inverse_lambert_w_transform`:** grepped — only `core/data.py::load_and_preprocess` (line 234) and `01_parity_check.ipynb` (the inline path) call it. The Phase 8 parity check uses an **inline copy** of the function, so it will NOT pick up the differentiable version. **This is OK** because the parity check's purpose is to verify Path A (inline) vs Path B (module), and the module's forward output must still match the inline forward exactly to within the locked tolerance. **Verify after change:** rerun `01_parity_check.ipynb` to confirm parity_check.json still shows pass=true.
 
 **Caller of the wrapper, transitively:** `full_denorm_pipeline` at `data.py:134-162` does NOT call `inverse_lambert_w_transform` — it calls the **forward** `lambert_w_transform` only (line 160). So the differentiable inverse change affects **only one direction** of the pipeline. The forward (Gaussian → heavy-tail) is already pure-torch differentiable.
 
@@ -432,7 +432,7 @@ __all__ = [
 ### Pitfall 7: Doc numbers drift if `__init__.py` changes
 **What goes wrong:** Future HPO retune changes `LR_CRITIC` in `__init__.py`. `training_protocol.md` still shows the old value.
 **Why it happens:** Markdown is hand-typed; no programmatic link.
-**How to avoid:** D-09 partially mitigates by mandating citations like "(`revision/core/__init__.py:13`)" so a reviewer sees the source. **Stronger mitigation (Claude's discretion):** the Phase 9 plan can include a sanity-check cell in `02_eval06_roundtrip.ipynb` that asserts the constants in the docs match `__init__.py` (string regex). Optional; nice to have.
+**How to avoid:** D-09 partially mitigates by mandating citations like "(`core/__init__.py:13`)" so a reviewer sees the source. **Stronger mitigation (Claude's discretion):** the Phase 9 plan can include a sanity-check cell in `02_eval06_roundtrip.ipynb` that asserts the constants in the docs match `__init__.py` (string regex). Optional; nice to have.
 **Warning signs:** Future phase report has a number that disagrees with the markdown.
 
 ## Code Examples
@@ -440,7 +440,7 @@ __all__ = [
 ### Round-trip assertion idiom (preserves Phase 8 pattern)
 
 ```python
-# In revision/02_eval06_roundtrip.ipynb (cell pattern from 01_parity_check.ipynb)
+# In 02_eval06_roundtrip.ipynb (cell pattern from 01_parity_check.ipynb)
 import torch
 from revision.core.data import (
     load_and_preprocess,
@@ -497,20 +497,20 @@ print("full_denorm_pipeline gradient flow PASSED")
 # Training Protocol — QWGAN-GP (v1.1 unconditioned baseline)
 
 > **Source of truth:** all numerical constants below are imported from
-> `revision/core/__init__.py`. Update that file to change them; this doc
+> `core/__init__.py`. Update that file to change them; this doc
 > tracks the file via the line-cited references in the table.
 
 ## Optimizer & Schedule
 
 | Constant | Value | Source |
 |----------|-------|--------|
-| `N_CRITIC` | 9 critic steps per generator step | `revision/core/__init__.py:11` |
-| `LAMBDA` (gradient penalty coeff) | 2.16 | `revision/core/__init__.py:12` |
-| `LR_CRITIC` | 1.8046 × 10⁻⁵ | `revision/core/__init__.py:13` |
-| `LR_GENERATOR` | 6.9173 × 10⁻⁵ | `revision/core/__init__.py:14` |
-| Optimizer | Adam, betas=(0.0, 0.9) | `revision/core/training.py:233-234` |
-| `NUM_EPOCHS` | 2000 | `revision/core/__init__.py:20` |
-| `BATCH_SIZE` | 12 | `revision/core/__init__.py:21` |
+| `N_CRITIC` | 9 critic steps per generator step | `core/__init__.py:11` |
+| `LAMBDA` (gradient penalty coeff) | 2.16 | `core/__init__.py:12` |
+| `LR_CRITIC` | 1.8046 × 10⁻⁵ | `core/__init__.py:13` |
+| `LR_GENERATOR` | 6.9173 × 10⁻⁵ | `core/__init__.py:14` |
+| Optimizer | Adam, betas=(0.0, 0.9) | `core/training.py:233-234` |
+| `NUM_EPOCHS` | 2000 | `core/__init__.py:20` |
+| `BATCH_SIZE` | 12 | `core/__init__.py:21` |
 
 (prose: 1-paragraph justification — HPO-tuned values from v1.1 Phase 4; Adam betas chosen for WGAN-GP stability...)
 
@@ -518,10 +518,10 @@ print("full_denorm_pipeline gradient flow PASSED")
 
 | Property | Value | Source |
 |----------|-------|--------|
-| Monitored metric | EMD on log-returns | `revision/core/training.py:79-140` |
-| `patience` | 50 eval cycles (= 500 epochs at EVAL_EVERY=10) | `revision/core/training.py:96` |
-| `warmup_epochs` | 100 epochs (no monitoring during warmup) | `revision/core/training.py:97` |
-| Checkpoint scheme | save-best-EMD, reload on stop | `revision/core/training.py:142-175` |
+| Monitored metric | EMD on log-returns | `core/training.py:79-140` |
+| `patience` | 50 eval cycles (= 500 epochs at EVAL_EVERY=10) | `core/training.py:96` |
+| `warmup_epochs` | 100 epochs (no monitoring during warmup) | `core/training.py:97` |
+| Checkpoint scheme | save-best-EMD, reload on stop | `core/training.py:142-175` |
 
 (prose: 1-paragraph — EMD chosen over critic loss; EMD-on-same-distribution caveat per R1-M5...)
 
@@ -529,39 +529,39 @@ print("full_denorm_pipeline gradient flow PASSED")
 
 | Property | Value | Source |
 |----------|-------|--------|
-| Backend | PennyLane `default.qubit`, `shots=None` (analytic statevector) | `revision/core/models/quantum.py:64` |
-| Differentiation | `diff_method="backprop"` | `revision/core/models/quantum.py:43, 76` |
-| `NUM_QUBITS` | 5 | `revision/core/__init__.py:17` |
-| `NUM_LAYERS` | 4 strongly-entangled | `revision/core/__init__.py:18` |
-| `WINDOW_LENGTH` | 10 (= 2 × NUM_QUBITS) | `revision/core/__init__.py:19` |
-| Noise range | [0, 4π] (NOT [0, 2π]; v1.1 Phase 4) | `revision/core/__init__.py:32-33` |
+| Backend | PennyLane `default.qubit`, `shots=None` (analytic statevector) | `core/models/quantum.py:64` |
+| Differentiation | `diff_method="backprop"` | `core/models/quantum.py:43, 76` |
+| `NUM_QUBITS` | 5 | `core/__init__.py:17` |
+| `NUM_LAYERS` | 4 strongly-entangled | `core/__init__.py:18` |
+| `WINDOW_LENGTH` | 10 (= 2 × NUM_QUBITS) | `core/__init__.py:19` |
+| Noise range | [0, 4π] (NOT [0, 2π]; v1.1 Phase 4) | `core/__init__.py:32-33` |
 | PQC parameter count | 75 (= 5 + 4·15 + 10) | verified Phase 8 |
 
 ## Critic (1D-CNN)
 
 | Property | Value | Source |
 |----------|-------|--------|
-| Architecture | Conv1d(1→64)→Conv1d(64→128)→Conv1d(128→128)→AdaptiveAvgPool1d→Linear(128→32)→Dropout→Linear(32→1) | `revision/core/models/critic.py` |
-| Kernel size | 10, padding 5 | `revision/core/models/critic.py` |
-| Dropout | 0.2 (configurable) | `revision/core/__init__.py:24` |
-| Precision | float64 (`.double()`) | `revision/core/models/critic.py` |
+| Architecture | Conv1d(1→64)→Conv1d(64→128)→Conv1d(128→128)→AdaptiveAvgPool1d→Linear(128→32)→Dropout→Linear(32→1) | `core/models/critic.py` |
+| Kernel size | 10, padding 5 | `core/models/critic.py` |
+| Dropout | 0.2 (configurable) | `core/__init__.py:24` |
+| Precision | float64 (`.double()`) | `core/models/critic.py` |
 
 ## Gradient Penalty
 
 | Property | Value | Source |
 |----------|-------|--------|
-| Type | Two-sided (mean((‖∇‖₂ − 1)²)) | `revision/core/training.py:30-73` |
-| Coefficient λ | 2.16 (= `LAMBDA`) | `revision/core/__init__.py:12` |
-| Interpolation α | sampled per-sample, U(0,1), broadcast over remaining dims | `revision/core/training.py:54-60` |
+| Type | Two-sided (mean((‖∇‖₂ − 1)²)) | `core/training.py:30-73` |
+| Coefficient λ | 2.16 (= `LAMBDA`) | `core/__init__.py:12` |
+| Interpolation α | sampled per-sample, U(0,1), broadcast over remaining dims | `core/training.py:54-60` |
 
 ## Reproducibility
 
 | Property | Value | Source |
 |----------|-------|--------|
-| Seed (default) | 42 | `revision/core/training.py:188` |
-| Seeded RNGs | `torch.manual_seed`, `np.random.seed`, `random.seed`, `torch.cuda.manual_seed_all` | `revision/core/training.py:211-215` |
-| DITHER (data pipeline) | 0.005 | `revision/core/__init__.py:27` |
-| DITHER_SEED | 42 | `revision/core/__init__.py:28` |
+| Seed (default) | 42 | `core/training.py:188` |
+| Seeded RNGs | `torch.manual_seed`, `np.random.seed`, `random.seed`, `torch.cuda.manual_seed_all` | `core/training.py:211-215` |
+| DITHER (data pipeline) | 0.005 | `core/__init__.py:27` |
+| DITHER_SEED | 42 | `core/__init__.py:28` |
 
 (1-line prose: "All Phase 9 results use analytic statevector simulation (`default.qubit`, `shots=None`); shot-noise sweeps are reported separately in Phase 12 SENS-01." — fulfills D-10.)
 ```
@@ -579,7 +579,7 @@ print("full_denorm_pipeline gradient flow PASSED")
 | Quantity | Value | Source / Derivation |
 |----------|-------|---------------------|
 | Raw CSV rows | 778 | `wc -l data.csv` minus header |
-| OD rows post fillna+dropna | 778 | `revision/core/data.py::load_and_preprocess` cell 5 logic (lines 211-219) |
+| OD rows post fillna+dropna | 778 | `core/data.py::load_and_preprocess` cell 5 logic (lines 211-219) |
 | Log-return rows (N−1) | 777 | `compute_log_delta`: `log_od[1:] - log_od[:-1]` |
 | Rolling windows (m=10, s=2) | 384 | `rolling_window` (`data.py:110-118`): `(777−10)//2 + 1 = 384` |
 | Independent campaigns | 1 | LUCY bioreactor, single run |
@@ -692,12 +692,12 @@ If re-enabled later, the EVAL-06 test would map cleanly:
 ## Sources
 
 ### Primary (HIGH confidence)
-- `revision/core/data.py` (read in full, 257 lines) — current `inverse_lambert_w_transform` at lines 68-87, `lambert_w_transform` at lines 90-104, `full_denorm_pipeline` at lines 134-162, `load_and_preprocess` at lines 187-256. All references in this RESEARCH cite live line numbers.
-- `revision/core/__init__.py` (read in full, 45 lines) — all hyperparameter constants. Cited line-by-line in the doc skeletons.
-- `revision/core/training.py` (read in full, 483 lines) — Adam betas (lines 233-234), seed setup (lines 211-215), EarlyStopping (lines 79-175).
-- `revision/core/models/quantum.py` (line-grep) — `default.qubit`, `shots=None`, `diff_method="backprop"` at lines 64, 76, 43.
-- `revision/core/eval.py` (read in full, 164 lines) — EMD on raw samples decision (line 25-36).
-- `revision/01_parity_check.ipynb` (read in full) — established notebook pattern that 02_eval06_roundtrip.ipynb will follow.
+- `core/data.py` (read in full, 257 lines) — current `inverse_lambert_w_transform` at lines 68-87, `lambert_w_transform` at lines 90-104, `full_denorm_pipeline` at lines 134-162, `load_and_preprocess` at lines 187-256. All references in this RESEARCH cite live line numbers.
+- `core/__init__.py` (read in full, 45 lines) — all hyperparameter constants. Cited line-by-line in the doc skeletons.
+- `core/training.py` (read in full, 483 lines) — Adam betas (lines 233-234), seed setup (lines 211-215), EarlyStopping (lines 79-175).
+- `core/models/quantum.py` (line-grep) — `default.qubit`, `shots=None`, `diff_method="backprop"` at lines 64, 76, 43.
+- `core/eval.py` (read in full, 164 lines) — EMD on raw samples decision (line 25-36).
+- `01_parity_check.ipynb` (read in full) — established notebook pattern that 02_eval06_roundtrip.ipynb will follow.
 - `.planning/phases/09-documentation-bridge/09-CONTEXT.md` (read in full, 140 lines) — locked decisions D-01..D-10.
 - `.planning/phases/08-core-module-extraction/08-VERIFICATION.md` (read in full) — Phase 8 parity baseline (EMD delta = 0.0).
 - `.planning/scratch/09.1-r1-m3-ablation-spec.md` (read in full, 101 lines) — preprocessing.py contract for Phase 09.1 stubs.
@@ -722,6 +722,6 @@ If re-enabled later, the EVAL-06 test would map cleanly:
 - Discrepancies (OQ-1, OQ-2, OQ-3): HIGH — verified against live data.csv and live pipeline execution; reconcile with user before locking doc text.
 
 **Research date:** 2026-05-11
-**Valid until:** 2026-06-10 (30 days — stable scientific Python stack; `revision/core/` is locked from Phase 8)
+**Valid until:** 2026-06-10 (30 days — stable scientific Python stack; `core/` is locked from Phase 8)
 
 ## RESEARCH COMPLETE

@@ -1,12 +1,12 @@
 ---
 phase: 10-classical-baselines
 plan: 01
-subsystem: revision/core/models
+subsystem: core/models
 tags: [baselines, wgan-gp, vae, autoregressive, model-definitions]
 requires:
-  - revision/core/models/quantum.py (interface contract analog)
-  - revision/core/training.py (train_wgan_gp params_pqc contract)
-  - revision/results/transform_ablation/runs/{A,B}/{42..46} (Phase 09.1 quantum reference column)
+  - core/models/quantum.py (interface contract analog)
+  - core/training.py (train_wgan_gp params_pqc contract)
+  - results/transform_ablation/runs/{A,B}/{42..46} (Phase 09.1 quantum reference column)
 provides:
   - WGANMLPGenerator (74 params), WGANCNNGenerator (73), WGANLSTMGenerator (78)
   - VAEBaseline (562 params, ELBO-ready interface)
@@ -21,13 +21,13 @@ tech-stack:
     - model-definitions-only in core/ (D-10-13); loops/orchestration in run_baselines.py
 key-files:
   created:
-    - revision/core/models/classical.py
-    - revision/core/models/nonadversarial.py
-    - revision/tests/test_classical.py
-    - revision/tests/test_nonadversarial.py
-    - revision/tests/__init__.py
+    - core/models/classical.py
+    - core/models/nonadversarial.py
+    - tests/test_classical.py
+    - tests/test_nonadversarial.py
+    - tests/__init__.py
   modified:
-    - revision/core/models/__init__.py
+    - core/models/__init__.py
 decisions:
   - "Used main-repo qgan_env python via absolute path (env is gitignored, not in worktree)"
   - "AR sample burn-in 50 steps from zeros for stationarity before saved window"
@@ -44,7 +44,7 @@ Implemented the 5 model definitions Phase 10 needs — 3 matched-parameter class
 
 ## What Was Built
 
-**Task 1 — `revision/core/models/classical.py` + barrel** (TDD: RED `9bf6abe` → GREEN `fd5a786`)
+**Task 1 — `core/models/classical.py` + barrel** (TDD: RED `9bf6abe` → GREEN `fd5a786`)
 - `WGANMLPGenerator` (74 params): `Linear(5,4)+b → Tanh → Linear(4,10)+b`
 - `WGANCNNGenerator` (73 params): `ConvTranspose1d(1,9,k=6,s=1) → LeakyReLU → Conv1d(9,1,1)`
 - `WGANLSTMGenerator` (78 params): functional `LSTM(I=2,H=2,1L,bias) → Linear(2,10)+b`
@@ -53,14 +53,14 @@ Implemented the 5 model definitions Phase 10 needs — 3 matched-parameter class
 - Pitfall-1 negative test passes: one Adam step on `[params_pqc]` mutates it (autograd live, not detached).
 - `__init__.py` barrel updated to expose `classical, nonadversarial`.
 
-**Task 2 — `revision/core/models/nonadversarial.py`** (TDD: RED `7178d00` → GREEN `a3d0bb3`)
+**Task 2 — `core/models/nonadversarial.py`** (TDD: RED `7178d00` → GREEN `a3d0bb3`)
 - `VAEBaseline(nn.Module)`: `Linear(10,16)→ReLU→[mu,logvar](16,4)` encoder, `Linear(4,16)→ReLU→Linear(16,10)` decoder; `encode/reparameterize/decode/forward/sample`; 562 params (reported transparently, NOT param-matched per D-10-03).
 - `ARBaseline` (plain class, not nn.Module): AR(2), `count_params()==3`, closed-form `np.linalg.lstsq` fit, recursive `sample` with 50-step burn-in.
 - Both samplers emit in `[-1,1]` window space and deliberately do NOT apply `*0.1` (quantum-output artifact — RESEARCH Pitfall 3); documented in module + class docstrings.
 - D-10-13 honored: no ELBO loop / optimizer / `.backward()` in this file (guarded by `test_no_training_loop_in_module`).
 
 **Task 3 — Phase 09.1 quantum reference precondition gate** (no code change — nominal `<files>` entry)
-- Verified all 10 dirs `revision/results/transform_ablation/runs/{A,B}/{42,43,44,45,46}/` contain `config.yaml`, `samples.npy`, `inverse_kwargs.npz`. Command exited 0: `OK all 10 Phase 09.1 quantum run dirs present`. **Phase is NOT blocked** — the Wave-4 comparison-table reference column is available.
+- Verified all 10 dirs `results/transform_ablation/runs/{A,B}/{42,43,44,45,46}/` contain `config.yaml`, `samples.npy`, `inverse_kwargs.npz`. Command exited 0: `OK all 10 Phase 09.1 quantum run dirs present`. **Phase is NOT blocked** — the Wave-4 comparison-table reference column is available.
 
 ## Verification Results
 
@@ -70,7 +70,7 @@ Implemented the 5 model definitions Phase 10 needs — 3 matched-parameter class
 - VAE: forward returns `(x_hat[B,10], mu[B,4], logvar[B,4])`; sample `(n,10)`
 - AR: `phi.shape==(2,)`, `sigma2>0`, `p==2`, sample `(n,10)`, distinct seeds → distinct samples
 - All 10 Phase 09.1 quantum run dirs present
-- Test files `revision/tests/test_classical.py`, `test_nonadversarial.py` both pass
+- Test files `tests/test_classical.py`, `test_nonadversarial.py` both pass
 
 ## Deviations from Plan
 
@@ -86,7 +86,7 @@ Implemented the 5 model definitions Phase 10 needs — 3 matched-parameter class
 - **Found during:** Task 2 GREEN
 - **Issue:** `buf[t-1 : t-1-p : -1]` produced an empty slice when `t-1-p` went negative (Python negative-stop wraps to end of array), raising a numpy matmul dimension-mismatch in `ARBaseline.sample`.
 - **Fix:** Replaced with `buf[t-p : t][::-1]` (ascending lag-p..lag-1 window, reversed to lag-1..lag-p so it dots correctly with `phi`). Added an explanatory comment.
-- **Files modified:** `revision/core/models/nonadversarial.py`
+- **Files modified:** `core/models/nonadversarial.py`
 - **Commit:** `a3d0bb3` (fixed before the GREEN commit; RED test `7178d00` covered this path)
 
 ## TDD Gate Compliance

@@ -10,11 +10,11 @@ This phase delivers the **calibrated-uncertainty evidence** AIChE reviewers R1-M
 
 Concretely, Phase 12 produces three artifacts:
 
-1. **Shot-noise sensitivity** (SENS-01) — fidelity-metric degradation at shots ∈ {analytic, 8192, 1024} → `revision/results/shot_noise_sensitivity.json`
-2. **Noise-model sensitivity** (SENS-02) — depolarizing p ∈ {0, 0.001, 0.01, 0.05} and amplitude-damping γ ∈ {0, 0.001, 0.01, 0.05} → `revision/results/noise_model_sensitivity.json`
-3. **Multi-seed roll-up** (SENS-03) — every headline comparison table from Phases 10–11 re-emitted with ≥5 seeds, mean ± std in every cell → `revision/results/multiseed_summary.json`
+1. **Shot-noise sensitivity** (SENS-01) — fidelity-metric degradation at shots ∈ {analytic, 8192, 1024} → `results/shot_noise_sensitivity.json`
+2. **Noise-model sensitivity** (SENS-02) — depolarizing p ∈ {0, 0.001, 0.01, 0.05} and amplitude-damping γ ∈ {0, 0.001, 0.01, 0.05} → `results/noise_model_sensitivity.json`
+3. **Multi-seed roll-up** (SENS-03) — every headline comparison table from Phases 10–11 re-emitted with ≥5 seeds, mean ± std in every cell → `results/multiseed_summary.json`
 
-**In scope:** inference-time noise/shot evaluation of the trained analytic quantum generator (regenerate samples under noisy/finite-shot devices, recompute the existing fidelity suite); aggregation of existing Phase 10/11 per-seed artifacts into mean ± std roll-up tables; new `revision/run_*.py` + `*_sweep.sh` driver(s) following the Phase 10 pattern; JSON emission on the established long-form schema.
+**In scope:** inference-time noise/shot evaluation of the trained analytic quantum generator (regenerate samples under noisy/finite-shot devices, recompute the existing fidelity suite); aggregation of existing Phase 10/11 per-seed artifacts into mean ± std roll-up tables; new `run_*.py` + `*_sweep.sh` driver(s) following the Phase 10 pattern; JSON emission on the established long-form schema.
 
 **Out of scope (other phases own these):**
 - Ansatz comparison / training-progression / parameter-trajectory / entanglement figures → Phase 13 (ARCH-01..02, INTRO-01..03)
@@ -42,8 +42,8 @@ Concretely, Phase 12 produces three artifacts:
 Per the user's standing guidance to minimize process on technical phases, the following are fully Claude's discretion (locked by prior patterns, no user opinion needed):
 - Noise-channel device wiring (e.g., `default.mixed`, channel insertion strategy, finite-shot device construction) and how the trained analytic params are loaded into the noisy QNode.
 - Output JSON structure beyond the established long-form schema `{model_kind, pipeline, seed, metric_name, scale, value}`; degradation-curve representation in `shot_noise_sensitivity.json` / `noise_model_sensitivity.json`.
-- New driver/sweep file names and CLI surface (pattern after `revision/run_baselines.py` + `run_baselines_sweep.sh`); idempotent per-cell skip logic; `--parallel 2` guardrail; **no `multiprocessing.Pool`** (Phase 09.1 Pitfall 4).
-- Which fidelity metrics are recomputed under noise (reuse `revision/core/eval.py` helpers unchanged; EMD/moments/ACF/DTW at minimum, dual-scale per EVAL-05 convention).
+- New driver/sweep file names and CLI surface (pattern after `run_baselines.py` + `run_baselines_sweep.sh`); idempotent per-cell skip logic; `--parallel 2` guardrail; **no `multiprocessing.Pool`** (Phase 09.1 Pitfall 4).
+- Which fidelity metrics are recomputed under noise (reuse `core/eval.py` helpers unchanged; EMD/moments/ACF/DTW at minimum, dual-scale per EVAL-05 convention).
 - Pipeline coverage for the noise/shot grid (Pipeline B headline; Pipeline A as supplementary control, mirroring Phase 10/11).
 - Subsampling strategy if regenerated sample counts differ from the analytic artifacts.
 
@@ -63,15 +63,15 @@ Per the user's standing guidance to minimize process on technical phases, the fo
 - `.planning/phases/10-classical-baselines/10-CONTEXT.md` — Run-dir layout (D-10-14), data-hash invariant (D-10-15), long-form comparison schema (D-10-16/17), identical-conditions invariant (D-10-08), code-placement invariant (D-10-13), sweep-driver pattern (D-10-22/23/24)
 - `.planning/phases/11-utility-evaluation/11-CONTEXT.md` — Headline artifact set + dual-scale (EVAL-05) convention, no-regeneration invariant (D-11-08), driver-placement pattern (D-11-10)
 - `.planning/phases/09.1-r1-m3-preprocessing-ablation/09.1-CONTEXT.md` — Identical-conditions invariant, Pipeline A/B definitions, eval.py contract
-- `revision/results/baseline_comparison.json` — Headline table SENS-03 rolls up (long-form `{model_kind, pipeline, seed, metric_name, scale, value}`)
-- `revision/results/tstr.json`, `revision/results/predictive_discriminative.json`, `revision/results/augmentation.json`, `revision/results/fidelity_dualscale.json` — Phase 11 headline tables SENS-03 rolls up
-- `revision/results/baselines/runs/<model>/<pipeline>/<seed>/` — Per-seed artifacts SENS-03 aggregates; quantum analytic checkpoints SENS-01/02 reload (no regeneration of analytic baseline)
+- `results/baseline_comparison.json` — Headline table SENS-03 rolls up (long-form `{model_kind, pipeline, seed, metric_name, scale, value}`)
+- `results/tstr.json`, `results/predictive_discriminative.json`, `results/augmentation.json`, `results/fidelity_dualscale.json` — Phase 11 headline tables SENS-03 rolls up
+- `results/baselines/runs/<model>/<pipeline>/<seed>/` — Per-seed artifacts SENS-03 aggregates; quantum analytic checkpoints SENS-01/02 reload (no regeneration of analytic baseline)
 
 ### Reusable code
-- `revision/core/models/quantum.py` — `QuantumGenerator`; `dev = qml.device("default.qubit", shots=None, diff_method="backprop")` is the constraint behind D-12-01; the noisy/finite-shot device is constructed around this for inference
-- `revision/core/eval.py` — Fidelity helpers (`compute_emd/moments/acf/dtw/jsd/psd`, `full_metric_suite`) — reuse unchanged; dual-scale `scale` wrapper per EVAL-05
-- `revision/core/preprocessing.py` — `inverse_minmax_od`, `inverse_logreturns` for OD-scale reconstruction
-- `revision/run_baselines.py` + `revision/run_baselines_sweep.sh` — Reference template for the new Phase 12 driver(s)
+- `core/models/quantum.py` — `QuantumGenerator`; `dev = qml.device("default.qubit", shots=None, diff_method="backprop")` is the constraint behind D-12-01; the noisy/finite-shot device is constructed around this for inference
+- `core/eval.py` — Fidelity helpers (`compute_emd/moments/acf/dtw/jsd/psd`, `full_metric_suite`) — reuse unchanged; dual-scale `scale` wrapper per EVAL-05
+- `core/preprocessing.py` — `inverse_minmax_od`, `inverse_logreturns` for OD-scale reconstruction
+- `run_baselines.py` + `run_baselines_sweep.sh` — Reference template for the new Phase 12 driver(s)
 
 ### External
 - PennyLane 0.44.0 noise documentation — `default.mixed`, `qml.DepolarizingChannel`, `qml.AmplitudeDamping`, finite-shot devices (researcher to pin exact API for the trained-params-into-noisy-QNode path)
@@ -81,17 +81,17 @@ Per the user's standing guidance to minimize process on technical phases, the fo
 ## Existing Code Insights
 
 ### Reusable Assets
-- `revision/core/eval.py::full_metric_suite` — full fidelity suite already exists; Phase 12 only recomputes it on noise-perturbed samples, no new metric math.
-- `revision/run_baselines.py` + `run_baselines_sweep.sh` — idempotent per-cell driver + atomic `sweep_status.json` + `--parallel 2` guardrail; Phase 12 driver(s) follow this exact shape.
+- `core/eval.py::full_metric_suite` — full fidelity suite already exists; Phase 12 only recomputes it on noise-perturbed samples, no new metric math.
+- `run_baselines.py` + `run_baselines_sweep.sh` — idempotent per-cell driver + atomic `sweep_status.json` + `--parallel 2` guardrail; Phase 12 driver(s) follow this exact shape.
 - Phase 10/11 per-seed artifact bundles (50 baseline run dirs + quantum runs) — already carry 5-seed data + data-hash; SENS-03 reads and aggregates, never regenerates.
 
 ### Established Patterns
 - Long-form metrics schema `{model_kind, pipeline, seed, metric_name, scale, value}` — Phase 12 outputs extend it (add a `shots` / `noise_model` / `noise_level` dimension), not replace it.
-- Code-placement invariant (D-10-13): `revision/core/` = model + eval helpers only; all noise-sweep orchestration and aggregation in new `revision/run_*.py`.
+- Code-placement invariant (D-10-13): `core/` = model + eval helpers only; all noise-sweep orchestration and aggregation in new `run_*.py`.
 - No `multiprocessing.Pool` — xargs `-P 2` OS-process parallelism only (Phase 09.1 Pitfall 4).
 
 ### Integration Points
-- `shot_noise_sensitivity.json`, `noise_model_sensitivity.json`, `multiseed_summary.json` join the `revision/results/*.json` contract Phase 14 paper-writing reads.
+- `shot_noise_sensitivity.json`, `noise_model_sensitivity.json`, `multiseed_summary.json` join the `results/*.json` contract Phase 14 paper-writing reads.
 - Data-hash field (D-10-15) is the cross-phase consistency check — Phase 12 asserts it matches across every consumed Phase 10/11 artifact before rolling up.
 </code_context>
 

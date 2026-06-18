@@ -8,7 +8,7 @@ completed: 2026-04-23
 
 # Phase 8 Plan 03: Quantum Generator + Critic Extraction — Summary
 
-Extracted PQC generator and 1D-CNN critic from `qgan_pennylane.ipynb` cell 26 into `revision/core/models/quantum.py` and `revision/core/models/critic.py`. Identity-preserving refactor; v1.0/v1.1 decisions locked in.
+Extracted PQC generator and 1D-CNN critic from `qgan_pennylane.ipynb` cell 26 into `core/models/quantum.py` and `core/models/critic.py`. Identity-preserving refactor; v1.0/v1.1 decisions locked in.
 
 ## Extracted Classes
 
@@ -42,7 +42,7 @@ Output: `(batch_size, 1)` scalar score per sample.
 - IQP RZ encoding; no RZ→Rot substitution.
 - Range-CNOT: `r = (layer % (num_qubits - 1)) + 1`; `target = (q + r) % num_qubits`.
 - Measurement order `(<X_0>, <Z_0>, <X_1>, <Z_1>, …)` matches cell 26.
-- Noise range `[0, 4π]` is consumed upstream (training loop); `NOISE_HIGH = 4π` already in `revision/core/__init__.py`.
+- Noise range `[0, 4π]` is consumed upstream (training loop); `NOISE_HIGH = 4π` already in `core/__init__.py`.
 - Dropout rate plumbed through constructor kwarg; exactly one `nn.Dropout` module.
 
 ## Verification
@@ -62,6 +62,6 @@ Output: `(batch_size, 1)` scalar score per sample.
 
 ## Self-Check: PASSED
 
-- `revision/core/models/quantum.py` exists ✓
-- `revision/core/models/critic.py` exists ✓
+- `core/models/quantum.py` exists ✓
+- `core/models/critic.py` exists ✓
 - Commits `7d5cef4`, `91dbbf1` in git log ✓

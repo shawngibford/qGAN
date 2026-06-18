@@ -1,0 +1,183 @@
+{
+ "figure": "tstr_crossmodel",
+ "render_only": true,
+ "source_artifact": "results/tstr.json",
+ "models": [
+  "quantum",
+  "wgan_mlp",
+  "wgan_cnn",
+  "wgan_lstm",
+  "vae",
+  "ar"
+ ],
+ "pipelines": [
+  "A",
+  "B"
+ ],
+ "init_seeds": [
+  40,
+  41,
+  42
+ ],
+ "per_model_pipeline": {
+  "quantum|A": {
+   "r2_mean": -4.572351556755396,
+   "r2_std": 0.08495936065415867,
+   "mae_mean": 1.0843473672866821,
+   "mae_std": 0.008075645406969211,
+   "rmse_mean": 1.1463789542516072,
+   "rmse_std": 0.008758551739853076,
+   "n_train_synth": 19250,
+   "n_eval_real": 320
+  },
+  "quantum|B": {
+   "r2_mean": 0.9940998520466501,
+   "r2_std": 0.00027644296800874587,
+   "mae_mean": 0.029663364092508953,
+   "mae_std": 0.0007827960217830723,
+   "rmse_mean": 0.03729364275932312,
+   "rmse_std": 0.0008704789820012125,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "wgan_mlp|A": {
+   "r2_mean": -0.2529255154747557,
+   "r2_std": 1.5974629083716951,
+   "mae_mean": 0.3696545325219631,
+   "mae_std": 0.3483688296015762,
+   "rmse_mean": 0.4083334604899089,
+   "rmse_std": 0.3588471933461606,
+   "n_train_synth": 19250,
+   "n_eval_real": 320
+  },
+  "wgan_mlp|B": {
+   "r2_mean": 0.9974201974921777,
+   "r2_std": 0.0003459929186551021,
+   "mae_mean": 0.019370300695300102,
+   "mae_std": 0.0013105272883396346,
+   "rmse_mean": 0.02461092236141364,
+   "rmse_std": 0.0016610999715485966,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "wgan_cnn|A": {
+   "r2_mean": 0.07538791767526572,
+   "r2_std": 0.07811788348236223,
+   "mae_mean": 0.4382377068201701,
+   "mae_std": 0.01810006609041758,
+   "rmse_mean": 0.46657607952753705,
+   "rmse_std": 0.01949942752024948,
+   "n_train_synth": 19250,
+   "n_eval_real": 320
+  },
+  "wgan_cnn|B": {
+   "r2_mean": 0.9969349776556508,
+   "r2_std": 0.0010987549621294744,
+   "mae_mean": 0.021158294131358463,
+   "mae_std": 0.004143813964155142,
+   "rmse_mean": 0.026488916327555973,
+   "rmse_std": 0.004608159051066958,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "wgan_lstm|A": {
+   "r2_mean": -0.7529562491900376,
+   "r2_std": 0.3728507810189788,
+   "mae_mean": 0.6168031692504883,
+   "mae_std": 0.06941361417886675,
+   "rmse_mean": 0.6395099560419718,
+   "rmse_std": 0.06684881854665435,
+   "n_train_synth": 19250,
+   "n_eval_real": 320
+  },
+  "wgan_lstm|B": {
+   "r2_mean": 0.9966968176212371,
+   "r2_std": 0.00012279026023761302,
+   "mae_mean": 0.021854375799496967,
+   "mae_std": 0.0005814926714634054,
+   "rmse_mean": 0.027906994024912517,
+   "rmse_std": 0.0005181602303584837,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "vae|A": {
+   "r2_mean": 0.9934407249709728,
+   "r2_std": 0.0003535768805514128,
+   "mae_mean": 0.03103354573249817,
+   "mae_std": 0.0009831086123767026,
+   "rmse_mean": 0.039318013936281204,
+   "rmse_std": 0.0010606991800445231,
+   "n_train_synth": 19250,
+   "n_eval_real": 320
+  },
+  "vae|B": {
+   "r2_mean": 0.9930071697239358,
+   "r2_std": 0.0002210852280499759,
+   "mae_mean": 0.03183582859734694,
+   "mae_std": 0.0006708584096040718,
+   "rmse_mean": 0.040606322387854256,
+   "rmse_std": 0.0006431126412111425,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  },
+  "ar|A": {
+   "r2_mean": 0.9914834925073799,
+   "r2_std": 0.004511262432800042,
+   "mae_mean": 0.03558711769680182,
+   "mae_std": 0.009846811978721351,
+   "rmse_mean": 0.043294647708535194,
+   "rmse_std": 0.011585591999807054,
+   "n_train_synth": 19250,
+   "n_eval_real": 320
+  },
+  "ar|B": {
+   "r2_mean": 0.9976528493844808,
+   "r2_std": 0.00028013490635831004,
+   "mae_mean": 0.01844084511200587,
+   "mae_std": 0.001187152578362895,
+   "rmse_mean": 0.023485714569687843,
+   "rmse_std": 0.001416367866489912,
+   "n_train_synth": 19200,
+   "n_eval_real": 320
+  }
+ },
+ "negative_r2_observed": [
+  "quantum|A",
+  "wgan_lstm|A",
+  "wgan_mlp|A"
+ ],
+ "caption_note": "R\u00b2 < 0 means the model is worse than predicting the mean \u2014 this is informative, not a render bug. The exact set of models with Pipeline A negative R\u00b2 (built dynamically from tstr.json's per_model_pipeline block, NEVER hard-coded) is: quantum, wgan_lstm, wgan_mlp \u2014 because the soft-sensor trained on synthetic windows fails to generalize back to real windows when the synthetic distribution is far from real; Pipeline B (synth\u2192real, the bioprocess-relevant direction) is positive for all models.",
+ "soft_sensor": "TSTRLiteLSTM (1-layer LSTM, hidden=32) copied verbatim from _build_baseline_notebook.py:395-440; MAE/RMSE added (sklearn ABSENT, RESEARCH Pitfall 2). One-step-ahead OD forecast: X=window[:,:9], y=window[:,9:10] (D-11-01).",
+ "real_only_baseline": {
+  "n_train_real": 65,
+  "n_eval_real": 320,
+  "per_init_seed": {
+   "40": {
+    "mse": 3.395045757293701,
+    "r2": -13.394692347707348,
+    "mae": 1.8083972930908203,
+    "rmse": 1.8425649404525757
+   },
+   "41": {
+    "mse": 3.2124176025390625,
+    "r2": -12.620364816181741,
+    "mae": 1.7538245916366577,
+    "rmse": 1.792321801185608
+   },
+   "42": {
+    "mse": 3.548990249633789,
+    "r2": -14.04740289396927,
+    "mae": 1.8431751728057861,
+    "rmse": 1.8838764429092407
+   }
+  },
+  "mse_mean": 3.385484536488851,
+  "mse_std": 0.1375714345362611,
+  "r2_mean": -13.354153352619454,
+  "r2_std": 0.5832906516514351,
+  "mae_mean": 1.8017990191777546,
+  "mae_std": 0.036774397822299625,
+  "rmse_mean": 1.8395877281824748,
+  "rmse_std": 0.03743626539388085
+ }
+}

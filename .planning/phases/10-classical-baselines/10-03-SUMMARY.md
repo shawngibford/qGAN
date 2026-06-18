@@ -7,9 +7,9 @@ tags: [bash, xargs, flock, sweep-driver, wgan-gp, pytorch, mps, apple-silicon]
 # Dependency graph
 requires:
   - phase: 10-classical-baselines (plan 10-02)
-    provides: revision/run_baselines.py per-run CLI driver + classical/nonadversarial models
+    provides: run_baselines.py per-run CLI driver + classical/nonadversarial models
 provides:
-  - revision/run_baselines_sweep.sh — resumable 50-run sweep driver (5 models x 2 pipelines x 5 seeds)
+  - run_baselines_sweep.sh — resumable 50-run sweep driver (5 models x 2 pipelines x 5 seeds)
   - WGAN-GP training path validated on Apple MPS (device wiring + float64->float32 GP fix)
 affects: [10-04, baseline-comparison, wave-4-aggregation]
 
@@ -22,10 +22,10 @@ tech-stack:
 
 key-files:
   created:
-    - revision/run_baselines_sweep.sh
+    - run_baselines_sweep.sh
   modified:
-    - revision/core/training.py
-    - revision/run_baselines.py
+    - core/training.py
+    - run_baselines.py
 
 key-decisions:
   - "SPLIT MODE (user directive): build sweep driver + prove MPS WGAN-GP path; full 50-run sweep delegated to orchestrator background execution after merge"
@@ -57,9 +57,9 @@ completed: 2026-05-17
 
 ## Accomplishments
 
-- **`revision/run_baselines_sweep.sh`** — resumable 50-run driver: 5 models (`wgan_mlp wgan_cnn wgan_lstm vae ar`) × 2 pipelines (`A B`, no C per D-10-05) × 5 seeds (`42-46`), EPOCHS=1000, OUT_ROOT=`revision/results/baselines` (D-10-08/D-10-14). `.npz`-aware `is_complete()` (`checkpoint.npz` for `ar`, `checkpoint.pt` otherwise), atomic `update_status()` (`flock -x 9` + `tempfile.mkstemp` + `os.rename`) keyed on the `(model,pipeline,seed)` 3-tuple with `total_count=50`, `--parallel {1,2}` guardrail copied verbatim, zero functional `multiprocessing.Pool` (D-10-24/Pitfall 5). Dry-run confirms exactly **50** would-run triples.
+- **`run_baselines_sweep.sh`** — resumable 50-run driver: 5 models (`wgan_mlp wgan_cnn wgan_lstm vae ar`) × 2 pipelines (`A B`, no C per D-10-05) × 5 seeds (`42-46`), EPOCHS=1000, OUT_ROOT=`results/baselines` (D-10-08/D-10-14). `.npz`-aware `is_complete()` (`checkpoint.npz` for `ar`, `checkpoint.pt` otherwise), atomic `update_status()` (`flock -x 9` + `tempfile.mkstemp` + `os.rename`) keyed on the `(model,pipeline,seed)` 3-tuple with `total_count=50`, `--parallel {1,2}` guardrail copied verbatim, zero functional `multiprocessing.Pool` (D-10-24/Pitfall 5). Dry-run confirms exactly **50** would-run triples.
 - **MPS WGAN-GP path proven working** — a 2-epoch `wgan_mlp` smoke runs with critic inputs on `mps:0`, finite critic/generator losses, and the complete finite 5-file bundle. The fix was required because `train_wgan_gp` computed a `device` variable selecting MPS but never moved the model/tensors onto it (dead code → silent CPU-only training), and a naive `.to(mps)` additionally failed on the float64 Critic (MPS has no float64).
-- **No regression** — `revision/tests/test_classical.py` and `test_nonadversarial.py` both print `OK`; the CPU path remains float64 and deterministic across identical seeds (verified run1==run2).
+- **No regression** — `tests/test_classical.py` and `test_nonadversarial.py` both print `OK`; the CPU path remains float64 and deterministic across identical seeds (verified run1==run2).
 
 ## Task Commits
 
@@ -70,9 +70,9 @@ completed: 2026-05-17
 
 ## Files Created/Modified
 
-- `revision/run_baselines_sweep.sh` (created) — 50-run resumable sweep driver, verbatim mirror of `run_ablation_sweep.sh` with the documented Phase-10 adaptations.
-- `revision/core/training.py` (modified) — device wiring + `compute_dtype` split so the WGAN-GP loop trains on MPS in float32 / CPU in float64.
-- `revision/run_baselines.py` (modified) — `generate_wgan_samples` moves the trained generator back to CPU before sampling so `samples.npy` stays bit-identical float64 `*0.1` space.
+- `run_baselines_sweep.sh` (created) — 50-run resumable sweep driver, verbatim mirror of `run_ablation_sweep.sh` with the documented Phase-10 adaptations.
+- `core/training.py` (modified) — device wiring + `compute_dtype` split so the WGAN-GP loop trains on MPS in float32 / CPU in float64.
+- `run_baselines.py` (modified) — `generate_wgan_samples` moves the trained generator back to CPU before sampling so `samples.npy` stays bit-identical float64 `*0.1` space.
 
 ## Decisions Made
 
@@ -90,12 +90,12 @@ completed: 2026-05-17
 - **Fix:**
   - `training.py`: introduced `compute_dtype = float32 (MPS) / float64 (CPU,CUDA)`; `generator.to(device)` (device only — preserves native float32); `critic.to(device=device, dtype=compute_dtype)` (no-op cast on CPU, float32 cast on MPS); per-batch real tensor `.to(device=device, dtype=compute_dtype)`; noise tensors created with `device=device`; generator-output recasts changed `.to(torch.float64)*0.1` → `.to(compute_dtype)*0.1` (3 sites). `compute_gradient_penalty` already keys off `real_samples.device/dtype`, so the GP double-backward followed onto MPS automatically.
   - `run_baselines.py`: `generate_wgan_samples` moves the trained generator back to CPU before sampling so `samples.npy` is bit-identical to the pre-fix float64 `*0.1` space the shared `reconstruct_od` inverse consumes.
-- **Files modified:** `revision/core/training.py`, `revision/run_baselines.py`
+- **Files modified:** `core/training.py`, `run_baselines.py`
 - **Verification:**
   - Instrumented 2-epoch `wgan_mlp` smoke: critic inputs observed on `mps:0`; `critic_loss_avg=[2.1444, 2.1468]`, `generator_loss_avg=[0.1087, 0.1137]` (all finite).
   - End-to-end CLI run on MPS emitted the full 5-file bundle (config.yaml/checkpoint.pt/samples.npy/metrics.json/inverse_kwargs.npz), all non-empty; samples `(3850,10)` all finite.
   - CPU path forced (mps unavailable): critic input stays `(cpu, float64)`, deterministic across identical seeds (run1==run2) — pre-fix behaviour preserved.
-  - `revision/tests/test_classical.py` → `OK classical 74/73/78, single-param, autograd-live`; `revision/tests/test_nonadversarial.py` → `OK nonadversarial VAE + AR` (no regression).
+  - `tests/test_classical.py` → `OK classical 74/73/78, single-param, autograd-live`; `tests/test_nonadversarial.py` → `OK nonadversarial VAE + AR` (no regression).
 - **Committed in:** `7595389` (separate atomic commit per split-mode directive)
 
 **2. [Rule 1 - Verify-command bug] Plan's `! grep -qi 'multiprocessing'` is self-contradictory with its own verbatim-copy directive**
@@ -120,19 +120,19 @@ completed: 2026-05-17
 - Sweep driver built & MPS WGAN-GP path validated via a 2-epoch smoke (device==mps, finite losses, 5-file bundle).
 - **Full 50-run sweep delegated to orchestrator background execution per the user split-mode directive.**
 - 50/50 completion + uniform `data_hash` invariant to be verified by the orchestrator before phase advance.
-- Smoke scratch dir `revision/results/_mps_smoke` removed; no smoke artifacts committed.
+- Smoke scratch dir `results/_mps_smoke` removed; no smoke artifacts committed.
 
 ## Next Phase Readiness
 
-- `revision/run_baselines_sweep.sh` is ready for the orchestrator to launch (`./revision/run_baselines_sweep.sh --parallel 2`); it is resumable, so partial progress survives interruption.
+- `run_baselines_sweep.sh` is ready for the orchestrator to launch (`./run_baselines_sweep.sh --parallel 2`); it is resumable, so partial progress survives interruption.
 - WGAN-GP now genuinely uses Apple MPS for all 3 classical WGAN generators across the sweep; non-WGAN paths (VAE local ELBO loop, AR closed-form lstsq) are unaffected by this change.
 - Wave-4 aggregation can proceed once the orchestrator confirms 50/50 + uniform `data_hash`.
 
 ## Self-Check: PASSED
 
-- Files: `revision/run_baselines_sweep.sh`, `revision/core/training.py`, `revision/run_baselines.py`, `10-03-SUMMARY.md` all present.
+- Files: `run_baselines_sweep.sh`, `core/training.py`, `run_baselines.py`, `10-03-SUMMARY.md` all present.
 - Commits: `7beb9cb` (Task 1 feat), `7595389` (Task 2 MPS fix) both in git log.
-- Smoke scratch dir `revision/results/_mps_smoke` removed; full 50-run sweep NOT run (delegated to orchestrator per split mode).
+- Smoke scratch dir `results/_mps_smoke` removed; full 50-run sweep NOT run (delegated to orchestrator per split mode).
 - STATE.md / ROADMAP.md untouched (orchestrator owns those writes).
 
 ---

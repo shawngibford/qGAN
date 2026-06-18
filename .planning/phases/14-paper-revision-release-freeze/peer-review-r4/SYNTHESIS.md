@@ -18,7 +18,7 @@ one agent returned a CRITICAL, three returned GO / GO-WITH-FIXES. **7 CRITICAL f
 across two independent failure domains:
 
 1. **The manuscript was never revised.** The r1/r2/r3 revision exists only in markdown
-   (`revision/docs/paper_blocks_*.md`). The actual `.tex` files are the un-revised,
+   (`docs/paper_blocks_*.md`). The actual `.tex` files are the un-revised,
    pre-revision version, are not git-tracked, and carry a stale headline number the
    project's own audit docs internally retract. Freezing now mints a DOI citing either
    no manuscript or the un-revised overclaiming manuscript.
@@ -73,9 +73,9 @@ working-tree hygiene, and claim wording, not the science pipeline.
 | C2 | 5 (C-1) | Stale unreconciled headline DTW **0.6843** presented as the live result; every matched-budget artifact says ~0.30; project's own methods_full.md:427 retracts it but the disclosure never reaches the manuscript | main (4) copy.tex:190,266; supp_material.tex:290 |
 | C3 | 5 (C-2) | **None** of the PAPER-01..11 paper_blocks revisions are integrated into the .tex — including the LOCKED (D-14-20) de-overclaiming set and the Path A reframe. The manuscript is the pre-revision version | main (4) copy.tex, supp_material.tex |
 | C4 | 5 (C-3) + 6 (HIGH-2) | The `.tex` manuscripts are not git-tracked — they will not be in the tagged tree, or the un-revised version gets frozen | `git ls-files '*.tex'` → empty |
-| C5 | 6 (CRIT-1) | The `!revision/results/` gitignore negations protecting the provenance backbone exist **only in the uncommitted working tree**; committing the `.gitignore` change without the negations in the same atomic commit ignores all provenance JSON | .gitignore (HEAD vs working tree) |
+| C5 | 6 (CRIT-1) | The `!results/` gitignore negations protecting the provenance backbone exist **only in the uncommitted working tree**; committing the `.gitignore` change without the negations in the same atomic commit ignores all provenance JSON | .gitignore (HEAD vs working tree) |
 | C6 | 6 (CRIT-2) | `real.csv` / `fake.csv` modified on **every row** (777/770 rows) in the working tree — unintended data drift; freezing tags state inconsistent with the certified results JSON | real.csv, fake.csv |
-| C7 | 6 (CRIT-3) | `revision/docs/release.md` (mandated by the 14-07 plan must_haves, ≥30 lines: tag SHA, DOIs, check-ignore result, reproduce steps) **does not exist** | revision/docs/ |
+| C7 | 6 (CRIT-3) | `docs/release.md` (mandated by the 14-07 plan must_haves, ≥30 lines: tag SHA, DOIs, check-ignore result, reproduce steps) **does not exist** | docs/ |
 
 ### HIGH (7)
 
@@ -86,7 +86,7 @@ working-tree hygiene, and claim wording, not the science pipeline.
 | H3 | 5 (H-2) | Abstract (main:49) carries the same uncorrected "high fidelity" overclaim |
 | H4 | 5 (H-3) | Orlandi-reference DTW comparison is anchored to the stale, non-reproducible 0.6843 |
 | H5 | 3 (HIGH-1) | Review worktrees were provisioned at stale commits; the DOI must be minted from current HEAD `8180a5e` (verified freeze-candidate state) |
-| H6 | 6 (HIGH-1) | `revision/results/baselines/runs/` (47 MB, 250 files) is untracked — classical-baseline comparison numbers cannot be reproduced from the deposit; commit at least the metrics.json/config.yaml |
+| H6 | 6 (HIGH-1) | `results/baselines/runs/` (47 MB, 250 files) is untracked — classical-baseline comparison numbers cannot be reproduced from the deposit; commit at least the metrics.json/config.yaml |
 | H7 | 6 (HIGH-3) | `verify_freeze_ready.py` validates the live (dirty) working tree, not the committed tag candidate — a green run does not certify the tag |
 
 ### MEDIUM (12)
@@ -145,18 +145,18 @@ ships license-less.
 **Freeze / release track (resolves C4, C5, C6, C7, H6, H7, M4, M10–M12):**
 8. `git checkout -- LICENSE` — revert the unintended working-tree deletion.
 9. Owner decides canonical `real.csv` / `fake.csv` / `results/phase4_validation.json`;
-   confirm consistency with the certified `revision/results/*.json`; commit or revert
+   confirm consistency with the certified `results/*.json`; commit or revert
    deliberately.
 10. Commit the `.gitignore` change as ONE atomic commit (the `results/` line AND both
-    `!revision/results/` negations together); fix the ` *.csv` leading space.
-11. Commit `revision/results/baselines/runs/` metrics.json + config.yaml artifacts.
+    `!results/` negations together); fix the ` *.csv` leading space.
+11. Commit `results/baselines/runs/` metrics.json + config.yaml artifacts.
 12. Decide `.tex` tracking; `git add` + commit the revised `.tex` files and `bib.bib`.
-13. Author and commit `revision/docs/release.md` per the 14-07 spec.
+13. Author and commit `docs/release.md` per the 14-07 spec.
 14. Fix `requirements-pinned.txt`: add `fastdtw`, pin `pandas<3.0`.
 15. Re-run `verify_freeze_ready.py` against the now-clean **committed** tree; confirm
-    `git status --porcelain` is empty; verify `git check-ignore revision/results/*.json`
+    `git status --porcelain` is empty; verify `git check-ignore results/*.json`
     against the committed `.gitignore`; then cut `git tag v2.0-revision` from HEAD and
-    confirm `git archive` contains `revision/results/*.json`, `data.csv`, `LICENSE`.
+    confirm `git archive` contains `results/*.json`, `data.csv`, `LICENSE`.
 
 Steps 1–7 are documentation/wording edits; steps 8–15 are working-tree hygiene and the
 freeze sequence. None require retraining or re-computation — every number is already
@@ -168,7 +168,7 @@ gap file) so the fixes land as a tracked plan **before** 14-07 cuts the tag.
 ## WHAT IS CONFIRMED SOUND (do not re-touch)
 
 - All 5 metric emitters reproduce byte-identically vs the committed JSONs (Agent 3).
-- `revision/tests/` suite: 23 passed / 0 genuine failures; `revision/core/` byte-frozen
+- `tests/` suite: 23 passed / 0 genuine failures; `core/` byte-frozen
   (Agent 2).
 - Number-provenance gate PASSES on all 10 paper-facing docs; 480 literals resolve;
   `data_hash` `91e447d4624e25b3` consistent across all 27 results JSONs; checkpoint

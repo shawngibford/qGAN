@@ -3,7 +3,7 @@
 This note records three empirical findings surfaced during 14-16 execution
 where the corrected data contradicted predictions inherited from the r3
 forensic synthesis. All three are benign for the manuscript's surviving
-claims; all are documented in `revision/docs/peer_review_remediation.md`'s
+claims; all are documented in `docs/peer_review_remediation.md`'s
 Plan 14-16 section.
 
 ## Finding 1 — LR-EMD ranking inversion → Path A reframe (executor checkpoint)

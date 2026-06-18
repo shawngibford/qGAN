@@ -5,14 +5,14 @@ depth: standard
 files_reviewed: 10
 files_reviewed_list:
   - revision/__init__.py
-  - revision/core/__init__.py
-  - revision/core/data.py
-  - revision/core/eval.py
-  - revision/core/models/__init__.py
-  - revision/core/models/critic.py
-  - revision/core/models/quantum.py
-  - revision/core/training.py
-  - revision/01_parity_check.ipynb
+  - core/__init__.py
+  - core/data.py
+  - core/eval.py
+  - core/models/__init__.py
+  - core/models/critic.py
+  - core/models/quantum.py
+  - core/training.py
+  - 01_parity_check.ipynb
   - scripts/build_parity_notebook.py
 findings:
   critical: 3
@@ -45,7 +45,7 @@ The parity-check notebook itself looks correct and should produce the locked tol
 
 ### CR-01: Spectral PSD loss has no gradient path to the actual MSE objective
 
-**File:** `revision/core/training.py:438-475`
+**File:** `core/training.py:438-475`
 **Severity:** BLOCKER
 
 `_spectral_psd_loss` computes `mse` as a Python `float` from numpy arrays (line 468: `mse = float(np.mean(diff ** 2))`). It then "re-attaches" autograd by returning:
@@ -86,7 +86,7 @@ Until a differentiable implementation lands, the safest interim is to raise `Not
 
 ### CR-02: `_ESAdapter.params_pqc` setter would replace the `nn.Parameter` with a raw tensor
 
-**File:** `revision/core/training.py:421-429`
+**File:** `core/training.py:421-429`
 **Severity:** BLOCKER (latent — triggered by any code that does `adapter.params_pqc = X`)
 
 The adapter exposes `params_pqc` as a `@property` whose setter is:
@@ -122,7 +122,7 @@ def params_pqc(self, value):
 
 ### CR-03: `find_optimal_lambert_delta` will raise `RuntimeWarning` and could divide by zero on degenerate inputs
 
-**File:** `revision/core/data.py:168-181`
+**File:** `core/data.py:168-181`
 **Severity:** BLOCKER (input-dependent crash / silent garbage)
 
 The minimizer's objective is:
@@ -165,7 +165,7 @@ def find_optimal_lambert_delta(normed: np.ndarray) -> float:
 
 ### WR-01: Architectural invariants enforced by `assert` (stripped under `python -O`)
 
-**File:** `revision/core/models/quantum.py:48-51`
+**File:** `core/models/quantum.py:48-51`
 **Issue:** `assert window_length == 2 * num_qubits` is a load-bearing invariant — violating it would silently produce mis-shaped tensors. `python -O` strips assertions. Same pattern in `scripts/build_parity_notebook.py:86, 97, 296, 297`.
 **Fix:**
 ```python
@@ -180,7 +180,7 @@ if window_length != 2 * num_qubits:
 
 ### WR-02: PSD hook re-samples real data every generator step (target drifts within an epoch)
 
-**File:** `revision/core/training.py:325-329, 432-435`
+**File:** `core/training.py:325-329, 432-435`
 **Issue:** When `spectral_loss_weight > 0`, `real_log_returns_for_psd(gan_data_list, batch_size)` calls `torch.randint` to draw a fresh real batch — *different from the batch the critic just trained on*. This adds gratuitous noise to the spectral target and consumes from the same global RNG that drives critic batch selection, so flipping the spectral weight on/off changes the entire seeded sequence of training batches downstream.
 **Fix:** Reuse the real batch from the most recent critic iteration:
 
@@ -196,7 +196,7 @@ Remove `real_log_returns_for_psd` entirely; the dedicated sampler is both buggy 
 
 ### WR-03: `device` argument to `compute_gradient_penalty` is misleading dead input
 
-**File:** `revision/core/training.py:31-73`
+**File:** `core/training.py:31-73`
 **Issue:** The signature accepts `device: torch.device` but the function explicitly ignores it — line 55 uses `real_samples.device`. The comment on lines 52-53 acknowledges this. Callers may believe they are pinning the GP computation onto a particular device by passing `device=`, but in fact the placement is governed entirely by `real_samples`. This is an API trap.
 **Fix:** Remove the parameter and update the call site:
 
@@ -213,7 +213,7 @@ def compute_gradient_penalty(
 
 ### WR-04: Eval block depends on `real_log_returns` leaking from the critic loop scope
 
-**File:** `revision/core/training.py:336-355`
+**File:** `core/training.py:336-355`
 **Issue:** Line 352 reads `real_log_returns.reshape(-1).cpu().numpy()` to build the EMD comparison set. `real_log_returns` was last bound inside the critic loop at line 266. If `n_critic == 0` (degenerate but not impossible — there is no validation), `real_log_returns` is undefined and the eval block raises `NameError` only at the eval epoch. Even when `n_critic > 0`, the eval EMD compares against whatever batch the critic happened to draw last — a quietly biased baseline.
 **Fix:** Sample an explicit eval batch:
 
@@ -232,7 +232,7 @@ Also add `if n_critic < 1: raise ValueError(...)` at the top of `train_wgan_gp`.
 
 ### WR-05: `compute_jsd` produces NaN on degenerate constant inputs
 
-**File:** `revision/core/eval.py:96-112`
+**File:** `core/eval.py:96-112`
 **Issue:** When `real` and `fake` are both constant (or empty), `lo == hi`, `np.linspace(lo, hi, bins+1)` returns `bins+1` identical edges, `np.histogram` returns all-zero counts, and `rh / rh.sum()` evaluates `0 / 0 → NaN`. `jensenshannon([NaN,...], [NaN,...]) → NaN`. The notebook never hit this because real log-returns aren't constant, but the function is now part of a public API.
 **Fix:** Guard explicitly:
 
@@ -249,7 +249,7 @@ edges = np.linspace(lo, hi, bins + 1)
 
 ### WR-06: PQC parameter-count gating uses strict `<` and silently skips gates on tight budgets
 
-**File:** `revision/core/models/quantum.py:130, 141, 159`
+**File:** `core/models/quantum.py:130, 141, 159`
 **Issue:** Three guard expressions:
 - `if idx < len(params_pqc):` (Step 2 IQP)
 - `if idx + 2 < len(params_pqc):` (Step 4 Rot block)
@@ -273,7 +273,7 @@ Then drop the `if idx ...` guards inside `generator_circuit` — they hide misco
 
 ### WR-07: Callback exceptions are swallowed with no traceback
 
-**File:** `revision/core/training.py:378-379`
+**File:** `core/training.py:378-379`
 **Issue:** `except Exception as exc: print(f"  [callback warning] {exc!r}")`. A bare `repr(exc)` loses the traceback — a Phase 13 introspection callback that throws will report something like `KeyError('emd')` with no indication of *where* in the callback code the error occurred. Bad debugging UX.
 **Fix:**
 ```python
@@ -287,7 +287,7 @@ except Exception as exc:
 
 ### WR-08: `torch.load(..., weights_only=False)` is the unsafe code-execution path
 
-**File:** `revision/core/training.py:165` and `scripts/build_parity_notebook.py:94, 239, 310`
+**File:** `core/training.py:165` and `scripts/build_parity_notebook.py:94, 239, 310`
 **Issue:** `weights_only=False` allows the unpickler to instantiate arbitrary classes from the checkpoint. PyTorch flipped the safe default to `weights_only=True` precisely because checkpoints are an attack vector. Phase 8's checkpoints are local artifacts you authored, so the immediate risk is low — but the code is now part of an importable module that other people will reuse on checkpoints from elsewhere.
 **Fix:** Where the checkpoint contains only tensors and primitive dicts (the case here), pass `weights_only=True`:
 
@@ -303,22 +303,22 @@ If the checkpoint contains optimizer state with custom classes, register them vi
 
 ### IN-01: `module-level` import of `revision.core` from `data.py` creates a circular-import risk
 
-**File:** `revision/core/data.py:21`
-**Issue:** `data.py` does `from revision.core import DITHER, DITHER_SEED, PAR_LIGHT_MAX, WINDOW_LENGTH`. `revision/core/__init__.py` in turn imports `data` (line 35: `from revision.core import data, eval, training`). The import currently works because the constants are defined *before* the submodule imports in `__init__.py`, but any reordering will break it. Same pattern in `training.py:225`.
-**Fix:** Define the constants in a small `revision/core/constants.py` (no dependencies) and import from there in both `__init__.py` and the submodules.
+**File:** `core/data.py:21`
+**Issue:** `data.py` does `from revision.core import DITHER, DITHER_SEED, PAR_LIGHT_MAX, WINDOW_LENGTH`. `core/__init__.py` in turn imports `data` (line 35: `from revision.core import data, eval, training`). The import currently works because the constants are defined *before* the submodule imports in `__init__.py`, but any reordering will break it. Same pattern in `training.py:225`.
+**Fix:** Define the constants in a small `core/constants.py` (no dependencies) and import from there in both `__init__.py` and the submodules.
 
 ---
 
 ### IN-02: `eval` shadows the Python builtin in the package namespace
 
-**File:** `revision/core/__init__.py:35`, `revision/core/eval.py`
+**File:** `core/__init__.py:35`, `core/eval.py`
 **Issue:** Documented in `eval.py:13-15` as a deliberate trade-off. Acceptable, but `revision.core.eval` will silently override the builtin if anyone does `from revision.core import *` (mitigated by `__all__`). Consider `metrics.py` instead — both shorter and unambiguous.
 
 ---
 
 ### IN-03: `_NOISE_HIGH_LITERAL = 4 * math.pi` is dead code
 
-**File:** `revision/core/training.py:478-482`
+**File:** `core/training.py:478-482`
 **Issue:** A module-level constant added solely so a grep-based verification step finds the literal `4 * math.pi` in `training.py`. It is unused and the comment admits as much. Dead code now that the verification step is past.
 **Fix:** Delete the constant and the comment.
 
@@ -326,29 +326,29 @@ If the checkpoint contains optimizer state with custom classes, register them vi
 
 ### IN-04: `forward()` silently discards `par_light`
 
-**File:** `revision/core/models/quantum.py:200-201`
+**File:** `core/models/quantum.py:200-201`
 **Issue:** `_ = par_light` documents the intent (forward-compat hook). When Phase 12+ wires conditioning back in, callers that *think* they passed conditioning will be silently ignored. Consider a one-time `warnings.warn` on first non-None `par_light` so accidental use of the dormant feature is visible.
 
 ---
 
 ### IN-05: Magic literal `0.1` for generator output scaling
 
-**File:** `revision/core/training.py:283, 316, 350`
-**Issue:** `gen_out * 0.1` appears three times with no name. It mirrors the notebook line `generated_samples = generated_samples.to(torch.float64) * 0.1`, but there is no constant `GEN_SCALE` used (despite `revision/core/__init__.py:22` defining `GEN_SCALE = 1.0` — note: 1.0, not 0.1, so the constant doesn't even match the actual scaling).
+**File:** `core/training.py:283, 316, 350`
+**Issue:** `gen_out * 0.1` appears three times with no name. It mirrors the notebook line `generated_samples = generated_samples.to(torch.float64) * 0.1`, but there is no constant `GEN_SCALE` used (despite `core/__init__.py:22` defining `GEN_SCALE = 1.0` — note: 1.0, not 0.1, so the constant doesn't even match the actual scaling).
 **Fix:** Either replace the literal with a module constant `GEN_OUTPUT_SCALE = 0.1` or reconcile the existing `GEN_SCALE` constant with the value actually used.
 
 ---
 
 ### IN-06: `compute_log_delta` `len(od_np)` works only because `od_np` was already converted
 
-**File:** `revision/core/data.py:60`
+**File:** `core/data.py:60`
 **Issue:** `od_np = od_values.numpy() if isinstance(...) else od_values.copy()` — both branches return a numpy array, so `len(od_np)` is the array length. Fine. But the docstring should clarify that `od_values` may be either a torch tensor *or* a numpy array; the type hint says `torch.Tensor` only, which is misleading.
 
 ---
 
 ### IN-07: `kurt_avg.append(moments["kurtosis"])` records *fake-only* kurtosis
 
-**File:** `revision/core/training.py:361`
+**File:** `core/training.py:361`
 **Issue:** The metric name `kurt_avg` suggests an averaged comparison, but the value stored is just `moments["kurtosis"]` of the *fake* batch. Compare to `compute_moments(real_flat)` to compute a real-vs-fake delta if that's the intent. If the stored value is just a tracking statistic, rename to `fake_kurt`.
 **Fix:** Either compute and store both real and fake kurtosis, or rename the field for clarity.
 

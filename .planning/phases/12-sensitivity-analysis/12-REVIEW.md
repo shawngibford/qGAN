@@ -4,9 +4,9 @@ reviewed: 2026-05-18T00:00:00Z
 depth: standard
 files_reviewed: 3
 files_reviewed_list:
-  - revision/run_sensitivity.py
-  - revision/run_multiseed_rollup.py
-  - revision/run_sensitivity_sweep.sh
+  - run_sensitivity.py
+  - run_multiseed_rollup.py
+  - run_sensitivity_sweep.sh
 findings:
   critical: 3
   warning: 5
@@ -65,11 +65,11 @@ resume invariant.
 
 ### CR-01: log-return scale uses wrong real reference + wrong fake array — breaks numerical faithfulness
 
-**File:** `revision/run_sensitivity.py:550-566`
+**File:** `run_sensitivity.py:550-566`
 **Issue:**
 The dual-scale recompute claims to reproduce the unchanged fidelity suite
 (D-12-03), but the log-return branch diverges from the **frozen Phase 11
-canonical recipe** (`revision/run_dualscale_fidelity.py:439-516`,
+canonical recipe** (`run_dualscale_fidelity.py:439-516`,
 `build_real_references` at `:289-302`) that produced the frozen
 `fidelity_dualscale.json` consumed by `run_multiseed_rollup.py`. Three
 concrete divergences:
@@ -143,7 +143,7 @@ lr_metrics = full_metric_suite(real_lr, fake_lr)     # flat, like Phase 11
 
 ### CR-02: `--seed 0` (and any falsy seed) silently rejected / mis-routed
 
-**File:** `revision/run_sensitivity.py:807` and `revision/run_sensitivity.py:796`
+**File:** `run_sensitivity.py:807` and `run_sensitivity.py:796`
 **Issue:**
 Per-cell validation is `if not (args.pipeline and args.seed is not None and
 args.condition)`. `args.seed` is correctly guarded with `is not None`, but
@@ -177,7 +177,7 @@ if not ck_path.exists():
 
 ### CR-03: parallel status writes are serialized by flock but the *resume completeness* check is not — `all_complete` can be wrong, breaking the resume invariant
 
-**File:** `revision/run_sensitivity_sweep.sh:267-270`, `:333-339`, `:421`
+**File:** `run_sensitivity_sweep.sh:267-270`, `:333-339`, `:421`
 **Issue:**
 `update_status` is flock-protected, so individual JSON merges don't corrupt
 each other. But `doc["all_complete"] = (completed == doc["total_count"])` is
@@ -223,7 +223,7 @@ PY
 
 ### WR-01: `assert` used for the PennyLane version gate and the data_hash gate — disabled under `python -O`
 
-**File:** `revision/run_sensitivity.py:93-97`; `revision/run_multiseed_rollup.py:85-87`
+**File:** `run_sensitivity.py:93-97`; `run_multiseed_rollup.py:85-87`
 **Issue:** The version gate (`assert qml.__version__ == "0.44.0"`) and the
 D-10-15 cross-artifact `data_hash` gate (`assert len(set(...)) == 1`) are the
 documented hard fail-loud guards protecting the entire numerical-faithfulness
@@ -242,7 +242,7 @@ if len(set(hashes.values())) != 1:
 
 ### WR-02: `run_multiseed_rollup` groups by 6-key but ignores `condition`/`shots`/`noise_*` — collapses distinct sensitivity cells
 
-**File:** `revision/run_multiseed_rollup.py:96-105`
+**File:** `run_multiseed_rollup.py:96-105`
 **Issue:** The groupby key is
 `(source, model_kind, pipeline, metric_name, scale, injection_ratio)`. It
 consumes only the five Phase 10/11 headline JSONs (`HEADLINE`, line 63-69),
@@ -261,7 +261,7 @@ carries a non-None `condition`.
 
 ### WR-03: `n_synth` mismatch between regenerated samples and frozen analytic count is unchecked
 
-**File:** `revision/run_sensitivity.py:825-827`
+**File:** `run_sensitivity.py:825-827`
 **Issue:** Regeneration uses
 `n=int(np.load(frozen_samples).shape[0])` to match the frozen analytic
 sample count, then `generate_samples_on_qnode` returns
@@ -279,7 +279,7 @@ branch (the contract is explicitly "same N as frozen analytic column").
 
 ### WR-04: `--emit-rollup` mutual-exclusion check misfires on `--seed 0`
 
-**File:** `revision/run_sensitivity.py:796`
+**File:** `run_sensitivity.py:796`
 **Issue:** `if args.pipeline or args.seed is not None or args.condition:`
 is correct for rejecting `--seed 0 --emit-rollup` (0 is not None), but the
 asymmetry with the per-cell guard is fragile and undocumented. More
@@ -291,7 +291,7 @@ today but a latent correctness trap given seeds are constrained to
 
 ### WR-05: `usage()` prints a hardcoded line range that drifts from the header
 
-**File:** `revision/run_sensitivity_sweep.sh:136-138`
+**File:** `run_sensitivity_sweep.sh:136-138`
 **Issue:** `usage() { sed -n '2,84p' "$0"; }` hardcodes line numbers
 2..84. Any header edit (this file's header is heavily commented and likely
 to change) silently truncates or over-prints the help text. Not a
@@ -304,7 +304,7 @@ or move usage to a heredoc.
 
 ### IN-01: deliberate circuit duplication is a real long-term drift risk
 
-**File:** `revision/run_sensitivity.py:363-416`
+**File:** `run_sensitivity.py:363-416`
 **Issue:** `noisy_generator_circuit` is a verbatim copy of
 `quantum.py:122-171` (acknowledged, D-10-13). It was confirmed byte-equivalent
 against the current `quantum.py` during this review. The risk is purely
@@ -316,7 +316,7 @@ exact git blob hash reviewed) so drift is detectable.
 
 ### IN-02: `import yaml` and `import datetime` are function-local
 
-**File:** `revision/run_sensitivity.py:583`, `:635`, `:552`
+**File:** `run_sensitivity.py:583`, `:635`, `:552`
 **Issue:** `import yaml` (in `_write_bundle`), `import datetime as _dt`
 (in `aggregate`), and `from revision.core.preprocessing import
 forward_logreturns` (in `compute_dualscale_metrics`) are deferred imports.
@@ -327,7 +327,7 @@ unless there is a measured import-cost reason.
 
 ### IN-03: `default=float` JSON serializer can mask non-finite metric values
 
-**File:** `revision/run_sensitivity.py:591`, `:729-730`
+**File:** `run_sensitivity.py:591`, `:729-730`
 **Issue:** `json.dumps(..., default=float)` coerces numpy scalars, which is
 intended. But `full_metric_suite` can return `nan`/`inf` (e.g. EMD/JSD on a
 degenerate distribution under heavy depolarizing noise where all samples
@@ -340,7 +340,7 @@ explicitly.
 
 ### IN-04: `seeds`/`pipelines` provenance in `aggregate` derived from data, not asserted against D-12-02
 
-**File:** `revision/run_sensitivity.py:681-684`
+**File:** `run_sensitivity.py:681-684`
 **Issue:** The emitted `seeds`/`pipelines` headers are computed from whatever
 rows happen to be present. A partial sweep (some cells failed) silently
 produces a headline JSON claiming `seeds: [42]` with no indication it is

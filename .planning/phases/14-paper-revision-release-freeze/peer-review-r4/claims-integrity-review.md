@@ -6,7 +6,7 @@
 data; confirm the withdrawn Path A claim (LR-EMD beats WGANs) is fully scrubbed;
 flag residual overclaiming.
 
-> **Addendum (2026-05-24):** The VAE "posterior collapse (sample std ≈ 0.0004)" characterization in this document was NOT supported by the matched-budget data. The actual matched-budget VAE log-return std is 0.0186 (≈ 1.17× narrower than real 0.0217, not 54× narrower). The VAE's anomalously low LR-DTW = 0.088 reflects a degenerate generation regime (marginal well-aligned, log-return lag-1 ACF = −0.648 vs real −0.064, matched-pipeline reference) rather than posterior collapse. See `revision/docs/peer_review_remediation.md` for the corrected characterization. This document is preserved unchanged below as a record of the prior belief and the bug-discovery timeline.
+> **Addendum (2026-05-24):** The VAE "posterior collapse (sample std ≈ 0.0004)" characterization in this document was NOT supported by the matched-budget data. The actual matched-budget VAE log-return std is 0.0186 (≈ 1.17× narrower than real 0.0217, not 54× narrower). The VAE's anomalously low LR-DTW = 0.088 reflects a degenerate generation regime (marginal well-aligned, log-return lag-1 ACF = −0.648 vs real −0.064, matched-pipeline reference) rather than posterior collapse. See `docs/peer_review_remediation.md` for the corrected characterization. This document is preserved unchanged below as a record of the prior belief and the bug-discovery timeline.
 
 ## Environment note (procedural, not a finding)
 
@@ -20,7 +20,7 @@ intended freeze state. No file in the main repo was modified.
 
 ## 1. SURVIVING CLAIM (a) — OD-EMD parametric-efficiency equivalence
 
-**Claim text** (`revision/docs/reviewer_response.md:269-272`): "55 quantum
+**Claim text** (`docs/reviewer_response.md:269-272`): "55 quantum
 parameters achieve OD-scale EMD statistically equivalent to classical generators
 of 73-562 generator params AND the full ~2.5x10^5 adversarial budget ... (Welch
 p > 0.36, |d| ≤ 0.65, n=5)."
@@ -36,7 +36,7 @@ p > 0.36, |d| ≤ 0.65, n=5)."
   by hand from the stored means/stds → Welch t = -1.0185, p = 0.3652, pooled
   Cohen d = -0.6442. Byte-matches `welch_pairwise.json:314-316`. The aggregator
   arithmetic is sound.
-- Parameter counts verified against `revision/results/model_info.json`:
+- Parameter counts verified against `results/model_info.json`:
   wgan_cnn 73, wgan_mlp 74, wgan_lstm 78, vae 562, ar 3, iqp_sel_55 55. The
   "73-562" range correctly spans min generator (wgan_cnn) to max generator (vae).
 - Shared critic 250881 params verified at

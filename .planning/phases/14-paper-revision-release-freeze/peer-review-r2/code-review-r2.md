@@ -1,16 +1,16 @@
 ---
 reviewer: code-quality-r2
 scope: Phase 14 plan 14-13 remediation sweep (commits 4ea576b…36eeabf)
-files_audited: revision/verify_number_provenance.py, revision/run_methods_full.py,
-  revision/run_matched2000.py, revision/run_matched2000_dualscale.py,
-  revision/run_canonical_headline.py, revision/run_figure_suite.py,
-  revision/run_model_info.py, revision/verify_freeze_ready.py,
-  revision/checkpoints/best_checkpoint.pt, revision/requirements-pinned.txt,
-  revision/results/manuscript_apparatus_constants.json,
-  revision/results/reconciliation_deltas.json,
-  revision/results/total_adversarial_param_budget.json,
-  revision/docs/methods_full.md, revision/docs/reconciliation_note.md,
-  revision/docs/paper_blocks_framing.md, revision/core/ (delta check)
+files_audited: verify_number_provenance.py, run_methods_full.py,
+  run_matched2000.py, run_matched2000_dualscale.py,
+  run_canonical_headline.py, run_figure_suite.py,
+  run_model_info.py, verify_freeze_ready.py,
+  checkpoints/best_checkpoint.pt, requirements-pinned.txt,
+  results/manuscript_apparatus_constants.json,
+  results/reconciliation_deltas.json,
+  results/total_adversarial_param_budget.json,
+  docs/methods_full.md, docs/reconciliation_note.md,
+  docs/paper_blocks_framing.md, core/ (delta check)
 created: 2026-05-20T00:00:00Z
 ---
 
@@ -25,8 +25,8 @@ Zenodo tag is cut. The 14-13 sweep is substantive and competent work
 that closes the core of the original 28 findings. The two remediation
 artifacts that were emitted to satisfy the gate (`reconciliation_deltas.json`,
 `total_adversarial_param_budget.json`) are legitimate derived audit
-artifacts, not back-fits. D-14-22 (`revision/core/` byte-freeze) is
-**literally** honored — `git diff 06bb470..main -- revision/core/`
+artifacts, not back-fits. D-14-22 (`core/` byte-freeze) is
+**literally** honored — `git diff 06bb470..main -- core/`
 returns zero bytes. But the gate v2 rewrite still admits some false
 positives, the `training_time_device` field captures the
 post-sample-generation device (not training-time), and the f-string emit
@@ -51,7 +51,7 @@ matches `canonical_config_lock.json#checkpoint_sha256` — correct).
 ### HIGH (should be addressed before v2.0 tag)
 
 #### R2-HIGH-1: Gate v2 sign-flip false positive — positive token resolves to negative JSON value
-**File:** `revision/verify_number_provenance.py:193`
+**File:** `verify_number_provenance.py:193`
 **Evidence:**
 ```python
 boundary_re = re.compile(rf"(?<![\d.]){re.escape(token)}(?![\d])")
@@ -83,12 +83,12 @@ already captures `-0.0001` as one token; the gate just doesn't enforce
 sign at match time.
 
 #### R2-HIGH-2: Gate v2 ε-neighborhood still admits broad false positives at low precision
-**File:** `revision/verify_number_provenance.py:215-237`
+**File:** `verify_number_provenance.py:215-237`
 **Evidence:** With `--manifest`, methods_full.md's `-0.26` literal
 (documenting the AR(p) ML-bias factor `(777-2)/777 - 1 ≈ -0.26%`)
 resolves to:
 ```
-revision/docs/methods_full.md:-0.26 -> revision/results/ansatz_comparison.json#rows[278].value
+docs/methods_full.md:-0.26 -> results/ansatz_comparison.json#rows[278].value
 ```
 where `rows[278].value = -0.2570036284193482` — a `kurt_fake` value for
 V3 quantum seed 45. With `prec=2`, the tolerance is `10^-2 / 2 = 0.005`;
@@ -117,9 +117,9 @@ per-literal `--expected-source` annotations in the doc (e.g.,
 so the gate can verify the key path the author intended.
 
 #### R2-HIGH-3: `training_time_device` field captures post-sample-generation device, not training-time
-**File:** `revision/run_matched2000.py:331-337` (_device_manifest);
-`revision/run_matched2000.py:570` (_train_wgan call);
-`revision/run_matched2000.py:257-270` (generate_wgan_samples)
+**File:** `run_matched2000.py:331-337` (_device_manifest);
+`run_matched2000.py:570` (_train_wgan call);
+`run_matched2000.py:257-270` (generate_wgan_samples)
 **Evidence:** `_train_wgan` calls `generate_wgan_samples(generator, ...)`
 **before** `_device_manifest(generator)`. `generate_wgan_samples` at
 line 270 explicitly does `generator = generator.to("cpu")`. The
@@ -154,7 +154,7 @@ BEFORE `generate_wgan_samples` is called (e.g., capture
 `training_device = next(generator.parameters()).device` immediately
 after `train_wgan_gp(...)` returns); or (b) have `train_wgan_gp` itself
 record the device it ran on into the returned metrics dict, and gate
-on that. (b) is cleanest but requires either a `revision/core/` change
+on that. (b) is cleanest but requires either a `core/` change
 (D-14-22 blocked) or a post-hoc wrapper that reads from a side-channel.
 Documenting this as a "trust the hook, not the post-hoc inspection"
 caveat is acceptable as long as the operator-facing comment on lines
@@ -164,18 +164,18 @@ is true accidentally (because `generate_wgan_samples` moves to CPU),
 not because of the MPS-disable hook.
 
 #### R2-HIGH-4: `_train_vae` MPS-disable hook is purely cosmetic
-**File:** `revision/run_matched2000.py:625-660`
+**File:** `run_matched2000.py:625-660`
 **Evidence:** `_train_vae` adds the `torch.backends.mps.is_available =
 lambda: False` patch (lines 625-626) and the `try: ... finally: orig_mps`
 restore. But `VAEBaseline.__init__` in
-`revision/core/models/nonadversarial.py` never queries
+`core/models/nonadversarial.py` never queries
 `torch.backends.mps.is_available()` — the VAE is constructed and trained
 on whatever device the default torch context is (CPU by default), and
 the model never moves devices. The MPS-disable hook protects nothing
 for VAE.
 
 ```
-$ grep -n 'mps\|device\|to(' revision/core/models/nonadversarial.py
+$ grep -n 'mps\|device\|to(' core/models/nonadversarial.py
 115:        device = self.dec_h.weight.device
 116:        z = torch.randn(n, self.LATENT_DIM, generator=gen, device=device)
 ```
@@ -201,12 +201,12 @@ training (via a sentinel field in the metrics dict).
 ### MEDIUM (should be addressed before resubmission, not blocking)
 
 #### R2-MED-1: CR-3 fix cites the line PRECEDING the cast, not the cast itself
-**File:** `revision/run_methods_full.py:131`
+**File:** `run_methods_full.py:131`
 **Evidence:** The `_citations` target pattern is:
 ```python
 "generator_to_compute_dtype": "generated_samples = generator",
 ```
-This matches `revision/core/training.py:346` (`generated_samples =
+This matches `core/training.py:346` (`generated_samples =
 generator(noise_batch)`). But the **cast** the citation describes
 (`.to(compute_dtype) * 0.1`) is on **line 347**:
 ```
@@ -215,7 +215,7 @@ generator(noise_batch)`). But the **cast** the citation describes
 ```
 The emitted methods_full.json text reads:
 ```
-"... revision/core/training.py:346 generator output cast .to(compute_dtype) * 0.1 ..."
+"... core/training.py:346 generator output cast .to(compute_dtype) * 0.1 ..."
 ```
 Citation is one line off from the code it describes. The docstring
 comment at `run_methods_full.py:126-128` acknowledges this is the
@@ -234,7 +234,7 @@ point of CR-3 was to prevent this kind of drift.
 This anchors the citation on the cast line itself.
 
 #### R2-MED-2: `_finite_sanitize` silently stringifies numpy arrays
-**File:** `revision/run_matched2000.py:117-148`
+**File:** `run_matched2000.py:117-148`
 **Evidence:** Lines 139-148:
 ```python
 try:
@@ -257,7 +257,7 @@ pipeline). Latent footgun.
 the `try float()` fallback, OR raise loudly with a clear error.
 
 #### R2-MED-3: `verify_freeze_ready.gate_b` checks only 3 of 9 paper-facing docs
-**File:** `revision/verify_freeze_ready.py:64-68`
+**File:** `verify_freeze_ready.py:64-68`
 **Evidence:**
 ```python
 PAPER_BLOCKS = [
@@ -284,7 +284,7 @@ extract a `PROVENANCE_GATED_DOCS` list that both 14-13 SUMMARY's
 verify section and `verify_freeze_ready.py` import from.
 
 #### R2-MED-4: `_ID_PATTERNS` `line ~?N` strip can swallow legitimate data
-**File:** `revision/verify_number_provenance.py:114`
+**File:** `verify_number_provenance.py:114`
 **Evidence:** Pattern `\bline\s*~?\d+(?:-\d+)?\b` strips any `line N`
 or `line ~N` occurrence — including legitimate data literals. Test:
 ```
@@ -304,7 +304,7 @@ verb, or file path within ±20 chars of the match — or restrict to
 4-digit-or-less numbers that are clearly source-line citations.
 
 #### R2-MED-5: `_train_vae` integer-shape numpy/random/torch seeding doesn't cover Adam state
-**File:** `revision/run_matched2000.py:601-605`
+**File:** `run_matched2000.py:601-605`
 **Evidence:** HI-7 fix adds `np.random.seed(seed)` and `_random.seed(seed)`
 to `_train_vae`. But `torch.optim.Adam` initializes its first/second
 moment state from zeros — no RNG dependence. The seeding fix is
@@ -325,7 +325,7 @@ Reframe the commit message to "defense in depth" rather than "fix" if
 the SUMMARY.md is updated.
 
 #### R2-MED-6: Apparatus-constants JSON is a back-fit to satisfy the gate
-**File:** `revision/results/manuscript_apparatus_constants.json`
+**File:** `results/manuscript_apparatus_constants.json`
 **Evidence:** The JSON's own `note` field says:
 > "Emitting them here lets the v2 provenance gate resolve them as
 > legitimate manuscript-context literals rather than via substring
@@ -348,7 +348,7 @@ JSON" in the gate's docstring so future operators don't abuse it for
 results values.
 
 #### R2-MED-7: `optimizer_betas` in bucket_3 still reads from WGAN entry only
-**File:** `revision/run_methods_full.py:441`
+**File:** `run_methods_full.py:441`
 **Evidence:**
 ```python
 repro = mi_by_model.get("iqp_sel_55_repro", {})
@@ -378,7 +378,7 @@ or any artifact byte.
 The `verify_freeze_ready.gate_a_gitignore_archive()` still appends to
 `.gitignore` and runs `git add -f`. The original review flagged this as
 MD-5. The 14-13 sweep extended the negation pattern to recursive
-(`!revision/results/**/*.json`) but did NOT add a `--check-only` flag.
+(`!results/**/*.json`) but did NOT add a `--check-only` flag.
 A CI run that exercises the verify will still leave dirty files.
 
 #### R2-LOW-2: Original review's MD-6 (large `.npz` not size-checked) not addressed
@@ -446,7 +446,7 @@ and 7 LOW/INFO. I spot-checked the resolution claims:
 | **HI-3** data_hash gate mutual-equality only | **RESOLVED** | `EXPECTED_DATA_HASH = "91e447d4624e25b3"` + explicit-raise added to `run_model_info.py:740`. Gate now enforces equality to the literal. |
 | **HI-4** hardcoded topology | **RESOLVED** | Reads `decomp.get("gate_layout", {}).get("entangler", "range")` with a `"range"` fallback default — safe. |
 | **HI-5** `model_kinds` excludes headline | **RESOLVED** | `MODEL_KINDS + [HEADLINE_MODEL_KIND]` in the dualscale emitter. |
-| **HI-6** freeze gate glob vs verifier rglob | **RESOLVED** | `verify_freeze_ready.py` now uses `RESULTS_DIR.rglob("*.json")` consistently. Negation written as `!revision/results/**/*.json`. |
+| **HI-6** freeze gate glob vs verifier rglob | **RESOLVED** | `verify_freeze_ready.py` now uses `RESULTS_DIR.rglob("*.json")` consistently. Negation written as `!results/**/*.json`. |
 | **HI-7** `_train_vae` lacks np/random seed | **RESOLVED (defensive)** | Both seeds added. Functionally no current change (see R2-MED-5) but defense-in-depth is good. |
 | **HI-8** `default=float` NaN/Inf serialization | **RESOLVED** | `_finite_sanitize` + `_dumps_finite` with 5% threshold. Minor latent footgun with numpy arrays (R2-MED-2). |
 | **HI-9** subprocess re-spawn in sweep harness | **NOT ADDRESSED** | Original review flagged this as performance-only. The 14-13 sweep did not touch the sweep harness. Acceptable. |
@@ -468,7 +468,7 @@ counted as "addressed with reservations," not "closed."
 ## Positive observations
 
 1. **D-14-22 byte-freeze is literally honored.** `git diff 06bb470..main
-   -- revision/core/` returns zero bytes. Every "documented not changed"
+   -- core/` returns zero bytes. Every "documented not changed"
    commitment is upheld. The §3.x Metric conventions subsection in
    methods_full.md is the right kind of remediation — disclosure rather
    than core modification.

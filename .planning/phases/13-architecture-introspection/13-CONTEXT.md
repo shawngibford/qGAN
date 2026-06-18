@@ -17,20 +17,20 @@ Concretely, Phase 13 produces:
 
 1. **Ansatz comparison** (ARCH-01/02) — 3 ansatz variants spanning depth AND
    entanglement-topology axes, trained under the identical Phase 09.1/10
-   protocol, multi-seed, full fidelity suite → `revision/results/ansatz_comparison.json`
+   protocol, multi-seed, full fidelity suite → `results/ansatz_comparison.json`
 2. **Training-progression figure** (INTRO-01) — generated distribution at epochs
    {0, N/4, N/2, 3N/4, N} for the quantum generator **and all three Phase-10
    classical WGAN-GP variants** side-by-side, Pipeline B →
-   `revision/results/figures/training_progression.*` + underlying JSON
+   `results/figures/training_progression.*` + underlying JSON
 3. **Parameter-trajectory plot** (INTRO-02) — PQC param norms + angle histograms
    across epochs → figure + JSON
 4. **Entanglement trajectory** (INTRO-03) — Von Neumann entanglement entropy
    (balanced bipartition) **with state-purity Tr(ρ²) cross-check** across
    training → figure + JSON
 
-**In scope:** new ansatz variant definitions in `revision/core/models/quantum.py`
+**In scope:** new ansatz variant definitions in `core/models/quantum.py`
 (config-selectable); new instrumented training runs (via the existing dormant
-`callback(epoch, metrics)` hook in `training.py`); new `revision/run_*.py` +
+`callback(epoch, metrics)` hook in `training.py`); new `run_*.py` +
 `*_sweep.sh` driver(s) following the Phase 10 pattern; JSON on the established
 long-form schema; introspection figures with reproducibility JSON; the two
 folded training-loop bug fixes (CR-01, CR-02) + their regression tests.
@@ -77,7 +77,7 @@ sweeps on the local-Mac budget.
   research shows it is strictly more reviewer-defensible — but the *axis*
   (topology-at-fixed-depth-4) is locked.
 - **D-13-03:** Variants are **config-selectable** in
-  `revision/core/models/quantum.py` (ROADMAP success criterion 1). Add an
+  `core/models/quantum.py` (ROADMAP success criterion 1). Add an
   ansatz-spec parameter (depth + topology) to `QuantumGenerator`; the
   range-based pattern remains the default so all prior phases' behavior is
   byte-unchanged. Param-count drift across variants (75/135/75) is expected and
@@ -128,7 +128,7 @@ sweeps on the local-Mac budget.
 
 ### Folded Todos
 - **CR-01 — spectral-loss hook non-differentiable + device-unsafe**
-  (`revision/core/training.py:356-360, 470-507`). Folded: Phase 13 is the first
+  (`core/training.py:356-360, 470-507`). Folded: Phase 13 is the first
   phase that exercises the spectral/callback path, and the todo is tagged
   `resolves_phase: 13`. Fix: make the spectral PSD loss a real differentiable
   torch term computed on the device-resident generator output (no
@@ -138,7 +138,7 @@ sweeps on the local-Mac budget.
   Note: headline runs keep weight=0.0 (D-13-06) — this fix is correctness for
   the now-reachable hook, not a headline-objective change.
 - **CR-02 — EarlyStopping checkpoint restore device/dtype-inconsistent**
-  (`revision/core/training.py:163-171`). Folded: tagged `resolves_phase: 13`;
+  (`core/training.py:163-171`). Folded: tagged `resolves_phase: 13`;
   becomes reachable code in any phase that exercises the training loop. Fix:
   pass `map_location=device` and recast restored tensors to the live
   `compute_dtype` on EarlyStopping restore; move optimizer state to the active
@@ -158,15 +158,15 @@ opinion needed):
   alternative within the topology-at-fixed-depth-4 axis (D-13-02).
 - Bipartition wire choice for the entanglement entropy (D-13-09), recorded in JSON.
 - New driver/sweep file names and CLI surface (pattern after
-  `revision/run_baselines.py` + `run_baselines_sweep.sh`); idempotent per-cell
+  `run_baselines.py` + `run_baselines_sweep.sh`); idempotent per-cell
   skip logic; `--parallel 2` guardrail; **no `multiprocessing.Pool`**
   (Phase 09.1 Pitfall 4).
 - Figure rendering details (panel layout, format, styling) and the exact
   callback-snapshot data schema, provided each figure has companion
   reproducibility JSON (ROADMAP criterion 4) and outputs join the
-  `revision/results/*.json` contract.
+  `results/*.json` contract.
 - Which fidelity metrics populate `ansatz_comparison.json` (reuse
-  `revision/core/eval.py` unchanged; dual-scale per EVAL-05 convention; same
+  `core/eval.py` unchanged; dual-scale per EVAL-05 convention; same
   metric set as Phase 10's `baseline_comparison.json`).
 - Sweep wall-time budget and `is_complete()` artifact-bundle layout (follow the
   Phase 10/12 run-dir convention D-10-14).
@@ -206,27 +206,27 @@ opinion needed):
   convention
 - `.planning/phases/09.1-r1-m3-preprocessing-ablation/09.1-CONTEXT.md` —
   Pipeline A/B definitions, eval.py contract, Pitfall 4
-- `revision/results/baseline_comparison.json` — long-form
+- `results/baseline_comparison.json` — long-form
   `{model_kind, pipeline, seed, metric_name, scale, value}` schema the ansatz
   table mirrors/extends (add an `ansatz` / `depth` / `topology` dimension)
-- `revision/results/baselines/runs/<model>/<pipeline>/<seed>/` — Phase-10
+- `results/baselines/runs/<model>/<pipeline>/<seed>/` — Phase-10
   classical run dirs; INTRO-01 reads which classical variants exist; existing
   V1 quantum runs are reused as ansatz variant-1 (final metrics only)
 
 ### Reusable code
-- `revision/core/models/quantum.py` — `QuantumGenerator`; `generator_circuit`
+- `core/models/quantum.py` — `QuantumGenerator`; `generator_circuit`
   (range-based CNOT pattern at lines ~137–162); `count_params()`. Ansatz
   variants extend this file (D-13-03)
-- `revision/core/training.py` — `train_wgan_gp`; the **dormant Phase 13
+- `core/training.py` — `train_wgan_gp`; the **dormant Phase 13
   `callback(epoch, metrics)` hook** (lines ~192, ~395–411, eval-epoch only,
   try/except-wrapped) is the instrumentation entry point for INTRO-*;
   `EarlyStopping` (lines ~79, ~163–171 = CR-02); `_spectral_psd_loss`
   (lines ~356–360, ~470–507 = CR-01)
-- `revision/core/eval.py` — `full_metric_suite` and helpers — reuse unchanged
+- `core/eval.py` — `full_metric_suite` and helpers — reuse unchanged
   for `ansatz_comparison.json`; dual-scale per EVAL-05
-- `revision/core/preprocessing.py` — `inverse_minmax_od`, `inverse_logreturns`
+- `core/preprocessing.py` — `inverse_minmax_od`, `inverse_logreturns`
   for OD-scale reconstruction in figures
-- `revision/run_baselines.py` + `revision/run_baselines_sweep.sh` — reference
+- `run_baselines.py` + `run_baselines_sweep.sh` — reference
   template for the new Phase 13 driver(s)
 
 ### External
@@ -241,24 +241,24 @@ opinion needed):
 ## Existing Code Insights
 
 ### Reusable Assets
-- `revision/core/training.py::train_wgan_gp` already has a **purpose-built,
+- `core/training.py::train_wgan_gp` already has a **purpose-built,
   dormant Phase 13 `callback(epoch, metrics)` hook** (eval-epoch only,
   try/except-wrapped so callback bugs can't kill training). INTRO-01/02/03
   instrumentation hangs off this — no training-loop surgery needed for the
   happy path.
-- `revision/core/eval.py::full_metric_suite` — full fidelity suite already
+- `core/eval.py::full_metric_suite` — full fidelity suite already
   exists; `ansatz_comparison.json` recomputes it on new ansatz samples, no new
   metric math.
 - Existing Phase 09.1/10 5-seed V1 (depth-4 range-CNOT) quantum runs are reused
   as ansatz variant-1 final metrics — no recompute (D-13-01).
-- `revision/run_baselines.py` + `_sweep.sh` — idempotent per-cell driver +
+- `run_baselines.py` + `_sweep.sh` — idempotent per-cell driver +
   atomic `sweep_status.json` + `--parallel 2`; Phase 13 driver(s) follow this
   exact shape.
 
 ### Established Patterns
-- Code-placement invariant (D-10-13): `revision/core/` = model + eval helpers
+- Code-placement invariant (D-10-13): `core/` = model + eval helpers
   only (ansatz variant definitions go in `quantum.py`); all sweep/figure
-  orchestration in new `revision/run_*.py`.
+  orchestration in new `run_*.py`.
 - Long-form metrics schema `{model_kind, pipeline, seed, metric_name, scale,
   value}` — `ansatz_comparison.json` extends it with an ansatz/depth/topology
   dimension, does not replace it.
@@ -270,9 +270,9 @@ opinion needed):
 
 ### Integration Points
 - `ansatz_comparison.json` + the four introspection figures (+ companion JSON)
-  join the `revision/results/*.json` + `revision/results/figures/` contract
+  join the `results/*.json` + `results/figures/` contract
   Phase 14 paper-writing reads (PAPER-03 circuit rationale, PAPER-05 outlook).
-- CR-01/CR-02 fixes land in `revision/core/training.py` — must preserve the
+- CR-01/CR-02 fixes land in `core/training.py` — must preserve the
   byte-unchanged default behavior all prior phases depend on (spectral
   weight=0.0 + callback=None + early_stopper=None defaults).
 - Data-hash field (D-10-15) asserted on any reused V1 / classical artifacts

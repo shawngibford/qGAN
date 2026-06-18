@@ -4,14 +4,14 @@ plan: 01
 subsystem: sensitivity-harness
 tags: [pennylane, inference, shot-noise, noise-channels, fidelity, smoke-gate]
 requires:
-  - revision/results/transform_ablation/runs/<pipeline>/<seed>/checkpoint.pt (frozen params_pqc)
-  - revision/results/transform_ablation/runs/<pipeline>/<seed>/samples.npy (frozen analytic reference)
-  - revision/results/transform_ablation/runs/<pipeline>/<seed>/inverse_kwargs.npz
-  - revision/results/fidelity_dualscale.json (quantum B/42 OD reference)
+  - results/transform_ablation/runs/<pipeline>/<seed>/checkpoint.pt (frozen params_pqc)
+  - results/transform_ablation/runs/<pipeline>/<seed>/samples.npy (frozen analytic reference)
+  - results/transform_ablation/runs/<pipeline>/<seed>/inverse_kwargs.npz
+  - results/fidelity_dualscale.json (quantum B/42 OD reference)
   - revision.core (HPO constants, QuantumGenerator, full_metric_suite, inverse_logreturns)
 provides:
-  - revision/run_sensitivity.py (SENS-01/02 per-cell inference driver, CLI)
-  - revision/results/sensitivity/runs/analytic/B/42/{config.yaml,samples.npy,metrics.json} (faithful smoke bundle)
+  - run_sensitivity.py (SENS-01/02 per-cell inference driver, CLI)
+  - results/sensitivity/runs/analytic/B/42/{config.yaml,samples.npy,metrics.json} (faithful smoke bundle)
 affects:
   - Plan 12-02 (full SENS-01/02 grid sweep — consumes this driver)
 tech-stack:
@@ -22,10 +22,10 @@ tech-stack:
     - "PennyLane 0.44.0 startup version assertion (fail-loud)"
 key-files:
   created:
-    - revision/run_sensitivity.py
-    - revision/results/sensitivity/runs/analytic/B/42/config.yaml
-    - revision/results/sensitivity/runs/analytic/B/42/samples.npy
-    - revision/results/sensitivity/runs/analytic/B/42/metrics.json
+    - run_sensitivity.py
+    - results/sensitivity/runs/analytic/B/42/config.yaml
+    - results/sensitivity/runs/analytic/B/42/samples.npy
+    - results/sensitivity/runs/analytic/B/42/metrics.json
   modified: []
 decisions:
   - "Per-layer channel insertion (after each entangling block) chosen as the documented SENS-02 default (RESEARCH Assumption A1 / Open Q2 RESOLVED)"
@@ -37,7 +37,7 @@ metrics:
 
 # Phase 12 Plan 01: SENS-01/02 Inference Harness Summary
 
-Built `revision/run_sensitivity.py` — the per-cell SENS-01 (shot-noise) /
+Built `run_sensitivity.py` — the per-cell SENS-01 (shot-noise) /
 SENS-02 (noise-channel) inference driver — and proved it byte-faithful to the
 frozen Phase 09.1/10 analytic reference via the analytic/B/42 smoke cell.
 
@@ -109,8 +109,8 @@ documented in the module docstring.
 `QuantumGenerator.generator_circuit` (quantum.py:122-171) as
 `noisy_generator_circuit` so per-layer channels can be inserted (the original
 ends with `qml.expval` returns and cannot have channels appended after the
-call). This copy lives in `revision/run_sensitivity.py`, NOT `core/`, so it
-does NOT violate D-10-13. `git diff --stat revision/core/` is empty across all
+call). This copy lives in `run_sensitivity.py`, NOT `core/`, so it
+does NOT violate D-10-13. `git diff --stat core/` is empty across all
 three tasks. Documented in the function docstring as a deliberate noise-study
 duplication.
 
@@ -125,7 +125,7 @@ unchanged. Folded into the Task 2 commit (`8c7c05e`).
 
 ## Verification Status
 
-- `python revision/run_sensitivity.py --help` exits 0; CLI exposes
+- `python run_sensitivity.py --help` exits 0; CLI exposes
   `--pipeline {A,B}`, `--seed`, `--condition` (11 choices incl. `ampdamp_0.01`).
 - `ast.parse` clean; no `multiprocessing`; no `diff_method="backprop"|"adjoint"`;
   no `shots=` kwarg on any `qml.device(` line.
@@ -136,9 +136,9 @@ unchanged. Folded into the Task 2 commit (`8c7c05e`).
   metrics emitted at two `scale` values (OD always; log_return for Pipeline B).
 - `analytic` branch reads frozen `transform_ablation/.../samples.npy`, does not
   call the generation function.
-- Smoke bundle `revision/results/sensitivity/runs/analytic/B/42/metrics.json`
+- Smoke bundle `results/sensitivity/runs/analytic/B/42/metrics.json`
   exists, non-empty, contains `emd`.
-- `git diff --quiet revision/core/` clean (CORE_CLEAN) for all three tasks.
+- `git diff --quiet core/` clean (CORE_CLEAN) for all three tasks.
 
 ## Known Stubs
 
@@ -152,10 +152,10 @@ limit reached.
 
 ## Self-Check: PASSED
 
-- FOUND: revision/run_sensitivity.py
-- FOUND: revision/results/sensitivity/runs/analytic/B/42/config.yaml
-- FOUND: revision/results/sensitivity/runs/analytic/B/42/samples.npy
-- FOUND: revision/results/sensitivity/runs/analytic/B/42/metrics.json
+- FOUND: run_sensitivity.py
+- FOUND: results/sensitivity/runs/analytic/B/42/config.yaml
+- FOUND: results/sensitivity/runs/analytic/B/42/samples.npy
+- FOUND: results/sensitivity/runs/analytic/B/42/metrics.json
 - FOUND commit bf5fd57 (Task 1)
 - FOUND commit 8c7c05e (Task 2)
 - FOUND commit cb511ab (Task 3)

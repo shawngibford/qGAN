@@ -27,7 +27,7 @@ headline-vs-headline, and headline is unchanged: OD-EMD 0.023, log-ret-EMD 0.121
 
 ## 1. Checkpoint inspection (mandate item 1)
 
-`revision/checkpoints/best_checkpoint.pt` was loaded via
+`checkpoints/best_checkpoint.pt` was loaded via
 `./qgan_env/bin/python` (`torch.load(..., weights_only=False)`).
 
 | Property | Value | Source |
@@ -66,7 +66,7 @@ Final rotation = RX-only                   -> 5
 **Checkpoint integrity: CONFIRMED.** The recovered checkpoint is byte-identical
 to what 14-01/14-04/14-05 documented, decomposes to exactly 55 parameters, and
 matches the locked `iqp_sel_55` circuit definition in
-`revision/core/models/quantum.py`.
+`core/models/quantum.py`.
 
 ---
 
@@ -87,7 +87,7 @@ VAL_LAMBDA_GP = 2.16           # HPO-tuned (Optuna)
 EVAL_EVERY    = 10
 ```
 
-### Matched-2000ep config.yaml (`revision/results/matched2000/runs/iqp_sel_55_repro/42/config.yaml`)
+### Matched-2000ep config.yaml (`results/matched2000/runs/iqp_sel_55_repro/42/config.yaml`)
 
 ```yaml
 model:           iqp_sel_55_repro
@@ -133,7 +133,7 @@ early_stopper:   null           # full 2000ep, D-14-13
 The notebook variable `NUM_LAYERS = 4` together with the RX+RY final rotation
 yields 75 parameters and is the `default_75` circuit. The recovered checkpoint
 is **55 parameters**, corresponding to the `iqp_sel_55` circuit (RX-only final,
-`num_layers=3`). Per `revision/core/models/quantum.py:47-50` and the canonical
+`num_layers=3`). Per `core/models/quantum.py:47-50` and the canonical
 config lock (D-14-04), `iqp_sel_55` is the **recovered canonical paper circuit**
 — the variant historically trained and stored as `best_checkpoint.pt` —
 distinct from the `default_75` byte-frozen reference. The matched-2000ep run
@@ -149,8 +149,8 @@ sweep.)
 ## 3. Headline-vs-repro gap on every metric (mandate item 3)
 
 Sources:
-- Headline: `revision/results/headline_canonical.json` rows[] (frozen checkpoint, n=1, generation_seed=42).
-- Repro: `revision/results/matched2000_dualscale.json#aggregates` rows for `model_kind="iqp_sel_55_repro"` (n=5 seeds 42..46, mean ± std).
+- Headline: `results/headline_canonical.json` rows[] (frozen checkpoint, n=1, generation_seed=42).
+- Repro: `results/matched2000_dualscale.json#aggregates` rows for `model_kind="iqp_sel_55_repro"` (n=5 seeds 42..46, mean ± std).
 
 ### Earth Mover's Distance
 
@@ -226,7 +226,7 @@ The CR-4 historical asymmetry was: classical on Apple-Silicon MPS at float32,
 quantum on CPU at float64. The quantum side was MORE precise — so CR-4 cannot
 explain why quantum looks worse.
 
-### Generation path (`revision/run_matched2000.py:257-284`)
+### Generation path (`run_matched2000.py:257-284`)
 
 ```python
 generator = generator.to("cpu")              # MPS has no f64 statevector path
@@ -262,14 +262,14 @@ Therefore `out.to(torch.float64)` is a **no-op cast** — the precision is alrea
 float64 by the time it leaves the QNode.
 
 The classical path (`generate_wgan_samples` for WGAN-CNN/LSTM/MLP) calls the
-same function (`revision/run_matched2000.py:257-284`) but the classical
+same function (`run_matched2000.py:257-284`) but the classical
 generators *do* output float32 (their parameters are stored as float32), so the
 `.to(torch.float64)` cast there is a real upcast. EMD computed downstream in
 `revision.core.eval` is then in float64 for both branches.
 
 **Quantum is still the more-precise side at sample-generation time. No
 downcast bug.** This is consistent with the device manifest in
-`revision/results/matched2000/runs/iqp_sel_55_repro/42/config.yaml`:
+`results/matched2000/runs/iqp_sel_55_repro/42/config.yaml`:
 
 ```yaml
 device_manifest:
@@ -284,7 +284,7 @@ device_manifest:
 
 ## 5. Per-seed best/worst for iqp_sel_55_repro (mandate item 5)
 
-Source: `revision/results/matched2000/runs/iqp_sel_55_repro/{42,43,44,45,46}/metrics.json`.
+Source: `results/matched2000/runs/iqp_sel_55_repro/{42,43,44,45,46}/metrics.json`.
 
 The on-disk `emd_avg` is a list of length 201 (eval at every 10 epochs across
 2000ep). It is **log-return-scale EMD** (matches `frozen_checkpoint_headline`
@@ -346,7 +346,7 @@ Best epoch across all seeds: 0.1056 (seed 46), **better** than the headline's
 
 ## 6. Quantum-specific code paths in `_train_quantum` (mandate item 6)
 
-I read `revision/run_matched2000.py:412-547` (`_train_quantum`) and compared
+I read `run_matched2000.py:412-547` (`_train_quantum`) and compared
 against `_train_wgan:550-632` and `_train_vae:635-740`.
 
 ### Branches/special-cases unique to `_train_quantum`
@@ -473,12 +473,12 @@ identical to the historical setup.
 
 ## Appendix — files inspected
 
-- `/Users/shawngibford/dev/phd/qGAN/revision/checkpoints/best_checkpoint.pt`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/canonical_config_lock.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/headline_canonical.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/matched2000_dualscale.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/matched2000/runs/iqp_sel_55_repro/{42,43,44,45,46}/metrics.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/matched2000/runs/iqp_sel_55_repro/42/config.yaml`
-- `/Users/shawngibford/dev/phd/qGAN/revision/run_matched2000.py` (lines 257–632)
-- `/Users/shawngibford/dev/phd/qGAN/revision/core/models/quantum.py` (lines 1–330)
+- `/Users/shawngibford/dev/phd/qGAN/checkpoints/best_checkpoint.pt`
+- `/Users/shawngibford/dev/phd/qGAN/results/canonical_config_lock.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/headline_canonical.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/matched2000_dualscale.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/matched2000/runs/iqp_sel_55_repro/{42,43,44,45,46}/metrics.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/matched2000/runs/iqp_sel_55_repro/42/config.yaml`
+- `/Users/shawngibford/dev/phd/qGAN/run_matched2000.py` (lines 257–632)
+- `/Users/shawngibford/dev/phd/qGAN/core/models/quantum.py` (lines 1–330)
 - `/Users/shawngibford/dev/phd/qGAN/qgan_pennylane.ipynb` (cells 26, 28, 37, 40, 41)

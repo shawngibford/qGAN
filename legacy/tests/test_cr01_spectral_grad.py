@@ -16,7 +16,7 @@ import inspect
 
 import torch
 
-from revision.core.training import _spectral_psd_loss
+from core.training import _spectral_psd_loss
 
 
 def test_returns_tensor_with_grad_fn_when_fake_requires_grad():
@@ -62,7 +62,7 @@ def test_no_scipy_welch_import_remains():
 
 def test_call_site_guard_preserved():
     """spectral_loss_weight=0.0 default must skip the spectral branch."""
-    from revision.core import training as tr
+    from core import training as tr
 
     src = inspect.getsource(tr.train_wgan_gp)
     assert "if spectral_loss_weight > 0.0" in src, (

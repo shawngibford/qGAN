@@ -21,16 +21,16 @@ overrides_applied: 0
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Shot-noise sweep at {analytic, 8192, 1024} shots run for quantum generator; metric degradation curve written to revision/results/shot_noise_sensitivity.json | VERIFIED | File exists; 270 rows; schema complete; shots set exactly {None, 8192, 1024}; seeds {42,43,44}; both pipelines; dual-scale |
-| 2 | Noise-model sensitivity for depolarizing (p in {0,0.001,0.01,0.05}) and amplitude-damping (gamma in {0,0.001,0.01,0.05}) written to revision/results/noise_model_sensitivity.json | VERIFIED | File exists; 720 rows; noise_model {depolarizing, amplitude_damping}; noise_level {0.0,0.001,0.01,0.05} for each model; ampdamp_0.01 present; per-layer channel_insertion recorded in provenance |
-| 3 | Every headline comparison table (Phases 10-11) re-emitted with >=5 seeds, mean +/- std per cell — revision/results/multiseed_summary.json consolidates the roll-up | VERIFIED | File exists; 1266 cells; 870 five-seed cells with n==5 and seeds=[42,43,44,45,46]; data_hash 91e447d4624e25b3 asserted across all five consumed artifacts; 168 D-11-09 N/A null cells faithfully propagated (not fabricated or dropped) |
+| 1 | Shot-noise sweep at {analytic, 8192, 1024} shots run for quantum generator; metric degradation curve written to results/shot_noise_sensitivity.json | VERIFIED | File exists; 270 rows; schema complete; shots set exactly {None, 8192, 1024}; seeds {42,43,44}; both pipelines; dual-scale |
+| 2 | Noise-model sensitivity for depolarizing (p in {0,0.001,0.01,0.05}) and amplitude-damping (gamma in {0,0.001,0.01,0.05}) written to results/noise_model_sensitivity.json | VERIFIED | File exists; 720 rows; noise_model {depolarizing, amplitude_damping}; noise_level {0.0,0.001,0.01,0.05} for each model; ampdamp_0.01 present; per-layer channel_insertion recorded in provenance |
+| 3 | Every headline comparison table (Phases 10-11) re-emitted with >=5 seeds, mean +/- std per cell — results/multiseed_summary.json consolidates the roll-up | VERIFIED | File exists; 1266 cells; 870 five-seed cells with n==5 and seeds=[42,43,44,45,46]; data_hash 91e447d4624e25b3 asserted across all five consumed artifacts; 168 D-11-09 N/A null cells faithfully propagated (not fabricated or dropped) |
 | 4 | Compute budget respected — sweeps complete on local Mac statevector simulator within the phase session (documented in summary) | VERIFIED | 12-02-SUMMARY.md documents sweep wall time 8m 22s against < 10-min budget; sweep_status.json: all_complete=true, completed_count==total_count==66, failed=0 |
 
 **Score:** 4/4 truths verified
 
-**Cross-cutting constraint — revision/core/ byte-untouched:**
+**Cross-cutting constraint — core/ byte-untouched:**
 
-`git diff --stat revision/core/` is empty. `git status revision/core/` reports nothing to commit, working tree clean. VERIFIED across all three plans.
+`git diff --stat core/` is empty. `git status core/` reports nothing to commit, working tree clean. VERIFIED across all three plans.
 
 ---
 
@@ -53,14 +53,14 @@ Both headline numbers reconcile to machine epsilon. The CR-01 reconciliation cla
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `revision/run_sensitivity.py` | SENS-01/02 per-cell CLI driver | VERIFIED | 900+ lines; AST-parses clean; PennyLane 0.44.0 assert at startup; _find_repo_root present; params_pqc reload; set_shots; default.mixed; DepolarizingChannel; AmplitudeDamping; ampdamp_0.01; diff_method=None (6 instances); no multiprocessing; *0.1 generation contract; seed*7919+1 reconstruction |
-| `revision/run_sensitivity_sweep.sh` | Idempotent xargs -P 2 sweep orchestrator | VERIFIED | Syntax-valid (bash -n exits 0); xargs -P; flock/os.fsync/os.rename atomic status; no qgan_env; no multiprocessing; 11-condition CONDITIONS list incl. ampdamp_0.01; SEEDS="42 43 44" only; is_complete content-validates metrics.json and samples.npy (CR-03 fix present) |
-| `revision/run_multiseed_rollup.py` | SENS-03 pure stdlib aggregator | VERIFIED | AST-parses clean; _find_repo_root; data_hash assert before any rollup math; statistics.fmean/stdev; no torch/pennylane/core.models imports; HEADLINE lists all 5 files; injection_ratio in groupby key |
-| `revision/results/shot_noise_sensitivity.json` | SENS-01 deliverable | VERIFIED | 270 rows; extended long-form schema; shots {None,8192,1024}; seeds {42,43,44}; pipelines {A,B}; scales {OD,log_return} |
-| `revision/results/noise_model_sensitivity.json` | SENS-02 deliverable | VERIFIED | 720 rows; extended long-form schema; noise_model {depolarizing,amplitude_damping}; noise_level {0.0,0.001,0.01,0.05} per model; seeds {42,43,44}; pipelines {A,B}; scales {OD,log_return}; channel_insertion provenance present |
-| `revision/results/multiseed_summary.json` | SENS-03 deliverable | VERIFIED | 1266 cells; data_hash 91e447d4624e25b3; all 5 consumed_artifacts mapped to canonical hash; seed_set [42,43,44,45,46]; 870 five-seed cells (n==5); 168 null cells = D-11-09 N/A cells (fidelity_dualscale/log_return/Pipeline-A only) — correct faithful propagation |
-| `revision/results/sensitivity/runs/analytic/B/42/metrics.json` | Harness-faithfulness smoke cell | VERIFIED | Exists; 20 rows; OD-scale EMD 0.022937980562900893 (delta 6.94e-18 vs frozen); log_return EMD 0.12094375219747686 (delta 1.53e-16 vs frozen); dual-scale confirmed |
-| `revision/results/sensitivity/sweep_status.json` | Sweep completion record | VERIFIED | all_complete: true; completed_count=66; total_count=66; failed cells: 0 |
+| `run_sensitivity.py` | SENS-01/02 per-cell CLI driver | VERIFIED | 900+ lines; AST-parses clean; PennyLane 0.44.0 assert at startup; _find_repo_root present; params_pqc reload; set_shots; default.mixed; DepolarizingChannel; AmplitudeDamping; ampdamp_0.01; diff_method=None (6 instances); no multiprocessing; *0.1 generation contract; seed*7919+1 reconstruction |
+| `run_sensitivity_sweep.sh` | Idempotent xargs -P 2 sweep orchestrator | VERIFIED | Syntax-valid (bash -n exits 0); xargs -P; flock/os.fsync/os.rename atomic status; no qgan_env; no multiprocessing; 11-condition CONDITIONS list incl. ampdamp_0.01; SEEDS="42 43 44" only; is_complete content-validates metrics.json and samples.npy (CR-03 fix present) |
+| `run_multiseed_rollup.py` | SENS-03 pure stdlib aggregator | VERIFIED | AST-parses clean; _find_repo_root; data_hash assert before any rollup math; statistics.fmean/stdev; no torch/pennylane/core.models imports; HEADLINE lists all 5 files; injection_ratio in groupby key |
+| `results/shot_noise_sensitivity.json` | SENS-01 deliverable | VERIFIED | 270 rows; extended long-form schema; shots {None,8192,1024}; seeds {42,43,44}; pipelines {A,B}; scales {OD,log_return} |
+| `results/noise_model_sensitivity.json` | SENS-02 deliverable | VERIFIED | 720 rows; extended long-form schema; noise_model {depolarizing,amplitude_damping}; noise_level {0.0,0.001,0.01,0.05} per model; seeds {42,43,44}; pipelines {A,B}; scales {OD,log_return}; channel_insertion provenance present |
+| `results/multiseed_summary.json` | SENS-03 deliverable | VERIFIED | 1266 cells; data_hash 91e447d4624e25b3; all 5 consumed_artifacts mapped to canonical hash; seed_set [42,43,44,45,46]; 870 five-seed cells (n==5); 168 null cells = D-11-09 N/A cells (fidelity_dualscale/log_return/Pipeline-A only) — correct faithful propagation |
+| `results/sensitivity/runs/analytic/B/42/metrics.json` | Harness-faithfulness smoke cell | VERIFIED | Exists; 20 rows; OD-scale EMD 0.022937980562900893 (delta 6.94e-18 vs frozen); log_return EMD 0.12094375219747686 (delta 1.53e-16 vs frozen); dual-scale confirmed |
+| `results/sensitivity/sweep_status.json` | Sweep completion record | VERIFIED | all_complete: true; completed_count=66; total_count=66; failed cells: 0 |
 
 ---
 
@@ -70,10 +70,10 @@ Both headline numbers reconcile to machine epsilon. The CR-01 reconciliation cla
 |------|----|-----|--------|---------|
 | run_sensitivity.py | transform_ablation/runs/<pipeline>/<seed>/checkpoint.pt | torch.load params_pqc reload | WIRED | `ck["params_pqc"]` assigned to `g.params_pqc.data`; path anchored at REPO |
 | run_sensitivity.py | revision.core.eval.full_metric_suite | dual-scale fidelity recompute | WIRED | Imported from revision.core.eval; called in compute_dualscale_metrics |
-| run_sensitivity_sweep.sh | run_sensitivity.py | xargs -P 2, one cell per python invocation | WIRED | `$PYTHON revision/run_sensitivity.py --pipeline $p --seed $s --condition $c --out-root` |
+| run_sensitivity_sweep.sh | run_sensitivity.py | xargs -P 2, one cell per python invocation | WIRED | `$PYTHON run_sensitivity.py --pipeline $p --seed $s --condition $c --out-root` |
 | run_sensitivity_sweep.sh | xargs -P | OS-process parallelism | WIRED | `xargs -P "$PARALLEL" -L 1`; --parallel guardrail rejects >2 |
-| run_multiseed_rollup.py | revision/results/{baseline_comparison,tstr,predictive_discriminative,augmentation,fidelity_dualscale}.json | json.load + cross-artifact data_hash assert | WIRED | All 5 loaded; assert before rollup math; canonical_hash 91e447d4624e25b3 |
-| run_multiseed_rollup.py | revision/results/multiseed_summary.json | groupby -> mean +/- std | WIRED | statistics.fmean/stdev; output written via Path.write_text |
+| run_multiseed_rollup.py | results/{baseline_comparison,tstr,predictive_discriminative,augmentation,fidelity_dualscale}.json | json.load + cross-artifact data_hash assert | WIRED | All 5 loaded; assert before rollup math; canonical_hash 91e447d4624e25b3 |
+| run_multiseed_rollup.py | results/multiseed_summary.json | groupby -> mean +/- std | WIRED | statistics.fmean/stdev; output written via Path.write_text |
 
 ---
 
@@ -97,7 +97,7 @@ Both headline numbers reconcile to machine epsilon. The CR-01 reconciliation cla
 | CR-01 reconciliation: log_return EMD delta vs frozen | abs(regen - frozen) | 1.53e-16 < 1e-6 | PASS |
 | CR-01 reconciliation: OD-scale EMD unchanged | abs(regen - frozen) | 6.94e-18 < 1e-6 | PASS |
 | sweep_status.json all_complete | python3 assert check | all_complete=true; 66/66; 0 failed | PASS |
-| revision/core/ untouched | git diff --stat | Empty output; exit 0 | PASS |
+| core/ untouched | git diff --stat | Empty output; exit 0 | PASS |
 
 ---
 
@@ -148,7 +148,7 @@ No gaps. All four success criteria are met:
 3. multiseed_summary.json — 1266 cells, all 5 Phase 10/11 headline files consumed, data_hash 91e447d4624e25b3 asserted and confirmed, 870 five-seed headline cells with n==5, 168 D-11-09 N/A cells faithfully propagated as null (not a gap per phase instructions).
 4. Compute budget — 8m 22s sweep wall time, documented in 12-02-SUMMARY.md.
 
-Cross-cutting constraint satisfied: revision/core/ is byte-untouched (git diff --stat empty, working tree clean).
+Cross-cutting constraint satisfied: core/ is byte-untouched (git diff --stat empty, working tree clean).
 
 CR-01 numerical faithfulness independently confirmed: Pipeline-B seed-42 log_return EMD reconciles to 1.53e-16 (within < 1e-6) and OD-scale EMD reconciles to 6.94e-18 (within < 1e-6) against the frozen fidelity_dualscale.json values. CR-02 (seed choices=[42..46] + fail-fast checkpoint guard) and CR-03 (is_complete content-validates metrics.json and samples.npy) are both present in the current code.
 

@@ -1,13 +1,13 @@
 # REF.md — Reference Surgery Action List (R1-m1)
 
 Reviewer R1-m1 flagged 11 misplaced / weak references. The sentence-level
-fixes were applied to `main (4) copy.tex` and `supp_material.tex` by Plan
+fixes were applied to `main.tex` and `supp_material.tex` by Plan
 14-17. The `.bib` file (`bib.bib`) lives **Overleaf-side, not in this
 repo**, so the bibliography-entry additions and removals listed below have
 to be applied manually in Overleaf before resubmission.
 
 Full per-reference rationale and the verbatim before/after sentence
-rewrites are in `revision/docs/paper_blocks_refs_methods.md` §PAPER-06.
+rewrites are in `docs/paper_blocks_refs_methods.md` §PAPER-06.
 
 ---
 
@@ -90,7 +90,7 @@ they currently are.
 
 ## 4. Manuscript-side sentence rewrites — VERIFY present in Overleaf
 
-These were applied to `main (4) copy.tex` and `supp_material.tex` in this
+These were applied to `main.tex` and `supp_material.tex` in this
 repo by Plan 14-17 (commit `e7e6329`). Before resubmitting, sync these to
 the Overleaf project and confirm the following:
 

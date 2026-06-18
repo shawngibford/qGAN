@@ -8,22 +8,22 @@
 
 | New/Modified File | Role | Data Flow | Closest Analog | Match Quality |
 |-------------------|------|-----------|----------------|---------------|
-| `revision/core/models/quantum.py` (MODIFIED — topology spec + `introspect()`) | model | transform | itself (`generator_circuit` lines 137–155) | exact (self-extension) |
-| `revision/core/training.py` (MODIFIED — CR-01 `_spectral_psd_loss`) | training | transform | itself (lines 470–507) | exact (self-replace) |
-| `revision/core/training.py` (MODIFIED — CR-02 `EarlyStopping._load_checkpoint`) | training | file-I/O | itself (lines 163–175) | exact (self-replace) |
-| `revision/run_ansatz.py` (NEW) | driver | batch (request-response per proc) | `revision/run_baselines.py` | exact (clone) |
-| `revision/run_ansatz_sweep.sh` (NEW) | driver/orchestration | batch | `revision/run_baselines_sweep.sh` | exact (clone) |
-| `revision/run_introspect.py` (NEW) | driver | event-driven (callback) | `revision/run_baselines.py` (`_train_wgan`) + callback hook `training.py:396-411` | role-match |
-| `revision/run_introspect_figures.py` (NEW) | utility | transform → file-I/O | `revision/run_dualscale_fidelity.py` (JSON-emit shape) | partial — no matplotlib analog in repo |
-| `revision/results/ansatz_comparison.json` (NEW artifact) | config/contract | — | `revision/run_dualscale_fidelity.py` rows[] builder (lines 358–376, 400–434) | exact (schema clone) |
-| `revision/results/figures/*.{png,pdf}` + companion `*.json` (NEW) | artifact | file-I/O | none (no figure-rendering code anywhere in repo) | **no analog** |
+| `core/models/quantum.py` (MODIFIED — topology spec + `introspect()`) | model | transform | itself (`generator_circuit` lines 137–155) | exact (self-extension) |
+| `core/training.py` (MODIFIED — CR-01 `_spectral_psd_loss`) | training | transform | itself (lines 470–507) | exact (self-replace) |
+| `core/training.py` (MODIFIED — CR-02 `EarlyStopping._load_checkpoint`) | training | file-I/O | itself (lines 163–175) | exact (self-replace) |
+| `run_ansatz.py` (NEW) | driver | batch (request-response per proc) | `run_baselines.py` | exact (clone) |
+| `run_ansatz_sweep.sh` (NEW) | driver/orchestration | batch | `run_baselines_sweep.sh` | exact (clone) |
+| `run_introspect.py` (NEW) | driver | event-driven (callback) | `run_baselines.py` (`_train_wgan`) + callback hook `training.py:396-411` | role-match |
+| `run_introspect_figures.py` (NEW) | utility | transform → file-I/O | `run_dualscale_fidelity.py` (JSON-emit shape) | partial — no matplotlib analog in repo |
+| `results/ansatz_comparison.json` (NEW artifact) | config/contract | — | `run_dualscale_fidelity.py` rows[] builder (lines 358–376, 400–434) | exact (schema clone) |
+| `results/figures/*.{png,pdf}` + companion `*.json` (NEW) | artifact | file-I/O | none (no figure-rendering code anywhere in repo) | **no analog** |
 | `tests/test_cr01_spectral_grad.py`, `test_cr02_es_restore.py`, `test_ansatz_variants.py`, `test_ansatz_json_schema.py`, `test_introspect_callback.py`, `test_entropy_purity.py` (NEW) | test | — | none (`tests/` dir does not exist yet) | **no analog** |
 
 ---
 
 ## Pattern Assignments
 
-### `revision/core/models/quantum.py` — topology spec + `introspect()` (model, transform)
+### `core/models/quantum.py` — topology spec + `introspect()` (model, transform)
 
 **Analog:** itself — extend `QuantumGenerator` in place; default branch MUST be byte-identical (PROJECT constraint, Pitfall 3).
 
@@ -59,7 +59,7 @@ Wrap with `if self.topology == "range":` (this exact body) `elif self.topology =
 
 ---
 
-### `revision/core/training.py` — CR-01 `_spectral_psd_loss` (training, transform)
+### `core/training.py` — CR-01 `_spectral_psd_loss` (training, transform)
 
 **Analog:** itself — replace the body of `_spectral_psd_loss` at **lines 470–507** (the scipy.welch + numpy + `mse*var/var.detach()` proxy). The call site **lines 356–360** stays unchanged (the `if spectral_loss_weight > 0.0:` guard preserves byte-unchanged default — D-13-06).
 
@@ -78,7 +78,7 @@ Drop the `from scipy.signal import welch` import inside the function. Keep the `
 
 ---
 
-### `revision/core/training.py` — CR-02 `EarlyStopping._load_checkpoint` (training, file-I/O)
+### `core/training.py` — CR-02 `EarlyStopping._load_checkpoint` (training, file-I/O)
 
 **Analog:** itself — replace `_load_checkpoint` at **lines 163–175**. Current code does an un-mapped `torch.load` + raw `.data =` assignment:
 ```python
@@ -110,9 +110,9 @@ Keep the trailing `print(...)` (lines 172–175). Default unchanged: Phase 13 he
 
 ---
 
-### `revision/run_ansatz.py` (driver, batch — one (variant, seed) per process)
+### `run_ansatz.py` (driver, batch — one (variant, seed) per process)
 
-**Analog:** `revision/run_baselines.py` — clone structurally; this is the cleanest match (idempotent per-run, 5-file bundle, `data_hash`, WGAN branch).
+**Analog:** `run_baselines.py` — clone structurally; this is the cleanest match (idempotent per-run, 5-file bundle, `data_hash`, WGAN branch).
 
 **Imports + constants pattern** (`run_baselines.py:50–91`) — copy verbatim; swap `revision.core.models.classical` import for `revision.core.models.quantum.QuantumGenerator`:
 ```python
@@ -138,9 +138,9 @@ from revision.core.training import train_wgan_gp
 
 ---
 
-### `revision/run_ansatz_sweep.sh` (driver/orchestration, batch)
+### `run_ansatz_sweep.sh` (driver/orchestration, batch)
 
-**Analog:** `revision/run_baselines_sweep.sh` — clone verbatim, change only the matrix and `is_complete` bundle.
+**Analog:** `run_baselines_sweep.sh` — clone verbatim, change only the matrix and `is_complete` bundle.
 
 **Copy verbatim:** `set -euo pipefail` (line 81); PYTHON resolution (lines 94–107); `--parallel` 1|2 guardrail with reject ≥3 (lines 146–156); `is_complete()` (lines 174–184); `iso_now` (lines 186–188); `update_status()` atomic tmpfile+`os.rename` under `flock -x 9` (lines 199–282); `run_one()` (lines 290–335); `xargs -P 2 -L 1 bash -c 'run_one "$0" "$1" "$2"'` dispatch (lines 400–419); final summary + non-zero-if-incomplete exit (lines 424–480).
 
@@ -154,9 +154,9 @@ from revision.core.training import train_wgan_gp
 
 ---
 
-### `revision/run_introspect.py` (driver, event-driven via callback)
+### `run_introspect.py` (driver, event-driven via callback)
 
-**Analog:** `revision/run_baselines.py` `_train_wgan` (lines 237–282) for the train wiring + `training.py:396-411` callback hook for the instrumentation contract. Separate driver, not a `run_ansatz.py` flag (RESEARCH Open Q3 recommendation).
+**Analog:** `run_baselines.py` `_train_wgan` (lines 237–282) for the train wiring + `training.py:396-411` callback hook for the instrumentation contract. Separate driver, not a `run_ansatz.py` flag (RESEARCH Open Q3 recommendation).
 
 **Train wiring:** reuse `_train_wgan` shape but pass a `callback=` closure. Quantum run: `QuantumGenerator(num_layers=4, topology="range")` (V1, seed 42). Classical runs: `WGANMLPGenerator/WGANCNNGenerator/WGANLSTMGenerator` (Pipeline B, seed 42) — import from `revision.core.models.classical` (see `run_baselines.py:79–83`, `_WGAN_GENERATORS` lines 93–97).
 
@@ -180,21 +180,21 @@ def snapshot_cb(epoch, metrics):
 ```
 Use `eval_every=10` (project default, `EVAL_EVERY`) so 0/250/500/750 all land on eval epochs (RESEARCH Pitfall 4). Classical variants have no `introspect()` — guard with `hasattr(generator, "introspect")`.
 
-**Persist:** snapshots → JSON under `revision/results/figures/*.json` companion (the reproducibility contract, ROADMAP criterion 4). Record the bipartition `{0,1}|{2,3,4}` in metadata (D-13-09).
+**Persist:** snapshots → JSON under `results/figures/*.json` companion (the reproducibility contract, ROADMAP criterion 4). Record the bipartition `{0,1}|{2,3,4}` in metadata (D-13-09).
 
 ---
 
-### `revision/run_introspect_figures.py` (utility, transform → file-I/O)
+### `run_introspect_figures.py` (utility, transform → file-I/O)
 
-**Analog (JSON-emit half only):** `revision/run_dualscale_fidelity.py` `main()` (lines 306–376) — argparse + `out_path.write_text(json.dumps(obj, indent=2))` pattern.
+**Analog (JSON-emit half only):** `run_dualscale_fidelity.py` `main()` (lines 306–376) — argparse + `out_path.write_text(json.dumps(obj, indent=2))` pattern.
 
 **No analog for the matplotlib half** — there is zero figure-rendering code anywhere in `revision/` (`run_ablation.py:17` explicitly states "NO matplotlib import"). The planner should use RESEARCH §"Recommended Project Structure" + D-13 figure discretion (panel layout / format / styling free) and standard matplotlib idioms. Each figure MUST have a companion `*.json` (ROADMAP criterion 4) — reuse the `json.dumps(..., indent=2)` write pattern from `run_dualscale_fidelity.py:376`.
 
 ---
 
-### `revision/results/ansatz_comparison.json` (config/contract artifact)
+### `results/ansatz_comparison.json` (config/contract artifact)
 
-**Analog:** `revision/run_dualscale_fidelity.py` rows[] builder — lines 358–376 (envelope) + 400–434 (OD rows) + 471–509 (log_return rows).
+**Analog:** `run_dualscale_fidelity.py` rows[] builder — lines 358–376 (envelope) + 400–434 (OD rows) + 471–509 (log_return rows).
 
 **Envelope pattern** (lines 358–376):
 ```python
@@ -215,7 +215,7 @@ out_path.write_text(json.dumps(obj, indent=2))
 ## Shared Patterns
 
 ### Idempotent per-run bundle + data_hash
-**Source:** `revision/run_baselines.py:226-234` (`_compute_data_hash`), `:456-463` (clean run-dir), `:490-522` (config.yaml + 5-file persist)
+**Source:** `run_baselines.py:226-234` (`_compute_data_hash`), `:456-463` (clean run-dir), `:490-522` (config.yaml + 5-file persist)
 **Apply to:** `run_ansatz.py`, `run_introspect.py`
 ```python
 od = load_and_preprocess(str(csv_path))["OD"].cpu().numpy()
@@ -225,7 +225,7 @@ run_dir.mkdir(parents=True, exist_ok=True)
 ```
 
 ### Training-noise contract (exact, load-bearing)
-**Source:** `revision/core/training.py:304-313` and `revision/run_baselines.py:198-207`
+**Source:** `core/training.py:304-313` and `run_baselines.py:198-207`
 **Apply to:** every sample/snapshot generation in `run_ansatz.py` and `run_introspect.py`
 ```python
 generator = generator.to("cpu")               # MPS has no float64 (Pitfall 6)
@@ -235,17 +235,17 @@ out = generator(noise).to(torch.float64) * 0.1   # *0.1 is the quantum-output ar
 ```
 
 ### Atomic resumable sweep status
-**Source:** `revision/run_baselines_sweep.sh:199-282` (`update_status` — tmpfile + `os.rename` under `flock -x 9`), `:174-184` (`is_complete`)
+**Source:** `run_baselines_sweep.sh:199-282` (`update_status` — tmpfile + `os.rename` under `flock -x 9`), `:174-184` (`is_complete`)
 **Apply to:** `run_ansatz_sweep.sh`
 Never replace `xargs -P 2 -L 1` with `multiprocessing.Pool` (D-10-24 / Pitfall 5).
 
 ### Long-form metrics schema
-**Source:** `revision/run_dualscale_fidelity.py:358-376` (envelope), `eval.py:143` (`full_metric_suite`)
+**Source:** `run_dualscale_fidelity.py:358-376` (envelope), `eval.py:143` (`full_metric_suite`)
 **Apply to:** `ansatz_comparison.json` — extend `rows[]` with `ansatz`/`depth`/`topology`, do not replace; reuse `full_metric_suite` UNCHANGED (D-10-20).
 
 ### Byte-unchanged-default discipline
 **Source:** `quantum.py:38-44` (defaulted kwargs), `training.py:189-208` (`spectral_loss_weight=0.0`, `callback=None`, `early_stopper=None` no-op defaults)
-**Apply to:** all three `revision/core/` edits — `topology="range"` default, CR-01 guarded by `if spectral_loss_weight > 0.0`, CR-02 only on the `early_stopper is not None` path. Phases 8–12 must reproduce byte-identically.
+**Apply to:** all three `core/` edits — `topology="range"` default, CR-01 guarded by `if spectral_loss_weight > 0.0`, CR-02 only on the `early_stopper is not None` path. Phases 8–12 must reproduce byte-identically.
 
 ---
 
@@ -253,9 +253,9 @@ Never replace `xargs -P 2 -L 1` with `multiprocessing.Pool` (D-10-24 / Pitfall 5
 
 | File | Role | Data Flow | Reason |
 |------|------|-----------|--------|
-| `revision/results/figures/training_progression.{png,pdf}` | artifact | file-I/O | No matplotlib/figure-rendering code exists anywhere in `revision/` (`run_ablation.py:17`: "NO matplotlib import"). Planner uses RESEARCH structure + D-13 figure discretion + standard matplotlib; companion JSON reuses `run_dualscale_fidelity.py:376` write pattern. |
-| `revision/results/figures/param_trajectory.{png,pdf}` | artifact | file-I/O | Same — no figure analog. |
-| `revision/results/figures/entanglement_trajectory.{png,pdf}` | artifact | file-I/O | Same — no figure analog; bipartition metadata `{0,1}|{2,3,4}` recorded in companion JSON (D-13-09). |
+| `results/figures/training_progression.{png,pdf}` | artifact | file-I/O | No matplotlib/figure-rendering code exists anywhere in `revision/` (`run_ablation.py:17`: "NO matplotlib import"). Planner uses RESEARCH structure + D-13 figure discretion + standard matplotlib; companion JSON reuses `run_dualscale_fidelity.py:376` write pattern. |
+| `results/figures/param_trajectory.{png,pdf}` | artifact | file-I/O | Same — no figure analog. |
+| `results/figures/entanglement_trajectory.{png,pdf}` | artifact | file-I/O | Same — no figure analog; bipartition metadata `{0,1}|{2,3,4}` recorded in companion JSON (D-13-09). |
 | `tests/test_cr01_spectral_grad.py` | test | — | No `tests/` directory exists yet (verified). RESEARCH Validation Architecture mandates pytest; Wave 0 must create `tests/` (+ conftest if needed). Test shapes are CONTEXT-mandated (assert non-zero grad into `params_pqc` when `spectral_loss_weight>0`; skipped when `=0.0`). |
 | `tests/test_cr02_es_restore.py` | test | — | Same — no test analog. CONTEXT-mandated: early-stop+restore device/dtype consistency on CPU and MPS (skip-marker if MPS unavailable). |
 | `tests/test_ansatz_variants.py` | test | — | Same — covers ARCH-01: `count_params()==75` default byte-unchanged, V2=135, V3=75, V3 uses linear CNOT only. |
@@ -267,7 +267,7 @@ Never replace `xargs -P 2 -L 1` with `multiprocessing.Pool` (D-10-24 / Pitfall 5
 
 ## Metadata
 
-**Analog search scope:** `revision/core/` (models, training, eval), `revision/run_*.py` (7 drivers), `revision/run_*sweep.sh` (3 sweeps), `tests/` (absent), `revision/results/figures/` (absent)
+**Analog search scope:** `core/` (models, training, eval), `run_*.py` (7 drivers), `run_*sweep.sh` (3 sweeps), `tests/` (absent), `results/figures/` (absent)
 **Files scanned:** quantum.py, training.py, eval.py, run_baselines.py, run_baselines_sweep.sh, run_dualscale_fidelity.py (+ grep survey of run_ablation/run_multiseed_rollup/run_sensitivity)
 **Key correction carried from RESEARCH:** PennyLane installed version is **0.43.0** (not 0.44.0 as CONTEXT canonical-refs states) — in-QNode `qml.vn_entropy`/`qml.purity` API is version-robust; the offline `qml.math.*` route is NOT a drop-in on 0.43.
 **Pattern extraction date:** 2026-05-18

@@ -27,12 +27,12 @@ tech-stack:
 
 key-files:
   created:
-    - revision/_build_baseline_notebook.py
-    - revision/06_baseline_comparison.ipynb
-    - revision/results/baseline_comparison.json
-    - revision/results/baseline_comparison.md
-    - revision/results/baseline_classical_wgan.json
-    - revision/results/baseline_nonadversarial.json
+    - _build_baseline_notebook.py
+    - 06_baseline_comparison.ipynb
+    - results/baseline_comparison.json
+    - results/baseline_comparison.md
+    - results/baseline_classical_wgan.json
+    - results/baseline_nonadversarial.json
   modified: []
 
 key-decisions:
@@ -63,7 +63,7 @@ completed: 2026-05-17
 - **Files modified:** 6 created (2 notebook artifacts + 4 result deliverables)
 
 ## Accomplishments
-- Built `revision/_build_baseline_notebook.py` (deterministic generator) producing `06_baseline_comparison.ipynb` (20 cells), executed end-to-end via nbconvert with no errors
+- Built `_build_baseline_notebook.py` (deterministic generator) producing `06_baseline_comparison.ipynb` (20 cells), executed end-to-end via nbconvert with no errors
 - `reconstruct_od` copied verbatim (A branch + B branch byte-identical to 09.1; C branch deleted per D-10-05); base path parametrized so the same function resolves reused quantum runs (`transform_ablation/runs/<p>/<s>`) and new runs (`baselines/runs/<model>/<p>/<s>`)
 - 1710 long-form rows `{model_kind,pipeline,seed,metric_name,scale,value}` over 6 models × 2 pipelines × 5 seeds, all metrics via `revision.core.eval` only
 - `data_hash = 91e447d4624e25b3` recomputed once from `load_and_preprocess` and asserted equal across all 50 new configs; quantum equivalence documented by construction (no 09.1 grep)
@@ -78,12 +78,12 @@ Each task was committed atomically:
 2. **Task 2: TSTR-lite verbatim + emit BASE-01/02/03 artifacts** - `4e34944` (feat)
 
 ## Files Created/Modified
-- `revision/_build_baseline_notebook.py` - Deterministic notebook generator (canonical source, regenerable)
-- `revision/06_baseline_comparison.ipynb` - Executed aggregation notebook (20 cells)
-- `revision/results/baseline_comparison.json` - BASE-03: long-form rows[] + models[] + tstr block
-- `revision/results/baseline_comparison.md` - BASE-03: markdown table, one row per model per pipeline
-- `revision/results/baseline_classical_wgan.json` - BASE-01: {wgan_mlp,wgan_cnn,wgan_lstm} subset
-- `revision/results/baseline_nonadversarial.json` - BASE-02: {vae,ar} subset with train_protocol_notes
+- `_build_baseline_notebook.py` - Deterministic notebook generator (canonical source, regenerable)
+- `06_baseline_comparison.ipynb` - Executed aggregation notebook (20 cells)
+- `results/baseline_comparison.json` - BASE-03: long-form rows[] + models[] + tstr block
+- `results/baseline_comparison.md` - BASE-03: markdown table, one row per model per pipeline
+- `results/baseline_classical_wgan.json` - BASE-01: {wgan_mlp,wgan_cnn,wgan_lstm} subset
+- `results/baseline_nonadversarial.json` - BASE-02: {vae,ar} subset with train_protocol_notes
 
 ## Decisions Made
 None beyond the plan — D-10-04/05/13/15/16/17/18/19/20/21 followed exactly as specified. Parameter counts read straight from on-disk Wave-2 `config.yaml` (quantum=75, wgan_mlp=74, wgan_cnn=73, wgan_lstm=78, vae=562, ar=3), matching the matched-parameter contract.

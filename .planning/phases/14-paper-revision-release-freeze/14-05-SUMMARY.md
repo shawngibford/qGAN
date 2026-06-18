@@ -9,31 +9,31 @@ requires:
   - phase: 14-paper-revision-release-freeze (plan 03)
     provides: "model_info.json (10-model aggregate, 55-param decomposition), reconciliation_note.md (1000ep->2000ep EMD delta), verify_number_provenance.py (the executable gate)"
   - phase: 14-paper-revision-release-freeze (plan 04)
-    provides: "revision/results/figures/ suite (per-model + cross-model + headline_vs_reproduction) referenced by the PAPER-02/03 'see figure suite' framing"
+    provides: "results/figures/ suite (per-model + cross-model + headline_vs_reproduction) referenced by the PAPER-02/03 'see figure suite' framing"
   - phase: 14-paper-revision-release-freeze (plan 02)
     provides: "matched2000 45/45 accepted sweep + headline_canonical.json — the matched-budget evidence the reframed hypothesis and de-overclaim blocks are calibrated against"
   - phase: 14-paper-revision-release-freeze (plan 01)
     provides: "canonical_config_lock.json — locked iqp_sel_55 55-param decomposition driving the PAPER-03 qubit/layer rationale"
 provides:
-  - "revision/docs/paper_blocks_framing.md — copy-paste LaTeX blocks for PAPER-01..05 keyed to label/anchor + line citation + one-line reviewer rationale, every numeric literal JSON-traceable (verify_number_provenance.py PASS, 23 distinct literals)"
+  - "docs/paper_blocks_framing.md — copy-paste LaTeX blocks for PAPER-01..05 keyed to label/anchor + line citation + one-line reviewer rationale, every numeric literal JSON-traceable (verify_number_provenance.py PASS, 23 distinct literals)"
 affects: [14-06, 14-07, paper-resubmission, reviewer-response]
 
 # Tech tracking
 tech-stack:
   added: []
   patterns:
-    - "Provenance-safe LaTeX block authoring: every quantitative literal in an AFTER block must resolve verbatim/at-precision to a revision/results/*.json value; non-resolving rounded means (e.g. reconciliation EMD averages, which live only in a .md) are NOT introduced into manuscript body — claims using them are stated qualitatively in the result direction (D-14-20)"
+    - "Provenance-safe LaTeX block authoring: every quantitative literal in an AFTER block must resolve verbatim/at-precision to a results/*.json value; non-resolving rounded means (e.g. reconciliation EMD averages, which live only in a .md) are NOT introduced into manuscript body — claims using them are stated qualitatively in the result direction (D-14-20)"
     - "Line citations written in the file:NNN / :NNN-NNN form so the number-provenance gate strips them as source-location identifiers, not data; \\label/anchor sentence is the primary key, line ref is secondary"
     - "Read-only .tex by construction: the Overleaf-canonical .tex files are untracked in the worktree, so git diff --stat is empty by construction (D-14-18) — blocks are copy-paste targets, never edits"
 
 key-files:
   created:
-    - revision/docs/paper_blocks_framing.md
+    - docs/paper_blocks_framing.md
   modified: []
 
 key-decisions:
   - "PAPER-02 LOCKED applied unconditionally (D-14-20): the matched-2000ep sweep shows the 55-param quantum generator does NOT beat parameter-matched classical WGAN-GP baselines (reconciliation_note.md: iqp_sel_55_repro EMD ~0.155 vs wgan_cnn ~0.102 / wgan_mlp ~0.122), so every overclaim before->after block is mandatory, not contingent on result direction."
-  - "PAPER-03 trainability sub-point stated qualitatively, NOT with hand-typed EMD means: the rounded ansatz EMD means (0.155376/0.156328/0.148114) live only in reconciliation_note.md and do NOT resolve against any revision/results/*.json (the gate only checks JSON). Quantitative rationale therefore uses the structural decomposition (5q/3L/55p; V1/V2/V3 75/135/75p, depth 4/8/4) — all of which resolve in model_info.json/ansatz_comparison.json — and the depth/capacity conclusion is stated in the matched-budget result direction (D-14-20)."
+  - "PAPER-03 trainability sub-point stated qualitatively, NOT with hand-typed EMD means: the rounded ansatz EMD means (0.155376/0.156328/0.148114) live only in reconciliation_note.md and do NOT resolve against any results/*.json (the gate only checks JSON). Quantitative rationale therefore uses the structural decomposition (5q/3L/55p; V1/V2/V3 75/135/75p, depth 4/8/4) — all of which resolve in model_info.json/ansatz_comparison.json — and the depth/capacity conclusion is stated in the matched-budget result direction (D-14-20)."
   - "PAPER-02a folded into PAPER-01b: 'exponentially more compactly' (main:151) is the same anchor as the quantum-necessity transition; PAPER-01b's AFTER block already removes it. Tracked explicitly as PAPER-02a so the LOCKED phrase is grep-verifiable as addressed without a conflicting double-replacement of one sentence."
   - "Apparatus constants (20L/300L/880nm/120cm) are deliberately confined to BEFORE quotations; PAPER-05c removes the contradictory '300L configuration of the 20L version' and the malformed mid-sentence \\label{fig:lucy} without introducing apparatus numbers into the resolvable numeric body."
 
@@ -49,7 +49,7 @@ completed: 2026-05-19
 
 # Phase 14 Plan 05: PAPER-01..05 Keyed Framing & Claim-Calibration LaTeX Blocks Summary
 
-**Authored `revision/docs/paper_blocks_framing.md` — copy-paste LaTeX blocks for the five claim-calibration + circuit-rationale reviewer requirements (PAPER-01 reframed parameter-parity hypothesis, PAPER-02 LOCKED de-overclaiming, PAPER-03 Circuit Design Rationale subsection, PAPER-04 bioprocess growth-rate log-return justification, PAPER-05 Outlook demotion + Table A2 caveat + 20L/300L fix), each keyed to a `\label`/anchor sentence with a one-line reviewer rationale, every numeric literal resolving to a `revision/results/*.json` value (verify_number_provenance.py PASS, 23 distinct literals) and the read-only Overleaf `.tex` untouched.**
+**Authored `docs/paper_blocks_framing.md` — copy-paste LaTeX blocks for the five claim-calibration + circuit-rationale reviewer requirements (PAPER-01 reframed parameter-parity hypothesis, PAPER-02 LOCKED de-overclaiming, PAPER-03 Circuit Design Rationale subsection, PAPER-04 bioprocess growth-rate log-return justification, PAPER-05 Outlook demotion + Table A2 caveat + 20L/300L fix), each keyed to a `\label`/anchor sentence with a one-line reviewer rationale, every numeric literal resolving to a `results/*.json` value (verify_number_provenance.py PASS, 23 distinct literals) and the read-only Overleaf `.tex` untouched.**
 
 ## Performance
 
@@ -74,7 +74,7 @@ completed: 2026-05-19
   2. **Expressibility–trainability tradeoff** — compared against V1 (75p, depth 4, range), V2 (135p, depth 8, range), V3 (75p, depth 4, linear) over 5 seeds at matched 2000ep; deeper/larger ansatz did not improve fidelity at matched budget (stated in the matched-budget result direction per D-14-20; structural numbers resolve, no hand-typed EMD mean).
   3. **Classical critic + quantum generator** — WGAN-GP gradient-penalty cost/stability argument + clean single-component isolation vs the matched classical baselines.
 - Added a number-provenance source-map footer.
-- **Full-file gate PASS: `verify_number_provenance.py --target revision/docs/paper_blocks_framing.md` exits 0, 23 distinct numeric literals all resolve to `revision/results/*.json`.**
+- **Full-file gate PASS: `verify_number_provenance.py --target docs/paper_blocks_framing.md` exits 0, 23 distinct numeric literals all resolve to `results/*.json`.**
 
 ## Task Commits
 
@@ -82,11 +82,11 @@ completed: 2026-05-19
 2. **Task 2: PAPER-03 Circuit Design Rationale subsection + provenance gate pass** — `843f89e` (feat)
 
 ## Files Created/Modified
-- `revision/docs/paper_blocks_framing.md` — copy-paste LaTeX blocks for PAPER-01..05, each keyed to label/anchor + `file:NNN` line citation + one-line R1-M/R2- reviewer rationale, JSON-source annotations + provenance footer (created; ~480 lines)
+- `docs/paper_blocks_framing.md` — copy-paste LaTeX blocks for PAPER-01..05, each keyed to label/anchor + `file:NNN` line citation + one-line R1-M/R2- reviewer rationale, JSON-source annotations + provenance footer (created; ~480 lines)
 
 ## Decisions Made
 - **PAPER-02 unconditionally LOCKED (D-14-20):** matched-2000ep sweep shows the quantum entrant does not beat parameter-matched classical baselines; every overclaim before→after block is mandatory regardless of result direction.
-- **PAPER-03 trainability stated qualitatively (D-14-20 + provenance contract):** rounded ansatz EMD means live only in `reconciliation_note.md` (a `.md`, not a `.json`) and the gate only checks `revision/results/*.json`, so they do NOT resolve; the rationale uses the structural decomposition (which all resolves) and states the depth/capacity conclusion in the matched-budget result direction rather than hand-typing a non-resolving number into the manuscript body.
+- **PAPER-03 trainability stated qualitatively (D-14-20 + provenance contract):** rounded ansatz EMD means live only in `reconciliation_note.md` (a `.md`, not a `.json`) and the gate only checks `results/*.json`, so they do NOT resolve; the rationale uses the structural decomposition (which all resolves) and states the depth/capacity conclusion in the matched-budget result direction rather than hand-typing a non-resolving number into the manuscript body.
 - **PAPER-02a folded into PAPER-01b:** the "exponentially more compactly" overclaim and the quantum-necessity transition share anchor `main:151`; one AFTER block satisfies both, tracked explicitly so the LOCKED phrase is grep-verifiable.
 - **Apparatus constants quarantined to BEFORE blocks:** 20L/300L/880nm/etc. are not model results and are not in any results JSON; PAPER-05c removes the contradiction and the malformed `\label` without introducing them into the resolvable numeric body.
 
@@ -111,7 +111,7 @@ completed: 2026-05-19
 **Total deviations:** 2 auto-fixed (both Rule-3 worktree-resource blockers, both resolved by the established 14-01..04 main-checkout-resolution precedent). No scope creep — no `.tex` edited, no number hand-typed, no plan task altered.
 
 ## Issues Encountered
-- **Rounded reconciliation EMD means do not resolve against JSON:** the per-model 1000ep→2000ep EMD averages (e.g. `0.154999`, `0.155376`, `0.121527`, `0.101747`) are computed in `revision/docs/reconciliation_note.md` and are **not stored verbatim in any `revision/results/*.json`**; the number-provenance gate only scans `revision/results/*.json`. Writing them into a manuscript block would FAIL the gate (success-criterion 5 / Pitfall 5 / T-14-13). Resolved by design (see Decisions): quantitative claims use the structural decomposition (all of which resolves) and the EMD comparison is stated qualitatively in the matched-budget result direction (D-14-20) — the honest, provenance-safe framing the reviewers asked for.
+- **Rounded reconciliation EMD means do not resolve against JSON:** the per-model 1000ep→2000ep EMD averages (e.g. `0.154999`, `0.155376`, `0.121527`, `0.101747`) are computed in `docs/reconciliation_note.md` and are **not stored verbatim in any `results/*.json`**; the number-provenance gate only scans `results/*.json`. Writing them into a manuscript block would FAIL the gate (success-criterion 5 / Pitfall 5 / T-14-13). Resolved by design (see Decisions): quantitative claims use the structural decomposition (all of which resolves) and the EMD comparison is stated qualitatively in the matched-budget result direction (D-14-20) — the honest, provenance-safe framing the reviewers asked for.
 - **Pre-existing env-only test failure (out-of-scope, NOT re-logged):** the Phase-10 `samples.npy`-missing `test_utility.py` failure recorded by 14-01 in `deferred-items.md` is unrelated to this docs-only plan (no test run, no code path touched). No fix attempted (correct per scope-boundary rule).
 
 ## Next Phase Readiness
@@ -121,7 +121,7 @@ completed: 2026-05-19
 - **No blockers.** Pure documentation authoring — no training, no re-run; the matched2000 sweep + headline + figure suite remain byte-frozen (14-01..04 invariants intact).
 
 ## Known Stubs
-None — every numeric literal in `paper_blocks_framing.md` resolves to a real `revision/results/*.json` artifact (gate PASS, 23 distinct literals); no placeholder text, no TODO/FIXME, no unsourced number. The qualitative trainability framing is an intentional, documented provenance-safety + D-14-20 decision, not a stub (the structural numbers backing it all resolve).
+None — every numeric literal in `paper_blocks_framing.md` resolves to a real `results/*.json` artifact (gate PASS, 23 distinct literals); no placeholder text, no TODO/FIXME, no unsourced number. The qualitative trainability framing is an intentional, documented provenance-safety + D-14-20 decision, not a stub (the structural numbers backing it all resolve).
 
 ## Threat Surface Scan
 No new network endpoints, auth paths, or external file-access patterns. Both plan trust boundaries are mitigated as specified:
@@ -132,8 +132,8 @@ No new network endpoints, auth paths, or external file-access patterns. Both pla
 No threat flags.
 
 ## Self-Check: PASSED
-- `revision/docs/paper_blocks_framing.md` — FOUND (PAPER-01..05 keyed blocks, `\subsection{Circuit Design Rationale}`, fig:lucy/fig:qgan_hybrid_appraoch/fig:qgan_schemcatic/tbl:various_approaches present, verbatim hypothesis present, R1-M/R2- rationale tags present)
-- `verify_number_provenance.py --target revision/docs/paper_blocks_framing.md` — PASS, exit 0, 23 distinct literals all resolve
+- `docs/paper_blocks_framing.md` — FOUND (PAPER-01..05 keyed blocks, `\subsection{Circuit Design Rationale}`, fig:lucy/fig:qgan_hybrid_appraoch/fig:qgan_schemcatic/tbl:various_approaches present, verbatim hypothesis present, R1-M/R2- rationale tags present)
+- `verify_number_provenance.py --target docs/paper_blocks_framing.md` — PASS, exit 0, 23 distinct literals all resolve
 - `git diff --stat -- "main (4) copy.tex" supp_material.tex` — empty (TEX_UNTOUCHED, D-14-18)
 - Commit `fba45e7` (Task 1) — FOUND
 - Commit `843f89e` (Task 2) — FOUND

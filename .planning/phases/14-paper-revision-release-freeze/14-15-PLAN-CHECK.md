@@ -2,7 +2,7 @@
 
 **Verdict: BLOCKED**
 
-The plan's structural integrity is sound (D-14-22, D-14-13, D-14-16 preserved; schema T1→T2 aligned; no re-training; no `revision/core/` touches; verification checklist clean). However, **two headline numerical claims that T4 asks reviewers to read in `reviewer_response.md` and `methods_full.md` are contradicted by the actual QQ companion JSONs**. Reviewers would see numbers that don't match the data they can independently re-derive — a credibility-killing finding in a peer-review-response context. This MUST be fixed before execution.
+The plan's structural integrity is sound (D-14-22, D-14-13, D-14-16 preserved; schema T1→T2 aligned; no re-training; no `core/` touches; verification checklist clean). However, **two headline numerical claims that T4 asks reviewers to read in `reviewer_response.md` and `methods_full.md` are contradicted by the actual QQ companion JSONs**. Reviewers would see numbers that don't match the data they can independently re-derive — a credibility-killing finding in a peer-review-response context. This MUST be fixed before execution.
 
 ## Findings
 
@@ -10,7 +10,7 @@ The plan's structural integrity is sound (D-14-22, D-14-13, D-14-16 preserved; s
 
 Plan claims (T4, `reviewer_response.md` body + `methods_full.md` cross-reference, plus Context §2): "8 of the 9 models recover the OD marginal to within **≤0.03 OD-units** max-absolute-quantile-difference; only WGAN-CNN deviates with max upper-tail of **~0.69**."
 
-Spot-check from `revision/results/figures/qq_<model>.json` (real_quantiles vs fake_quantiles, max-abs across the 0.5–99.5% grid):
+Spot-check from `results/figures/qq_<model>.json` (real_quantiles vs fake_quantiles, max-abs across the 0.5–99.5% grid):
 
 | model            | max-abs-quantile-diff |
 |------------------|-----------------------|
@@ -39,23 +39,23 @@ The qualitative claim ("8/9 hug the diagonal at the figure scale, WGAN-CNN visib
 ## Other dimensions — PASS
 
 - **Requirement coverage:** all 4 intended outcomes (Context §11) trace to T1 (distribution-EMD aggregator) / T2 (3-column table) / T3 (qq_overlay) / T4 (reviewer comms). Verification checklist (T5, 10 items) trace-clean.
-- **D-14-22 byte-freeze:** every `<verify>` gate asserts `[ -z "$(git diff --stat revision/core/)" ]`; T1 additionally asserts `[ ! -f revision/core/run_distribution_emd.py ]`. No task lists a `revision/core/**` file in `<files>`. PASS.
+- **D-14-22 byte-freeze:** every `<verify>` gate asserts `[ -z "$(git diff --stat core/)" ]`; T1 additionally asserts `[ ! -f core/run_distribution_emd.py ]`. No task lists a `core/**` file in `<files>`. PASS.
 - **D-14-13 / D-14-16 gate semantics:** new column is informational; strict-accept thresholds unchanged; no v2.1 gate edit. PASS.
 - **No re-training:** T1 `<action>` loads `samples.npy` + reconstructs OD via `reconstruct_od`; no `train_*` invocations anywhere in the plan. PASS.
 - **Schema T1 → T2 alignment:** T1 emits `aggregates[*, scale='OD', mean, std, n]`; T2 reads `distribution_emd.json#aggregates[*, scale='OD']`. Aligned. PASS.
 - **Anchor sources confirmed by spot-check:**
-  - `revision/core/eval.py:25-36` — v1.0 raw-sample `compute_emd` present (the contrast the new emitter cites). ✓
-  - `revision/run_figure_suite.py:106-116` — `MODEL_ORDER` is exactly the 9 listed. ✓
-  - `revision/run_figure_suite.py:261-296` — `reconstruct_od` helper, Pipeline-B `seed*7919+1` draw load-bearing. ✓
-  - `revision/run_figure_suite.py:403-433` — `render_qq_plot` companion schema includes `real_quantiles`, `fake_quantiles`, `quantile_grid` — usable by `render_qq_overlay` and by T3's `convergence_stats` emit. ✓
-  - `revision/run_figure_suite.py:2378-2400` — caller loop iterates `MODEL_ORDER`; T3's new `render_qq_overlay` call slots in cleanly at ~line 2400+. ✓
-  - `revision/run_model_info.py:218-302` — `_reconciliation_rows()` reads `matched2000_dualscale.json#aggregates` filtered by `metric_name='emd'` AND `scale='OD'`. T2's extension to add a third column from `distribution_emd.json#aggregates[*, scale='OD']` plugs in via the same row builder. ✓
+  - `core/eval.py:25-36` — v1.0 raw-sample `compute_emd` present (the contrast the new emitter cites). ✓
+  - `run_figure_suite.py:106-116` — `MODEL_ORDER` is exactly the 9 listed. ✓
+  - `run_figure_suite.py:261-296` — `reconstruct_od` helper, Pipeline-B `seed*7919+1` draw load-bearing. ✓
+  - `run_figure_suite.py:403-433` — `render_qq_plot` companion schema includes `real_quantiles`, `fake_quantiles`, `quantile_grid` — usable by `render_qq_overlay` and by T3's `convergence_stats` emit. ✓
+  - `run_figure_suite.py:2378-2400` — caller loop iterates `MODEL_ORDER`; T3's new `render_qq_overlay` call slots in cleanly at ~line 2400+. ✓
+  - `run_model_info.py:218-302` — `_reconciliation_rows()` reads `matched2000_dualscale.json#aggregates` filtered by `metric_name='emd'` AND `scale='OD'`. T2's extension to add a third column from `distribution_emd.json#aggregates[*, scale='OD']` plugs in via the same row builder. ✓
   - `reconciliation_note.md` C-3 disclosure paragraph cites the **50-bin** density Wasserstein formulation that T1 implements verbatim. ✓
 
 ## False-positives skipped (per instructions)
 
 - Did not flag the histogram-density Wasserstein formulation choice (D-14-22 locks it as `wasserstein_distance(bin_centers, bin_centers, real_hist_density, fake_hist_density)` with `n_bins=50`).
-- Did not flag the new emitter living outside `revision/core/` (D-14-22 forbids core/ edits).
+- Did not flag the new emitter living outside `core/` (D-14-22 forbids core/ edits).
 - Did not flag the absence of a strict-accept threshold for distribution-EMD (D-14-13 / D-14-16 keep gate semantics frozen).
 - Did not flag the lack of re-runs (no re-training is locked in).
 - Did not flag the lack of new ACF / conditional-moment figures (out of scope per plan §"Out of scope").

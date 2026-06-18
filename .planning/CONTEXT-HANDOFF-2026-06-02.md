@@ -53,7 +53,7 @@ pdfinfo "main (4) copy.pdf" 2>/dev/null | grep -E "Pages|Title"
 | Supp figures | **15** (A1–A15; A15 is an 8-sub-panel grid) |
 | Total visible panels | 28 (6 main + 22 supp counting sub-panels) |
 | Compile state | 0 LaTeX errors, 0 BibTeX warnings, 0 undefined refs/cites |
-| Provenance gate | PASS — 149 main + 198 supp literals trace to `revision/results/*.json` |
+| Provenance gate | PASS — 149 main + 198 supp literals trace to `results/*.json` |
 | Freeze gates a/b/c | PASS |
 | Freeze gate d (`release.md`) | Expected-deferred to plan 14-07 (Zenodo at journal acceptance) |
 | AIChE upload bundle | `~/Desktop/aiche_upload_v1.2.4/` + `aiche_upload_v1.2.4.zip` (35 files, 2.9 MB) |
@@ -100,7 +100,7 @@ From `.planning/PAPER-SUBMISSION-HANDOFF.md §5` and `.planning/review-findings/
 
 3. **Real-data lag-1 ACF reference is −0.0641** (matched-pipeline, with dither), NOT −0.029 (legacy unmatched).
 
-4. **Pipeline B = log-returns + standardize + linear rescale to [−1, 1]** — NO Lambert W. Pipeline C (the dropped one) is `log-return → standardize → inverse Lambert W → rescale to [−1, 1]` (Lambert W is inserted BETWEEN standardize and rescale, not appended after — v1.2.2 F-4 fixed this). Lambert W only appears in the explicit "Pipeline C dropped per D-10-05" rationale (main §3.2, supp §A.7). `lambert_w_transform` / `inverse_lambert_w_transform` functions in `revision/core/data.py` are retained for ablation reproducibility only.
+4. **Pipeline B = log-returns + standardize + linear rescale to [−1, 1]** — NO Lambert W. Pipeline C (the dropped one) is `log-return → standardize → inverse Lambert W → rescale to [−1, 1]` (Lambert W is inserted BETWEEN standardize and rescale, not appended after — v1.2.2 F-4 fixed this). Lambert W only appears in the explicit "Pipeline C dropped per D-10-05" rationale (main §3.2, supp §A.7). `lambert_w_transform` / `inverse_lambert_w_transform` functions in `core/data.py` are retained for ablation reproducibility only.
 
 Plus the A2-sentinel regex prohibitions: "deployable framework", "industrial bioprocess monitoring" (outside title), "high fidelity", "strong performance", "computational advantages", "Hybrid-GAN demonstrated/implemented/evaluated", "closed-loop feedback control" (for AI workflow), "n=1" for shot/noise context (those use n=3). See `PAPER-SUBMISSION-HANDOFF.md §5` for full sentinel list.
 
@@ -112,12 +112,12 @@ Plus the A2-sentinel regex prohibitions: "deployable framework", "industrial bio
 cd /Users/shawngibford/dev/phd/qGAN
 
 # Provenance gate (numeric literals → JSON)
-./qgan_env/bin/python revision/verify_number_provenance.py --target "main (4) copy.tex"
-./qgan_env/bin/python revision/verify_number_provenance.py --target "supp_material.tex"
-./qgan_env/bin/python revision/verify_number_provenance.py --differential-test
+./qgan_env/bin/python verify_number_provenance.py --target "main (4) copy.tex"
+./qgan_env/bin/python verify_number_provenance.py --target "supp_material.tex"
+./qgan_env/bin/python verify_number_provenance.py --differential-test
 
 # Freeze gates a/b/c (gate d expected-deferred to 14-07)
-./qgan_env/bin/python revision/verify_freeze_ready.py
+./qgan_env/bin/python verify_freeze_ready.py
 # (gate d failure is OK; flag any OTHER failure)
 
 # Clean compile — CRITICAL: grep '^! ' for actual errors, don't trust exit code alone
@@ -154,7 +154,7 @@ docs(state): record v1.2.4 loss-diagnostics patch
 
 **Tag policy:** new patch-level tag (`v1.2.X+1`) for each session's scientific or visual change set; OLD tags stay on origin as historical references (never rewrite published tags). Always include `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>` footer.
 
-**For commits with substantive prose changes:** the .tex must pass the provenance gate. If a new number is introduced, it MUST already exist in `revision/results/*.json` — derived numbers (sums, differences, etc.) will be rejected. Either trace them or rephrase to avoid the literal.
+**For commits with substantive prose changes:** the .tex must pass the provenance gate. If a new number is introduced, it MUST already exist in `results/*.json` — derived numbers (sums, differences, etc.) will be rejected. Either trace them or rephrase to avoid the literal.
 
 ---
 
@@ -169,14 +169,14 @@ docs(state): record v1.2.4 loss-diagnostics patch
 | Compiled PDF | `main (4) copy.pdf` (recompile if timestamp older than HEAD commit) |
 | Submission handoff | `.planning/PAPER-SUBMISSION-HANDOFF.md` |
 | Rebuttal handoff | `.planning/REBUTTAL-HANDOFF.md` |
-| Per-reviewer rebuttal | `revision/docs/reviewer_response.md` |
+| Per-reviewer rebuttal | `docs/reviewer_response.md` |
 | 4-agent audit findings (v1.2.2) | `.planning/review-findings/REVIEW-FINDINGS.md` + per-agent files |
-| Headline data JSON | `revision/results/matched2000_dualscale.json` (705 KB) |
-| Per-pair Welch tests | `revision/results/welch_pairwise.json` |
-| Cross-model EMD | `revision/results/figures/cross_model_emd.json` |
-| TSTR utility data | `revision/results/tstr_matched2000.json` |
-| Loss-curve sidecars | `revision/results/figures/loss_<model>.json` |
-| Per-model run metrics | `revision/results/matched2000/runs/<model>/<seed>/metrics.json` |
+| Headline data JSON | `results/matched2000_dualscale.json` (705 KB) |
+| Per-pair Welch tests | `results/welch_pairwise.json` |
+| Cross-model EMD | `results/figures/cross_model_emd.json` |
+| TSTR utility data | `results/tstr_matched2000.json` |
+| Loss-curve sidecars | `results/figures/loss_<model>.json` |
+| Per-model run metrics | `results/matched2000/runs/<model>/<seed>/metrics.json` |
 | AIChE upload bundle | `~/Desktop/aiche_upload_v1.2.4/` + `.zip` |
 | Project state | `.planning/STATE.md` |
 | Project requirements | `.planning/REQUIREMENTS.md` |
@@ -242,7 +242,7 @@ Each session's full commit + tag detail is in `git log v1.2..HEAD --oneline`.
 - ❌ Don't trust pdflatex exit code alone — `grep '^! '` for actual errors (v1.2.1 gate-gap lesson)
 - ❌ Don't accept "the PDF looks fine" without re-running provenance gate (v1.2.2 lesson — Lambert W slipped past because numbers were correct in isolation)
 - ❌ Don't rewrite published tags (`v1.2` through `v1.2.4` are on origin). New patch tag only.
-- ❌ Don't delete `lambert_w_transform` / `inverse_lambert_w_transform` from `revision/core/data.py` — retained for ablation reproducibility
+- ❌ Don't delete `lambert_w_transform` / `inverse_lambert_w_transform` from `core/data.py` — retained for ablation reproducibility
 - ❌ Don't delete the historical `~/Desktop/aiche_upload_v1.2.1/` bundle (user explicitly chose to keep it)
 - ❌ Don't introduce new numeric literals without a JSON cell to trace them — either find the right JSON path or rephrase qualitatively (e.g., "remaining 1950 evaluation steps" → "remainder of training" because 1950 was a derived literal)
 - ❌ Don't claim "quantum advantage" generically — the bifurcated finding is the only positive claim, and it's scope-bounded
@@ -259,7 +259,7 @@ Each session's full commit + tag detail is in `git log v1.2..HEAD --oneline`.
 | What's the current page count? | 60 |
 | What's the current figure count? | Main 6, Supp 15 (one is 8-panel grid) = 22 visible panels |
 | What's the deadline? | ≈ 2026-06-17 AIChE resubmission (15 days from 2026-06-02) |
-| Is the rebuttal letter ready? | Yes — `revision/docs/reviewer_response.md` (520 lines, markdown) |
+| Is the rebuttal letter ready? | Yes — `docs/reviewer_response.md` (520 lines, markdown) |
 | Is the AIChE bundle ready? | Yes — `~/Desktop/aiche_upload_v1.2.4.zip` |
 | What's left to do externally? | AIChE portal upload, GitHub release notes (draft provided), Zenodo DOI at acceptance |
 | What's the WGAN-CNN seed-42 outlier? | OD-EMD = 0.1587 (other 4 seeds 0.020–0.034); disclosed at face value in §4.1 |

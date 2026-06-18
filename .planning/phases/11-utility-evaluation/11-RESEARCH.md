@@ -12,7 +12,7 @@ The single highest-value finding: **the canonical TimeGAN predictive/discriminat
 
 The second critical finding: **sklearn is NOT installed in the project venv** (`qgan_env`). Phase 10 deliberately used an inline `r2_score_inline`. Phase 11 must reuse that inline R²/MAE/RMSE math (or guard a sklearn install behind a checkpoint) — do not assume `from sklearn.metrics import ...` will work.
 
-**Primary recommendation:** Build two new drivers — `revision/run_utility.py` (TSTR + augmentation, both on the shared one-step-ahead OD forecast task) and `revision/run_timegan_scores.py` (faithful single-layer-GRU predictive + discriminative). Reuse `reconstruct_od` / `train_eval_tstr` patterns verbatim from `revision/_build_baseline_notebook.py` (they are NOT in `revision/core/` — D-10-13/D-11-10 keep eval orchestration out of core). Emit all three JSONs in the existing long-form `{model_kind, pipeline, seed, metric_name, scale, value}` schema, and wrap every `revision.core.eval` fidelity call with a `scale: "log_return" | "OD"` tag for EVAL-05.
+**Primary recommendation:** Build two new drivers — `run_utility.py` (TSTR + augmentation, both on the shared one-step-ahead OD forecast task) and `run_timegan_scores.py` (faithful single-layer-GRU predictive + discriminative). Reuse `reconstruct_od` / `train_eval_tstr` patterns verbatim from `_build_baseline_notebook.py` (they are NOT in `core/` — D-10-13/D-11-10 keep eval orchestration out of core). Emit all three JSONs in the existing long-form `{model_kind, pipeline, seed, metric_name, scale, value}` schema, and wrap every `revision.core.eval` fidelity call with a `scale: "log_return" | "OD"` tag for EVAL-05.
 
 <user_constraints>
 ## User Constraints (from CONTEXT.md)
@@ -28,7 +28,7 @@ The second critical finding: **sklearn is NOT installed in the project venv** (`
 - **D-11-07:** Conditions: `real-only` baseline, then `real + synthetic` at multiple injection ratios → lift curve per generator (suggested grid `{+25%, +50%, +100%, synthetic-only}`; exact grid is planner discretion). Delta table = downstream R²/MAE/RMSE change vs. real-only baseline, per generator.
 - **D-11-08:** **Reuse Phase 10 / Phase 09.1 artifacts as-is.** Read existing `samples.npy` from 50 Phase 10 baseline run dirs + Phase 09.1 quantum runs. **No regeneration, no retraining.**
 - **D-11-09:** Both **Pipeline A and Pipeline B** evaluated. Pipeline B is headline (D-10-06); Pipeline A is supplementary raw-OD control. EVAL-05 dual-scale (`log_return` + `OD`) applies to every metric.
-- **D-11-10:** Evaluation/aggregation logic stays **out of `revision/core/`**. New TSTR/score/augmentation orchestration lives in new `revision/run_*.py` driver(s) + JSON emitters, patterned after `revision/run_baselines.py`. Reuse `revision/core/eval.py` fidelity helpers unchanged for EVAL-05.
+- **D-11-10:** Evaluation/aggregation logic stays **out of `core/`**. New TSTR/score/augmentation orchestration lives in new `run_*.py` driver(s) + JSON emitters, patterned after `run_baselines.py`. Reuse `core/eval.py` fidelity helpers unchanged for EVAL-05.
 
 ### Claude's Discretion
 
@@ -62,14 +62,14 @@ The second critical finding: **sklearn is NOT installed in the project venv** (`
 
 | Capability | Primary Tier | Secondary Tier | Rationale |
 |------------|-------------|----------------|-----------|
-| Read frozen samples.npy | Artifact I/O (driver) | — | `revision/run_*.py` drivers; never `revision/core/` (D-11-10) |
-| OD reconstruction (inverse transform) | `revision/core/preprocessing.py` (`inverse_logreturns`, `inverse_minmax_od`) | driver glue (`reconstruct_od` wrapper) | Inverse math is core; the per-pipeline orchestration wrapper is driver-level |
-| Fidelity metrics (EMD/ACF/moments/DTW) | `revision/core/eval.py` (unchanged) | driver (scale-tagging loop) | Metric math is core; the `scale` field wrap is driver-level (EVAL-05) |
+| Read frozen samples.npy | Artifact I/O (driver) | — | `run_*.py` drivers; never `core/` (D-11-10) |
+| OD reconstruction (inverse transform) | `core/preprocessing.py` (`inverse_logreturns`, `inverse_minmax_od`) | driver glue (`reconstruct_od` wrapper) | Inverse math is core; the per-pipeline orchestration wrapper is driver-level |
+| Fidelity metrics (EMD/ACF/moments/DTW) | `core/eval.py` (unchanged) | driver (scale-tagging loop) | Metric math is core; the `scale` field wrap is driver-level (EVAL-05) |
 | TSTR soft-sensor train/eval | driver (`run_utility.py`) | — | Post-hoc evaluation model; not a project model family — stays out of core |
 | TimeGAN post-hoc GRU nets | driver (`run_timegan_scores.py`) | — | Evaluation-only nets; per D-10-13/D-11-10 not promoted to core |
 | Augmentation mixing-ratio sweep | driver (`run_utility.py`) | — | Orchestration over the same TSTR task |
-| JSON emission (long-form schema) | driver | — | `revision/results/*.json` contract Phase 14 reads |
-| Data-hash consistency assert | driver | `revision/core/data.py::load_and_preprocess` | Hash recomputed from canonical OD tensor |
+| JSON emission (long-form schema) | driver | — | `results/*.json` contract Phase 14 reads |
+| Data-hash consistency assert | driver | `core/data.py::load_and_preprocess` | Hash recomputed from canonical OD tensor |
 
 ## Standard Stack
 
@@ -167,7 +167,7 @@ revision/
 ├── run_dualscale_fidelity.py   # NEW (or fold into a Wave-4 emit notebook) — EVAL-05 scale-tagged re-emit
 ├── _build_utility_notebook.py  # OPTIONAL — deterministic notebook source (mirrors _build_baseline_notebook.py)
 ├── 07_utility_eval.ipynb       # OPTIONAL — generated analysis notebook (orchestrate+plot+JSON only)
-├── core/                       # UNCHANGED — D-11-10 invariant (git diff revision/core/ must be empty)
+├── core/                       # UNCHANGED — D-11-10 invariant (git diff core/ must be empty)
 └── results/
     ├── tstr.json                       # EVAL-01
     ├── predictive_discriminative.json  # EVAL-02/03
@@ -177,13 +177,13 @@ revision/
 
 ### Pattern 1: Driver-mirrors-run_baselines.py
 
-**What:** Each new driver is a CLI entrypoint that reads frozen artifacts, computes, and writes JSON. Pattern lifted from `revision/run_baselines.py`.
+**What:** Each new driver is a CLI entrypoint that reads frozen artifacts, computes, and writes JSON. Pattern lifted from `run_baselines.py`.
 **When to use:** All three Phase 11 deliverables.
 **Example:**
 ```python
-# Source: revision/run_baselines.py (verified in-tree) — the canonical driver shape
+# Source: run_baselines.py (verified in-tree) — the canonical driver shape
 # argparse → resolve run dir → load samples.npy + inverse_kwargs.npz →
-# reconstruct → compute → write JSON to revision/results/. One concern per driver.
+# reconstruct → compute → write JSON to results/. One concern per driver.
 # Idempotent; no multiprocessing.Pool (Phase 09.1 Pitfall 4 — xargs -P only).
 ```
 
@@ -193,11 +193,11 @@ revision/
 **When to use:** Every EVAL-01/04/05 OD computation.
 **Example:**
 ```python
-# Source: revision/_build_baseline_notebook.py:167-210 (verified, copy VERBATIM — D-11-10)
+# Source: _build_baseline_notebook.py:167-210 (verified, copy VERBATIM — D-11-10)
 def _run_base(model_kind, pipeline, seed):
     if model_kind == "quantum":                      # reused 09.1 quantum runs (D-10-18)
-        return Path(f"revision/results/transform_ablation/runs/{pipeline}/{seed}")
-    return Path(f"revision/results/baselines/runs/{model_kind}/{pipeline}/{seed}")
+        return Path(f"results/transform_ablation/runs/{pipeline}/{seed}")
+    return Path(f"results/baselines/runs/{model_kind}/{pipeline}/{seed}")
 
 def reconstruct_od(model_kind, pipeline, seed, n_synth_subsample=None):
     base = _run_base(model_kind, pipeline, seed)
@@ -226,7 +226,7 @@ def reconstruct_od(model_kind, pipeline, seed, n_synth_subsample=None):
 **When to use:** EVAL-01 TSTR and EVAL-04 augmentation (same task — D-11-06).
 **Example:**
 ```python
-# Source: revision/_build_baseline_notebook.py:394-440 (verified) — the exact split
+# Source: _build_baseline_notebook.py:394-440 (verified) — the exact split
 HELD_OUT_N = 320
 real_eval  = real_windowed_OD[:HELD_OUT_N]          # eval set, identical to Phase 10 D-10-21
 real_train = real_windowed_OD[HELD_OUT_N:]          # real-only baseline train set
@@ -244,11 +244,11 @@ Xtr = train_windows[:, :9];  ytr = train_windows[:, 9:10]   # one-step-ahead
 {"model_kind": "quantum", "pipeline": "A", "seed": 42,
  "metric_name": "emd", "scale": "OD", "value": 1.0520125260633941}
 ```
-Verified present in `revision/results/baseline_comparison.json` (`rows[]` has 1710 entries; `schema` = `"long-form rows[] + models[] aggregate (D-10-16)"`).
+Verified present in `results/baseline_comparison.json` (`rows[]` has 1710 entries; `schema` = `"long-form rows[] + models[] aggregate (D-10-16)"`).
 
 ### Anti-Patterns to Avoid
 
-- **Editing `revision/core/`** — D-11-10 / D-10-13 invariant. `git diff revision/core/` MUST be empty after Phase 11. Post-hoc nets and TSTR forecaster live in drivers/notebook source, NOT core (Phase 09.1 plan-04 explicitly verified zero core diff).
+- **Editing `core/`** — D-11-10 / D-10-13 invariant. `git diff core/` MUST be empty after Phase 11. Post-hoc nets and TSTR forecaster live in drivers/notebook source, NOT core (Phase 09.1 plan-04 explicitly verified zero core diff).
 - **`from sklearn.metrics import ...`** — sklearn is absent from `qgan_env`. Use inline `r2_score_inline` + hand MAE/RMSE (Phase 10 precedent).
 - **`multiprocessing.Pool`** — Phase 09.1 RESEARCH Pitfall 4 (carried into D-10-24). Use OS-process parallelism (`xargs -P 2`) only if a sweep driver is even needed; most Phase 11 work is single-process aggregation over already-trained artifacts and is fast (<5 min).
 - **Regenerating samples** — D-11-08. Phase 11 never calls `train_wgan_gp`, never instantiates a generator for sampling. It reads `samples.npy` only.
@@ -314,7 +314,7 @@ The reference is **TensorFlow 1** (`tf.nn.rnn_cell.GRUCell`, `tf.train.AdamOptim
   - `real + synthetic @ +25% / +50% / +100% / synthetic-only`: augment the real train partition with N synthetic windows where N = {0.25, 0.5, 1.0}×|real_train|, plus a synthetic-only condition.
 - **Eval set is always `real_windowed_OD[:320]`** (never mixed, never the train partition).
 - Delta table = ΔR², ΔMAE, ΔRMSE vs the `real_only` baseline, per generator → "lift curve per generator" (D-11-07).
-- Emit to `revision/results/augmentation.json` in long-form (`metric_name` ∈ {`r2_delta`,`mae_delta`,`rmse_delta`}, an `injection_ratio` field added to rows, `scale="OD"`).
+- Emit to `results/augmentation.json` in long-form (`metric_name` ∈ {`r2_delta`,`mae_delta`,`rmse_delta`}, an `injection_ratio` field added to rows, `scale="OD"`).
 
 **Pitfall:** the real train partition is small (`real_windowed_OD[320:]` ≈ 64 windows on the 384-window split). The Phase 09.1 FLAG-E note already flagged the 60× synthetic train-set advantage — the augmentation lift is a **lower bound**, not a matched-budget comparison. State this explicitly in `augmentation.json` metadata and the summary (it is the honest framing CONTEXT `<specifics>` mandates).
 
@@ -366,7 +366,7 @@ The reference is **TensorFlow 1** (`tf.nn.rnn_cell.GRUCell`, `tf.train.AdamOptim
 | Live service config | None — no external services. Local-Mac statevector only; no quantum execution in Phase 11 (samples frozen). | None |
 | OS-registered state | None — no schedulers, daemons, or registered tasks. | None |
 | Secrets/env vars | None — no secrets, no env-var-driven config. | None |
-| Build artifacts | New: `revision/results/{tstr,predictive_discriminative,augmentation}.json` (+ optional notebook). No package re-install (no new deps). `revision/core/__pycache__` unaffected (core untouched). | None — additive only |
+| Build artifacts | New: `results/{tstr,predictive_discriminative,augmentation}.json` (+ optional notebook). No package re-install (no new deps). `core/__pycache__` unaffected (core untouched). | None — additive only |
 
 **Nothing found in 4 of 5 categories:** verified by inspection of the revision tree, `.planning/config.json`, and CONTEXT (no service/secret/OS-state surface in an evaluation-only phase).
 
@@ -383,18 +383,18 @@ The reference is **TensorFlow 1** (`tf.nn.rnn_cell.GRUCell`, `tf.train.AdamOptim
 | Phase 10 reproduction sanity | Phase 11's recomputed quantum\|B OD-EMD ≈ Phase 10's `0.0276 ± 0.0046`; TSTR-lite quantum\|B R² ≈ `0.994` | Proves verbatim reuse of `reconstruct_od`/`train_eval_tstr` didn't drift |
 | Sample shape invariant | every loaded `samples.npy` is `(3840, 10)` float64 | A different shape signals a wrong/corrupt artifact |
 | Augmentation partition disjointness | `set(real_train_idx) ∩ set(real_eval_idx) == ∅` (eval = `[:320]`, train = `[320:]`) | Prevents the EVAL-04 leakage pitfall |
-| `revision/core/` untouched | `git diff --stat revision/core/` is empty after Phase 11 | D-11-10 / D-10-13 hard invariant |
+| `core/` untouched | `git diff --stat core/` is empty after Phase 11 | D-11-10 / D-10-13 hard invariant |
 
 ### Test Framework
 | Property | Value |
 |----------|-------|
-| Framework | pytest (existing `revision/tests/{test_classical.py,test_nonadversarial.py}`) |
-| Config file | none detected — tests run via `./qgan_env/bin/python -m pytest revision/tests/` |
-| Quick run command | `./qgan_env/bin/python -m pytest revision/tests/ -x -q` |
-| Full suite command | `./qgan_env/bin/python -m pytest revision/tests/ -q` |
+| Framework | pytest (existing `tests/{test_classical.py,test_nonadversarial.py}`) |
+| Config file | none detected — tests run via `./qgan_env/bin/python -m pytest tests/` |
+| Quick run command | `./qgan_env/bin/python -m pytest tests/ -x -q` |
+| Full suite command | `./qgan_env/bin/python -m pytest tests/ -q` |
 
 ### Wave 0 Gaps
-- [ ] `revision/tests/test_utility.py` — assert `reconstruct_od` output shape `(3840,10)`, data-hash equality, TSTR round-trip vs Phase 10 anchor (optional but recommended; project has a `tests/` convention)
+- [ ] `tests/test_utility.py` — assert `reconstruct_od` output shape `(3840,10)`, data-hash equality, TSTR round-trip vs Phase 10 anchor (optional but recommended; project has a `tests/` convention)
 - [ ] No framework install needed — pytest available via `qgan_env`.
 
 *(Nyquist disabled — these are plain assertions / pytest checks, not a Nyquist sampling regime.)*
@@ -403,18 +403,18 @@ The reference is **TensorFlow 1** (`tf.nn.rnn_cell.GRUCell`, `tf.train.AdamOptim
 
 ### Resolve run dir (quantum vs baseline) — verified contract
 ```python
-# Source: revision/_build_baseline_notebook.py:167-172 (verified on disk)
+# Source: _build_baseline_notebook.py:167-172 (verified on disk)
 def _run_base(model_kind, pipeline, seed):
     if model_kind == "quantum":
-        return Path(f"revision/results/transform_ablation/runs/{pipeline}/{seed}")
-    return Path(f"revision/results/baselines/runs/{model_kind}/{pipeline}/{seed}")
+        return Path(f"results/transform_ablation/runs/{pipeline}/{seed}")
+    return Path(f"results/baselines/runs/{model_kind}/{pipeline}/{seed}")
 # MODEL_KINDS = ["quantum","wgan_mlp","wgan_cnn","wgan_lstm","vae","ar"]
 # PIPELINES   = ["A","B"];  SEEDS = [42,43,44,45,46]   → 6×2×5 = 60 run dirs, all verified present
 ```
 
 ### Inline metrics (sklearn absent) — extend train_eval_tstr return
 ```python
-# Source: revision/_build_baseline_notebook.py:405-440 (verified) + Phase 11 additions
+# Source: _build_baseline_notebook.py:405-440 (verified) + Phase 11 additions
 def r2_score_inline(y_true, y_pred):
     ss_res = float(np.sum((y_true - y_pred) ** 2))
     ss_tot = float(np.sum((y_true - y_true.mean()) ** 2))
@@ -476,7 +476,7 @@ class PredictiveGRU(torch.nn.Module):
 3. **Should EVAL-05 dual-scale rows live in `tstr.json`/`augmentation.json` or a separate `fidelity_dualscale.json`?**
    - What we know: ROADMAP SC-4 says "visible as explicit scale fields in JSON outputs"; long-form schema already has a `scale` field.
    - Recommendation: emit a dedicated long-form block (e.g. `fidelity_dualscale.json` or a `fidelity` array in the utility JSON) carrying every `revision.core.eval` metric twice — once `scale="OD"`, once `scale="log_return"` (Pipeline B; Pipeline A is OD-only — log-return scale n/a, emit explicit `"log_return": null` or omit with a documented reason). Planner decides file boundary; the schema is the constraint, not the filename.
-   - **RESOLVED:** Plan 11-03 emits a dedicated `revision/results/fidelity_dualscale.json` extending the long-form schema with explicit `scale` fields per metric row.
+   - **RESOLVED:** Plan 11-03 emits a dedicated `results/fidelity_dualscale.json` extending the long-form schema with explicit `scale` fields per metric row.
 
 ## Environment Availability
 
@@ -500,7 +500,7 @@ class PredictiveGRU(torch.nn.Module):
 ## Sources
 
 ### Primary (HIGH confidence)
-- Codebase (verified on disk, May 2026): `revision/core/{eval,preprocessing,data,__init__}.py`, `revision/run_baselines.py`, `revision/_build_baseline_notebook.py`, `revision/results/baseline_comparison.json`, all 60 `samples.npy`/`config.yaml`/`inverse_kwargs.npz` run dirs, `revision/results/baselines/sweep_status.json` (50/50 complete), `qgan_env` import probes (sklearn ABSENT; torch/numpy/scipy/statsmodels/fastdtw/pyyaml/pennylane 0.43.0 present).
+- Codebase (verified on disk, May 2026): `core/{eval,preprocessing,data,__init__}.py`, `run_baselines.py`, `_build_baseline_notebook.py`, `results/baseline_comparison.json`, all 60 `samples.npy`/`config.yaml`/`inverse_kwargs.npz` run dirs, `results/baselines/sweep_status.json` (50/50 complete), `qgan_env` import probes (sklearn ABSENT; torch/numpy/scipy/statsmodels/fastdtw/pyyaml/pennylane 0.43.0 present).
 - `.planning/phases/11-utility-evaluation/11-CONTEXT.md`, `.planning/phases/10-classical-baselines/10-CONTEXT.md`, `.planning/phases/09.1-.../09.1-04-SUMMARY.md`, `.planning/REQUIREMENTS.md`, `.planning/ROADMAP.md`, `.planning/config.json`.
 - [jsyoon0823/TimeGAN/metrics/predictive_metrics.py](https://github.com/jsyoon0823/TimeGAN/blob/master/metrics/predictive_metrics.py) — single-layer GRU, hidden=int(dim/2), 5000 iters, Adam, batch 128, MAE next-step.
 - [jsyoon0823/TimeGAN/metrics/discriminative_metrics.py](https://github.com/jsyoon0823/TimeGAN/blob/master/metrics/discriminative_metrics.py) — single-layer GRU, hidden=int(dim/2), 2000 iters, Adam, batch 128, `|0.5−acc|`, real=1/synth=0.

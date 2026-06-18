@@ -22,12 +22,12 @@ Tags present: `v1.0` only — **`v2.0-revision` has NOT been cut yet.**
 2. **Any committed secrets?** — NO. `git grep` over the full HEAD tree for
    `ZENODO_TOKEN`, `ghp_*`, `AKIA*`, `Bearer`, private-key headers, and
    `password=` found nothing. No `.env` file is tracked. The untracked LaTeX
-   manuscripts (`main (4) copy.tex`, `supp_material.tex`) and `revision/docs/`
+   manuscripts (`main (4) copy.tex`, `supp_material.tex`) and `docs/`
    are also clean. The 14-07 requirement that `ZENODO_TOKEN` never be committed
    is currently satisfied.
 
 3. **What untracked items MUST be committed before freeze?** — One mandatory:
-   `revision/results/baselines/runs/` (47 MB, 250 files — the per-seed baseline
+   `results/baselines/runs/` (47 MB, 250 files — the per-seed baseline
    run artifacts that the classical-baseline comparison numbers depend on; see
    HIGH-1). Possibly: the LaTeX manuscripts if D-14-21's "includes .tex reference
    files" is to be honored (see HIGH-2). Everything else untracked is junk and
@@ -37,31 +37,31 @@ Tags present: `v1.0` only — **`v2.0-revision` has NOT been cut yet.**
 
 ## FREEZE BLOCKERS — must resolve before tagging
 
-### CRITICAL-1 — `revision/results/` provenance backbone is NOT protected by the committed `.gitignore`
+### CRITICAL-1 — `results/` provenance backbone is NOT protected by the committed `.gitignore`
 
 The 14-07 plan's central risk (RESEARCH Pitfall 4) is that the provenance JSON
-gets gitignored out of the tag. The fix — the `!revision/results/` negation
+gets gitignored out of the tag. The fix — the `!results/` negation
 block — exists **only in the uncommitted working tree**. The committed
 `.gitignore` at HEAD has neither `results/` nor the negations:
 
-- `git show HEAD:.gitignore` → no `results/` line, no `!revision/results/` lines.
+- `git show HEAD:.gitignore` → no `results/` line, no `!results/` lines.
 - Working-tree `.gitignore` diff adds both `results/` AND the two negations
-  `!revision/results/` + `!revision/results/**/*.json`.
+  `!results/` + `!results/**/*.json`.
 
 Why this is dangerous: `verify_freeze_ready.py` **PASSED** when I ran it, but it
 ran against the *working tree* `.gitignore` (which has the negations). Its
 gate-(a) "self-heal" appends the negation and `git add -f`s the JSON — but those
-edits are in the working tree and **uncommitted**. The 261 `revision/results/*.json`
+edits are in the working tree and **uncommitted**. The 261 `results/*.json`
 files are individually tracked at HEAD, so a `git archive HEAD` *today* does
 contain them. But the moment anyone commits the working-tree `.gitignore` change
 that adds the bare `results/` line **without also committing the negations in the
-same commit**, every untracked `revision/results/*` file becomes ignored.
+same commit**, every untracked `results/*` file becomes ignored.
 
 Required fix: commit the working-tree `.gitignore` **as a single atomic change**
-(the `results/` line and both `!revision/results/` negations together), then
-re-run `verify_freeze_ready.py` and `git check-ignore revision/results/*.json`
+(the `results/` line and both `!results/` negations together), then
+re-run `verify_freeze_ready.py` and `git check-ignore results/*.json`
 against the committed state, and confirm `git archive <tagcandidate> | tar -t`
-still contains `revision/results/*.json`. Do NOT tag until check-ignore is
+still contains `results/*.json`. Do NOT tag until check-ignore is
 verified against the COMMITTED `.gitignore`.
 
 ### CRITICAL-2 — uncommitted data drift in `real.csv` / `fake.csv` would freeze inconsistent state
@@ -75,34 +75,34 @@ the notebook and analysis consume.
 This is unintended drift of the headline datasets. Freezing now would either
 (a) tag HEAD's old CSVs while the working notebook/results reflect the new ones,
 or (b) commit the new CSVs that may not match the numbers in
-`revision/results/*.json` that the provenance gate certified. Either way the
+`results/*.json` that the provenance gate certified. Either way the
 DOI'd archive is internally inconsistent.
 
 Required fix: the project owner must decide which CSV version is canonical,
 ensure it is consistent with the certified provenance JSON, and either commit or
 revert the change deliberately — not freeze it by accident.
 
-### CRITICAL-3 — `revision/docs/release.md` does not exist
+### CRITICAL-3 — `docs/release.md` does not exist
 
-The 14-07 plan `must_haves.artifacts` requires `revision/docs/release.md`
+The 14-07 plan `must_haves.artifacts` requires `docs/release.md`
 (min 30 lines) recording tag SHA, reserved version + concept DOI, the
-check-ignore result, and reproduce steps. `ls revision/docs/` confirms the file
+check-ignore result, and reproduce steps. `ls docs/` confirms the file
 is **absent** (no tracked copy, no untracked copy). `verify_freeze_ready.py`
 does NOT check for it, so the gate passing does not cover this. The release
 record mandated by the plan does not yet exist.
 
-Required fix: author `revision/docs/release.md` per the 14-07 spec (Task 3) and
+Required fix: author `docs/release.md` per the 14-07 spec (Task 3) and
 commit it into the tagged tree.
 
 ---
 
 ## HIGH severity
 
-### HIGH-1 — `revision/results/baselines/runs/` (47 MB, 250 files) is untracked
+### HIGH-1 — `results/baselines/runs/` (47 MB, 250 files) is untracked
 
-`revision/results/baselines/runs/wgan_lstm/{A,B}/{42..46}/` contains
+`results/baselines/runs/wgan_lstm/{A,B}/{42..46}/` contains
 `metrics.json`, `samples.npy`, `config.yaml`, `inverse_kwargs.npz`,
-`checkpoint.pt` per seed. The aggregate `revision/results/baseline_comparison.json`
+`checkpoint.pt` per seed. The aggregate `results/baseline_comparison.json`
 (tracked) and `reconciliation_note.md` are derived from these runs. Freezing
 without them ships a DOI archive whose classical-baseline comparison numbers
 cannot be reproduced from the deposited artifacts. The per-run `metrics.json`
@@ -129,7 +129,7 @@ an unresolved scope gap.
 
 The gate is correct in logic but operates on the live working tree: gate-(a)
 self-heals `.gitignore` and `git add -f`s files into the index, gate-(b) reads
-working-copy `revision/docs/*.md`, gate-(c) reads `git ls-files`. None of this
+working-copy `docs/*.md`, gate-(c) reads `git ls-files`. None of this
 proves the *committed* tree that will be tagged satisfies the invariants. A
 green run today does NOT certify the tag. The gate must be re-run **after** the
 pre-freeze commit and **before** `git tag`, and ideally extended to also assert
@@ -142,7 +142,7 @@ working tree like the current one.
 
 ### MEDIUM-1 — 18 ablation `checkpoint.pt` files (~2 MB each, ~36 MB) ship in the tag archive
 
-`revision/results/transform_ablation/{runs,_smoke_100ep_archive}/**/checkpoint.pt`
+`results/transform_ablation/{runs,_smoke_100ep_archive}/**/checkpoint.pt`
 — 18 tracked `*.pt` files at ~2,011,893 bytes each. They are tracked despite the
 `.gitignore *.pt` rule because they were `git add -f`'d by an earlier wave;
 tracked files override `.gitignore`. `verify_freeze_ready.py` deliberately
@@ -158,7 +158,7 @@ to ship; flag for owner awareness.
 `git status` shows `results/phase4_validation.json` modified (83-line diff). The
 top-level `results/` directory is *not* tracked in bulk, but this specific file
 is tracked. Like the CSVs, this is uncommitted drift. The file is in the
-phase-4 (`results/`) area, not `revision/results/`, so it is likely not on the
+phase-4 (`results/`) area, not `results/`, so it is likely not on the
 provenance-gate path, but the owner should confirm whether the change is
 intended before it is committed or reverted.
 
@@ -205,17 +205,17 @@ samples are a published artifact; if so commit, else leave out.
 
 | Check | Result |
 |---|---|
-| `git check-ignore revision/results/*.json` (working tree) | empty (not ignored) — PASS, but only because uncommitted negations exist (CRITICAL-1) |
-| `revision/results/*.json` tracked at HEAD | 261 files — PASS |
+| `git check-ignore results/*.json` (working tree) | empty (not ignored) — PASS, but only because uncommitted negations exist (CRITICAL-1) |
+| `results/*.json` tracked at HEAD | 261 files — PASS |
 | `data.csv` tracked | YES — PASS |
 | `qgan_env/` tracked | NO (gitignored) — PASS |
 | Large checkpoints (>25 MB) tracked | NONE — PASS (but see MEDIUM-1: 18 sub-threshold .pt ship) |
 | LICENSE at HEAD | PRESENT — PASS (working-tree deletion uncommitted — see CRITICAL re: pre-freeze commit) |
 | Committed secrets / ZENODO_TOKEN | NONE found — PASS |
 | `.tex` manuscripts tracked | NONE — FAIL vs D-14-21 (HIGH-2) |
-| `revision/verify_freeze_ready.py` exists | YES (9.7 KB, well-formed, `raise AssertionError` idiom) — PASS |
-| `revision/verify_freeze_ready.py` run result | exit 0, all three gates pass — PASS (but validates working tree, not tag — HIGH-3) |
-| `revision/docs/release.md` exists | NO — FAIL (CRITICAL-3) |
+| `verify_freeze_ready.py` exists | YES (9.7 KB, well-formed, `raise AssertionError` idiom) — PASS |
+| `verify_freeze_ready.py` run result | exit 0, all three gates pass — PASS (but validates working tree, not tag — HIGH-3) |
+| `docs/release.md` exists | NO — FAIL (CRITICAL-3) |
 | Tag `v2.0-revision` exists | NO — not yet cut (expected; this is the gate before cutting) |
 
 ---
@@ -225,19 +225,19 @@ samples are a published artifact; if so commit, else leave out.
 1. Revert the unintended working-tree deletion: `git checkout -- LICENSE`.
 2. Resolve CRITICAL-2: owner decides canonical `real.csv`/`fake.csv` (and
    `results/phase4_validation.json`); confirm consistency with the certified
-   `revision/results/*.json`; commit or revert deliberately.
+   `results/*.json`; commit or revert deliberately.
 3. Commit the `.gitignore` change as ONE atomic commit containing the `results/`
-   line AND both `!revision/results/` negations together (CRITICAL-1); fix the
+   line AND both `!results/` negations together (CRITICAL-1); fix the
    ` *.csv` leading space to `# *.csv` (LOW-1) in the same commit.
-4. Commit `revision/results/baselines/runs/` metrics/config artifacts (HIGH-1).
+4. Commit `results/baselines/runs/` metrics/config artifacts (HIGH-1).
 5. Decide and act on `.tex` manuscript inclusion (HIGH-2).
-6. Author and commit `revision/docs/release.md` (CRITICAL-3).
-7. Re-run `python revision/verify_freeze_ready.py` against the now-clean,
+6. Author and commit `docs/release.md` (CRITICAL-3).
+7. Re-run `python verify_freeze_ready.py` against the now-clean,
    committed tree; confirm `git status --porcelain` is empty (HIGH-3).
-8. Verify `git check-ignore revision/results/*.json` is empty against the
+8. Verify `git check-ignore results/*.json` is empty against the
    committed `.gitignore`, then cut `git tag -a v2.0-revision`.
 9. Confirm `git archive v2.0-revision | tar -t` contains
-   `revision/results/*.json`, `data.csv`, and `LICENSE`.
+   `results/*.json`, `data.csv`, and `LICENSE`.
 
 ---
 

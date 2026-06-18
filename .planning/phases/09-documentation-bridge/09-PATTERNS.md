@@ -8,19 +8,19 @@
 
 | New/Modified File | Role | Data Flow | Closest Analog | Match Quality |
 |-------------------|------|-----------|----------------|---------------|
-| `revision/core/data.py` (MODIFY) | utility (numerical transform) | transform / autograd | `revision/core/data.py` existing `inverse_lambert_w_transform` (lines 68–87) + `lambert_w_transform` (lines 90–104) + PyTorch `torch.autograd.Function` docs idiom | exact body, new autograd wrapper (no in-repo Function subclass) |
-| `revision/core/preprocessing.py` (CREATE) | module facade / API contract | re-export | `revision/core/data.py` (module structure, `from __future__ import`, docstring style, `__all__`) | role-match (sibling module) |
-| `revision/02_eval06_roundtrip.ipynb` (CREATE) | test / verification notebook | request-response (load→assert→json) | `revision/01_parity_check.ipynb` | exact (canonical pattern; same file family) |
-| `revision/docs/training_protocol.md` (CREATE) | documentation | static content + traceable refs | none in-repo (`revision/docs/` is empty — `.gitkeep` only) | no analog (RESEARCH skeleton is the template) |
-| `revision/docs/dataset_stats.md` (CREATE) | documentation | static content + traceable refs | none in-repo | no analog (RESEARCH skeleton is the template) |
+| `core/data.py` (MODIFY) | utility (numerical transform) | transform / autograd | `core/data.py` existing `inverse_lambert_w_transform` (lines 68–87) + `lambert_w_transform` (lines 90–104) + PyTorch `torch.autograd.Function` docs idiom | exact body, new autograd wrapper (no in-repo Function subclass) |
+| `core/preprocessing.py` (CREATE) | module facade / API contract | re-export | `core/data.py` (module structure, `from __future__ import`, docstring style, `__all__`) | role-match (sibling module) |
+| `02_eval06_roundtrip.ipynb` (CREATE) | test / verification notebook | request-response (load→assert→json) | `01_parity_check.ipynb` | exact (canonical pattern; same file family) |
+| `docs/training_protocol.md` (CREATE) | documentation | static content + traceable refs | none in-repo (`docs/` is empty — `.gitkeep` only) | no analog (RESEARCH skeleton is the template) |
+| `docs/dataset_stats.md` (CREATE) | documentation | static content + traceable refs | none in-repo | no analog (RESEARCH skeleton is the template) |
 
 ## Pattern Assignments
 
-### `revision/core/data.py` (utility, transform/autograd) — MODIFY
+### `core/data.py` (utility, transform/autograd) — MODIFY
 
-**Analog:** existing `inverse_lambert_w_transform` body at `revision/core/data.py:68–87` (forward output behavior to preserve verbatim) + `lambert_w_transform` at `revision/core/data.py:90–104` (float64 promotion style) + PyTorch docs `torch.autograd.Function` idiom (no in-repo subclass exists — grep returned 0 hits).
+**Analog:** existing `inverse_lambert_w_transform` body at `core/data.py:68–87` (forward output behavior to preserve verbatim) + `lambert_w_transform` at `core/data.py:90–104` (float64 promotion style) + PyTorch docs `torch.autograd.Function` idiom (no in-repo subclass exists — grep returned 0 hits).
 
-**Imports pattern** (file `revision/core/data.py:11–21`):
+**Imports pattern** (file `core/data.py:11–21`):
 ```python
 from __future__ import annotations
 from pathlib import Path
@@ -36,7 +36,7 @@ from revision.core import DITHER, DITHER_SEED, PAR_LIGHT_MAX, WINDOW_LENGTH
 ```
 Copy: keep the existing import block untouched; no new third-party deps (D-05). The new `torch.autograd.Function` subclass uses only `torch` + `scipy.special.lambertw` (both already imported).
 
-**Forward-path behavior to preserve verbatim** (file `revision/core/data.py:80–87`):
+**Forward-path behavior to preserve verbatim** (file `core/data.py:80–87`):
 ```python
 data = data.double()                                       # float64 promote
 sign = torch.sign(data)
@@ -49,19 +49,19 @@ return transformed_data
 ```
 The new `_InverseLambertW.forward(ctx, data, delta)` MUST produce a bit-identical tensor to this (Phase 8 parity baseline = 0.0 delta — D-03 in-place replacement, no parallel function).
 
-**Float64 promotion convention** (file `revision/core/data.py:101`, mirroring forward):
+**Float64 promotion convention** (file `core/data.py:101`, mirroring forward):
 ```python
 transformed_data = transformed_data.double()
 ```
 Apply: promote on entry of `forward`; cast `grad_data.to(grad_output.dtype)` at the end of `backward` to honor caller dtype.
 
-**Device preservation pattern** (file `revision/core/data.py:85`):
+**Device preservation pattern** (file `core/data.py:85`):
 ```python
 lambert_tensor = torch.tensor(lambert_result, dtype=torch.float64, device=data.device)
 ```
 Apply: the new Function must continue to use `device=data.device` after `torch.from_numpy(...)` so MPS/CUDA tensors round-trip through scipy without leaking onto CPU (Pitfall 3 in RESEARCH).
 
-**Section-header / numbering style** (file `revision/core/data.py:65–67`):
+**Section-header / numbering style** (file `core/data.py:65–67`):
 ```python
 # ─────────────────────────────────────────────────────────────────────────────
 # Cell 17 — Lambert W transforms
@@ -69,13 +69,13 @@ Apply: the new Function must continue to use `device=data.device` after `torch.f
 ```
 Apply: keep the existing comment banner directly above `inverse_lambert_w_transform`. Add the `class _InverseLambertW(torch.autograd.Function):` immediately above the public wrapper, under the same "Cell 17" banner.
 
-**Public-API signature to preserve** (file `revision/core/data.py:68`):
+**Public-API signature to preserve** (file `core/data.py:68`):
 ```python
 def inverse_lambert_w_transform(data: torch.Tensor, delta: float) -> torch.Tensor:
 ```
 Apply: the public wrapper becomes a one-line `return _InverseLambertW.apply(data, delta)`. Same signature, same return shape/dtype. D-07: no rename.
 
-**Docstring template to preserve** (file `revision/core/data.py:69–79`):
+**Docstring template to preserve** (file `core/data.py:69–79`):
 ```python
 """Inverse Lambert W transform (heavy-tail → Gaussian-ish).
 
@@ -114,11 +114,11 @@ Source: RESEARCH.md "Pattern 1" lines 193–258 (verbatim skeleton, including th
 
 ---
 
-### `revision/core/preprocessing.py` (module facade) — CREATE
+### `core/preprocessing.py` (module facade) — CREATE
 
-**Analog:** `revision/core/data.py` (sibling module, same package, same style conventions).
+**Analog:** `core/data.py` (sibling module, same package, same style conventions).
 
-**Imports pattern** (copy from `revision/core/data.py:11–17`):
+**Imports pattern** (copy from `core/data.py:11–17`):
 ```python
 from __future__ import annotations
 from typing import Tuple
@@ -131,7 +131,7 @@ from revision.core.data import (
 ```
 Per D-07: single source of truth in `data.py`; `preprocessing.py` re-exports under the unified contract names.
 
-**Module docstring pattern** (mirroring `revision/core/data.py:1–10` and `revision/core/__init__.py:1–6`):
+**Module docstring pattern** (mirroring `core/data.py:1–10` and `core/__init__.py:1–6`):
 ```python
 """Preprocessing pipelines — three ablation variants for R1-M3 (Phase 09.1).
 
@@ -145,7 +145,7 @@ on a real OD trajectory.
 ```
 Copy the "module is a refactor not rewrite" voice from `data.py:1–10`. Same triple-quoted module docstring at top, before `from __future__ import`.
 
-**Section-header style** (mirroring `revision/core/data.py:24–26`, `:43–45`, `:65–67`):
+**Section-header style** (mirroring `core/data.py:24–26`, `:43–45`, `:65–67`):
 ```python
 # ─────────────────────────────────────────────────────────────────────────────
 # Pipeline C (CURRENT PAPER) — log-returns + Lambert W
@@ -153,7 +153,7 @@ Copy the "module is a refactor not rewrite" voice from `data.py:1–10`. Same tr
 ```
 Apply three banners: one per pipeline variant. Keep the box-drawing style verbatim — it is the project signature comment header (used 6 times in `data.py`).
 
-**`__all__` pattern** (copy from `revision/core/__init__.py:38–45`):
+**`__all__` pattern** (copy from `core/__init__.py:38–45`):
 ```python
 __all__ = [
     "forward_lambert", "inverse_lambert",
@@ -171,13 +171,13 @@ def forward_logreturns(od: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
 ```
 Apply identical signature shape to the other 3 stubs (`inverse_logreturns`, `forward_minmax_od`, `inverse_minmax_od`). Each gets one-line docstring stating expected behavior + `raise NotImplementedError("Phase 09.1")`.
 
-**Module registration:** `revision/core/__init__.py:35` currently imports `data, eval, training` and `models`. Phase 9 must add `preprocessing` to that import line and to `__all__` so the contract is package-level accessible (`from revision.core import preprocessing`).
+**Module registration:** `core/__init__.py:35` currently imports `data, eval, training` and `models`. Phase 9 must add `preprocessing` to that import line and to `__all__` so the contract is package-level accessible (`from revision.core import preprocessing`).
 
 ---
 
-### `revision/02_eval06_roundtrip.ipynb` (test / verification notebook) — CREATE
+### `02_eval06_roundtrip.ipynb` (test / verification notebook) — CREATE
 
-**Analog:** `revision/01_parity_check.ipynb` (canonical pattern; same notebook family in same dir).
+**Analog:** `01_parity_check.ipynb` (canonical pattern; same notebook family in same dir).
 
 **Markdown header cell pattern** (copy structure from `01_parity_check.ipynb` cell `51f2e835`):
 ```markdown
@@ -190,7 +190,7 @@ Verifies the differentiable `inverse_lambert_w_transform` (Phase 9):
 - **gradcheck**: analytic backward vs finite-difference, atol=1e-6
 - **Full pipeline smoke test**: full_denorm_pipeline gradient flow non-NaN, looser ≤ 1e-6 tolerance (D-04b)
 
-Output: `revision/results/eval06_roundtrip.json` with `pass: true`.
+Output: `results/eval06_roundtrip.json` with `pass: true`.
 ```
 
 **Repo-root finder cell — copy verbatim from `01_parity_check.ipynb` cell `2c8bc6c2` lines 1–46**:
@@ -275,7 +275,7 @@ artifact = {
     "notes": "Phase 9 EVAL-06: differentiable inverse Lambert W round-trip.",
 }
 
-out = Path("revision/results/eval06_roundtrip.json")
+out = Path("results/eval06_roundtrip.json")
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps(artifact, indent=2))
 print(json.dumps(artifact, indent=2))
@@ -321,40 +321,40 @@ Note: real-data length is **777** (RESEARCH OQ-1, OQ-2 verified live). Do NOT us
 
 ---
 
-### `revision/docs/training_protocol.md` (documentation) — CREATE
+### `docs/training_protocol.md` (documentation) — CREATE
 
-**Analog:** none in-repo (`revision/docs/` contains only `.gitkeep`). Top-level `README.md` is not the right shape (marketing prose, not paper-ready spec). **Use RESEARCH.md "training_protocol.md skeleton" at lines 494–567 as the literal template.**
+**Analog:** none in-repo (`docs/` contains only `.gitkeep`). Top-level `README.md` is not the right shape (marketing prose, not paper-ready spec). **Use RESEARCH.md "training_protocol.md skeleton" at lines 494–567 as the literal template.**
 
-**Citation pattern (D-09):** Every numerical value must include a `(\`revision/core/__init__.py:LINE\`)` source citation. Verified line numbers from live read of `revision/core/__init__.py`:
+**Citation pattern (D-09):** Every numerical value must include a `(\`core/__init__.py:LINE\`)` source citation. Verified line numbers from live read of `core/__init__.py`:
 
 | Constant | Value | Source line |
 |----------|-------|-------------|
-| `N_CRITIC` | 9 | `revision/core/__init__.py:11` |
-| `LAMBDA` | 2.16 | `revision/core/__init__.py:12` |
-| `LR_CRITIC` | 1.8046e-05 | `revision/core/__init__.py:13` |
-| `LR_GENERATOR` | 6.9173e-05 | `revision/core/__init__.py:14` |
-| `NUM_QUBITS` | 5 | `revision/core/__init__.py:17` |
-| `NUM_LAYERS` | 4 | `revision/core/__init__.py:18` |
-| `WINDOW_LENGTH` | 10 | `revision/core/__init__.py:19` |
-| `NUM_EPOCHS` | 2000 | `revision/core/__init__.py:20` |
-| `BATCH_SIZE` | 12 | `revision/core/__init__.py:21` |
-| `GEN_SCALE` | 1.0 | `revision/core/__init__.py:22` |
-| `EVAL_EVERY` | 10 | `revision/core/__init__.py:23` |
-| `DROPOUT_RATE` | 0.2 | `revision/core/__init__.py:24` |
-| `DITHER` | 0.005 | `revision/core/__init__.py:27` |
-| `DITHER_SEED` | 42 | `revision/core/__init__.py:28` |
-| `PAR_LIGHT_MAX` | 12.5 | `revision/core/__init__.py:29` |
-| `NOISE_LOW` | 0.0 | `revision/core/__init__.py:32` |
-| `NOISE_HIGH` | 4π | `revision/core/__init__.py:33` |
+| `N_CRITIC` | 9 | `core/__init__.py:11` |
+| `LAMBDA` | 2.16 | `core/__init__.py:12` |
+| `LR_CRITIC` | 1.8046e-05 | `core/__init__.py:13` |
+| `LR_GENERATOR` | 6.9173e-05 | `core/__init__.py:14` |
+| `NUM_QUBITS` | 5 | `core/__init__.py:17` |
+| `NUM_LAYERS` | 4 | `core/__init__.py:18` |
+| `WINDOW_LENGTH` | 10 | `core/__init__.py:19` |
+| `NUM_EPOCHS` | 2000 | `core/__init__.py:20` |
+| `BATCH_SIZE` | 12 | `core/__init__.py:21` |
+| `GEN_SCALE` | 1.0 | `core/__init__.py:22` |
+| `EVAL_EVERY` | 10 | `core/__init__.py:23` |
+| `DROPOUT_RATE` | 0.2 | `core/__init__.py:24` |
+| `DITHER` | 0.005 | `core/__init__.py:27` |
+| `DITHER_SEED` | 42 | `core/__init__.py:28` |
+| `PAR_LIGHT_MAX` | 12.5 | `core/__init__.py:29` |
+| `NOISE_LOW` | 0.0 | `core/__init__.py:32` |
+| `NOISE_HIGH` | 4π | `core/__init__.py:33` |
 
 Non-`__init__.py` citations (verified live):
-- Adam betas=(0.0, 0.9): `revision/core/training.py:233-234`
-- `torch.manual_seed(seed)`: `revision/core/training.py:211`
-- `torch.cuda.manual_seed_all(seed)`: `revision/core/training.py:215`
-- `seed: int = 42` default: `revision/core/training.py:188`
-- `EarlyStopping(patience=50, warmup_epochs=100)`: `revision/core/training.py:96-97` (class defaults at lines 94–98)
-- `shots=None` analytic statevector: `revision/core/models/quantum.py:64` (per RESEARCH citation)
-- `diff_method="backprop"`: `revision/core/models/quantum.py:43, 76` (per RESEARCH citation)
+- Adam betas=(0.0, 0.9): `core/training.py:233-234`
+- `torch.manual_seed(seed)`: `core/training.py:211`
+- `torch.cuda.manual_seed_all(seed)`: `core/training.py:215`
+- `seed: int = 42` default: `core/training.py:188`
+- `EarlyStopping(patience=50, warmup_epochs=100)`: `core/training.py:96-97` (class defaults at lines 94–98)
+- `shots=None` analytic statevector: `core/models/quantum.py:64` (per RESEARCH citation)
+- `diff_method="backprop"`: `core/models/quantum.py:43, 76` (per RESEARCH citation)
 
 **Section ordering** (Claude's discretion per CONTEXT.md):
 Suggested order: (1) Optimizer & Schedule, (2) Early-Stopping, (3) Quantum Circuit, (4) Critic (1D-CNN), (5) Gradient Penalty, (6) Reproducibility, (7) Analytic-vs-Shot Distinction (D-10 statement).
@@ -363,7 +363,7 @@ Suggested order: (1) Optimizer & Schedule, (2) Early-Stopping, (3) Quantum Circu
 
 ---
 
-### `revision/docs/dataset_stats.md` (documentation) — CREATE
+### `docs/dataset_stats.md` (documentation) — CREATE
 
 **Analog:** none in-repo. **Use RESEARCH.md "dataset_stats.md skeleton" at lines 571–616 as the literal template.**
 
@@ -372,9 +372,9 @@ Suggested order: (1) Optimizer & Schedule, (2) Early-Stopping, (3) Quantum Circu
 | Quantity | Value | Source |
 |----------|-------|--------|
 | Raw CSV rows (data) | 778 | `wc -l data.csv` minus header; verified `load_and_preprocess` returns OD tensor of length 778 |
-| OD rows post fillna+dropna | 778 | `revision/core/data.py:211-219` (fillna with 10-row rolling-mean, then dropna) |
-| Log-return rows (N−1) | 777 | `revision/core/data.py:62` (`log_od[1:] - log_od[:-1]`) |
-| Rolling windows (m=10, s=2) | 384 | `(777 − 10) // 2 + 1 = 384`; `revision/core/data.py:110-118` |
+| OD rows post fillna+dropna | 778 | `core/data.py:211-219` (fillna with 10-row rolling-mean, then dropna) |
+| Log-return rows (N−1) | 777 | `core/data.py:62` (`log_od[1:] - log_od[:-1]`) |
+| Rolling windows (m=10, s=2) | 384 | `(777 − 10) // 2 + 1 = 384`; `core/data.py:110-118` |
 | Independent campaigns | 1 | LUCY bioreactor, single run |
 | Sampling cadence | 10 minutes | `data.csv` consecutive DATE deltas |
 | Start date | 2024-03-27 13:12 | first row of `data.csv` |
@@ -391,7 +391,7 @@ Suggested order: (1) Optimizer & Schedule, (2) Early-Stopping, (3) Quantum Circu
 ## Shared Patterns
 
 ### Float64 Promotion at Autograd Boundary
-**Source:** `revision/core/data.py:80, 101` (both forward and inverse currently call `.double()` on entry)
+**Source:** `core/data.py:80, 101` (both forward and inverse currently call `.double()` on entry)
 **Apply to:** New `_InverseLambertW.forward` (promote on entry, cache float64 tensors via `ctx.save_for_backward`, cast `grad_data.to(grad_output.dtype)` in backward).
 ```python
 data = data.double()                        # entry: float32 → float64
@@ -402,14 +402,14 @@ return grad_data.to(grad_output.dtype), None
 **Why:** 1e-8 tolerance is unreachable in float32; pattern matches existing forward at line 80.
 
 ### Device Preservation Across scipy Boundary
-**Source:** `revision/core/data.py:85`
+**Source:** `core/data.py:85`
 ```python
 lambert_tensor = torch.tensor(lambert_result, dtype=torch.float64, device=data.device)
 ```
 **Apply to:** New autograd Function — preserve `data.device` after `torch.from_numpy(...)` so caller's MPS/CUDA tensor doesn't get pinned to CPU (Pitfall 3, RESEARCH lines 408–412).
 
 ### Section-Header Box-Drawing Comment Style
-**Source:** `revision/core/data.py:24-26, 43-45, 65-67, 107-109, 131-133, 165-167, 184-186` (used 7 times across the module)
+**Source:** `core/data.py:24-26, 43-45, 65-67, 107-109, 131-133, 165-167, 184-186` (used 7 times across the module)
 ```python
 # ─────────────────────────────────────────────────────────────────────────────
 # Cell NN — section name
@@ -418,12 +418,12 @@ lambert_tensor = torch.tensor(lambert_result, dtype=torch.float64, device=data.d
 **Apply to:** `preprocessing.py` (3 section headers, one per pipeline variant), and any new section added to `data.py` for `_InverseLambertW` (keep under existing "Cell 17 — Lambert W transforms" banner; do not introduce a new one).
 
 ### Notebook Repo-Root Finder + nbconvert Shim
-**Source:** `revision/01_parity_check.ipynb` cell `2c8bc6c2` lines 19–46
-**Apply to:** `revision/02_eval06_roundtrip.ipynb` first cell (verbatim copy, including `os.chdir(REPO_ROOT)` + `sys.path.insert`).
-**Why:** nbconvert sets CWD to notebook dir; without this shim `data.csv` and `revision/core/` won't resolve.
+**Source:** `01_parity_check.ipynb` cell `2c8bc6c2` lines 19–46
+**Apply to:** `02_eval06_roundtrip.ipynb` first cell (verbatim copy, including `os.chdir(REPO_ROOT)` + `sys.path.insert`).
+**Why:** nbconvert sets CWD to notebook dir; without this shim `data.csv` and `core/` won't resolve.
 
 ### JSON Artifact Schema (Phase 8 lineage)
-**Source:** `revision/01_parity_check.ipynb` cell `a28db61d` — see `revision/results/parity_check.json` for the realized shape:
+**Source:** `01_parity_check.ipynb` cell `a28db61d` — see `results/parity_check.json` for the realized shape:
 ```json
 {
   "delta": {...},
@@ -434,19 +434,19 @@ lambert_tensor = torch.tensor(lambert_result, dtype=torch.float64, device=data.d
   "notes": "..."
 }
 ```
-**Apply to:** `revision/results/eval06_roundtrip.json` — same top-level keys (`delta`, `tolerance`, `pass`, `seed`, `git_sha`, `notes`). Adds verification-specific deltas (`synthetic`, `real`, `full_pipeline`, `gradcheck_passed`).
+**Apply to:** `results/eval06_roundtrip.json` — same top-level keys (`delta`, `tolerance`, `pass`, `seed`, `git_sha`, `notes`). Adds verification-specific deltas (`synthetic`, `real`, `full_pipeline`, `gradcheck_passed`).
 
 ### "Source of Truth" Citation Footer for Docs (D-09)
-**Source:** D-09 mandates traceability to `revision/core/__init__.py`. No in-repo doc analog — pattern is defined by Phase 9 itself.
+**Source:** D-09 mandates traceability to `core/__init__.py`. No in-repo doc analog — pattern is defined by Phase 9 itself.
 **Apply to:** Both `training_protocol.md` and `dataset_stats.md` — top-of-file blockquote naming the source file once, then per-row `(\`<path>:<line>\`)` citations in tables.
 ```markdown
 > **Source of truth:** all numerical constants below are imported from
-> `revision/core/__init__.py`. Update that file to change them; this doc
+> `core/__init__.py`. Update that file to change them; this doc
 > tracks the file via the line-cited references in the table.
 ```
 
-### Module Registration in `revision/core/__init__.py`
-**Source:** `revision/core/__init__.py:35-39`
+### Module Registration in `core/__init__.py`
+**Source:** `core/__init__.py:35-39`
 ```python
 from revision.core import data, eval, training  # noqa: F401,E402
 from revision.core import models  # noqa: F401,E402
@@ -466,19 +466,19 @@ __all__ = ["data", "eval", "training", "models", "preprocessing", ...]
 
 | File | Role | Data Flow | Reason | Fallback |
 |------|------|-----------|--------|----------|
-| `revision/docs/training_protocol.md` | documentation | static | `revision/docs/` is empty (`.gitkeep` only); top-level `README.md` is marketing prose, wrong shape; `archive/*.md` files are phase-result notes, not paper methods specs | Use RESEARCH.md skeleton (lines 494–567) verbatim as template |
-| `revision/docs/dataset_stats.md` | documentation | static | same as above | Use RESEARCH.md skeleton (lines 571–616) verbatim as template |
+| `docs/training_protocol.md` | documentation | static | `docs/` is empty (`.gitkeep` only); top-level `README.md` is marketing prose, wrong shape; `archive/*.md` files are phase-result notes, not paper methods specs | Use RESEARCH.md skeleton (lines 494–567) verbatim as template |
+| `docs/dataset_stats.md` | documentation | static | same as above | Use RESEARCH.md skeleton (lines 571–616) verbatim as template |
 | `class _InverseLambertW(torch.autograd.Function)` in `data.py` | autograd Function subclass | autograd | `grep -r "torch.autograd.Function"` returned 0 hits in `revision/` and 0 hits in `qgan_pennylane.ipynb` — this is the first such class in the repo | Use RESEARCH.md "Pattern 1" skeleton (lines 193–258) which cites the canonical PyTorch docs idiom |
 
 ## Metadata
 
-**Analog search scope:** `revision/core/`, `revision/`, top-level `*.md`, `archive/*.md`
+**Analog search scope:** `core/`, `revision/`, top-level `*.md`, `archive/*.md`
 **Codebase grep hits:**
 - `torch.autograd.Function`: 0 in-repo hits (verified `grep -r --include="*.py" --include="*.ipynb"`)
-- `revision/docs/`: empty (only `.gitkeep`)
-- existing Lambert W code: `revision/core/data.py:68-104` (both directions)
-- notebook pattern: `revision/01_parity_check.ipynb` (~270 lines, fully read)
-- canonical constants: `revision/core/__init__.py` (45 lines, fully read)
+- `docs/`: empty (only `.gitkeep`)
+- existing Lambert W code: `core/data.py:68-104` (both directions)
+- notebook pattern: `01_parity_check.ipynb` (~270 lines, fully read)
+- canonical constants: `core/__init__.py` (45 lines, fully read)
 
 **Pattern extraction date:** 2026-05-11
 

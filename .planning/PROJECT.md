@@ -13,7 +13,7 @@ The qGAN must generate synthetic OD time series that capture real data's volatil
 **Goal:** Address all reviewer concerns on AIChE Journal manuscript aic-4719598 so the QWGAN-GP bioprocess paper can be resubmitted — establishing quantum-vs-classical evidence, utility-oriented validation, and calibrated claims.
 
 **Target features (Code — Group A, executes first):**
-- Extract shared modules from main notebook into `revision/core/` (data pipeline, PQC generator, critic, WGAN-GP training loop)
+- Extract shared modules from main notebook into `core/` (data pipeline, PQC generator, critic, WGAN-GP training loop)
 - Matched-parameter classical WGAN-GP baseline
 - Non-adversarial baseline (VAE or AR)
 - TSTR evaluation + predictive score + discriminative score
@@ -59,7 +59,7 @@ The qGAN must generate synthetic OD time series that capture real data's volatil
 ### Active (v2.0 — Reviewer Response)
 
 Code group (Group A):
-- [x] Extract shared modules (data, PQC, critic, training loop) into `revision/core/` — Phase 8 (INFRA-01 + INFRA-02 validated 2026-04-27, parity check passes with zero numerical drift)
+- [x] Extract shared modules (data, PQC, critic, training loop) into `core/` — Phase 8 (INFRA-01 + INFRA-02 validated 2026-04-27, parity check passes with zero numerical drift)
 - [x] Matched-parameter classical WGAN-GP baseline — Phase 10 (BASE-01 validated 2026-05-18; wgan_mlp/cnn/lstm at 74/73/78 params, identical critic/optimizer/seed set)
 - [x] Non-adversarial baseline (VAE or AR) — Phase 10 (BASE-02 validated 2026-05-18; VAE 562p + AR p=2, same data/metrics; BASE-03 comparison table emitted)
 - [x] TSTR + predictive + discriminative score evaluation — Phase 11 (EVAL-01..04 validated 2026-05-18; tstr.json, predictive_discriminative.json, augmentation.json; CR-01 + WR-01..06 gap closure complete, suite 23 passed)
@@ -93,7 +93,7 @@ Paper group (Group B):
 
 ### Out of Scope
 
-- ~~Migrating to a .py module structure~~ — v2.0 REINSTATES partial module extraction into `revision/core/` (shared modules only; main notebook unchanged)
+- ~~Migrating to a .py module structure~~ — v2.0 REINSTATES partial module extraction into `core/` (shared modules only; main notebook unchanged)
 - Qutrit circuit architectures — separate experimental notebooks
 - Hardware execution on real QPU — simulator-only (stated honestly in paper per R1-M5)
 - Implementing the full closed-loop decision pipeline — moved to Outlook per R2-3
@@ -137,11 +137,11 @@ PhD research project — the notebook has qutrit experimental variants (phase2, 
 ## Constraints
 
 - **Main notebook untouched**: `qgan_pennylane.ipynb` stays as-is; revision work lives in `revision/`
-- **Code structure**: `revision/core/` shared Python modules + `revision/NN_topic.ipynb` parallel notebooks (notebooks orchestrate + plot + write JSON only)
+- **Code structure**: `core/` shared Python modules + `revision/NN_topic.ipynb` parallel notebooks (notebooks orchestrate + plot + write JSON only)
 - **Compute**: Local Mac only — statevector simulator, multi-seed sweeps must be sized accordingly
 - **Data path**: Relative `./data.csv` (shared with main notebook)
 - **Compatibility**: PennyLane 0.44.0 and PyTorch 2.8.0 in qgan_env
-- **Results contract**: Each revision notebook writes structured JSON to `revision/results/<name>.json` so paper-writing reads numbers from one place
+- **Results contract**: Each revision notebook writes structured JSON to `results/<name>.json` so paper-writing reads numbers from one place
 - **Paper scope**: Manuscript aic-4719598 — AIChE Journal Major Revision
 
 ## Evolution
@@ -162,4 +162,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-19 — Phase 13 (Architecture & Introspection) complete; ARCH-01/02 + INTRO-01/02/03 validated. V1/V2/V3 topology-selectable ansatz, ansatz_comparison.json (300 rows, multi-seed, dual-scale), training-progression/param-trajectory/entanglement-entropy figures (PNG+PDF) with reproducibility JSON. Code review found 2 BLOCKERs + 5 WARNINGs, all 7 fixed (CR-01 --epochs threading, CR-02 npz schema guard, WR-01..05); revision/core/ default path byte-unchanged vs b7c84d3 (test_default_forward_byte_unchanged atol 1e-12 green, 30/30 suite). 3 figure visual-correctness checks remain in 13-HUMAN-UAT.md (partial)*
+*Last updated: 2026-05-19 — Phase 13 (Architecture & Introspection) complete; ARCH-01/02 + INTRO-01/02/03 validated. V1/V2/V3 topology-selectable ansatz, ansatz_comparison.json (300 rows, multi-seed, dual-scale), training-progression/param-trajectory/entanglement-entropy figures (PNG+PDF) with reproducibility JSON. Code review found 2 BLOCKERs + 5 WARNINGs, all 7 fixed (CR-01 --epochs threading, CR-02 npz schema guard, WR-01..05); core/ default path byte-unchanged vs b7c84d3 (test_default_forward_byte_unchanged atol 1e-12 green, 30/30 suite). 3 figure visual-correctness checks remain in 13-HUMAN-UAT.md (partial)*

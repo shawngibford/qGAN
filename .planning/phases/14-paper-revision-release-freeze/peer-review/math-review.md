@@ -2,9 +2,9 @@
 
 Reviewer role: mathematical and statistical rigor at a top-tier journal.
 Date: 2026-05-20
-Scope: `revision/core/*.py`, `revision/run_*.py`, `revision/docs/methods_full.md`,
-`revision/docs/reconciliation_note.md`, `revision/results/*.json`, and
-`revision/results/figures/*.json`.
+Scope: `core/*.py`, `run_*.py`, `docs/methods_full.md`,
+`docs/reconciliation_note.md`, `results/*.json`, and
+`results/figures/*.json`.
 
 ## Executive verdict
 
@@ -49,7 +49,7 @@ wgan_lstm:         round(0.146192 - 0.029258, 6) = 0.116934   claim +0.116935 (o
 wgan_cnn:          round(0.101747 - 0.113033, 6) = -0.011286  claim -0.011286 ✓
 wgan_mlp:          round(0.121527 - 0.027580, 6) = +0.093947  ("+0.093946" appears in reconciliation_note as well)
 
-# Quantum param formulas (revision/core/models/quantum.py:105-109)
+# Quantum param formulas (core/models/quantum.py:105-109)
 iqp_sel_55:    5 + 3*5*3 + 5*1 = 55  ✓ (matches canonical_config_lock.json)
 default_75/V1: 5 + 4*5*3 + 5*2 = 75  ✓ (matches v1_config_lock.json)
 V2:            5 + 8*5*3 + 5*2 = 135 ✓ (matches v2_config_lock.json)
@@ -73,9 +73,9 @@ CRITICAL-1 below.
 
 ### C-1. Scale collision in reconciliation_note.md "EMD (OD scale)" table
 
-`revision/docs/reconciliation_note.md:9` declares "EMD (OD scale) — final-eval
+`docs/reconciliation_note.md:9` declares "EMD (OD scale) — final-eval
 mean over seeds 42-46" as the table title. Reading the row construction in
-`revision/run_model_info.py:220-302`:
+`run_model_info.py:220-302`:
 
 - **OLD column** (`old_1000ep`) is built from `baseline_comparison.json` rows
   filtered by `scale == "OD"` and `pipeline == "B"` — correctly on the OD
@@ -83,7 +83,7 @@ mean over seeds 42-46" as the table title. Reading the row construction in
 - **NEW column** (`new_2000ep`) is built from
   `matched2000/runs/<model>/<seed>/metrics.json["emd_avg"][-1]`
   (`run_model_info.py:240`). But `emd_avg` is populated inside
-  `revision/core/training.py:415-420`:
+  `core/training.py:415-420`:
 
   ```python
   eval_gen = generator(eval_noise)
@@ -129,13 +129,13 @@ NOT comparable to audited fidelity)" and explicitly do not compute deltas
 between two non-commensurate metrics. Option (a) is correct and consistent
 with the rest of the audited corpus.
 
-Citation: `revision/docs/reconciliation_note.md:9-23`,
-`revision/run_model_info.py:220-302`, `revision/core/training.py:415-420`,
-`revision/results/matched2000_dualscale.json` (rows scale="OD").
+Citation: `docs/reconciliation_note.md:9-23`,
+`run_model_info.py:220-302`, `core/training.py:415-420`,
+`results/matched2000_dualscale.json` (rows scale="OD").
 
 ### C-2. Selection-biased + scale-mixed cross_model_emd figure
 
-`revision/run_figure_suite.py:620-669` renders the cross_model_emd bar chart.
+`run_figure_suite.py:620-669` renders the cross_model_emd bar chart.
 Two independent issues:
 
 1. **Selection bias.** Line 630 takes `float(np.min(mt["emd_avg"]))` per
@@ -154,7 +154,7 @@ Two independent issues:
    it as a horizontal dashed reference line. The bars are on the in-loop
    log-return-standardized scale (per C-1). The reference line and the bars
    are on **two different metric spaces**. Confirmed in
-   `revision/results/figures/cross_model_emd.json`:
+   `results/figures/cross_model_emd.json`:
    - `best_emd_mean` for iqp_sel_55_repro = 0.1127 (in-loop log-return)
    - `frozen_headline_OD_emd` = 0.0231 (OD)
    A reader sees a horizontal dashed line at 0.023 sitting below all the
@@ -169,9 +169,9 @@ quantities live in the same metric space. The "best-of-trajectory" framing
 should be dropped entirely or moved to a supplementary diagnostic with the
 selection-bias caveat explicit.
 
-Citation: `revision/run_figure_suite.py:620-669`,
-`revision/results/figures/cross_model_emd.json`,
-`revision/results/headline_canonical.json:53` (OD EMD), training.py:415-420.
+Citation: `run_figure_suite.py:620-669`,
+`results/figures/cross_model_emd.json`,
+`results/headline_canonical.json:53` (OD EMD), training.py:415-420.
 
 ### C-3. Original paper's 0.0015 "headline EMD" was a different metric
 
@@ -193,7 +193,7 @@ weights), so `scipy.stats.wasserstein_distance` treats them as one-dimensional
 samples in the range [0, max-density]. The result is dimensionally and
 mathematically distinct from the raw-sample Wasserstein.
 
-The current `revision/core/eval.py:25-36` `compute_emd` correctly calls
+The current `core/eval.py:25-36` `compute_emd` correctly calls
 `wasserstein_distance(real_raw, fake_raw)` on raw sample arrays — the
 distributionally correct 1D earth-mover distance over the data distribution.
 The v1.0 decision to switch is documented in eval.py's docstring and is the
@@ -205,19 +205,19 @@ histogram-density Wasserstein and is not commensurate with the new 0.121
 raw-sample Wasserstein."
 
 This is **not a code bug** — the v1.0 redefinition is documented in
-`revision/core/eval.py:25-36` — but a referee will demand that the paper
+`core/eval.py:25-36` — but a referee will demand that the paper
 acknowledge the redefinition explicitly rather than presenting the new number
 as a continuation of the old one.
 
-Citation: `qgan_pennylane.ipynb:1561-1569`, `revision/core/eval.py:25-36`,
-`revision/docs/reconciliation_note.md` (no mention of the metric
+Citation: `qgan_pennylane.ipynb:1561-1569`, `core/eval.py:25-36`,
+`docs/reconciliation_note.md` (no mention of the metric
 redefinition).
 
 ## HIGH findings
 
 ### H-1. `training_convergence_all_models` axis label is "OD scale" but data are not OD
 
-`revision/run_figure_suite.py:1146` sets `ax.set_ylabel("EMD (avg over eval
+`run_figure_suite.py:1146` sets `ax.set_ylabel("EMD (avg over eval
 window, OD scale)")`, but the underlying `emd_avg` arrays from
 `matched2000/runs/<m>/<s>/metrics.json` are the in-loop log-return-
 standardized EMD (training.py:415-420), not OD. The frozen-headline
@@ -228,13 +228,13 @@ reading the figure caption will be confused when this 0.0838 line value does
 not match the 0.0231 OD-scale headline value in
 `headline_canonical.json`.
 
-Citation: `revision/run_figure_suite.py:1146`,
-`revision/results/canonical_config_lock.json:2`,
-`revision/results/headline_canonical.json:53`.
+Citation: `run_figure_suite.py:1146`,
+`results/canonical_config_lock.json:2`,
+`results/headline_canonical.json:53`.
 
 ### H-2. Aggregation uses population std (ddof=0) throughout the figure pipeline
 
-`revision/run_matched2000_dualscale.py:522`:
+`run_matched2000_dualscale.py:522`:
 ```python
 std = statistics.pstdev(vals) if len(vals) > 1 else 0.0
 ```
@@ -252,8 +252,8 @@ ddof=1 is the established convention for sample std; pstdev is appropriate
 only when the 5 values are the **entire** population, which they are not
 (they are 5 samples from an underlying training-noise distribution).
 
-Citation: `revision/run_matched2000_dualscale.py:522`,
-`revision/run_figure_suite.py:634`, `:1129`, `:1892`.
+Citation: `run_matched2000_dualscale.py:522`,
+`run_figure_suite.py:634`, `:1129`, `:1892`.
 
 ### H-3. Shared critic (~250,881 params) absent from parameter-efficiency narrative
 
@@ -278,15 +278,15 @@ count, and the Pareto figure does not surface it. Recommendation: add a
 "total adversarial parameter count" companion table that includes the critic,
 and discuss the parameter-efficiency framing in light of it.
 
-Citation: `revision/results/classical_architectures.json` shared_critic,
-`revision/results/model_info.json` (generator-only counts),
-`revision/docs/methods_full.md:210-219`.
+Citation: `results/classical_architectures.json` shared_critic,
+`results/model_info.json` (generator-only counts),
+`docs/methods_full.md:210-219`.
 
 ## MEDIUM findings
 
 ### M-1. VAE ELBO uses `mean` over latent dim → implicit β re-weighting
 
-`revision/run_baselines.py:315-319`:
+`run_baselines.py:315-319`:
 ```python
 recon = torch.nn.functional.mse_loss(x_hat, x)
 kld = -0.5 * torch.mean(1.0 + logvar - mu.pow(2) - logvar.exp())
@@ -317,12 +317,12 @@ per-element-mean formulation (which is honest about the implicit β) or the
 code should switch to `mse_loss(reduction='sum') / batch_size` + `kld =
 -0.5 * sum / batch_size` to match the equation.
 
-Citation: `revision/run_baselines.py:315-319`,
-`revision/docs/methods_full.md:189-191`.
+Citation: `run_baselines.py:315-319`,
+`docs/methods_full.md:189-191`.
 
 ### M-2. AR(p) noise variance uses ddof=0 (biased ML estimator, not unbiased)
 
-`revision/core/models/nonadversarial.py:157`:
+`core/models/nonadversarial.py:157`:
 ```python
 self.sigma2 = float(resid.var(ddof=0))
 ```
@@ -341,12 +341,12 @@ match the methods statement. Methods § 2.j writes the residual as
 referee may prefer the unbiased convention. Recommendation: change to
 `resid.var(ddof=p)` or document the ML convention.
 
-Citation: `revision/core/models/nonadversarial.py:157`,
-`revision/docs/methods_full.md:206-208`.
+Citation: `core/models/nonadversarial.py:157`,
+`docs/methods_full.md:206-208`.
 
 ### M-3. `compute_moments` uses ddof=0 std and Fisher kurtosis — undocumented in methods
 
-`revision/core/eval.py:55-57`:
+`core/eval.py:55-57`:
 ```python
 "std": float(np.std(s)),         # ddof=0 (population)
 "skewness": float(skew(s)),       # bias=True (sample, scipy default)
@@ -363,12 +363,12 @@ Recommendation: add a one-line statement to methods_full.md § 2 (or in a
 "Metric conventions" subsection) that std is ddof=0, kurtosis is Fisher
 (excess), and skew/kurtosis use scipy.stats defaults with bias=True.
 
-Citation: `revision/core/eval.py:42-58`,
-`revision/docs/methods_full.md` (no metric convention statement).
+Citation: `core/eval.py:42-58`,
+`docs/methods_full.md` (no metric convention statement).
 
 ### M-4. ACF computed via statsmodels FFT — methods doc says "scipy" implicitly
 
-methods_full.md does not pin the ACF library. `revision/core/eval.py:64-72`
+methods_full.md does not pin the ACF library. `core/eval.py:64-72`
 calls `statsmodels.tsa.stattools.acf(s, nlags=20, fft=True)`. statsmodels'
 ACF uses a divisor of `n` (biased by default), not `n-k` (unbiased). For a
 short series this matters — but the v1.0 decision is documented in
@@ -376,7 +376,7 @@ short series this matters — but the v1.0 decision is documented in
 biased ACF estimator vs the unbiased one was the conscious choice; the
 methods doc should clarify.
 
-Citation: `revision/core/eval.py:64-72`.
+Citation: `core/eval.py:64-72`.
 
 ### M-5. EMD `emd_avg[-1]` is one in-loop snapshot, not 5-seed × full-eval mean
 
@@ -392,7 +392,7 @@ The dualscale EMD is therefore both more accurate (more samples) and on the
 right scale (OD). reconciliation_note's choice of `emd_avg[-1]` is the worse
 estimator on the wrong scale.
 
-Citation: `revision/run_model_info.py:240`, `revision/core/training.py:402-420`.
+Citation: `run_model_info.py:240`, `core/training.py:402-420`.
 
 ## LOW findings
 
@@ -410,7 +410,7 @@ hides the last-digit adjustment that produces the +0.116935 delta. Acceptable
 provided the underlying full-precision numbers live in the JSON sources (they
 do).
 
-Citation: `revision/docs/reconciliation_note.md:19`.
+Citation: `docs/reconciliation_note.md:19`.
 
 ### L-2. lambda_gp = 2.16 is non-standard (Gulrajani 2017 uses 10)
 
@@ -419,8 +419,8 @@ phase). This is fine for honest reporting, but a referee may ask for the HPO
 search range and the criterion that selected 2.16. The methods_full.json
 buckets should expose this. Not strictly a math issue.
 
-Citation: `revision/docs/methods_full.md:232`,
-`revision/core/training.py:219`.
+Citation: `docs/methods_full.md:232`,
+`core/training.py:219`.
 
 ### L-3. `n_critic = 9` — non-standard but accept
 
@@ -429,7 +429,7 @@ Same as L-2 — methodologically defensible, just non-standard.
 
 ### L-4. Gradient penalty `device` argument is unused (cosmetic API smell)
 
-`revision/core/training.py:31-73` accepts `device` but uses
+`core/training.py:31-73` accepts `device` but uses
 `real_samples.device` instead (line 55). The comment at lines 51-53 admits
 this. Cosmetic only; the GP is computed on the correct device, and the
 function signature keeps API symmetry with the notebook. Not a math
@@ -450,7 +450,7 @@ correctness issue.
 
 ### I-2. EMD via `scipy.stats.wasserstein_distance` on raw samples: CORRECT
 
-`revision/core/eval.py:25-36` calls
+`core/eval.py:25-36` calls
 `wasserstein_distance(real.ravel(), fake.ravel())` — the documented 1D
 empirical Wasserstein-1 / earth-mover distance. Inputs are properly
 flattened. Eval is on the actual scale of the samples (whichever space the
@@ -458,8 +458,8 @@ caller passes in). ✓
 
 ### I-3. Quantum parameter formulas match config-locks exactly
 
-`revision/core/models/quantum.py:104-109` ↔
-`revision/results/{canonical,default_75,v1,v2,v3}_config_lock.json`
+`core/models/quantum.py:104-109` ↔
+`results/{canonical,default_75,v1,v2,v3}_config_lock.json`
 `param_count` fields all match by formula `nq + L*nq*3 + nq*final_rot_factor`
 where final_rot_factor ∈ {1 for RX_only, 2 for RX_plus_RY}. ✓
 
@@ -473,7 +473,7 @@ encodes via `4 * hidden_size + 4 * hidden_size = 16` extra params. ✓
 
 ### I-5. Seed independence: CORRECT
 
-`revision/core/training.py:244-249` seeds torch + numpy + random once at the
+`core/training.py:244-249` seeds torch + numpy + random once at the
 top of `train_wgan_gp` before any optimizer/data construction. Subsequent
 `np.random.uniform(...)` noise draws (lines 339-345, 373-378, 408-414) and
 `torch.rand`/`torch.stack`-via-`torch.randint(...)` data sampling all drain
@@ -484,7 +484,7 @@ independent trajectories. ✓
 
 `verify_number_provenance.py:1-180` correctly flags the 3 deltas in
 reconciliation_note.md (+0.127413, +0.116935, -0.011286) because they do not
-appear in any `revision/results/*.json`. The gate is doing its job — these
+appear in any `results/*.json`. The gate is doing its job — these
 are exactly the kind of human-recomputed numbers that should be flagged. The
 gate is the right enforcement mechanism even though the *arithmetic* is
 correct, because the *interpretation* is wrong (per CRITICAL-1).

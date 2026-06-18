@@ -4,10 +4,10 @@ plan: 18
 subsystem: paper-revision
 tags: [claims-integrity, statistics, peer-review-r4, gap-closure]
 requires:
-  - revision/docs/reviewer_response.md
-  - revision/docs/methods_full.md
-  - revision/results/welch_pairwise.json
-  - revision/verify_number_provenance.py
+  - docs/reviewer_response.md
+  - docs/methods_full.md
+  - results/welch_pairwise.json
+  - verify_number_provenance.py
 provides:
   - "Recalibrated OD-EMD claim: 'no statistically detectable difference at n=5 (underpowered)' instead of 'statistically equivalent'"
   - "OD-DTW Orlandi claim reframed as matched-budget-wide; LR-DTW stated as sole quantum-distinguishing DTW result"
@@ -21,9 +21,9 @@ tech-stack:
 key-files:
   created: []
   modified:
-    - revision/docs/reviewer_response.md
-    - revision/docs/methods_full.md
-    - revision/results/welch_pairwise.json
+    - docs/reviewer_response.md
+    - docs/methods_full.md
+    - results/welch_pairwise.json
 decisions:
   - "OD-EMD claim direction retained (quantum OD-EMD not distinguishable from size-matched classical) but 'equivalent' wording and positive-equivalence framing removed — a high p-value at n=5 is an absence-of-detectable-difference result, not evidence of absence"
   - "LR-DTW uniform-dominance claim treated as conjunctive: no multiplicity correction required (unlike a disjunctive >=1-significant-pair claim); reconciled with OD-EMD non-significance reported without positive-equivalence inference"
@@ -101,9 +101,9 @@ gate still passing.
   numeric value preserved byte-identical (git diff confirms only the `notes`
   field changed).
 - Number-provenance gate re-run over both edited docs:
-  - `revision/verify_number_provenance.py --target reviewer_response.md` →
+  - `verify_number_provenance.py --target reviewer_response.md` →
     PASS (88 distinct numeric literals all resolve, exit 0).
-  - `revision/verify_number_provenance.py --target methods_full.md` → PASS
+  - `verify_number_provenance.py --target methods_full.md` → PASS
     (107 distinct numeric literals all resolve, exit 0).
 - `run_welch_aggregator.py` not run and not edited.
 
@@ -131,9 +131,9 @@ around existing, already-certified numbers was changed.
 
 ## Self-Check: PASSED
 
-- `revision/docs/reviewer_response.md` — FOUND, modified
-- `revision/docs/methods_full.md` — FOUND, modified
-- `revision/results/welch_pairwise.json` — FOUND, modified, valid JSON
+- `docs/reviewer_response.md` — FOUND, modified
+- `docs/methods_full.md` — FOUND, modified
+- `results/welch_pairwise.json` — FOUND, modified, valid JSON
 - `.planning/phases/14-paper-revision-release-freeze/14-18-SUMMARY.md` — FOUND
 - Commit 6eeda6e (Task 1) — FOUND
 - Commit f522d3a (Task 2) — FOUND

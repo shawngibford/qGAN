@@ -10,22 +10,22 @@ Phase 12 is ~90% wiring of frozen components. Every new file has a direct, shipp
 
 | New/Modified File | Role | Data Flow | Closest Analog | Match Quality |
 |-------------------|------|-----------|----------------|---------------|
-| `revision/run_sensitivity.py` | driver (CLI, one cell/invocation) | transform + request-response | `revision/run_baselines.py` (CLI shape) + `revision/run_ablation.py:179-209` (`generate_samples`) + `revision/run_utility.py:130-185` (`reconstruct_od`) | exact (composite) |
-| `revision/run_sensitivity_sweep.sh` | sweep orchestration | batch / event-driven | `revision/run_baselines_sweep.sh` | exact |
-| `revision/run_multiseed_rollup.py` | aggregator (single invocation) | batch / transform | `revision/run_utility.py` (consumer/aggregation shape, repo-resolver) + Code Example 4 (groupby) | role-match |
-| `revision/results/shot_noise_sensitivity.json` | output artifact | data emission | `revision/results/baseline_comparison.json` (long-form `rows[]` schema) | exact (extend) |
-| `revision/results/noise_model_sensitivity.json` | output artifact | data emission | `revision/results/baseline_comparison.json` | exact (extend) |
-| `revision/results/multiseed_summary.json` | output artifact | data emission | `revision/results/baseline_comparison.json` + RESEARCH Code Example 4 | exact (extend) |
-| `revision/core/*` | UNTOUCHED | — | n/a (D-10-13 invariant — assert `git diff --stat revision/core/` empty) | — |
+| `run_sensitivity.py` | driver (CLI, one cell/invocation) | transform + request-response | `run_baselines.py` (CLI shape) + `run_ablation.py:179-209` (`generate_samples`) + `run_utility.py:130-185` (`reconstruct_od`) | exact (composite) |
+| `run_sensitivity_sweep.sh` | sweep orchestration | batch / event-driven | `run_baselines_sweep.sh` | exact |
+| `run_multiseed_rollup.py` | aggregator (single invocation) | batch / transform | `run_utility.py` (consumer/aggregation shape, repo-resolver) + Code Example 4 (groupby) | role-match |
+| `results/shot_noise_sensitivity.json` | output artifact | data emission | `results/baseline_comparison.json` (long-form `rows[]` schema) | exact (extend) |
+| `results/noise_model_sensitivity.json` | output artifact | data emission | `results/baseline_comparison.json` | exact (extend) |
+| `results/multiseed_summary.json` | output artifact | data emission | `results/baseline_comparison.json` + RESEARCH Code Example 4 | exact (extend) |
+| `core/*` | UNTOUCHED | — | n/a (D-10-13 invariant — assert `git diff --stat core/` empty) | — |
 
 ---
 
 ## Pattern Assignments
 
-### `revision/run_sensitivity.py` (driver, SENS-01 + SENS-02 per-cell inference)
+### `run_sensitivity.py` (driver, SENS-01 + SENS-02 per-cell inference)
 
-**Primary analog:** `revision/run_baselines.py` (CLI/idempotency/config-emit skeleton)
-**Secondary analogs:** `revision/run_ablation.py:179-209` (`generate_samples` — *0.1 contract), `revision/run_utility.py:38-58, 130-185` (repo-root resolver + `reconstruct_od`), `revision/core/models/quantum.py:103-202` (circuit body to copy for the noisy QNode).
+**Primary analog:** `run_baselines.py` (CLI/idempotency/config-emit skeleton)
+**Secondary analogs:** `run_ablation.py:179-209` (`generate_samples` — *0.1 contract), `run_utility.py:38-58, 130-185` (repo-root resolver + `reconstruct_od`), `core/models/quantum.py:103-202` (circuit body to copy for the noisy QNode).
 
 **Module docstring + imports pattern** — copy the structure of `run_baselines.py:1-91`. Notice: docstring states the invariant decisions (D-12-01/02/03) and Pitfalls inline; imports pull HPO constants from `revision.core` never as literals (`run_baselines.py:65-77`):
 ```python
@@ -35,7 +35,7 @@ from revision.core import (
 )
 ```
 
-**Repo-root resolver (Pitfall 6)** — copy verbatim from `revision/run_utility.py:38-58`:
+**Repo-root resolver (Pitfall 6)** — copy verbatim from `run_utility.py:38-58`:
 ```python
 def _find_repo_root() -> Path:
     p = Path(__file__).resolve().parent
@@ -46,7 +46,7 @@ def _find_repo_root() -> Path:
     for cand in [p, *p.parents]:
         if (cand / "revision" / "core" / "preprocessing.py").exists():
             return cand
-    raise RuntimeError("repo root not found (revision/core/preprocessing.py)")
+    raise RuntimeError("repo root not found (core/preprocessing.py)")
 
 REPO = _find_repo_root()
 if str(REPO) not in sys.path:
@@ -67,16 +67,16 @@ assert qml.__version__ == "0.44.0", (
 from revision.core.models.quantum import QuantumGenerator
 g = QuantumGenerator(num_qubits=NUM_QUBITS, num_layers=NUM_LAYERS,
                      window_length=WINDOW_LENGTH)
-ck = torch.load(REPO / "revision/results/transform_ablation/runs"
+ck = torch.load(REPO / "results/transform_ablation/runs"
                 / pipeline / str(seed) / "checkpoint.pt",
                 map_location="cpu", weights_only=False)
 g.params_pqc.data = ck["params_pqc"]   # 75-element trained tensor
 g.eval()
 ```
 
-**Generation contract (Pitfall 3 — the `*0.1` is load-bearing)** — copy `generate_samples` body **verbatim** from `revision/run_ablation.py:179-208`; the ONLY change is the call site uses the alternate `qnode` instead of `generator(noise)`:
+**Generation contract (Pitfall 3 — the `*0.1` is load-bearing)** — copy `generate_samples` body **verbatim** from `run_ablation.py:179-208`; the ONLY change is the call site uses the alternate `qnode` instead of `generator(noise)`:
 ```python
-# revision/run_ablation.py:195-208 — copy verbatim, swap call site to qnode
+# run_ablation.py:195-208 — copy verbatim, swap call site to qnode
 rng = np.random.default_rng(seed)
 out_parts: list[np.ndarray] = []
 remaining = n
@@ -107,7 +107,7 @@ def make_shot_qnode(g, shots: int | None):
 ```
 For SENS-02, copy the `generator_circuit` body (`quantum.py:122-171`) into the driver as `noisy_generator_circuit`, inserting `qml.DepolarizingChannel(p, wires=q)` / `qml.AmplitudeDamping(gamma, wires=q)` **after each entangling block** (per-layer, RESEARCH Assumption A1 default) on a `qml.device("default.mixed", wires=NUM_QUBITS)`. Document this copy as a deliberate noise-study duplication (does NOT violate D-10-13 — copy lives in `run_sensitivity.py`, not `core/`).
 
-**OD reconstruction (Pitfall 4 — `seed*7919+1` load-bearing)** — copy `reconstruct_od` Pipeline-A and Pipeline-B branches **verbatim** from `revision/run_utility.py:144-185`. Note the `od[:, :10]` truncation when `inverse_logreturns` returns length-11 (`run_utility.py:179-181`):
+**OD reconstruction (Pitfall 4 — `seed*7919+1` load-bearing)** — copy `reconstruct_od` Pipeline-A and Pipeline-B branches **verbatim** from `run_utility.py:144-185`. Note the `od[:, :10]` truncation when `inverse_logreturns` returns length-11 (`run_utility.py:179-181`):
 ```python
 # run_utility.py:166-181 — Pipeline B branch, verbatim
 rng = np.random.default_rng(seed * 7919 + 1)   # load-bearing — do NOT refactor
@@ -138,13 +138,13 @@ np.save(run_dir / "samples.npy", samples)
 ```
 **`{analytic}` sub-pattern (no regeneration, mirrors D-11-08):** for `condition=analytic` do NOT re-run — read frozen `transform_ablation/runs/<pipeline>/<seed>/samples.npy`. Only `shots ∈ {8192,1024}` and the 8 noise cells get fresh forward passes.
 
-**CLI surface** — pattern after `run_baselines.py:430-454`: `--pipeline {A|B} --seed N --condition <cell> [--out-root revision/results/sensitivity] [--csv-path ./data.csv]`, one `(pipeline, seed, condition)` cell per invocation.
+**CLI surface** — pattern after `run_baselines.py:430-454`: `--pipeline {A|B} --seed N --condition <cell> [--out-root results/sensitivity] [--csv-path ./data.csv]`, one `(pipeline, seed, condition)` cell per invocation.
 
 ---
 
-### `revision/run_sensitivity_sweep.sh` (sweep orchestration)
+### `run_sensitivity_sweep.sh` (sweep orchestration)
 
-**Analog:** `revision/run_baselines_sweep.sh` — copy near-verbatim; only the worklist (MODELS→CONDITIONS), `is_complete` artifact set, `total_count`, and the `python -m` target change.
+**Analog:** `run_baselines_sweep.sh` — copy near-verbatim; only the worklist (MODELS→CONDITIONS), `is_complete` artifact set, `total_count`, and the `python -m` target change.
 
 **Idempotent per-cell skip (`is_complete`)** — `run_baselines_sweep.sh:174-184`:
 ```bash
@@ -194,9 +194,9 @@ fi
 
 ---
 
-### `revision/run_multiseed_rollup.py` (SENS-03 aggregator, single invocation)
+### `run_multiseed_rollup.py` (SENS-03 aggregator, single invocation)
 
-**Analog:** `revision/run_utility.py` (pure-consumer shape + repo-root resolver `:38-58`) + RESEARCH Code Example 4 (the groupby — ~30 lines, the only new logic).
+**Analog:** `run_utility.py` (pure-consumer shape + repo-root resolver `:38-58`) + RESEARCH Code Example 4 (the groupby — ~30 lines, the only new logic).
 
 **Repo-root resolver + no model/device/torch** — reuse the same `_find_repo_root()` block as `run_sensitivity.py`. This driver imports NO torch, NO pennylane, NO `core` model code (Pattern 2: "no device, no model, no torch").
 
@@ -235,7 +235,7 @@ rollup = [{
 
 ### Output JSON artifacts (`shot_noise_sensitivity.json`, `noise_model_sensitivity.json`, `multiseed_summary.json`)
 
-**Analog:** `revision/results/baseline_comparison.json` — established long-form contract (verified live):
+**Analog:** `results/baseline_comparison.json` — established long-form contract (verified live):
 - Top-level keys: `schema, model_kinds, pipelines, seeds, data_hash, data_hash_verification, ...`
 - `rows[]` element: `{model_kind, pipeline, seed, metric_name, scale, value}` (example row 0: `{'model_kind':'quantum','pipeline':'A','seed':42,'metric_name':'emd','scale':'OD','value':1.052...}`)
 - `data_hash` = `91e447d4624e25b3` across all five headline JSONs.
@@ -247,31 +247,31 @@ rollup = [{
 ## Shared Patterns
 
 ### Repo-root resolver (cwd-independence, Pitfall 6)
-**Source:** `revision/run_utility.py:38-58` (`_find_repo_root` + `sys.path.insert`)
+**Source:** `run_utility.py:38-58` (`_find_repo_root` + `sys.path.insert`)
 **Apply to:** both new drivers (`run_sensitivity.py`, `run_multiseed_rollup.py`) — anchor every artifact path at `REPO`.
 
 ### Atomic status + flock + idempotent skip
-**Source:** `revision/run_baselines_sweep.sh:174-184` (`is_complete`), `:199-282` (`update_status`), `:290-335` (`run_one`)
+**Source:** `run_baselines_sweep.sh:174-184` (`is_complete`), `:199-282` (`update_status`), `:290-335` (`run_one`)
 **Apply to:** `run_sensitivity_sweep.sh` — copy verbatim, retarget worklist/artifact set.
 
 ### `--parallel 1|2` guardrail + xargs OS-process parallelism (NEVER Pool)
-**Source:** `revision/run_baselines_sweep.sh:146-156` (guardrail), `:400-419` (xargs `-P 2 -L 1`), `:34-43` (the "no multiprocessing.Pool" rationale, 09.1 Pitfall 4)
+**Source:** `run_baselines_sweep.sh:146-156` (guardrail), `:400-419` (xargs `-P 2 -L 1`), `:34-43` (the "no multiprocessing.Pool" rationale, 09.1 Pitfall 4)
 **Apply to:** `run_sensitivity_sweep.sh`.
 
 ### HPO constants from `revision.core`, never literals
-**Source:** `revision/run_baselines.py:65-77`
+**Source:** `run_baselines.py:65-77`
 **Apply to:** `run_sensitivity.py` — import `BATCH_SIZE, NOISE_LOW/HIGH, NUM_QUBITS, NUM_LAYERS, WINDOW_LENGTH` from `revision.core`.
 
 ### `*0.1` generation contract + `default_rng(seed)`
-**Source:** `revision/run_ablation.py:195-208` (verbatim) + `revision/core/models/quantum.py:194-199` (the `.T` transpose for batched expvals)
+**Source:** `run_ablation.py:195-208` (verbatim) + `core/models/quantum.py:194-199` (the `.T` transpose for batched expvals)
 **Apply to:** `run_sensitivity.py` sample regeneration (Pitfall 3).
 
 ### Pipeline-B `seed*7919+1` od_start draw + `od[:, :10]` truncation
-**Source:** `revision/run_utility.py:144-185` (`reconstruct_od`, verbatim)
+**Source:** `run_utility.py:144-185` (`reconstruct_od`, verbatim)
 **Apply to:** `run_sensitivity.py` OD-scale reconstruction (Pitfall 4).
 
 ### `core/` untouched invariant
-**Source:** D-10-13 (RESEARCH Validation Note) — `git diff --stat revision/core/` must be empty.
+**Source:** D-10-13 (RESEARCH Validation Note) — `git diff --stat core/` must be empty.
 **Apply to:** all of Phase 12 — alternate/noisy QNode and circuit-body copy live in `run_sensitivity.py`, never `core/`.
 
 ---
@@ -289,6 +289,6 @@ These four are the only genuinely new code in Phase 12 (~50 lines total). Everyt
 
 ## Metadata
 
-**Analog search scope:** `revision/run_*.py`, `revision/run_*.sh`, `revision/core/`, `revision/results/*.json`
+**Analog search scope:** `run_*.py`, `run_*.sh`, `core/`, `results/*.json`
 **Files scanned:** `run_baselines.py`, `run_baselines_sweep.sh`, `run_ablation.py`, `run_utility.py`, `core/models/quantum.py`, `core/eval.py`, `core/preprocessing.py` (via RESEARCH), `baseline_comparison.json`
 **Pattern extraction date:** 2026-05-18

@@ -1,6 +1,6 @@
 # Data-Pipeline Lineage Audit (r3, Agent 2)
 
-> **Addendum (2026-05-24):** The VAE "posterior collapse (sample std ≈ 0.0004)" characterization in this document was NOT supported by the matched-budget data. The actual matched-budget VAE log-return std is 0.0186 (≈ 1.17× narrower than real 0.0217, not 54× narrower). The VAE's anomalously low LR-DTW = 0.088 reflects a degenerate generation regime (marginal well-aligned, log-return lag-1 ACF = −0.648 vs real −0.064, matched-pipeline reference) rather than posterior collapse. See `revision/docs/peer_review_remediation.md` for the corrected characterization. This document is preserved unchanged below as a record of the prior belief and the bug-discovery timeline.
+> **Addendum (2026-05-24):** The VAE "posterior collapse (sample std ≈ 0.0004)" characterization in this document was NOT supported by the matched-budget data. The actual matched-budget VAE log-return std is 0.0186 (≈ 1.17× narrower than real 0.0217, not 54× narrower). The VAE's anomalously low LR-DTW = 0.088 reflects a degenerate generation regime (marginal well-aligned, log-return lag-1 ACF = −0.648 vs real −0.064, matched-pipeline reference) rather than posterior collapse. See `docs/peer_review_remediation.md` for the corrected characterization. This document is preserved unchanged below as a record of the prior belief and the bug-discovery timeline.
 
 ---
 
@@ -11,7 +11,7 @@ numbers look mid-pack while the pre-v1.0 paper headline (~0.0015) was
 visibly better.
 
 **Verdict — pipeline consistent with notebook? PARTIAL NO.**
-- The `revision/core/` module is bit-faithful to the v1.0/v1.1 notebook
+- The `core/` module is bit-faithful to the v1.0/v1.1 notebook
   (Lambert W still present, log-returns + dither + rolling-window verbatim).
 - BUT the matched-2000ep driver (`run_matched2000.py`) **only uses
   Pipeline B** (log-returns + standardize, NO Lambert W) — a *deliberate*
@@ -35,7 +35,7 @@ quality regression of ~5×).
 
 ### 1.1 v1.0/v1.1 Notebook Pipeline (canonical, Pipeline C)
 Cells 5, 9, 15, 17, 18, 21, 22, 23, 30 of `qgan_pennylane.ipynb`, mirrored
-verbatim in `revision/core/data.py:load_and_preprocess`:
+verbatim in `core/data.py:load_and_preprocess`:
 
 ```
 FORWARD (data → training samples):
@@ -59,7 +59,7 @@ scale (cells 59, 66): wasserstein_distance(log_delta_np, fake_log_delta_np).
 ```
 
 ### 1.2 Matched-2000ep Pipeline (current paper artifacts, Pipeline B)
-`revision/run_matched2000.py:build_dataset_for_pipeline` (lines 213-254):
+`run_matched2000.py:build_dataset_for_pipeline` (lines 213-254):
 
 ```
 FORWARD (data → training samples):
@@ -96,7 +96,7 @@ INVERSE (samples.npy ∈ [-1,1] → OD):
 
 ## 2. Per-Model Output-Scale Audit (Pitfall 3)
 
-`revision/results/matched2000/runs/<model>/42/samples.npy` empirical ranges
+`results/matched2000/runs/<model>/42/samples.npy` empirical ranges
 (measured for this audit):
 
 | Model | min(samples_pm1) | max(samples_pm1) | std | `*0.1` applied? |
@@ -176,7 +176,7 @@ formulation and selection criterion differ.
 
 ## 4. Lambert W Status
 
-**Lambert W is NOT removed from the codebase** — `revision/core/data.py:70-145`
+**Lambert W is NOT removed from the codebase** — `core/data.py:70-145`
 preserves `inverse_lambert_w_transform` (forward + differentiable backward
 via `_InverseLambertW(torch.autograd.Function)`) and `lambert_w_transform`
 verbatim from notebook cell 17.
@@ -258,7 +258,7 @@ training-loop audit to disentangle):
   naturally produces a wide range, compressing 10× makes its distribution
   too narrow vs the standardized real target; for a generator that already
   produces a near-zero output, compression makes no difference.
-- HPO drift: `revision/core/__init__.py:11-14` shows
+- HPO drift: `core/__init__.py:11-14` shows
   `N_CRITIC=9, LAMBDA=2.16, LR_CRITIC=1.8e-5, LR_GENERATOR=6.9e-5`
   (v1.1 Phase-4 HPO-tuned). The pre-v1.0 paper used different hyperparams.
 
@@ -266,19 +266,19 @@ training-loop audit to disentangle):
 
 ## 6. File/Line Citations
 
-- `revision/core/data.py:174-202` — `full_denorm_pipeline` (Pipeline C inverse, Lambert W + denormalize)
-- `revision/core/data.py:118-145` — `inverse_lambert_w_transform` / `lambert_w_transform` (Lambert W still present)
-- `revision/core/data.py:227-296` — `load_and_preprocess` (full v1.0 forward chain)
-- `revision/core/preprocessing.py:29-46` — `forward_logreturns` (Pipeline B forward)
-- `revision/core/preprocessing.py:49-72` — `inverse_logreturns` (Pipeline B inverse via cumsum-exp)
-- `revision/core/eval.py:25-36` — `compute_emd` (raw-sample Wasserstein, v1.0 locked)
-- `revision/core/training.py:347, 381, 416` — `*0.1` in training-loop critic feed
-- `revision/run_matched2000.py:213-254` — `build_dataset_for_pipeline` (Pipeline B only)
-- `revision/run_matched2000.py:257-284` — `generate_wgan_samples` (`*0.1` at sample emission)
-- `revision/run_matched2000.py:732, 780` — VAE/AR explicit "(NO *0.1, Pitfall 3)"
-- `revision/run_matched2000_dualscale.py:367-373` — `_log_return_rows` (EMD against `real_log_delta` — SCALE MISMATCH)
-- `revision/run_figure_suite.py:261-296` — `reconstruct_od` (canonical Pipeline-B inverse helper)
-- `revision/run_distribution_emd.py:78-141` — `compute_histogram_density_emd` (50-bin density Wasserstein restored for pre-v1.0 commensurability)
-- `revision/results/headline_canonical.json` — checkpoint_emd = 0.084 at epoch 1969 (training-loop metric, not the pre-v1.0 0.0015)
+- `core/data.py:174-202` — `full_denorm_pipeline` (Pipeline C inverse, Lambert W + denormalize)
+- `core/data.py:118-145` — `inverse_lambert_w_transform` / `lambert_w_transform` (Lambert W still present)
+- `core/data.py:227-296` — `load_and_preprocess` (full v1.0 forward chain)
+- `core/preprocessing.py:29-46` — `forward_logreturns` (Pipeline B forward)
+- `core/preprocessing.py:49-72` — `inverse_logreturns` (Pipeline B inverse via cumsum-exp)
+- `core/eval.py:25-36` — `compute_emd` (raw-sample Wasserstein, v1.0 locked)
+- `core/training.py:347, 381, 416` — `*0.1` in training-loop critic feed
+- `run_matched2000.py:213-254` — `build_dataset_for_pipeline` (Pipeline B only)
+- `run_matched2000.py:257-284` — `generate_wgan_samples` (`*0.1` at sample emission)
+- `run_matched2000.py:732, 780` — VAE/AR explicit "(NO *0.1, Pitfall 3)"
+- `run_matched2000_dualscale.py:367-373` — `_log_return_rows` (EMD against `real_log_delta` — SCALE MISMATCH)
+- `run_figure_suite.py:261-296` — `reconstruct_od` (canonical Pipeline-B inverse helper)
+- `run_distribution_emd.py:78-141` — `compute_histogram_density_emd` (50-bin density Wasserstein restored for pre-v1.0 commensurability)
+- `results/headline_canonical.json` — checkpoint_emd = 0.084 at epoch 1969 (training-loop metric, not the pre-v1.0 0.0015)
 - `.planning/phases/14-paper-revision-release-freeze/14-13-PLAN.md:677, 680` — pre-v1.0 ≈ 0.0015 headline trajectory disclosure
 - `.planning/phases/14-paper-revision-release-freeze/14-15-PLAN.md:43, 1079` — histogram-density reintroduction rationale

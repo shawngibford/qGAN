@@ -1,0 +1,14 @@
+{
+  "ansatz_name": "V2",
+  "circuit_id": "default_75",
+  "data_hash": "91e447d4624e25b3",
+  "depth": 8,
+  "figure": "circuit_diagram",
+  "generation_timestamp": "2026-05-20T19:13:49.961928Z",
+  "n_params": 135,
+  "num_qubits": 5,
+  "render_only": true,
+  "renderer": "qml.draw_mpl(style=\"pennylane\")",
+  "source_config_lock_path": "results/v2_config_lock.json",
+  "topology": "range"
+}

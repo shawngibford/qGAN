@@ -1,0 +1,571 @@
+{
+ "figure": "matched2000_dualscale_sidebyside",
+ "render_only": true,
+ "source_artifact": "results/matched2000_dualscale.json",
+ "source_data_hash": "91e447d4624e25b3",
+ "models_matched2000": [
+  "iqp_sel_55_repro",
+  "V1",
+  "V2",
+  "V3",
+  "wgan_mlp",
+  "wgan_cnn",
+  "wgan_lstm",
+  "vae",
+  "ar"
+ ],
+ "headline_kind": "frozen_checkpoint_headline",
+ "headline_source": "frozen_checkpoint_epoch_1969",
+ "panels": [
+  "emd",
+  "moment_mean",
+  "moment_std"
+ ],
+ "scales": [
+  "OD",
+  "log_return"
+ ],
+ "conflation_guard": "D-14-10 / T-14-16: frozen-checkpoint headline plotted as a DISTINCT dashed reference line + diamond marker; never merged into the iqp_sel_55_repro 2000ep reproduction bar.",
+ "plotted_values": [
+  {
+   "model_kind": "iqp_sel_55_repro",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.028157189897779968,
+   "std": 0.004259860193172894,
+   "n_seeds": 5,
+   "source": "matched2000_reproduction"
+  },
+  {
+   "model_kind": "V1",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.028328385521925216,
+   "std": 0.005288344105574405,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V2",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.02790972768080375,
+   "std": 0.005062542059145136,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V3",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.0308271359485383,
+   "std": 0.005397683132812568,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "wgan_mlp",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.0769375865852578,
+   "std": 0.029219901746783968,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_cnn",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.7988824182762755,
+   "std": 1.4736093457486434,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_lstm",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.11767479429395375,
+   "std": 0.0705495605461099,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "vae",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.025741708778716454,
+   "std": 0.007161769866652516,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "ar",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.02908435933553529,
+   "std": 0.0046073600388848585,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "frozen_checkpoint_headline",
+   "scale": "OD",
+   "metric_name": "emd",
+   "mean": 0.02238151476844307,
+   "std": 0.0,
+   "n_seeds": 1,
+   "source": "frozen_checkpoint_epoch_1969"
+  },
+  {
+   "model_kind": "iqp_sel_55_repro",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.004032220917694146,
+   "std": 0.0009384868577124821,
+   "n_seeds": 5,
+   "source": "matched2000_reproduction"
+  },
+  {
+   "model_kind": "V1",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.0041173559306657,
+   "std": 0.0004901257004266926,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V2",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.004394072816621667,
+   "std": 5.634079441224278e-05,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V3",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.005016512948180313,
+   "std": 0.0017129037675028217,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "wgan_mlp",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.0444305066357077,
+   "std": 0.007407310578575269,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_cnn",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.12856030922233522,
+   "std": 0.06258074262283446,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_lstm",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.024415522408147483,
+   "std": 0.0055760587963341,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "vae",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.015833865376756177,
+   "std": 2.2019959465193185e-05,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "ar",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.0029415772653960193,
+   "std": 0.00011169319203792755,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "frozen_checkpoint_headline",
+   "scale": "log_return",
+   "metric_name": "emd",
+   "mean": 0.4493815741821947,
+   "std": 0.0,
+   "n_seeds": 1,
+   "source": "frozen_checkpoint_epoch_1969"
+  },
+  {
+   "model_kind": "iqp_sel_55_repro",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.403850627414632,
+   "std": 0.00820421766185718,
+   "n_seeds": 5,
+   "source": "matched2000_reproduction"
+  },
+  {
+   "model_kind": "V1",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.4037809072453875,
+   "std": 0.007303298407566772,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V2",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.4039503330116232,
+   "std": 0.00890793554784147,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V3",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.4046183316969703,
+   "std": 0.008299115555378806,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "wgan_mlp",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.3661242421171451,
+   "std": 0.06461987733028128,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_cnn",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 2.0335969728364915,
+   "std": 1.571304538410431,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_lstm",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.316844077972551,
+   "std": 0.11179021823344613,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "vae",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.385408562125461,
+   "std": 0.008128149887944918,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "ar",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.4037801775461822,
+   "std": 0.00826781951632639,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "frozen_checkpoint_headline",
+   "scale": "OD",
+   "metric_name": "moment_mean",
+   "mean": 1.407791362467706,
+   "std": 0.0,
+   "n_seeds": 1,
+   "source": "frozen_checkpoint_epoch_1969"
+  },
+  {
+   "model_kind": "iqp_sel_55_repro",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": 0.12312389887092648,
+   "std": 0.004651509251451783,
+   "n_seeds": 5,
+   "source": "matched2000_reproduction"
+  },
+  {
+   "model_kind": "V1",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": 0.1242441598625464,
+   "std": 0.004425633097343448,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V2",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": 0.1276217798486734,
+   "std": 0.0019441045057063417,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V3",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": 0.12584605164804602,
+   "std": 0.003943283831711542,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "wgan_mlp",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": -0.38188204857985364,
+   "std": 0.2684506923204018,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_cnn",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": 0.7411465967917688,
+   "std": 3.220390375497868,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_lstm",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": -0.5774334530885689,
+   "std": 0.6847389688794079,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "vae",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": -0.007039941195861531,
+   "std": 0.0007176435399674605,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "ar",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": 0.12087081425770647,
+   "std": 0.005737394087760588,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "frozen_checkpoint_headline",
+   "scale": "log_return",
+   "metric_name": "moment_mean",
+   "mean": 0.12296598095612293,
+   "std": 0.0,
+   "n_seeds": 1,
+   "source": "frozen_checkpoint_epoch_1969"
+  },
+  {
+   "model_kind": "iqp_sel_55_repro",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8782740188746203,
+   "std": 0.011659784543927222,
+   "n_seeds": 5,
+   "source": "matched2000_reproduction"
+  },
+  {
+   "model_kind": "V1",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8786938150543516,
+   "std": 0.010335682432180452,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V2",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8782375066276773,
+   "std": 0.012991290370594412,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V3",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8806256083614524,
+   "std": 0.013256208035500096,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "wgan_mlp",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8771934305296094,
+   "std": 0.04826030562263989,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_cnn",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 1.7181115418585282,
+   "std": 1.8312670572141247,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_lstm",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8268400610490326,
+   "std": 0.07372761873401416,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "vae",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8641147188613354,
+   "std": 0.011389880119385255,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "ar",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8787623595985737,
+   "std": 0.010861401035806949,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "frozen_checkpoint_headline",
+   "scale": "OD",
+   "metric_name": "moment_std",
+   "mean": 0.8865642035406427,
+   "std": 0.0,
+   "n_seeds": 1,
+   "source": "frozen_checkpoint_epoch_1969"
+  },
+  {
+   "model_kind": "iqp_sel_55_repro",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 0.8297097854195945,
+   "std": 0.1304707587628135,
+   "n_seeds": 5,
+   "source": "matched2000_reproduction"
+  },
+  {
+   "model_kind": "V1",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 0.8103509675175953,
+   "std": 0.0765745483421929,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V2",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 0.7760392032813698,
+   "std": 0.008581378655157073,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "V3",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 1.1789982136201966,
+   "std": 0.11473315790158445,
+   "n_seeds": 5,
+   "source": "matched2000_ansatz"
+  },
+  {
+   "model_kind": "wgan_mlp",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 3.5296879121900795,
+   "std": 0.4125804571763916,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_cnn",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 9.06677607939368,
+   "std": 3.3685255907394764,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "wgan_lstm",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 2.0601738755322416,
+   "std": 0.3002362559404345,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "vae",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 0.01855218080290109,
+   "std": 0.00186316257382083,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "ar",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 0.9918638761003556,
+   "std": 0.0036337179170877545,
+   "n_seeds": 5,
+   "source": "matched2000_baseline"
+  },
+  {
+   "model_kind": "frozen_checkpoint_headline",
+   "scale": "log_return",
+   "metric_name": "moment_std",
+   "mean": 0.6202632484653514,
+   "std": 0.0,
+   "n_seeds": 1,
+   "source": "frozen_checkpoint_epoch_1969"
+  }
+ ]
+}

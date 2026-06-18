@@ -14,7 +14,7 @@ remediation numbers themselves wrong, mis-described, or misleading?
 
 The core remediation work is correct and impressive:
 
-- All nine reconciliation deltas in `revision/results/reconciliation_deltas.json`
+- All nine reconciliation deltas in `results/reconciliation_deltas.json`
   are arithmetically verifiable from `baseline_comparison.json` (OLD column)
   and `matched2000_dualscale.json#aggregates` (NEW column). I recomputed each
   delta independently in Python and every digit matches to >10 significant
@@ -30,12 +30,12 @@ The core remediation work is correct and impressive:
 - The metric-redefinition disclosure paragraph (C-3) in `reconciliation_note.md`
   now explicitly states the 0.0015 → 0.121 transition is between two
   non-commensurate metrics (histogram-density Wasserstein vs raw-sample
-  Wasserstein), citing `revision/core/eval.py:25-36` for the v1.0
+  Wasserstein), citing `core/eval.py:25-36` for the v1.0
   redefinition. The byte-freeze at those line numbers is preserved.
 - The AR-sigma² ddof=0 bias claim (≈0.26% downward) is mathematically
   accurate (true value 0.258% — see Findings §M-1).
 - The Fisher kurtosis / biased ACF / ddof=0 std conventions documented in
-  methods_full.md §3.x match the actual code defaults in `revision/core/eval.py`.
+  methods_full.md §3.x match the actual code defaults in `core/eval.py`.
 
 However, **one MEDIUM-severity mathematical error** in the remediation
 documentation, **one HIGH-severity narrative overclaim**, and **one LOW
@@ -169,10 +169,10 @@ currently says the OPPOSITE direction, which would confuse a referee.
 Also fix `peer_review_remediation.md:51` (`implicit β ≈ 0.4 (window=10,
 latent_dim=4)` → `implicit β ≈ 2.5 (window=10, latent_dim=4)`).
 
-Citation: `revision/run_baselines.py:315-319`,
-`revision/core/models/nonadversarial.py:63-64` (LATENT_DIM=4, WINDOW=10),
-`revision/docs/methods_full.md:316-327`,
-`revision/docs/peer_review_remediation.md:51`.
+Citation: `run_baselines.py:315-319`,
+`core/models/nonadversarial.py:63-64` (LATENT_DIM=4, WINDOW=10),
+`docs/methods_full.md:316-327`,
+`docs/peer_review_remediation.md:51`.
 
 ---
 
@@ -229,10 +229,10 @@ interpretation paragraph to:
 > wgan_cnn improvement is not statistically distinguishable from seed
 > noise, but the directional movement is worth noting.
 
-Citation: `revision/results/matched2000_dualscale.json#rows`
+Citation: `results/matched2000_dualscale.json#rows`
 filtered to (model_kind=wgan_cnn, scale=OD, metric_name=emd),
-`revision/results/baseline_comparison.json#rows` same filter on (pipeline=B),
-`revision/docs/reconciliation_note.md:25`.
+`results/baseline_comparison.json#rows` same filter on (pipeline=B),
+`docs/reconciliation_note.md:25`.
 
 ---
 
@@ -270,8 +270,8 @@ correct — or (b) clarify the formula to `(n_resid - p) / n_resid = (n_total
 - 2p) / (n_total - p)` for n_total = 777, p = 2 → 773/775 ≈ 0.99742, 0.26%
 downward bias. Low priority; cosmetic.
 
-Citation: `revision/core/models/nonadversarial.py:152-157`,
-`revision/docs/methods_full.md:217-221, 306-314`.
+Citation: `core/models/nonadversarial.py:152-157`,
+`docs/methods_full.md:217-221, 306-314`.
 
 ---
 
@@ -302,8 +302,8 @@ precision; the meaningful manuscript-facing precision for wgan_cnn given
 n=5 seeds is one significant figure (delta ≈ -0.06, 95% Welch CI roughly
 [-0.23, +0.11])."* Low priority; cosmetic improvement only.
 
-Citation: `revision/results/reconciliation_deltas.json:42`,
-`revision/docs/reconciliation_note.md:18`.
+Citation: `results/reconciliation_deltas.json:42`,
+`docs/reconciliation_note.md:18`.
 
 ---
 
@@ -329,7 +329,7 @@ subsection) that single-seed aggregates carry `std = 0.0, n_seeds = 1` as
 a sentinel rather than the mathematically-undefined NaN. The n_seeds field
 is the disambiguator. Very low priority.
 
-Citation: `revision/results/matched2000_dualscale.json#aggregates` rows
+Citation: `results/matched2000_dualscale.json#aggregates` rows
 where `model_kind == "frozen_checkpoint_headline"`.
 
 ---
@@ -446,7 +446,7 @@ Caption explicitly states "OD scale, final-eval mean ± std over 5 seeds
 metric-redefinition disclosure paragraph explicitly stating that pre-v1.0
 0.0015 (histogram-density) and v1.0+ 0.121 (raw-sample) measure different
 distances over different supports and are NOT commensurate. Citation to
-`revision/core/eval.py:25-36` correct (raw-sample Wasserstein implementation).
+`core/eval.py:25-36` correct (raw-sample Wasserstein implementation).
 
 ### Original H-1 (training_convergence "OD scale" axis label wrong)
 **Verdict: NOT RE-VERIFIED IN R2 SCOPE** (no figure-side artifact in the
@@ -551,30 +551,30 @@ derivation direction, which is a self-contained doc-text issue).
 
 Primary artifacts (all paths absolute):
 
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/matched2000_dualscale.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/reconciliation_deltas.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/total_adversarial_param_budget.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/figures/cross_model_emd.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/methods_full.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/classical_architectures.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/baseline_comparison.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/headline_canonical.json`
-- `/Users/shawngibford/dev/phd/qGAN/revision/results/canonical_config_lock.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/matched2000_dualscale.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/reconciliation_deltas.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/total_adversarial_param_budget.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/figures/cross_model_emd.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/methods_full.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/classical_architectures.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/baseline_comparison.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/headline_canonical.json`
+- `/Users/shawngibford/dev/phd/qGAN/results/canonical_config_lock.json`
 
 Docs:
 
-- `/Users/shawngibford/dev/phd/qGAN/revision/docs/reconciliation_note.md`
-- `/Users/shawngibford/dev/phd/qGAN/revision/docs/methods_full.md`
-- `/Users/shawngibford/dev/phd/qGAN/revision/docs/peer_review_remediation.md`
-- `/Users/shawngibford/dev/phd/qGAN/revision/docs/paper_blocks_framing.md`
-- `/Users/shawngibford/dev/phd/qGAN/revision/docs/paper_blocks_refs_methods.md`
-- `/Users/shawngibford/dev/phd/qGAN/revision/docs/reviewer_response.md`
+- `/Users/shawngibford/dev/phd/qGAN/docs/reconciliation_note.md`
+- `/Users/shawngibford/dev/phd/qGAN/docs/methods_full.md`
+- `/Users/shawngibford/dev/phd/qGAN/docs/peer_review_remediation.md`
+- `/Users/shawngibford/dev/phd/qGAN/docs/paper_blocks_framing.md`
+- `/Users/shawngibford/dev/phd/qGAN/docs/paper_blocks_refs_methods.md`
+- `/Users/shawngibford/dev/phd/qGAN/docs/reviewer_response.md`
 
 Code (citation verification only — byte-freeze D-14-22 preserved):
 
-- `/Users/shawngibford/dev/phd/qGAN/revision/core/eval.py:25-36` (compute_emd raw-sample)
-- `/Users/shawngibford/dev/phd/qGAN/revision/core/eval.py:42-58` (compute_moments)
-- `/Users/shawngibford/dev/phd/qGAN/revision/core/eval.py:64-72` (compute_acf)
-- `/Users/shawngibford/dev/phd/qGAN/revision/core/models/nonadversarial.py:53-77` (VAE dims)
-- `/Users/shawngibford/dev/phd/qGAN/revision/core/models/nonadversarial.py:152-157` (AR sigma²)
-- `/Users/shawngibford/dev/phd/qGAN/revision/run_baselines.py:313-319` (VAE ELBO loss)
+- `/Users/shawngibford/dev/phd/qGAN/core/eval.py:25-36` (compute_emd raw-sample)
+- `/Users/shawngibford/dev/phd/qGAN/core/eval.py:42-58` (compute_moments)
+- `/Users/shawngibford/dev/phd/qGAN/core/eval.py:64-72` (compute_acf)
+- `/Users/shawngibford/dev/phd/qGAN/core/models/nonadversarial.py:53-77` (VAE dims)
+- `/Users/shawngibford/dev/phd/qGAN/core/models/nonadversarial.py:152-157` (AR sigma²)
+- `/Users/shawngibford/dev/phd/qGAN/run_baselines.py:313-319` (VAE ELBO loss)

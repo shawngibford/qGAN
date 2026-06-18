@@ -1,7 +1,7 @@
 # Provenance / Numerical-Claims Peer Review — Round 2 (post-14-13)
 
 **Reviewer role:** Reviewer 4 / 5 — numerical-claim traceability under gate v2.
-**Method:** ran `revision/verify_number_provenance.py` (v2, schema `"v2 (Phase 14 plan 14-13 — boundary-strict resolution + render-only exclusion)"`) end-to-end on all 10 paper-facing docs; executed a differential v1-vs-v2 test against the same corpus on the documented coincidence cases; reproduced 4 reconciliation deltas independently from `baseline_comparison.json` + `matched2000_dualscale.json`; recomputed the 250881 critic param count from `revision/core/models/critic.py`; spot-checked 12 paper-facing literals end-to-end; reviewed `peer_review_remediation.md` against 5 cited commits; audited the new `_ID_PATTERNS` set for false-negative excludes; audited the manifest output for semantic-mismatch artifacts.
+**Method:** ran `verify_number_provenance.py` (v2, schema `"v2 (Phase 14 plan 14-13 — boundary-strict resolution + render-only exclusion)"`) end-to-end on all 10 paper-facing docs; executed a differential v1-vs-v2 test against the same corpus on the documented coincidence cases; reproduced 4 reconciliation deltas independently from `baseline_comparison.json` + `matched2000_dualscale.json`; recomputed the 250881 critic param count from `core/models/critic.py`; spot-checked 12 paper-facing literals end-to-end; reviewed `peer_review_remediation.md` against 5 cited commits; audited the new `_ID_PATTERNS` set for false-negative excludes; audited the manifest output for semantic-mismatch artifacts.
 
 **Bottom line.** PASS-WITH-FINDINGS. Gate v2 is strictly stronger than v1 on the substring-coincidence axis that motivated it (Pass 1's boundary regex correctly REJECTS the `0.6843` substring pseudo-match that v1 PASSed), the 3 new structured JSONs source legitimate physical/computed quantities (LUCY constants match the manuscript; 8 of 9 reconciliation deltas reproduce exactly from upstream data; the 250881 critic-params figure exactly reproduces from `critic.py`'s `nn.Sequential`), the doc-side cleanup of the `0.6843` phantom is real (commit `1a9925f` removes both the BEFORE-block literal AND the misleading provenance footer), and HI-9 is explicitly OUT OF SCOPE with the reviewer's own perf-only rationale recorded in two places. **However:** (1) gate v2's Pass-2 ε-neighborhood path still admits coincidental float resolutions (PROV-HIGH-1 is mitigated, not eliminated) — `0.6843` still resolves under v2 via a different unrelated training-loss value at ε=5e-5; (2) the `--manifest` output reports the FIRST text-matching JSON path the resolver hits, which in several cases is a coincidental sample inside `figures/_introspect_*.json` rather than the authoritative aggregate source; (3) the `_introspect_*.json` files (7 of them, ~6 MB combined) are NOT marked `render_only: true` and therefore remain in the resolution corpus, where their dense per-snapshot sample arrays create a large surface for coincidental ε-matches. These residual hazards do not invalidate any numeric claim I traced, but they leave the manifest a misleading audit artifact for some literals (e.g. `0.027586` is reported as resolving to `_introspect_wgan_lstm.json#snapshots[3].samples[11][7]` when the authoritative source is `multiseed_summary.json#rollup` and `reconciliation_deltas.json#rows[0].old_1000ep`).
 
@@ -13,17 +13,17 @@
 
 ### §1.a — Setup
 
-- v1 source = `git show 1f50e81:revision/verify_number_provenance.py` (201 lines, schema-less, substring `in` matcher).
-- v2 source = `revision/verify_number_provenance.py` HEAD (328 lines, `_SCHEMA = "v2 (Phase 14 plan 14-13 — boundary-strict resolution + render-only exclusion)"`).
-- Corpus: identical `revision/results/*.json` for both runs (308 JSON files total; v2 excludes 86 with `render_only: true`, so v2 sees 222 files).
+- v1 source = `git show 1f50e81:verify_number_provenance.py` (201 lines, schema-less, substring `in` matcher).
+- v2 source = `verify_number_provenance.py` HEAD (328 lines, `_SCHEMA = "v2 (Phase 14 plan 14-13 — boundary-strict resolution + render-only exclusion)"`).
+- Corpus: identical `results/*.json` for both runs (308 JSON files total; v2 excludes 86 with `render_only: true`, so v2 sees 222 files).
 
 ### §1.b — Substring-coincidence case (PROV-CRIT-2 archetype): token `0.6843`
 
 | Gate | `_resolves("0.6843", corpus)` | Source returned |
 |---|---|---|
-| v1 | `revision/results/baselines/runs/wgan_cnn/A/46/metrics.json` | substring of `-0.6843011379241943` in `generator_loss_avg` |
+| v1 | `results/baselines/runs/wgan_cnn/A/46/metrics.json` | substring of `-0.6843011379241943` in `generator_loss_avg` |
 | v2 (Pass 1, boundary regex) | None | boundary regex `(?<![\d.])0\.6843(?![\d])` correctly REJECTS the `-0.6843011…` substring |
-| v2 (Pass 2, ε-neighborhood) | `revision/results/baselines/runs/wgan_lstm/A/44/metrics.json#generator_loss_avg[76]` | ε-neighborhood match to `0.6842915415763855` (|diff|=8.46e-06 ≤ tol=5e-05) |
+| v2 (Pass 2, ε-neighborhood) | `results/baselines/runs/wgan_lstm/A/44/metrics.json#generator_loss_avg[76]` | ε-neighborhood match to `0.6842915415763855` (|diff|=8.46e-06 ≤ tol=5e-05) |
 
 **Reading:** v2's Pass 1 is strictly stronger — the substring coincidence is killed dead. v2's Pass 2 still admits a different coincidence at the 4-dp ε-neighborhood. In practice the doc-side cleanup (commit `1a9925f`) removed `0.6843` from `paper_blocks_framing.md` entirely, so the gate is no longer asked to resolve it. **The CRIT-2 root cause is fixed via the doc-side change, not the gate-side change.** Gate v2 makes the substring class of false positive impossible; it does not make the float-coincidence class impossible.
 
@@ -42,7 +42,7 @@ Token chosen from a render-only file (`figures/acf_V1.json#acf_real_OD[2] = 0.99
 
 | Gate | Resolution |
 |---|---|
-| v1 | `revision/results/figures/acf_V1.json` (admitted) |
+| v1 | `results/figures/acf_V1.json` (admitted) |
 | v2 | None (correctly excluded as `render_only: true` source) |
 
 **Reading:** PROV-MED-3 is genuinely closed for the 86 figure companion JSONs that declare `render_only: true`. The 7 `_introspect_*.json` files do NOT carry the flag and remain in the corpus (see §6 below).
@@ -62,7 +62,7 @@ Gate v2 is strictly stronger on substring, render-only, and prose-id stripping �
 
 ## §2 — Audit of the 3 NEW structured JSONs
 
-### §2.a — `revision/results/manuscript_apparatus_constants.json` — LUCY photobioreactor constants
+### §2.a — `results/manuscript_apparatus_constants.json` — LUCY photobioreactor constants
 
 Cross-checked every value against `main (4) copy.tex` §3 "Photobioreactor Experimental Setup" (lines 176-180):
 
@@ -80,7 +80,7 @@ Cross-checked every value against `main (4) copy.tex` §3 "Photobioreactor Exper
 
 **FINDING-LO-1 (LOW / cosmetic):** Three of the four "apparatus_dimensions_mm" fields aren't in millimeters: `depth_or_height_880` is nm (OD sensor wavelength), `ancillary_10` is minutes (logging interval), `ancillary_120` is cm (tube length). The dict-key suffix `_mm` is misleading. The values are still correct; only the container name is wrong. Recommend renaming to `apparatus_constants_misc` (or split into per-unit subdicts). Cosmetic only — gate output is unaffected.
 
-### §2.b — `revision/results/reconciliation_deltas.json` — the deltas computed in T3
+### §2.b — `results/reconciliation_deltas.json` — the deltas computed in T3
 
 I reproduced the OLD and NEW columns independently from upstream:
 
@@ -114,7 +114,7 @@ I reproduced the OLD and NEW columns independently from upstream:
 
 **Conclusion.** The deltas are NOT reverse-engineered. They are mechanical subtractions of two audited aggregate fields and reproduce exactly from upstream data. The scale-mix problem identified in PROV-CRIT-1 / math-review C-1 is genuinely fixed at the data layer (NEW column is now OD-scale), not just at the prose layer.
 
-### §2.c — `revision/results/total_adversarial_param_budget.json` — the 250881 critic-included claim
+### §2.c — `results/total_adversarial_param_budget.json` — the 250881 critic-included claim
 
 Cross-checked independently by importing and counting parameters on the actual `Critic` class:
 
@@ -149,7 +149,7 @@ Component breakdown (matches `classical_architectures.json#models.shared_critic.
 
 The WGAN entries (wgan_mlp/cnn/lstm) only carry `generator_n_params_note` pointing to `classical_architectures.json#models.{wgan_mlp,wgan_cnn,wgan_lstm}.total_params`. The note is appropriate — the totals can be derived but are not explicitly summed in this JSON. This is a minor missed completeness item but not a soundness issue.
 
-**Conclusion.** 250881 is genuinely the critic's trainable parameter count under `revision/core/models/critic.py`'s frozen architecture. The values in `total_adversarial_param_budget.json` are mechanical adds, not reverse-engineered.
+**Conclusion.** 250881 is genuinely the critic's trainable parameter count under `core/models/critic.py`'s frozen architecture. The values in `total_adversarial_param_budget.json` are mechanical adds, not reverse-engineered.
 
 ---
 
@@ -198,16 +198,16 @@ End-to-end gate v2 run on all 10 docs (the original 9 + the new `peer_review_rem
 
 | Doc | v2 gate | Distinct literals resolved |
 |---|---|---|
-| `revision/docs/paper_blocks_framing.md` | PASS | 23 |
-| `revision/docs/paper_blocks_refs_methods.md` | PASS | 49 |
-| `revision/docs/reviewer_response.md` | PASS | 32 |
-| `revision/docs/reconciliation_note.md` | PASS | 33 |
-| `revision/docs/methods_full.md` | PASS | 64 |
-| `revision/docs/circuit_atlas.md` | PASS | 18 |
-| `revision/docs/completeness_sweep_manifest.md` | PASS | 27 |
-| `revision/docs/training_protocol.md` | PASS | 18 |
-| `revision/docs/dataset_stats.md` | PASS | 5 |
-| `revision/docs/peer_review_remediation.md` | PASS | 31 |
+| `docs/paper_blocks_framing.md` | PASS | 23 |
+| `docs/paper_blocks_refs_methods.md` | PASS | 49 |
+| `docs/reviewer_response.md` | PASS | 32 |
+| `docs/reconciliation_note.md` | PASS | 33 |
+| `docs/methods_full.md` | PASS | 64 |
+| `docs/circuit_atlas.md` | PASS | 18 |
+| `docs/completeness_sweep_manifest.md` | PASS | 27 |
+| `docs/training_protocol.md` | PASS | 18 |
+| `docs/dataset_stats.md` | PASS | 5 |
+| `docs/peer_review_remediation.md` | PASS | 31 |
 
 (The remediation index's own table reports 8 distinct literals for `completeness_sweep_manifest.md`; the doc has since been expanded by T7 to 27. The remediation index's table is correctly annotated as "pre-T7".)
 
@@ -215,18 +215,18 @@ End-to-end gate v2 run on all 10 docs (the original 9 + the new `peer_review_rem
 
 **FINDING-1 (HIGH, residual) — gate v2's Pass-2 ε-neighborhood still admits coincidental float resolutions.**
 
-The token `0.6843` standalone resolves under v2 to `revision/results/baselines/runs/wgan_lstm/A/44/metrics.json#generator_loss_avg[76] = 0.6842915415763855` via the Pass-2 ε-neighborhood (|diff|=8.46e-06 ≤ tol=10^-4/2=5e-05). The remediation index claims PROV-HIGH-1 is closed by `dfde1ba` (T2). My differential-test reading is that PROV-HIGH-1 is **mitigated, not closed**:
+The token `0.6843` standalone resolves under v2 to `results/baselines/runs/wgan_lstm/A/44/metrics.json#generator_loss_avg[76] = 0.6842915415763855` via the Pass-2 ε-neighborhood (|diff|=8.46e-06 ≤ tol=10^-4/2=5e-05). The remediation index claims PROV-HIGH-1 is closed by `dfde1ba` (T2). My differential-test reading is that PROV-HIGH-1 is **mitigated, not closed**:
 
 - The substring coincidence class (which is what `0.6843` IS in the original review) is genuinely closed by Pass 1's boundary regex.
 - The float-coincidence class (which is what `+0.116935` and `+0.093946` ARE) is NOT closed; it is converted from a silent failure to an inspectable one via the `--manifest` flag, but the ε-neighborhood still admits unrelated quantities that happen to round-match.
 
-Concrete evidence: in `reconciliation_note.md`, the literal `0.113033` (the wgan_cnn old_1000ep value) RESOLVES via Pass 1 to `revision/results/baselines/runs/vae/A/44/metrics.json#recon[90] = 0.1130330148153007`, a coincidental match in a VAE reconstruction-loss trace. The TRUE semantic source is `reconciliation_deltas.json#rows[5].old_1000ep = 0.11303307733265014` (which the boundary regex does NOT match because of the trailing `307`). The gate stopped at the first text-match it found alphabetically and never reached the authoritative source.
+Concrete evidence: in `reconciliation_note.md`, the literal `0.113033` (the wgan_cnn old_1000ep value) RESOLVES via Pass 1 to `results/baselines/runs/vae/A/44/metrics.json#recon[90] = 0.1130330148153007`, a coincidental match in a VAE reconstruction-loss trace. The TRUE semantic source is `reconciliation_deltas.json#rows[5].old_1000ep = 0.11303307733265014` (which the boundary regex does NOT match because of the trailing `307`). The gate stopped at the first text-match it found alphabetically and never reached the authoritative source.
 
 **Recommended hardening** (for a future plan, not blocker): change `_resolves()` to either (a) enumerate ALL matches and choose the one with shortest str(leaf) (preferring the literal stored field over a substring of a longer float) or (b) prefer matches where the leaf's key path contains a string related to the doc context.
 
 **FINDING-2 (MEDIUM) — `--manifest` output mis-reports semantic provenance for some literals.**
 
-The `--manifest` output for `paper_blocks_framing.md` reports `55 -> revision/results/baselines/sweep_status.json#runs[34].ended_at` — i.e. the `55` matches the `:13:55Z` substring of the ISO timestamp `2026-05-18T00:13:55Z`. The AUTHORITATIVE source for `55` in the paper-blocks context is `canonical_config_lock.json#param_count = 55` (the IQP-ansatz parameter count). The gate resolves correctly (the literal IS in the corpus), but the manifest tells a reviewer the wrong story.
+The `--manifest` output for `paper_blocks_framing.md` reports `55 -> results/baselines/sweep_status.json#runs[34].ended_at` — i.e. the `55` matches the `:13:55Z` substring of the ISO timestamp `2026-05-18T00:13:55Z`. The AUTHORITATIVE source for `55` in the paper-blocks context is `canonical_config_lock.json#param_count = 55` (the IQP-ansatz parameter count). The gate resolves correctly (the literal IS in the corpus), but the manifest tells a reviewer the wrong story.
 
 Similarly for `0.027586` in `reconciliation_note.md`: manifest reports `figures/_introspect_wgan_lstm.json#snapshots[3].samples[11][7] = 0.027585849165916443`, when the authoritative source is `multiseed_summary.json#rollup` (the iqp B emd OD aggregate mean computed from baseline_comparison.json).
 
@@ -285,10 +285,10 @@ I spot-checked 5 of the 27 closed findings against the cited commits:
 | # | Finding | Cited commit | Claim | Verified? |
 |---|---|---|---|---|
 | 1 | CR-5 (substring → boundary regex) | `dfde1ba` (T2) | Gate v2 boundary regex `(?<![\d.])<token>(?![\d])` + ε-neighborhood | ✓ — `git show dfde1ba` displays the boundary regex at gate v2's line 193 verbatim; the substring `if token in blob` of v1 is gone |
-| 2 | PROV-CRIT-2 (0.6843 phantom) | `dfde1ba` (T2, gate) + `1a9925f` (T5, doc) | Gate boundary regex + doc removes literal + footer | ✓ — `git show 1a9925f -- revision/docs/paper_blocks_framing.md` confirms `0.6843` removed from line 119 AND the misleading `:520` "substring of frozen artifacts where they coincide" footer is gone |
+| 2 | PROV-CRIT-2 (0.6843 phantom) | `dfde1ba` (T2, gate) + `1a9925f` (T5, doc) | Gate boundary regex + doc removes literal + footer | ✓ — `git show 1a9925f -- docs/paper_blocks_framing.md` confirms `0.6843` removed from line 119 AND the misleading `:520` "substring of frozen artifacts where they coincide" footer is gone |
 | 3 | C-1 / PROV-CRIT-1 (reconciliation scale-mix) | `9fe3a0f` (T3) | NEW column → `matched2000_dualscale.json#aggregates`, new `reconciliation_deltas.json` | ✓ — commit message lists exact deltas; I independently reproduced 4/4 spot-checked deltas from upstream data; the file `reconciliation_deltas.json` exists and exactly matches my recompute |
 | 4 | H-3 (Pareto critic-included param count missing) | `9fe3a0f` (T3) | 250881 cited + new §2.k.x | ✓ — `methods_full.md:232-244` cites 250881 four times in §2.k context; `total_adversarial_param_budget.json` exists and provides per-model totals |
-| 5 | METHODS-BLOCKER-1 (`requirements.txt` `≥` → `==`) | `4ea576b` (T1) | `revision/requirements-pinned.txt` with `==` pins | ✓ — `git show 4ea576b --stat` shows `revision/requirements-pinned.txt | 20 ++++++++++++++++++++` added; commit body lists METHODS-BLOCKER-1 in "Closes" list |
+| 5 | METHODS-BLOCKER-1 (`requirements.txt` `≥` → `==`) | `4ea576b` (T1) | `requirements-pinned.txt` with `==` pins | ✓ — `git show 4ea576b --stat` shows `requirements-pinned.txt | 20 ++++++++++++++++++++` added; commit body lists METHODS-BLOCKER-1 in "Closes" list |
 
 **5/5 spot-checked finding → commit mappings are accurate.** The remediation index's claims about what each commit did are corroborated by the commit messages and diffs.
 
@@ -303,11 +303,11 @@ This is explicit, not silently skipped. ✓
 
 ### §5.b — M-2 / M-3 / MD-1 / MD-7 / LO-1 DOCUMENTED-NOT-CHANGED status
 
-- M-2 (line 49): "MEDIUM (DOCUMENTED)" + "DOCUMENTED in `methods_full.md §3.x.c` + §2.j implementation note per D-14-22 (revision/core/ byte-freeze preserved)" ✓
+- M-2 (line 49): "MEDIUM (DOCUMENTED)" + "DOCUMENTED in `methods_full.md §3.x.c` + §2.j implementation note per D-14-22 (core/ byte-freeze preserved)" ✓
 - M-3 (line 50): "MEDIUM (DOCUMENTED)" + "DOCUMENTED in `methods_full.md §3.x.a-b` per D-14-22" ✓
 - M-4 (line 51): "MEDIUM (DOCUMENTED)" + "DOCUMENTED in `methods_full.md §3.x.d` + §2.i implementation note; implicit β ≈ 0.4" ✓
 - MD-1 (line 88): "byte-frozen under D-14-22. Documented as a forward-fix-only item; the live data path uses the current `real_log_returns` field correctly." ✓
-- MD-7 (line 92): "byte-frozen under D-14-22; the CR-4 future-gate applies the monkey-patch ... but the underlying threadsafety concern cannot be addressed without `revision/core/` edits and is therefore deferred." ✓
+- MD-7 (line 92): "byte-frozen under D-14-22; the CR-4 future-gate applies the monkey-patch ... but the underlying threadsafety concern cannot be addressed without `core/` edits and is therefore deferred." ✓
 - LO-1 (line 98): "byte-frozen under D-14-22; the assert is documented as a no-op in production paths (where `python -O` would strip it)." ✓
 
 All explicitly marked DOCUMENTED-NOT-CHANGED with the D-14-22 byte-freeze rationale. The remediation index is honest about which items got code-level fixes vs documentation-only acknowledgement. ✓

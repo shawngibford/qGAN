@@ -8,7 +8,7 @@ completed: 2026-04-23
 
 # Phase 8 Plan 01: Core Package Scaffold — Summary
 
-Empty-but-importable `revision/core/` package with signature stubs and v1.1 HPO-tuned constants, ready for Wave 2 parallel fill-in.
+Empty-but-importable `core/` package with signature stubs and v1.1 HPO-tuned constants, ready for Wave 2 parallel fill-in.
 
 ## Package Structure Created
 

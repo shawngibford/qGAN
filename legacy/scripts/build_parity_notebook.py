@@ -1,6 +1,6 @@
 """Build revision/01_parity_check.ipynb programmatically via nbformat.
 
-Phase 8 Plan 5 (INFRA-02): proves the revision/core/* extraction reproduces
+Phase 8 Plan 5 (INFRA-02): proves the core/* extraction reproduces
 the qgan_pennylane.ipynb baseline within tolerance (EMD <= 1e-4, moments <= 1e-6).
 
 This script writes the notebook only — it does NOT execute it. Execution is
@@ -11,13 +11,13 @@ import nbformat
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-NB_PATH = REPO_ROOT / "revision" / "01_parity_check.ipynb"
+NB_PATH = REPO_ROOT / "01_parity_check.ipynb"
 
 
 CELL_TITLE_MD = """\
 # Phase 8 Parity Check (INFRA-02)
 
-Verifies `revision/core/` modules reproduce `qgan_pennylane.ipynb` behavior
+Verifies `core/` modules reproduce `qgan_pennylane.ipynb` behavior
 within tolerance:
 
 - **EMD**: |EMD_pre - EMD_post| <= 1e-4
@@ -29,7 +29,7 @@ Does **not** retrain. Loads an existing checkpoint
 inline notebook code path and the extracted-module code path, and compares
 metrics.
 
-Output: `revision/results/parity_check.json` with `pass: true`.
+Output: `results/parity_check.json` with `pass: true`.
 """
 
 
@@ -58,7 +58,7 @@ warnings.filterwarnings("ignore")
 def _find_repo_root():
     here = Path.cwd().resolve()
     for d in [here, *here.parents]:
-        if (d / "data.csv").exists() and (d / "revision" / "core").is_dir():
+        if (d / "data.csv").exists() and (d / "core").is_dir():
             return d
     raise FileNotFoundError(
         "Could not locate repo root from " + str(here) +
@@ -110,7 +110,7 @@ CELL_PATHA_HEADER_MD = """\
 ## Path A — Inline (pre-extraction baseline)
 
 Verbatim re-implementation of the relevant `qgan_pennylane.ipynb` code
-WITHOUT importing from `revision.core`. Mirrors:
+WITHOUT importing from `core`. Mirrors:
 
 - Cell 5: CSV load + OD/PAR_LIGHT extraction
 - Cell 7: `normalize`, `compute_log_delta`
@@ -275,7 +275,7 @@ print(f"[Path A] pre_metrics = {pre_metrics}")
 CELL_PATHB_HEADER_MD = """\
 ## Path B — Extracted modules (post-extraction)
 
-Identical computation via imports from `revision.core`. Same seed, same
+Identical computation via imports from `core`. Same seed, same
 checkpoint, same noise sample, same number of windows. The objective is
 that `pre_metrics` (Path A) and `post_metrics` (Path B) match within the
 locked tolerance.
@@ -283,11 +283,11 @@ locked tolerance.
 
 
 CELL_PATHB_CODE = """\
-from revision.core.data import load_and_preprocess
-from revision.core.eval import compute_emd, compute_moments
-from revision.core.models.quantum import QuantumGenerator
-from revision.core.models.critic import Critic  # noqa: F401  (verifies import works)
-from revision.core import (
+from core.data import load_and_preprocess
+from core.eval import compute_emd, compute_moments
+from core.models.quantum import QuantumGenerator
+from core.models.critic import Critic  # noqa: F401  (verifies import works)
+from core import (
     NUM_QUBITS as MOD_NUM_QUBITS,
     WINDOW_LENGTH as MOD_WINDOW_LENGTH,
     DROPOUT_RATE,
@@ -343,7 +343,7 @@ CELL_COMPARE_HEADER_MD = """\
 ## Comparison + Artifact
 
 Compute deltas, decide pass/fail against the locked tolerance, and write
-`revision/results/parity_check.json`. Tolerances are LOCKED by 08-CONTEXT.md:
+`results/parity_check.json`. Tolerances are LOCKED by 08-CONTEXT.md:
 
 - `emd`: 1e-4
 - `mean` / `std` / `kurtosis`: 1e-6
@@ -390,7 +390,7 @@ artifact = {
     ),
 }
 
-out = Path("revision/results/parity_check.json")
+out = Path("results/parity_check.json")
 out.parent.mkdir(parents=True, exist_ok=True)
 out.write_text(json.dumps(artifact, indent=2))
 print(json.dumps(artifact, indent=2))

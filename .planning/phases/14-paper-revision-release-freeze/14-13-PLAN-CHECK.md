@@ -11,7 +11,7 @@
 
 **PASS-WITH-FIXES**
 
-Plan is structurally sound, faithfully translates the approved design, and covers 27 of 28 actionable findings (HI-9 explicitly OOS). All locked decisions (CR-4 disclose+future-gate, `best_checkpoint.pt` direct-commit, D-14-16 lift Task 2 only, D-14-22 preserved, D-14-13 extended) are honored exactly as specified. File:line citations spot-check 100% accurate against the live repo. ROADMAP edits match the actual repo state. `revision/core/` byte-freeze enforced by per-task gate (`[ -z "$(git diff --stat revision/core/)" ]`).
+Plan is structurally sound, faithfully translates the approved design, and covers 27 of 28 actionable findings (HI-9 explicitly OOS). All locked decisions (CR-4 disclose+future-gate, `best_checkpoint.pt` direct-commit, D-14-16 lift Task 2 only, D-14-22 preserved, D-14-13 extended) are honored exactly as specified. File:line citations spot-check 100% accurate against the live repo. ROADMAP edits match the actual repo state. `core/` byte-freeze enforced by per-task gate (`[ -z "$(git diff --stat core/)" ]`).
 
 However, **5 fixable issues** would either confuse reviewers using the remediation index (HIGH) or cause spurious verify failures on otherwise-correct work (HIGH/MEDIUM). None of these threaten the 7-task atomic-commit boundary or D-14-22; they are surface-level corrections the planner should apply before T7 executes.
 
@@ -33,7 +33,7 @@ However, **5 fixable issues** would either confuse reviewers using the remediati
 #### H-CHK-2 — 4 of 9 timeseries figure paths in plan don't match disk reality
 
 **Plan lines:** 40–48 (frontmatter `files_modified`), 974 (Task 5 `<files>`), 1095 (Task 5 determinism verify model list)
-**Conflicts with:** disk listing `ls revision/results/figures/timeseries_*.png` returns: `ar`, `iqp_sel_55_repro`, `V1`, `V2`, `V3`, `vae`, `wgan_cnn`, `wgan_lstm`, `wgan_mlp` (9 files).
+**Conflicts with:** disk listing `ls results/figures/timeseries_*.png` returns: `ar`, `iqp_sel_55_repro`, `V1`, `V2`, `V3`, `vae`, `wgan_cnn`, `wgan_lstm`, `wgan_mlp` (9 files).
 
 The plan lists `default_75`, `iqp_sel_55`, `V1`, `V2`, `V3`, `vae`, `wgan_cnn`, `wgan_lstm`, `wgan_mlp` — i.e. it includes `default_75` (no such timeseries figure on disk) and `iqp_sel_55` (the actual file is `iqp_sel_55_repro`); it omits `ar` and `iqp_sel_55_repro`.
 
@@ -90,7 +90,7 @@ These are two different strings; check 3's grep target won't appear in the emitt
 | 1 | Goal coverage — 27/28 findings traced to concrete tasks | PASS (HI-9 explicit OOS) |
 | 2 | Cross-task dependencies — T2 before T7; T3 before T7 | PASS (T3 depends on T2's v2 gate; T7 reruns the gate against T3/T4/T5 emits) |
 | 3 | Atomic commit boundaries — file edits per task non-overlapping | PASS (methods_full.md edited in T1+T3+T5+T6 but at distinct sections §4.1+§5.1 / §2.k / CR-4 disclosure / §3.x+§2.i+§2.j) |
-| 4 | `revision/core/` byte-freeze preserved | PASS (every task's verify block asserts `[ -z "$(git diff --stat revision/core/)" ]`) |
+| 4 | `core/` byte-freeze preserved | PASS (every task's verify block asserts `[ -z "$(git diff --stat core/)" ]`) |
 | 5 | D-14-16 lift scope — Task 2 is the only task editing `verify_number_provenance.py` | PASS |
 | 6 | File:line citations — 100% accurate spot-check | PASS (`run_methods_full.py:466-468`, `verify_number_provenance.py:119`, `run_figure_suite.py:382`, `run_figure_suite.py:1117`, `run_figure_suite.py:1146`, `run_figure_suite.py:620-654`, `run_matched2000.py:344`, `run_matched2000.py:434-492`, `run_matched2000_dualscale.py:522`, `eval.py:25-36`, `verify_freeze_ready.py:82,116`, `run_canonical_headline.py:280,334` — all verified live) |
 | 7 | Verification section actionability | PASS-WITH-FIXES (12 checks runnable, but check 3 has caption-string mismatch — M-CHK-1) |
@@ -110,13 +110,13 @@ The following were considered as potential findings but correctly NOT flagged be
 
 3. **D-14-16 lift for Task 2 only.** The schema bump to `"v2 (Phase 14 plan 14-13 — boundary-strict resolution + render-only exclusion)"` is authorized for this plan; the gate is back in byte-freeze under the new schema after T2 closes. Not a finding.
 
-4. **D-14-22 preserved for M-2 / M-3 / MD-1 / MD-7 / LO-1 / M-4.** Documenting these findings in `methods_full.md §3.x` (instead of patching `revision/core/`) is the locked decision. The plan correctly distinguishes "DOCUMENTED" (Task 6) from "CHANGED" (which would require lifting D-14-22). Not a finding.
+4. **D-14-22 preserved for M-2 / M-3 / MD-1 / MD-7 / LO-1 / M-4.** Documenting these findings in `methods_full.md §3.x` (instead of patching `core/`) is the locked decision. The plan correctly distinguishes "DOCUMENTED" (Task 6) from "CHANGED" (which would require lifting D-14-22). Not a finding.
 
 5. **HI-9 (is_complete subprocess perf) OUT OF SCOPE.** The reviewer's own annotation says perf-only, no correctness impact. The plan explicitly excludes it. Not a finding.
 
 6. **Quantum-review.md MINOR-1 / MINOR-2 / MEDIUM (barren-plateau).** These items are NOT in the "12 CRITICAL + 16 HIGH" target set; they are MINOR / MEDIUM and were not promised to be addressed in this plan. The IQP-nomenclature footnote, quantum.py:1 docstring fix, and V2 barren-plateau acknowledgement could be future work, but their omission from 14-13 is NOT a scope violation since the plan's scope is explicitly the 28 CRITICAL+HIGH findings. Not a finding (would be a separate follow-up plan).
 
-7. **Pre-existing `.gitignore` modifications stash cycle.** The user's local working tree has unrelated dirty `.gitignore` edits that stay on the stash; only the new `!revision/checkpoints/best_checkpoint.pt` exception is applied at the executor side. This is the documented Phase 14 protocol per T-14-43 / project memory. Not a finding.
+7. **Pre-existing `.gitignore` modifications stash cycle.** The user's local working tree has unrelated dirty `.gitignore` edits that stay on the stash; only the new `!checkpoints/best_checkpoint.pt` exception is applied at the executor side. This is the documented Phase 14 protocol per T-14-43 / project memory. Not a finding.
 
 8. **No retraining, no new figures beyond re-renders.** The plan explicitly forbids retraining (matches the "pure correction sweep" framing). All figure changes are re-renders of existing artifacts against post-fix aggregates. Not a finding.
 

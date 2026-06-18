@@ -10,20 +10,20 @@ Phase 13 is mostly an *integration + instrumentation* phase, not a new-technolog
 
 **Critical correction to a CONTEXT.md assumption:** the canonical-refs section names "PennyLane 0.44.0", but the **installed and operative version is 0.43.0** [VERIFIED: `pennylane.__version__` == "0.43.0" in `./qgan_env`]. All API patterns below are verified against 0.43.0. The 0.43 measurement-process API (`qml.vn_entropy(wires=...)`, `qml.purity(wires=...)`, `qml.density_matrix(wires=...)`) works inside a QNode and **can coexist in the same return tuple as `qml.expval(...)`** — verified by execution. The offline `qml.math.vn_entropy(state, indices, ...)` helper has a *different, positional* signature in 0.43 (`indices` is positional, not a keyword, and on a statevector it requires the reduced-DM path), so the in-QNode measurement-process route is strictly simpler and is the recommended pattern.
 
-**Primary recommendation:** Add a depth+topology spec to `QuantumGenerator` (keeping the range-based depth-4 default byte-identical), build a single new `revision/run_ansatz.py` + `run_ansatz_sweep.sh` pair cloned structurally from `run_baselines.py`/`run_baselines_sweep.sh`, drive INTRO-* through a closure passed as the existing `callback=` kwarg that snapshots samples / param-stats / a dedicated read-only introspection QNode, fix CR-01 with a real Welch-free differentiable torch PSD term and CR-02 with `map_location` + dtype recast, and emit `ansatz_comparison.json` on the existing `rows[] + models[]` schema extended with `ansatz`/`depth`/`topology` fields.
+**Primary recommendation:** Add a depth+topology spec to `QuantumGenerator` (keeping the range-based depth-4 default byte-identical), build a single new `run_ansatz.py` + `run_ansatz_sweep.sh` pair cloned structurally from `run_baselines.py`/`run_baselines_sweep.sh`, drive INTRO-* through a closure passed as the existing `callback=` kwarg that snapshots samples / param-stats / a dedicated read-only introspection QNode, fix CR-01 with a real Welch-free differentiable torch PSD term and CR-02 with `map_location` + dtype recast, and emit `ansatz_comparison.json` on the existing `rows[] + models[]` schema extended with `ansatz`/`depth`/`topology` fields.
 
 ## Architectural Responsibility Map
 
 | Capability | Primary Tier | Secondary Tier | Rationale |
 |------------|-------------|----------------|-----------|
-| Ansatz variant definition (V1/V2/V3) | `revision/core/models/quantum.py` (model layer) | — | D-10-13 code-placement invariant: model defs live in `core/`, never in drivers |
-| Ansatz selection API | `revision/core/models/quantum.py` (model layer) | driver passes config | D-13-03; default must stay byte-unchanged |
-| Multi-seed ansatz training sweep | `revision/run_ansatz.py` + `*_sweep.sh` (orchestration) | `train_wgan_gp` UNCHANGED | D-10-13: all sweep orchestration in `run_*.py` |
+| Ansatz variant definition (V1/V2/V3) | `core/models/quantum.py` (model layer) | — | D-10-13 code-placement invariant: model defs live in `core/`, never in drivers |
+| Ansatz selection API | `core/models/quantum.py` (model layer) | driver passes config | D-13-03; default must stay byte-unchanged |
+| Multi-seed ansatz training sweep | `run_ansatz.py` + `*_sweep.sh` (orchestration) | `train_wgan_gp` UNCHANGED | D-10-13: all sweep orchestration in `run_*.py` |
 | INTRO snapshot capture | `callback` closure in driver (orchestration) | `train_wgan_gp` hook (already built) | Hook is dormant-by-design; no training-loop surgery |
 | Entanglement entropy / purity | dedicated read-only QNode on generator's `default.qubit` device (model layer helper) | callback invokes it | Statevector measurement belongs with the circuit, not the driver |
-| Fidelity metrics for the table | `revision/core/eval.py::full_metric_suite` UNCHANGED | aggregation notebook/script | D-10-20: no new metric math; reuse |
+| Fidelity metrics for the table | `core/eval.py::full_metric_suite` UNCHANGED | aggregation notebook/script | D-10-20: no new metric math; reuse |
 | Figure rendering | new `run_*.py` / a figures script (orchestration) | matplotlib | Notebook/script only orchestrates + plots + writes JSON |
-| CR-01 / CR-02 fixes | `revision/core/training.py` (training layer) | regression tests in `tests/` | Folded todos target this file specifically |
+| CR-01 / CR-02 fixes | `core/training.py` (training layer) | regression tests in `tests/` | Folded todos target this file specifically |
 
 **Why this matters:** the single most likely misassignment here is putting the entanglement-entropy computation in the driver (operating on returned expvals) instead of in a QNode that has access to the statevector. Reduced-state entropy/purity is *not* recoverable from the 10 PauliX/PauliZ expectation values the generator returns — it requires either an in-QNode `qml.vn_entropy`/`qml.purity` measurement or a `qml.state()`/`qml.density_matrix()` return reduced offline. This must be a model-layer helper.
 
@@ -76,7 +76,7 @@ Phase 13 is mostly an *integration + instrumentation* phase, not a new-technolog
 
 ```
                        ┌─────────────────────────────────────────────────┐
-                       │ revision/core/models/quantum.py                  │
+                       │ core/models/quantum.py                  │
    ansatz spec ───────►│  QuantumGenerator(depth, topology)               │
  (depth, topology)     │   ├─ generator_circuit  (measurement QNode)      │
                        │   └─ introspection_qnode (vn_entropy + purity)   │◄─┐
@@ -334,7 +334,7 @@ def _load_checkpoint(self, model):
 
 | Category | Items Found | Action Required |
 |----------|-------------|------------------|
-| Stored data (reused artifacts) | Existing 09.1/10 V1 quantum 5-seed final metrics (reused as ansatz variant-1, D-13-01); Phase-10 classical run dirs (`revision/results/baselines/runs/<model>/B/42/`) read for INTRO-01 instrumented re-runs | Read-only reuse; assert `data_hash` (D-10-15) before they enter the ansatz table / progression figure |
+| Stored data (reused artifacts) | Existing 09.1/10 V1 quantum 5-seed final metrics (reused as ansatz variant-1, D-13-01); Phase-10 classical run dirs (`results/baselines/runs/<model>/B/42/`) read for INTRO-01 instrumented re-runs | Read-only reuse; assert `data_hash` (D-10-15) before they enter the ansatz table / progression figure |
 | Live service config | None | None — local-Mac statevector compute only, no external services (verified: PROJECT.md "Compute: Local Mac only") |
 | OS-registered state | None | None — no Task Scheduler/launchd/pm2; sweeps run via tmux/nohup ad hoc (verified: `run_baselines_sweep.sh` invocation block) |
 | Secrets/env vars | None | None — no secrets in this project; `PYTHON` resolution uses `./qgan_env/bin/python` (verified: sweep script lines 97-107) |
@@ -375,7 +375,7 @@ return (qml.expval(qml.PauliX(0)), qml.expval(qml.PauliZ(0)), ...,
 ### ansatz_comparison.json schema (extends the verified long-form schema)
 
 ```json
-// Source: VERIFIED shape of revision/results/baseline_comparison.json (1710 rows)
+// Source: VERIFIED shape of results/baseline_comparison.json (1710 rows)
 {
   "schema": "long-form rows[] + models[] aggregate (D-10-16) + ansatz dim (Phase 13)",
   "model_kinds": ["quantum"],
@@ -409,8 +409,8 @@ return (qml.expval(qml.PauliX(0)), qml.expval(qml.PauliZ(0)), ...,
 
 - **Main notebook untouched** — `qgan_pennylane.ipynb` stays as-is; all work in `revision/`.
 - **Compute: Local Mac only** — statevector simulator; sweep sized accordingly (`--parallel ≤ 2`).
-- **Results contract** — every artifact is structured JSON under `revision/results/<name>.json`; figures under `revision/results/figures/` with companion `*.json`.
-- **`revision/core/` byte-untouched except the two folded fixes** — `quantum.py` topology add and `training.py` CR-01/CR-02 must preserve byte-unchanged defaults (`spectral_loss_weight=0.0`, `callback=None`, `early_stopper=None`, default `topology="range"`).
+- **Results contract** — every artifact is structured JSON under `results/<name>.json`; figures under `results/figures/` with companion `*.json`.
+- **`core/` byte-untouched except the two folded fixes** — `quantum.py` topology add and `training.py` CR-01/CR-02 must preserve byte-unchanged defaults (`spectral_loss_weight=0.0`, `callback=None`, `early_stopper=None`, default `topology="range"`).
 - **No new variance-collapse remediation** — report honestly; explain dynamics, don't close the gap.
 - **No `multiprocessing.Pool`** — `xargs -P 2` OS processes only (D-10-24, LOCKED).
 - **`data_hash` (D-10-15)** asserted on any reused V1/classical artifact before it enters the ansatz table / progression figure.
@@ -509,11 +509,11 @@ return (qml.expval(qml.PauliX(0)), qml.expval(qml.PauliZ(0)), ...,
 
 ### Primary (HIGH confidence — verified by live execution)
 - `./qgan_env` live probes (`/tmp/_pl_probe.py`, `_pl_probe2.py`, `_pl_probe3.py`) — pennylane 0.43.0 `vn_entropy`/`purity`/`density_matrix`/`state` in-QNode + offline `qml.math` signatures + no_grad behavior + batched/scalar shapes + entropy/purity bounds + noise-ensemble stability
-- `revision/core/models/quantum.py` (read) — generator_circuit structure, param-count formula, range-CNOT block
-- `revision/core/training.py` (read) — callback hook (396-411), spectral hook (356-360, 470-507), EarlyStopping restore (163-171), MPS/float64 device logic
-- `revision/run_baselines.py` + `run_baselines_sweep.sh` (read) — idempotent driver + atomic sweep template
-- `revision/results/baseline_comparison.json` (read) — verified `rows[] + models[]` long-form schema (1710 rows)
-- `revision/core/eval.py` (read) — `full_metric_suite` signature + keys
+- `core/models/quantum.py` (read) — generator_circuit structure, param-count formula, range-CNOT block
+- `core/training.py` (read) — callback hook (396-411), spectral hook (356-360, 470-507), EarlyStopping restore (163-171), MPS/float64 device logic
+- `run_baselines.py` + `run_baselines_sweep.sh` (read) — idempotent driver + atomic sweep template
+- `results/baseline_comparison.json` (read) — verified `rows[] + models[]` long-form schema (1710 rows)
+- `core/eval.py` (read) — `full_metric_suite` signature + keys
 - `.planning/phases/13-architecture-introspection/13-CONTEXT.md`, `.planning/REQUIREMENTS.md`, `.planning/ROADMAP.md`, `.planning/PROJECT.md`, the two CR-01/CR-02 todos (read)
 
 ### Secondary (MEDIUM confidence)

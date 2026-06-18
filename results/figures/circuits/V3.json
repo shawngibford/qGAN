@@ -1,0 +1,14 @@
+{
+  "ansatz_name": "V3",
+  "circuit_id": "default_75",
+  "data_hash": "91e447d4624e25b3",
+  "depth": 4,
+  "figure": "circuit_diagram",
+  "generation_timestamp": "2026-05-20T19:13:50.526547Z",
+  "n_params": 75,
+  "num_qubits": 5,
+  "render_only": true,
+  "renderer": "qml.draw_mpl(style=\"pennylane\")",
+  "source_config_lock_path": "results/v3_config_lock.json",
+  "topology": "linear"
+}

@@ -14,19 +14,19 @@
 
 | New/Modified File | Role | Data Flow | Closest Analog | Match Quality |
 |-------------------|------|-----------|----------------|---------------|
-| `revision/core/models/quantum.py` (ADD 55-param IQP:SEL, non-default) | model/config | transform | same file — existing `topology` ARCH-01 config-selectable switch (`quantum.py:38-80`) | exact (in-file precedent) |
-| `revision/run_model_info.py` (NEW) | utility (JSON emitter) | transform / batch | `revision/run_multiseed_rollup.py` (pure aggregator → long-form JSON + data_hash) | exact (role + data flow) |
-| `revision/run_<2000ep sweep>.py` + `.sh` (NEW) | driver + sweep harness | batch / event-driven (resumable) | `revision/run_ansatz_sweep.sh` + `revision/run_ansatz.py` (xargs -P2, sweep_status.json) | exact |
-| `revision/run_<figure_suite>.py` (NEW) | utility (figure renderer) | transform (JSON→PNG/PDF) | `revision/run_introspect_figures.py` (render-only, PNG+PDF+JSON) | exact |
-| Config-equivalence assertion (T1 gate; in recovery script) | test/gate | request-response (assert) | `revision/run_multiseed_rollup.py:80-92` cross-artifact hard-gate idiom + Phase-8 `parity_check.json` harness | role-match |
-| `revision/docs/training_protocol.md` / `dataset_stats.md` (REGEN from JSON) | doc (rendered) | transform (JSON→md) | `revision/results/baseline_comparison.md` rendered by `_build_baseline_notebook.py:550-593` | exact (md-from-JSON renderer) |
-| `revision/docs/reviewer_response.md` (NEW) | doc (structured prose) | n/a | `revision/docs/training_protocol.md` (sourced-table doc structure) + 13-04-SUMMARY.md front-matter discipline | role-match (structure only) |
-| `revision/docs/release.md` (NEW) | doc (process record) | n/a | RESEARCH "Tag + reserved-DOI" code block; no in-repo doc analog | **no analog** (see below) |
+| `core/models/quantum.py` (ADD 55-param IQP:SEL, non-default) | model/config | transform | same file — existing `topology` ARCH-01 config-selectable switch (`quantum.py:38-80`) | exact (in-file precedent) |
+| `run_model_info.py` (NEW) | utility (JSON emitter) | transform / batch | `run_multiseed_rollup.py` (pure aggregator → long-form JSON + data_hash) | exact (role + data flow) |
+| `run_<2000ep sweep>.py` + `.sh` (NEW) | driver + sweep harness | batch / event-driven (resumable) | `run_ansatz_sweep.sh` + `run_ansatz.py` (xargs -P2, sweep_status.json) | exact |
+| `run_<figure_suite>.py` (NEW) | utility (figure renderer) | transform (JSON→PNG/PDF) | `run_introspect_figures.py` (render-only, PNG+PDF+JSON) | exact |
+| Config-equivalence assertion (T1 gate; in recovery script) | test/gate | request-response (assert) | `run_multiseed_rollup.py:80-92` cross-artifact hard-gate idiom + Phase-8 `parity_check.json` harness | role-match |
+| `docs/training_protocol.md` / `dataset_stats.md` (REGEN from JSON) | doc (rendered) | transform (JSON→md) | `results/baseline_comparison.md` rendered by `_build_baseline_notebook.py:550-593` | exact (md-from-JSON renderer) |
+| `docs/reviewer_response.md` (NEW) | doc (structured prose) | n/a | `docs/training_protocol.md` (sourced-table doc structure) + 13-04-SUMMARY.md front-matter discipline | role-match (structure only) |
+| `docs/release.md` (NEW) | doc (process record) | n/a | RESEARCH "Tag + reserved-DOI" code block; no in-repo doc analog | **no analog** (see below) |
 | PAPER-01..11 copy-paste LaTeX blocks | manuscript revision package | n/a | none — `.tex` is read-only (D-14-18) | **no analog** (see below) |
 
 ## Pattern Assignments
 
-### `revision/core/models/quantum.py` — ADD 55-param IQP:SEL (model/config, transform)
+### `core/models/quantum.py` — ADD 55-param IQP:SEL (model/config, transform)
 
 **Analog:** the SAME file's existing ARCH-01 `topology` config-selectable switch. The 55-param circuit must be added the *identical* way (D-14-04, RESEARCH "add as NON-default selectable config"). Core default path stays byte-frozen.
 
@@ -55,7 +55,7 @@ self.num_params = num_qubits + num_layers * (num_qubits * 3) + num_qubits * 2
 
 **Config-equivalence hard-assert (D-14-07)** — use the `run_multiseed_rollup.py:87-91` *explicit-raise* idiom (NOT bare `assert`, which `python -O` strips and would silently disable the integrity gate):
 ```python
-# Source: revision/run_multiseed_rollup.py:86-92 (WR-01 explicit-raise gate)
+# Source: run_multiseed_rollup.py:86-92 (WR-01 explicit-raise gate)
 if len(set(hashes.values())) != 1:
     raise AssertionError(f"data_hash mismatch across headline artifacts: {hashes}")
 ```
@@ -65,9 +65,9 @@ structural forward-pass check. Failure BLOCKS the phase (D-14-07).
 
 ---
 
-### `revision/run_model_info.py` (NEW) — utility / JSON emitter (transform)
+### `run_model_info.py` (NEW) — utility / JSON emitter (transform)
 
-**Analog:** `revision/run_multiseed_rollup.py` — the canonical "pure consumer / pure aggregator → long-form JSON + data_hash" driver. No torch/pennylane/core import; reads result JSONs, asserts cross-artifact `data_hash`, emits one JSON.
+**Analog:** `run_multiseed_rollup.py` — the canonical "pure consumer / pure aggregator → long-form JSON + data_hash" driver. No torch/pennylane/core import; reads result JSONs, asserts cross-artifact `data_hash`, emits one JSON.
 
 **Repo-root resolver + RESULTS anchor** (`run_multiseed_rollup.py:42-59`) — copy verbatim (drivers may run from a worktree; results paths are repo-root anchored):
 ```python
@@ -80,7 +80,7 @@ def _find_repo_root() -> Path:
     for cand in [p, *p.parents]:
         if (cand / "revision" / "core" / "preprocessing.py").exists():
             return cand
-    raise RuntimeError("repo root not found (revision/core/preprocessing.py)")
+    raise RuntimeError("repo root not found (core/preprocessing.py)")
 
 REPO = _find_repo_root()
 if str(REPO) not in sys.path:
@@ -90,7 +90,7 @@ RESULTS = REPO / "revision/results"
 
 **Cross-artifact data_hash gate** (`run_multiseed_rollup.py:85-92`) — every consumed artifact must agree on `data_hash` (D-14-13 strict gate). Reuse exactly.
 
-**Long-form schema the emitter MUST conform to** — from `revision/results/baseline_comparison.json` (read this session). Top-level keys observed: `schema`, `model_kinds`, `pipelines`, `seeds`, `data_hash`, `data_hash_verification`, `metric_helpers`, `models`, `rows`. Per-`models[]` shape (copy this record structure for each model row in `model_info.json`):
+**Long-form schema the emitter MUST conform to** — from `results/baseline_comparison.json` (read this session). Top-level keys observed: `schema`, `model_kinds`, `pipelines`, `seeds`, `data_hash`, `data_hash_verification`, `metric_helpers`, `models`, `rows`. Per-`models[]` shape (copy this record structure for each model row in `model_info.json`):
 ```json
 { "kind": "quantum", "parameter_count": 75, "family": "adversarial-quantum",
   "train_protocol_notes": "QuantumGenerator(num_qubits=5, num_layers=4) PQC = 5 + 4*15 + 10 = 75 params; ..." }
@@ -106,9 +106,9 @@ print(f"model_info.json written: {len(rows)} rows, data_hash={canonical_hash}")
 
 ---
 
-### `revision/run_<2000ep sweep>.py` + `.sh` (NEW) — driver + resumable sweep harness (batch)
+### `run_<2000ep sweep>.py` + `.sh` (NEW) — driver + resumable sweep harness (batch)
 
-**Analog:** `revision/run_ansatz_sweep.sh` (+ `run_ansatz.py` per-run CLI). This is THE established `xargs -P2` resumable pattern (D-14-12/14, RESEARCH "Don't Hand-Roll"). Copy the whole skeleton; change only the matrix (VARIANTS/SEEDS/EPOCHS) and artifact-bundle definition.
+**Analog:** `run_ansatz_sweep.sh` (+ `run_ansatz.py` per-run CLI). This is THE established `xargs -P2` resumable pattern (D-14-12/14, RESEARCH "Don't Hand-Roll"). Copy the whole skeleton; change only the matrix (VARIANTS/SEEDS/EPOCHS) and artifact-bundle definition.
 
 **Thermal guardrail** (`run_ansatz_sweep.sh:147-157`) — `--parallel` must be 1 or 2; `>=3` hard-rejected with non-zero exit (LOCKED D-14-12, `--parallel ≥3` hard-rejected):
 ```bash
@@ -129,9 +129,9 @@ fi
 
 ---
 
-### `revision/run_<figure_suite>.py` (NEW) — figure renderer (transform JSON→PNG/PDF)
+### `run_<figure_suite>.py` (NEW) — figure renderer (transform JSON→PNG/PDF)
 
-**Analog:** `revision/run_introspect_figures.py` — render-only, every figure traceable to a reproducibility JSON (success criterion 4). D-14-17 explicitly names this as the pattern to follow; port the notebook's ~11 `savefig` routines into this shape for the full per-model suite.
+**Analog:** `run_introspect_figures.py` — render-only, every figure traceable to a reproducibility JSON (success criterion 4). D-14-17 explicitly names this as the pattern to follow; port the notebook's ~11 `savefig` routines into this shape for the full per-model suite.
 
 **Headless matplotlib** (`run_introspect_figures.py:24-29`):
 ```python
@@ -165,13 +165,13 @@ def _save(fig, figures_dir: Path, stem: str) -> list[Path]:
     return written
 ```
 
-**CLI + repo-root + print-written-paths idiom** (`run_introspect_figures.py:51-57, 291-325`): `argparse --figures-dir` defaulting to `revision/results/figures`, `_find_repo_root()` walking up to `revision/core/preprocessing.py`, resolve relative dir against repo, `print` every written path. Mirror exactly. **Figure-completeness bar = the verified 16 `Figure_*.png`** in `Final Results from 2000 epochs - IQP:SEL circuit/`, NOT 20 (RESEARCH Runtime State + Open Q3 / Assumption A2).
+**CLI + repo-root + print-written-paths idiom** (`run_introspect_figures.py:51-57, 291-325`): `argparse --figures-dir` defaulting to `results/figures`, `_find_repo_root()` walking up to `core/preprocessing.py`, resolve relative dir against repo, `print` every written path. Mirror exactly. **Figure-completeness bar = the verified 16 `Figure_*.png`** in `Final Results from 2000 epochs - IQP:SEL circuit/`, NOT 20 (RESEARCH Runtime State + Open Q3 / Assumption A2).
 
 ---
 
-### `revision/docs/training_protocol.md` / `dataset_stats.md` (REGEN from JSON) — rendered doc (transform)
+### `docs/training_protocol.md` / `dataset_stats.md` (REGEN from JSON) — rendered doc (transform)
 
-**Analog:** `revision/results/baseline_comparison.md`, rendered FROM JSON by the markdown-render cell in `revision/_build_baseline_notebook.py:550-593`. This is the exact "no hand-typed numbers, render markdown table from the long-form JSON" idiom (D-14-16, success criterion 5).
+**Analog:** `results/baseline_comparison.md`, rendered FROM JSON by the markdown-render cell in `_build_baseline_notebook.py:550-593`. This is the exact "no hand-typed numbers, render markdown table from the long-form JSON" idiom (D-14-16, success criterion 5).
 
 **JSON→markdown table render** (`_build_baseline_notebook.py:561-592`) — aggregate from `rows[]`, format cells, emit pipe-table lines:
 ```python
@@ -193,55 +193,55 @@ Note `_agg()` (`:553-559`) computes mean/std directly from `comparison["rows"]` 
 
 ---
 
-### `revision/docs/reviewer_response.md` (NEW) — structured-prose doc (no data flow)
+### `docs/reviewer_response.md` (NEW) — structured-prose doc (no data flow)
 
-**Analog (structure only):** `revision/docs/training_protocol.md` table discipline + the 13-04-SUMMARY.md front-matter `requires/provides/decisions/key-files` discipline. No exact content analog — this is a new AIChE point-by-point rebuttal artifact (D-14-19).
+**Analog (structure only):** `docs/training_protocol.md` table discipline + the 13-04-SUMMARY.md front-matter `requires/provides/decisions/key-files` discipline. No exact content analog — this is a new AIChE point-by-point rebuttal artifact (D-14-19).
 
 **Pattern to copy:** the sourced-row table convention from `training_protocol.md` (every claim carries a `| ... | Source |` provenance column). For `reviewer_response.md` the per-reviewer table is:
-`| comment ID | verbatim concern | change made | manuscript location (§/table/fig) | supporting artifact (revision/results/*.json or figure path) |`
-Comment IDs come from `QGAN_Review_Response_Plan.md.pdf` (R1-M1..M5, R1-m1..m7, R2-1..6 — RESEARCH Sources). Every "supporting artifact" cell must point at a real `revision/results/*.json` or `revision/results/figures/*` path (success criterion 5, Pitfall 5).
+`| comment ID | verbatim concern | change made | manuscript location (§/table/fig) | supporting artifact (results/*.json or figure path) |`
+Comment IDs come from `QGAN_Review_Response_Plan.md.pdf` (R1-M1..M5, R1-m1..m7, R2-1..6 — RESEARCH Sources). Every "supporting artifact" cell must point at a real `results/*.json` or `results/figures/*` path (success criterion 5, Pitfall 5).
 
 ---
 
-### `revision/docs/release.md` (NEW) — **NO CODE ANALOG** (process record)
+### `docs/release.md` (NEW) — **NO CODE ANALOG** (process record)
 
-No in-repo document plays this role (`revision/docs/` holds only `training_protocol.md`, `dataset_stats.md`). Use the RESEARCH "Tag + reserved-DOI release sequence" block as the content spec, not a code analog. It must record: tag SHA (`git rev-parse v2.0-revision`), the reserved Zenodo version DOI + concept DOI, the `git check-ignore revision/results/baseline_comparison.json` pre-tag verification result (must be empty — Pitfall 4), and copy-paste reproduce steps. Manual Zenodo deposit only (`prereserve_doi`) — NEVER the GitHub↔Zenodo webhook (RESEARCH Pattern 2 / Pitfall 1).
+No in-repo document plays this role (`docs/` holds only `training_protocol.md`, `dataset_stats.md`). Use the RESEARCH "Tag + reserved-DOI release sequence" block as the content spec, not a code analog. It must record: tag SHA (`git rev-parse v2.0-revision`), the reserved Zenodo version DOI + concept DOI, the `git check-ignore results/baseline_comparison.json` pre-tag verification result (must be empty — Pitfall 4), and copy-paste reproduce steps. Manual Zenodo deposit only (`prereserve_doi`) — NEVER the GitHub↔Zenodo webhook (RESEARCH Pattern 2 / Pitfall 1).
 
 ---
 
 ### PAPER-01..11 copy-paste LaTeX blocks — **NO CODE ANALOG** (manuscript revision package)
 
-D-14-18: `main (4) copy.tex` and `supp_material.tex` are READ-ONLY reference (Overleaf-canonical) — they are NEVER edited in-repo and there is no "edit the tex" analog by design. Deliverable is a set of copy-paste LaTeX blocks keyed to `\label`/anchor sentence + a one-line reviewer-comment rationale each. Anchors are fully enumerated in 14-RESEARCH.md "Phase Requirements" (PAPER-01..11 each cite exact `main (4) copy.tex` / `supp_material.tex` line numbers and `\label`/`\cite` keys). The only enforceable code artifact here is the **number-provenance grep-gate** (RESEARCH Pattern 3): a verifier script that extracts numeric literals from the LaTeX blocks and asserts each resolves to a `revision/results/*.json` value at stated precision — pattern-source for that gate is the explicit-raise cross-artifact gate in `run_multiseed_rollup.py:85-92`.
+D-14-18: `main (4) copy.tex` and `supp_material.tex` are READ-ONLY reference (Overleaf-canonical) — they are NEVER edited in-repo and there is no "edit the tex" analog by design. Deliverable is a set of copy-paste LaTeX blocks keyed to `\label`/anchor sentence + a one-line reviewer-comment rationale each. Anchors are fully enumerated in 14-RESEARCH.md "Phase Requirements" (PAPER-01..11 each cite exact `main (4) copy.tex` / `supp_material.tex` line numbers and `\label`/`\cite` keys). The only enforceable code artifact here is the **number-provenance grep-gate** (RESEARCH Pattern 3): a verifier script that extracts numeric literals from the LaTeX blocks and asserts each resolves to a `results/*.json` value at stated precision — pattern-source for that gate is the explicit-raise cross-artifact gate in `run_multiseed_rollup.py:85-92`.
 
 ## Shared Patterns
 
 ### Repo-root resolution + repo-anchored results path
-**Source:** `revision/run_multiseed_rollup.py:42-59` (also `run_introspect_figures.py:51-57`, `run_ansatz_sweep.sh:98-108` venv variant)
-**Apply to:** every new `revision/run_*.py` and the new sweep `.sh`
-Walk up to `revision/core/preprocessing.py`; anchor `RESULTS = REPO / "revision/results"`. Drivers run from worktrees — never assume cwd.
+**Source:** `run_multiseed_rollup.py:42-59` (also `run_introspect_figures.py:51-57`, `run_ansatz_sweep.sh:98-108` venv variant)
+**Apply to:** every new `run_*.py` and the new sweep `.sh`
+Walk up to `core/preprocessing.py`; anchor `RESULTS = REPO / "revision/results"`. Drivers run from worktrees — never assume cwd.
 
 ### Explicit-raise integrity gate (NOT bare assert)
-**Source:** `revision/run_multiseed_rollup.py:86-92` (WR-01)
+**Source:** `run_multiseed_rollup.py:86-92` (WR-01)
 **Apply to:** config-equivalence assertion (D-14-07), the D-14-13 strict accept gate, the number-provenance grep-gate
 `python -O` strips `assert`; integrity/data_hash/seed/shape gates must `raise AssertionError(...)` explicitly so they cannot be silently disabled.
 
 ### Cross-artifact data_hash equality (D-14-13 strict gate)
-**Source:** `revision/run_multiseed_rollup.py:85-92`; expected `91e447d4624e25b3`
+**Source:** `run_multiseed_rollup.py:85-92`; expected `91e447d4624e25b3`
 **Apply to:** `run_model_info.py`, the 2000ep sweep accept logic, every regenerated artifact
 Assert ONLY mutual equality of the frozen `data_hash` fields across all consumed artifacts; do NOT re-derive the hash (Anti-Pattern, run_multiseed_rollup.py:18-23). Also assert seed set == `{42,43,44,45,46}` and device-manifest assertion passed (D-14-12/13).
 
 ### Long-form `schema + rows[] + models[]` JSON contract
-**Source:** `revision/results/baseline_comparison.json` (schema header `"long-form rows[] + models[] aggregate (D-10-16)"`)
+**Source:** `results/baseline_comparison.json` (schema header `"long-form rows[] + models[] aggregate (D-10-16)"`)
 **Apply to:** `model_info.json` and every regenerated 2000ep artifact
 Conform top-level keys (`schema, data_hash, metric_helpers, models, rows`); metric helpers `revision.core.eval ONLY (D-10-20)` — never re-implement EMD/ACF/DTW/moments.
 
 ### Render-only + no-hand-typed-numbers
 **Source:** `run_introspect_figures.py` (figures), `_build_baseline_notebook.py:550-593` (markdown)
 **Apply to:** figure suite, regenerated `training_protocol.md`/`dataset_stats.md`, the model-info table
-Renderers read JSON and fail loudly on a missing companion; every number in a doc/figure/table/LaTeX block traces to a `revision/results/*.json` value (success criteria 4 & 5, RESEARCH Pitfall 5).
+Renderers read JSON and fail loudly on a missing companion; every number in a doc/figure/table/LaTeX block traces to a `results/*.json` value (success criteria 4 & 5, RESEARCH Pitfall 5).
 
 ### Resumable sweep harness (xargs -P2, never Pool)
-**Source:** `revision/run_ansatz_sweep.sh` end-to-end
+**Source:** `run_ansatz_sweep.sh` end-to-end
 **Apply to:** the new 2000ep sweep
 `--parallel` 1|2 only (>=3 rejected, D-14-12); `xargs -P 2 -L 1 bash -c`; `sweep_status.json` skip-already-done with atomic tmp+rename under flock; venv-binary direct invocation; per-run device/dtype manifest hard-assert (D-14-12).
 
@@ -251,13 +251,13 @@ Planner should treat these via RESEARCH.md specs, not a codebase analog:
 
 | File | Role | Data Flow | Reason |
 |------|------|-----------|--------|
-| `revision/docs/release.md` | process-record doc | n/a | No release/DOI doc exists in repo; spec = RESEARCH "Tag + reserved-DOI release sequence" + Pitfall 1/4. Manual Zenodo `prereserve_doi` only. |
+| `docs/release.md` | process-record doc | n/a | No release/DOI doc exists in repo; spec = RESEARCH "Tag + reserved-DOI release sequence" + Pitfall 1/4. Manual Zenodo `prereserve_doi` only. |
 | PAPER-01..11 LaTeX blocks | manuscript revision package | n/a | `.tex` is read-only by D-14-18 — there is intentionally no "edit the manuscript" code path. Anchors enumerated in 14-RESEARCH Phase Requirements. |
 | Git tag + Zenodo deposition | manual operator process | n/a | Operator-interactive (Zenodo token at deposit time); INFRA-03 last step, hard-blocked behind the gate (D-14-22). Not a source file. |
 
 ## Metadata
 
-**Analog search scope:** `revision/run_*.py`, `revision/*sweep*.sh`, `revision/_build_*notebook.py`, `revision/core/models/quantum.py`, `revision/docs/*.md`, `revision/results/*.json` + `*.md`, `.planning/phases/13-*/` summaries
+**Analog search scope:** `run_*.py`, `revision/*sweep*.sh`, `_build_*notebook.py`, `core/models/quantum.py`, `docs/*.md`, `results/*.json` + `*.md`, `.planning/phases/13-*/` summaries
 **Files scanned:** ~22 (6 read in full / targeted; structures of run_baselines, ansatz, sensitivity drivers confirmed by listing + grep)
 **Key patterns identified:**
 - Pure-aggregator JSON emitter idiom (`run_multiseed_rollup.py`) is the template for `run_model_info.py`

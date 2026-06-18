@@ -7,13 +7,13 @@ tags: [timegan, gru, predictive-score, discriminative-score, pytorch, eval, rebu
 # Dependency graph
 requires:
   - phase: 10-classical-baselines
-    provides: 50 frozen baseline samples.npy + config.yaml (data_hash) under revision/results/baselines/runs/
+    provides: 50 frozen baseline samples.npy + config.yaml (data_hash) under results/baselines/runs/
   - phase: 09.1-r1-m3-ablation
-    provides: 10 frozen quantum samples.npy under revision/results/transform_ablation/runs/
+    provides: 10 frozen quantum samples.npy under results/transform_ablation/runs/
 provides:
-  - revision/run_timegan_scores.py — faithful single-layer-GRU TimeGAN predictive + discriminative driver (EVAL-02/03)
-  - revision/results/predictive_discriminative.json — 120 long-form rows + mean±std scores block + TimeGAN citation metadata
-  - revision/tests/test_timegan_scores.py — RED/GREEN contract test (non-degenerate GRU, score ranges, determinism)
+  - run_timegan_scores.py — faithful single-layer-GRU TimeGAN predictive + discriminative driver (EVAL-02/03)
+  - results/predictive_discriminative.json — 120 long-form rows + mean±std scores block + TimeGAN citation metadata
+  - tests/test_timegan_scores.py — RED/GREEN contract test (non-degenerate GRU, score ranges, determinism)
 affects: [14-paper-revision, sensitivity-evaluation]
 
 # Tech tracking
@@ -26,9 +26,9 @@ tech-stack:
 
 key-files:
   created:
-    - revision/run_timegan_scores.py
-    - revision/results/predictive_discriminative.json
-    - revision/tests/test_timegan_scores.py
+    - run_timegan_scores.py
+    - results/predictive_discriminative.json
+    - tests/test_timegan_scores.py
   modified: []
 
 key-decisions:
@@ -63,7 +63,7 @@ completed: 2026-05-18
 - `PredictiveGRU`/`DiscriminativeGRU` — faithful torch ports of the canonical TimeGAN post-hoc nets (single-layer GRU + Linear, `input_size=1`), with H locked to WINDOW_LENGTH=10 so the degenerate canonical `int(dim/2)=0` trap is provably avoided (401 params at H=10/dim=1).
 - `predictive_score` (train-on-synthetic / test-on-real next-step MAE, Adam 1e-3 × 5000 iters, batch 128) and `discriminative_score` (real=1/synth=0, independent 80/20 split per pool, Adam 1e-3 × 2000 iters, batch 128, `|0.5−test_acc|`).
 - Driver ran end-to-end in ~10 min over the 60 frozen `samples.npy` artifacts (no regeneration, D-11-08); produced `predictive_discriminative.json` with 120 long-form rows, a per-(model,pipeline) mean±std `scores` block, and a `metadata` block pinning `jsyoon0823/TimeGAN` (master) + locked H + univariate-adaptation rationale.
-- `data_hash` recomputed == `91e447d4624e25b3` == all 50 baseline `config.yaml` fields; `revision/core/` untouched.
+- `data_hash` recomputed == `91e447d4624e25b3` == all 50 baseline `config.yaml` fields; `core/` untouched.
 
 ## Task Commits
 
@@ -76,9 +76,9 @@ Each task was committed atomically:
 _TDD task 1 has the RED→GREEN pair; no refactor commit was needed._
 
 ## Files Created/Modified
-- `revision/run_timegan_scores.py` - EVAL-02/03 driver: faithful TimeGAN nets, predictive/discriminative scoring, verbatim `reconstruct_od` (A+B) + data-hash assert loop + repo-root finder, argparse, per-seed roll-up, JSON writer, `__main__` smoke path.
-- `revision/results/predictive_discriminative.json` - 120 long-form rows + `scores` mean±std block + TimeGAN citation `metadata` (data_hash 91e447d4624e25b3).
-- `revision/tests/test_timegan_scores.py` - non-degenerate param-count guard, finite/range/determinism contracts.
+- `run_timegan_scores.py` - EVAL-02/03 driver: faithful TimeGAN nets, predictive/discriminative scoring, verbatim `reconstruct_od` (A+B) + data-hash assert loop + repo-root finder, argparse, per-seed roll-up, JSON writer, `__main__` smoke path.
+- `results/predictive_discriminative.json` - 120 long-form rows + `scores` mean±std block + TimeGAN citation `metadata` (data_hash 91e447d4624e25b3).
+- `tests/test_timegan_scores.py` - non-degenerate param-count guard, finite/range/determinism contracts.
 
 ## Decisions Made
 - **H = WINDOW_LENGTH = 10**, used identically for both post-hoc nets — locked per D-11-04 / Assumptions-Log A1; the canonical `hidden_dim = int(dim/2)` is degenerate (`int(1/2)=0`) at this project's univariate dim=1. Rationale recorded verbatim in the JSON `metadata.univariate_adaptation`.
@@ -110,9 +110,9 @@ None - no external service configuration required (local, offline, no network/au
 
 ## Self-Check: PASSED
 
-- `revision/run_timegan_scores.py` — FOUND
-- `revision/results/predictive_discriminative.json` — FOUND
-- `revision/tests/test_timegan_scores.py` — FOUND
+- `run_timegan_scores.py` — FOUND
+- `results/predictive_discriminative.json` — FOUND
+- `tests/test_timegan_scores.py` — FOUND
 - `.planning/phases/11-utility-evaluation/11-02-SUMMARY.md` — FOUND
 - Commits `2c86f82`, `8cb24f5`, `1712c01`, `67fafb5` — all FOUND on `worktree-agent-a6f428bc693505641`
 

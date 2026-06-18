@@ -8,11 +8,11 @@ completed: 2026-04-23
 
 # Phase 8 Plan 02: Data + Eval Module Fill-In — Summary
 
-Replaced all `NotImplementedError` stubs in `revision/core/data.py` and `revision/core/eval.py` with verbatim extractions of the v1.1 notebook pipeline; self-parity EMD = 0 exactly.
+Replaced all `NotImplementedError` stubs in `core/data.py` and `core/eval.py` with verbatim extractions of the v1.1 notebook pipeline; self-parity EMD = 0 exactly.
 
 ## Functions Extracted
 
-### `revision/core/data.py` (216 lines)
+### `core/data.py` (216 lines)
 | Function | Source cell | Notes |
 |---|---|---|
 | `normalize`, `denormalize` | 7 | torch default std (ddof=1 / unbiased) |
@@ -24,7 +24,7 @@ Replaced all `NotImplementedError` stubs in `revision/core/data.py` and `revisio
 | `find_optimal_lambert_delta` | 18 | `minimize_scalar` on `bounds=(0.01, 2.0)`, bounded method |
 | `load_and_preprocess` | 5+9+15+18+21+30 | Returns 11-key dict; `delta` computed dynamically |
 
-### `revision/core/eval.py` (134 lines)
+### `core/eval.py` (134 lines)
 | Function | Source cell | Notes |
 |---|---|---|
 | `compute_emd` | 59, 65 | `wasserstein_distance` on RAW samples (v1.0 locked) |

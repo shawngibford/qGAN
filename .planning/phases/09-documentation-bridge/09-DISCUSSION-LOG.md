@@ -55,7 +55,7 @@
 | Third-party lib | torchlambertw or similar; adds external dep | |
 
 **User's choice:** Claude's discretion → option (a) locked
-**Notes:** In-place replacement of `inverse_lambert_w_transform` in `revision/core/data.py`. scipy stays in forward path, autograd path is pure torch on the cached W value. No new dependencies.
+**Notes:** In-place replacement of `inverse_lambert_w_transform` in `core/data.py`. scipy stays in forward path, autograd path is pure torch on the cached W value. No new dependencies.
 
 ---
 

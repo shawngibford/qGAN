@@ -12,7 +12,7 @@ The plan is structurally sound on the two CRITICAL bug fixes (T1 R3-CR-2 + T2 R3
 | 2 | R3-CR-1 fixed at root cause; shared-edges; `fake_in_range_mass` disclosed; ranking inversion in `distribution_emd.json` v2 | T2 `<action>` Steps A-H + `<verify>` schema bump + ranking-inversion assertion; `must_haves.truths` items 8, 9, 10; `key_links` 2 | **COVERED** for `compute_histogram_density_emd` (`:94-141`) only |
 | 3 | Strong-claim parametric-efficiency-equivalence framing in `reviewer_response.md` R1-M1 | T3 Step A rewrites R1-M1 with the verbatim Welch claim; Step B appends `## Parametric-efficiency equivalence` subsection; `must_haves.truths` item 11; `key_links` 3 | **PARTIALLY COVERED** — text is specified but the cited "follow-up work" hedge does not exist in the file (see Issue 4) and the param-count table is wrong (see Issue 3) |
 | 4 | All 10 paper-facing docs PASS v2.1 gate; no gate edit | T4 Step F enumerates the 10-doc loop; T4 `<verify>` runs the gate; T3 Step H runs the gate on the three updated docs; `must_haves.truths` item 14; `key_links` 6 | **COVERED structurally** but the gate is content-agnostic and will PASS on coincidental ε-matches (see Issue 6 — soft warning) |
-| 5 | `revision/core/` byte-untouched (D-14-22) across all 5 tasks | Every task `<verify>` asserts `[ -z "$(git diff --stat revision/core/)" ]`; `must_haves.truths` item 3; `<threat_model>` T-14-82 + T-14-94 | **COVERED** |
+| 5 | `core/` byte-untouched (D-14-22) across all 5 tasks | Every task `<verify>` asserts `[ -z "$(git diff --stat core/)" ]`; `must_haves.truths` item 3; `<threat_model>` T-14-82 + T-14-94 | **COVERED** |
 | 6 | Only 14-07 remains outstanding for Phase 14 after 14-16 merges | T5 Step C + `must_haves.truths` items 16, 17; `<acceptance_criteria>` for T5 | **COVERED** |
 
 ## R3-HI-1 verdict: **(b) WRONG PUNT** — must fold sibling fix into T2
@@ -23,9 +23,9 @@ R3-HI-1 is **a single finding** that explicitly names **two files** as edit site
 
 ```
 Files:
-- revision/run_matched2000_dualscale.py:368-372  (the _log_return_rows emit)
-- revision/run_distribution_emd.py:144-153 (_real_references) +
-  revision/run_distribution_emd.py:156-169 (_fake_log_return_flat)
+- run_matched2000_dualscale.py:368-372  (the _log_return_rows emit)
+- run_distribution_emd.py:144-153 (_real_references) +
+  run_distribution_emd.py:156-169 (_fake_log_return_flat)
 ```
 
 Agent 5's recommended fix at lines 320-330 explicitly says:
@@ -38,7 +38,7 @@ Agent 5's recommended-action section (line 823-829) bundles both into pre-tag ho
 
 ### Why this is a wrong-to-punt (not right-to-punt)
 
-1. **Same file already being edited.** T2 already opens `revision/run_distribution_emd.py`. The sibling-call sites are at `:144-169`, ~30 lines below the `:94-141` block T2 replaces. The marginal cost is on the order of 20-40 lines of edit plus an analogous `fake_in_range_mass`-style disclosure stat for the log-return-scale rows.
+1. **Same file already being edited.** T2 already opens `run_distribution_emd.py`. The sibling-call sites are at `:144-169`, ~30 lines below the `:94-141` block T2 replaces. The marginal cost is on the order of 20-40 lines of edit plus an analogous `fake_in_range_mass`-style disclosure stat for the log-return-scale rows.
 
 2. **Manuscript ships with one corrected metric variant and one still-broken metric variant on the same JSON.** Post-T2, `distribution_emd.json` v2 carries:
    - OD-scale rows: correctly reformulated (R3-CR-1 fixed)
@@ -76,7 +76,7 @@ Also delete the `truths` item and T2 Step E docstring extension claims that R3-H
 
 **Quoted truth to remove (or rewrite):**
 ```
-"Files explicitly NOT modified by this plan: revision/core/ (D-14-22 byte-freeze...); ... 
+"Files explicitly NOT modified by this plan: core/ (D-14-22 byte-freeze...); ... 
  the analogous scale mismatch in `run_distribution_emd.py:_real_references` + 
  `_fake_log_return_flat` at `:144-169` (R3-HI-1 per `code-review-r3.md`) is OUTSIDE 
  the user-locked Path 1 scope of Plan 14-16 and is a known follow-up..."
@@ -102,7 +102,7 @@ Also delete the `truths` item and T2 Step E docstring extension claims that R3-H
 | ar | 3 (closed-form) | 0.627 | -0.32 |
 ```
 
-**Ground truth from `revision/results/model_info.json`:**
+**Ground truth from `results/model_info.json`:**
 - wgan_mlp: parameter_count = 74 ✓
 - wgan_cnn: parameter_count = 73  (NOT ~10^5)
 - wgan_lstm: parameter_count = 78  (NOT 562)
@@ -120,7 +120,7 @@ If kept as adversarial-budget framing, also add `total_adversarial_param_budget.
 
 ---
 
-### Issue 3 (BLOCKER): Plan repeatedly cites a "follow-up work" hedge that does not exist in `revision/docs/reviewer_response.md`
+### Issue 3 (BLOCKER): Plan repeatedly cites a "follow-up work" hedge that does not exist in `docs/reviewer_response.md`
 
 **Plan section:** `<objective>` line 187-188, T3 `<action>` Step A line 927-928, `<contract_changes>` line 290-292, `<success_criteria>` line 1657-1659.
 
@@ -130,7 +130,7 @@ If kept as adversarial-budget framing, also add `total_adversarial_param_budget.
 "replace the existing 'this is being addressed in follow-up work' hedge..."
 ```
 
-**Verification:** `grep -i 'follow-up work\|being addressed' revision/docs/reviewer_response.md` returns **zero matches**. The actual R1-M1 row (line 36 of the file) is a table-cell containing: *"Added matched-parameter classical WGAN-GP (MLP/CNN/LSTM critics) and a non-adversarial VAE + AR baseline, all at matched 2000-epoch budget, identical critic/optimizer/seed set; parameter-count-controlled comparison table"*. There is no hedge; there is no follow-up-work language. The current row simply doesn't make an equivalence claim — but it doesn't deny one either.
+**Verification:** `grep -i 'follow-up work\|being addressed' docs/reviewer_response.md` returns **zero matches**. The actual R1-M1 row (line 36 of the file) is a table-cell containing: *"Added matched-parameter classical WGAN-GP (MLP/CNN/LSTM critics) and a non-adversarial VAE + AR baseline, all at matched 2000-epoch budget, identical critic/optimizer/seed set; parameter-count-controlled comparison table"*. There is no hedge; there is no follow-up-work language. The current row simply doesn't make an equivalence claim — but it doesn't deny one either.
 
 **Consequence:** T3 Step A's "drop the prior 'this is being addressed in follow-up work' hedge" cannot be executed because that hedge is not in the file. Executor will either (a) fail to find the string and abort, or (b) interpret loosely and rewrite the table row, which is currently in markdown-table form, into a paragraph — without specifying how the surrounding table structure should adapt.
 
@@ -161,11 +161,11 @@ If kept as adversarial-budget framing, also add `total_adversarial_param_budget.
 
 **Plan section:** `<threat_model>` T-14-86, `must_haves.truths` item 14 + 17, `key_links` 6.
 
-**Issue:** The strong-claim numbers (`p > 0.36`, `|d| ≤ 0.65`, `p ≤ 0.014`, `d ≈ -2.6 to -5`, `n=5`) live ONLY in `peer-review-r3/statistical-honesty-r3.md`, which is NOT under `revision/results/*.json`. The v2.1 walker only crawls `revision/results/*.json`. Therefore these literals will resolve **via ε-neighborhood coincidental matches** to OTHER, unrelated JSON values (e.g., `0.36` matches `0.36042169522527` in `matched2000_dualscale.json#rows[*].value` — an EMD value, not a Welch p-value).
+**Issue:** The strong-claim numbers (`p > 0.36`, `|d| ≤ 0.65`, `p ≤ 0.014`, `d ≈ -2.6 to -5`, `n=5`) live ONLY in `peer-review-r3/statistical-honesty-r3.md`, which is NOT under `results/*.json`. The v2.1 walker only crawls `results/*.json`. Therefore these literals will resolve **via ε-neighborhood coincidental matches** to OTHER, unrelated JSON values (e.g., `0.36` matches `0.36042169522527` in `matched2000_dualscale.json#rows[*].value` — an EMD value, not a Welch p-value).
 
 The gate PASSES but the resolution is **semantically meaningless** — a defense-in-depth gap that the gate itself cannot detect by design.
 
-**Recommended remediation (warning, not blocker because the gate technically passes):** add a T3 sub-task to emit a new JSON `revision/results/welch_tests.json` mirroring `statistical-honesty-r3.md` §3a + §3b tables (per-pair Welch t, p, Cohen's d, MWU p, n=5). This makes the strong-claim literals genuinely resolvable to a JSON source rather than coincidentally-matched to unrelated values. The schema is straightforward (per-pair records keyed by `{quantum: <m>, classical: <m>, metric: 'OD-EMD' | 'LR-EMD'}`).
+**Recommended remediation (warning, not blocker because the gate technically passes):** add a T3 sub-task to emit a new JSON `results/welch_tests.json` mirroring `statistical-honesty-r3.md` §3a + §3b tables (per-pair Welch t, p, Cohen's d, MWU p, n=5). This makes the strong-claim literals genuinely resolvable to a JSON source rather than coincidentally-matched to unrelated values. The schema is straightforward (per-pair records keyed by `{quantum: <m>, classical: <m>, metric: 'OD-EMD' | 'LR-EMD'}`).
 
 If skipped: when a reviewer asks "where did 0.014 come from?", the answer is `statistical-honesty-r3.md` which is in `.planning/`, not in the audited corpus — a provenance audit gap.
 
@@ -175,7 +175,7 @@ If skipped: when a reviewer asks "where did 0.014 come from?", the answer is `st
 
 **Plan section:** T3 `<files>` line 906.
 
-T3 modifies: `revision/run_model_info.py`, `revision/docs/reviewer_response.md`, `revision/docs/methods_full.md`, `revision/docs/reconciliation_note.md` — that's 1 Python emitter plus 3 paper-facing docs (4 files total). 14-13/14/15 historically split this kind of work across 2 tasks. The plan justifies the consolidation under "single coherent edit" but T3 spans:
+T3 modifies: `run_model_info.py`, `docs/reviewer_response.md`, `docs/methods_full.md`, `docs/reconciliation_note.md` — that's 1 Python emitter plus 3 paper-facing docs (4 files total). 14-13/14/15 historically split this kind of work across 2 tasks. The plan justifies the consolidation under "single coherent edit" but T3 spans:
 - R1-M1 rewrite + new subsection in `reviewer_response.md` (manual edits)
 - Two new paragraphs in `methods_full.md` (manual edits)
 - C-3 sentence extension in `reconciliation_note.md` (emitted via `run_model_info.py`?)
@@ -223,10 +223,10 @@ T2 Step E2 (lines 863-955) applies `norm_log_delta = (log_delta - mu) / sigma` t
 
 #### 2. B2 closure (corrected param counts + adversarial framing) — **PARTIALLY CLOSED — 1 BLOCKER**
 
-- Generator parameter counts (74 / 73 / 78 / 562 / 3) are correct against `revision/results/model_info.json` — verified.
+- Generator parameter counts (74 / 73 / 78 / 562 / 3) are correct against `results/model_info.json` — verified.
 - The "10^4-10^5" old framing is fully removed (grep returns zero hits).
 - The strong-claim prose uses `73-562 generator parameters AND the full ~2.5x10^5-parameter adversarial budget (generator + 250,881-parameter shared critic)` — this is the honest framing.
-- **NEW BLOCKER:** The per-baseline equivalence table inserted by T4 (lines 1244-1250) hand-types `250,955` (wgan_mlp), `250,954` (wgan_cnn), `250,959` (wgan_lstm) as the WGAN adversarial totals. These values **do NOT exist in any JSON in the resolution corpus**. Inspection of `revision/results/total_adversarial_param_budget.json` shows the WGAN entries carry only `shared_critic_n_params: 250881` — they do NOT have a pre-computed `total_adversarial_param_budget` field (only quantum models do: 250936, 250956, 251016). Combined with the v2.1 gate's `_NUM` regex `[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?` not handling commas, `250,955` tokenizes as TWO tokens (`250`, `955`); `955` has no JSON anchor; integer ε-tolerance is 0.5; the gate will FAIL to resolve these tokens. **T4's verify step `./qgan_env/bin/python revision/verify_number_provenance.py --target revision/docs/reviewer_response.md` will reject this output.**
+- **NEW BLOCKER:** The per-baseline equivalence table inserted by T4 (lines 1244-1250) hand-types `250,955` (wgan_mlp), `250,954` (wgan_cnn), `250,959` (wgan_lstm) as the WGAN adversarial totals. These values **do NOT exist in any JSON in the resolution corpus**. Inspection of `results/total_adversarial_param_budget.json` shows the WGAN entries carry only `shared_critic_n_params: 250881` — they do NOT have a pre-computed `total_adversarial_param_budget` field (only quantum models do: 250936, 250956, 251016). Combined with the v2.1 gate's `_NUM` regex `[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?` not handling commas, `250,955` tokenizes as TWO tokens (`250`, `955`); `955` has no JSON anchor; integer ε-tolerance is 0.5; the gate will FAIL to resolve these tokens. **T4's verify step `./qgan_env/bin/python verify_number_provenance.py --target docs/reviewer_response.md` will reject this output.**
 - Additional gate-resolution risk: `250,881` (cited twice in the T4 H2 prose) tokenizes as `250` + `881`; `881` has no JSON anchor (the corpus carries `250881` as a single token). Existing pre-14-16 docs cite `250881` without comma (see `methods_full.md:244`, `:250`, `:255`, `:435` and `reviewer_response.md:201`) — those resolve because they're a single token. The plan's introduction of the comma-separated form is a regression.
 
 **Fix path:** Either (a) drop the WGAN-total column from the T4 H2 table and replace with prose `"each WGAN adversarial budget = generator + 250881 (shared critic) per total_adversarial_param_budget.json#shared_critic_n_params"`, OR (b) extend T3's `welch_pairwise.json` schema (or extend `total_adversarial_param_budget.json`) to emit explicit `wgan_mlp_total: 250955`, `wgan_cnn_total: 250954`, `wgan_lstm_total: 250959` as JSON leaves so the gate can resolve them. And replace all `250,XXX` comma-separated literals in the doc body with `250XXX` no-comma form to match the existing audit-resolvable convention.
@@ -249,7 +249,7 @@ T4 Steps A + B explicitly preserve the R1-M1 row verbatim and insert a NEW H2 be
 
 #### 5. W3 closure (T4/T5 atomic + independent) — **CLOSED**
 
-T4 `<files>` = `revision/docs/reviewer_response.md` only (single-file atomic edit). T5 `<files>` = `revision/run_model_info.py + methods_full.md + reconciliation_note.md` (one emitter + the docs it regenerates — a coherent single emit cycle). T4 does not read T5 outputs; T5 does not read T4 outputs. Neither depends on the other's commit state for gate-pass. T5 verify gate runs the v2.1 gate against methods_full.md + reconciliation_note.md only — independent of T4's reviewer_response.md. **W3 fully closed.**
+T4 `<files>` = `docs/reviewer_response.md` only (single-file atomic edit). T5 `<files>` = `run_model_info.py + methods_full.md + reconciliation_note.md` (one emitter + the docs it regenerates — a coherent single emit cycle). T4 does not read T5 outputs; T5 does not read T4 outputs. Neither depends on the other's commit state for gate-pass. T5 verify gate runs the v2.1 gate against methods_full.md + reconciliation_note.md only — independent of T4's reviewer_response.md. **W3 fully closed.**
 
 #### 6. Task renumbering cross-check — **NOT FULLY MIGRATED — WARNING**
 
@@ -257,8 +257,8 @@ The PLAN's `<task>` definitions (T1-T7) are correctly numbered and scoped. Howev
 
 - **Line 36** (truth, D-14-16 closure narrative): *"after T3 lands"* — the gate runs against the updated docs after **T5** lands (not T3, which is the welch aggregator); T4 runs the gate against `reviewer_response.md` first.
 - **Line 41** (truth, R3-CR-1 schema): *"C-3 disclosure paragraph extension that T3 writes into reconciliation_note.md"* — T5 writes the C-3 extension.
-- **Line 44** (truth, R1-M1 / new H2): *"After T3, `revision/docs/reviewer_response.md` R1-M1 row..."* — should read "After T4".
-- **Line 47** (truth, cross_model_emd re-render): *"After T4, `revision/results/figures/cross_model_emd.{png,pdf,json}` is RE-RENDERED"* — figure re-render is T6, not T4.
+- **Line 44** (truth, R1-M1 / new H2): *"After T3, `docs/reviewer_response.md` R1-M1 row..."* — should read "After T4".
+- **Line 47** (truth, cross_model_emd re-render): *"After T4, `results/figures/cross_model_emd.{png,pdf,json}` is RE-RENDERED"* — figure re-render is T6, not T4.
 - **Line 49** (truth, v2.1 gate run on 10 docs): *"After T4, v2.1 gate runs PASSING against all 10 paper-facing docs"* — the 10-doc gate run is T6 (T4 runs only against reviewer_response.md).
 - **Line 74** (artifact `run_model_info.py`): *"Updated (Task 3) to surface the corrected aggregates"* — should be Task 5. Also contradicts T4 by suggesting "R1-M1 response rewrite + Parametric-efficiency subsection logic MAY live in this emitter" (T4 task-definition is a manual edit, not an emit).
 - **Line 83** (artifact `methods_full.md`): *"Re-emitted (Task 3)"* — should be Task 5.
@@ -274,8 +274,8 @@ The PLAN's `<task>` definitions (T1-T7) are correctly numbered and scoped. Howev
 - **Hand-typed unsourced numbers:** `250,955`, `250,954`, `250,959` (WGAN adversarial totals in T4's H2 table) have no JSON anchor — captured as Issue #2 BLOCKER above.
 - **Comma-separated 250,881 form:** introduces tokenizer regression vs existing `250881` (no comma) usage in already-audit-passing docs — captured as Issue #2 BLOCKER above.
 - **Byte-freeze invariant assertions per task:**
-  - D-14-22 (`revision/core/` byte-freeze): asserted in **all 7 task verify gates** (T1 line 670, T2 1013, T3 1157, T4 1310, T5 1456, T6 1590, T7 1913). ✓
-  - D-14-16 (gate byte-freeze): asserted in T3, T4, T5, T7 verify gates. **T1, T2, T6 do not explicitly assert `git diff revision/verify_number_provenance.py` is empty.** Minor coverage gap — T1 + T2 don't touch the gate (low risk); T6 runs the gate but doesn't assert it's unmodified post-run (defensible since `verify_number_provenance.py` is a read-only invocation). Not a blocker; flag as soft warning.
+  - D-14-22 (`core/` byte-freeze): asserted in **all 7 task verify gates** (T1 line 670, T2 1013, T3 1157, T4 1310, T5 1456, T6 1590, T7 1913). ✓
+  - D-14-16 (gate byte-freeze): asserted in T3, T4, T5, T7 verify gates. **T1, T2, T6 do not explicitly assert `git diff verify_number_provenance.py` is empty.** Minor coverage gap — T1 + T2 don't touch the gate (low risk); T6 runs the gate but doesn't assert it's unmodified post-run (defensible since `verify_number_provenance.py` is a read-only invocation). Not a blocker; flag as soft warning.
   - D-14-13, D-14-18: documented in contract_changes preamble; not per-task verify gates. Inherently preserved by no-LaTeX-edit and no-strict-accept-edit scopes.
 
 ### Summary of remaining issues
@@ -286,7 +286,7 @@ The PLAN's `<task>` definitions (T1-T7) are correctly numbered and scoped. Howev
 | **WARNING** | Threshold literals `0.36`, `0.65`, `0.014`, `-2.6` in T4's H2 cite thresholds, not stored computed values; v2.1 gate cannot resolve them against welch_pairwise.json summaries (which store actual ≥0.36 / ≤0.65 etc. values). | T4 Step B strong-claim assertion; T3 schema spec at lines 1095-1100. | Extend T3 schema with explicit `strong_claim_thresholds: {floor_welch_p_OD: 0.36, ceiling_abs_cohen_d_OD: 0.65, ceiling_welch_p_LR_vs_wgan: 0.014, extremum_cohen_d_LR_vs_wgan: -2.6}` JSON leaf field; add T3 acceptance criteria asserting these leaves exist. |
 | **WARNING** | Contract_changes line 308-309 still says R1-M1 "hedges with 'this is being addressed in follow-up work'" and that "T3 rewrites it" — directly contradicts B3 closure narrative. | `<contract_changes>` block at line 307-313. | Replace with the closed narrative: "The current R1-M1 row makes no equivalence claim; T4 PRESERVES it verbatim and INSERTS a new H2 section asserting the strong claim." Update line 1939 trust-boundary table similarly. |
 | **WARNING** | Frontmatter `must_haves` blocks and artifact attributions carry 11 stale T-number references (T3/T4 → should be T4/T5/T6) — see line list in §6 above. | Lines 36, 41, 44, 47, 49, 74, 83, 92, 134, 137, 693, 728, 969, 1939. | Mechanical search-and-replace to align with the new T1-T7 scheme. |
-| **WARNING** | T1, T2, T6 verify gates do not assert `git diff revision/verify_number_provenance.py` is empty (other tasks do). Minor D-14-16 coverage gap. | T1 line 670, T2 line 1013, T6 line 1590. | Add `&& [ -z "$(git diff revision/verify_number_provenance.py)" ]` to those three verify gates for symmetry. |
+| **WARNING** | T1, T2, T6 verify gates do not assert `git diff verify_number_provenance.py` is empty (other tasks do). Minor D-14-16 coverage gap. | T1 line 670, T2 line 1013, T6 line 1590. | Add `&& [ -z "$(git diff verify_number_provenance.py)" ]` to those three verify gates for symmetry. |
 
 ### Recommendation
 
@@ -314,7 +314,7 @@ If the planner closes the BLOCKER + WARNING #2 (threshold-literal anchoring), th
 | 2 | W2 threshold-vs-computed: `strong_claim_thresholds` block as first-class JSON leaves; emitter asserts thresholds; T3 verify gate has leaf-equality assertions | **CLOSED** | T3 artifact `welch_pairwise.json` at line 71 names the four threshold leaves explicitly. T3 schema spec at lines 1112-1118 declares `strong_claim_thresholds: {floor_welch_p_OD: 0.36, ceiling_abs_cohen_d_OD: 0.65, ceiling_welch_p_LR_vs_wgan: 0.014, extremum_cohen_d_LR_vs_wgan: -2.6}`. T3 Step B2 (lines 1152-1184) emits the block AND adds pre-write `assert summaries["X"] > payload["strong_claim_thresholds"]["X"]` direction checks for all 4 thresholds. T3 acceptance criteria (lines 1202-1208) require exact-leaf equality. T3 `<automated>` (line 1234) has the four `(thr.get('floor_welch_p_OD') == 0.36)` exact-match assertions. |
 | 3 | B3 narrative: no "follow-up work" or "T3 rewrites R1-M1" attribution; consistent "R1-M1 PRESERVED + new H2 INSERTED" framing | **CLOSED** | `grep -niE 'follow-up work\|T3 rewrites R1-M1'` → 0 hits. All 4 mention sites converge on the closed framing: line 44 ("LEFT VERBATIM ... a NEW H2 section ... is INSERTED"), line 80 ("LEFT VERBATIM. A new H2 section ... is INSERTED"), line 313 ("PRESERVES that row verbatim and INSERTS a new H2 section"), lines 1968 / 1881 / 2031 / 2047 / 2103 / 2202 / 2304 (all repeat "PRESERVED verbatim + NEW H2 INSERTED"). Contract_changes block at lines 307-323 is now the corrected version. |
 | 4 | Task-number renumbering: all 14 stale T-references updated to 7-task scheme | **NOT CLOSED** | The planner closed some references but introduced more new ones. Stale T-N references that still misalign with the authoritative 7-task numbering (T1=dualscale fix, T2=distribution_emd fix, T3=welch aggregator, T4=reviewer_response, T5=methods_full + reconciliation_note + run_model_info, T6=figure re-render + gate, T7=SUMMARY + peer_review_remediation + completeness_sweep_manifest) — see authoritative `<name>` headers at lines 528, 696, 1045, 1254, 1417, 1563, 1696. Stale references still present: **must_haves.truths**: line 45 ("After T3, methods_full.md..." — should be T5), line 46 ("After T3, reconciliation_note.md..." — should be T5), line 50 ("After T5, 14-16-SUMMARY.md exists..." — should be T7). **must_haves.key_links**: line 125 ("reviewer_response.md ... (T3 output)" — should be T4), line 129 ("reconciliation_note.md ... column 3 (T3 output)" — should be T5), line 133 ("cross_model_emd ... (re-rendered, T4)" — should be T6). **Objective prose**: line 224 ("methods_full.md with corrected numbers ... (T3)" — should be T4+T5), line 227 ("v2.1 gate run on all 10 paper-facing docs (T4)" — should be T6), line 230 ("completeness_sweep_manifest.md (T5)" — should be T7). **Interfaces block**: line 396 ("run_model_info.py (READ-FIRST + EDIT in T3)" — should be T5), line 405 ("T3 read_first") — should be T5, line 429 ("methods_full.md (READ-FIRST + EDIT in T3)" — should be T5), line 437 ("reconciliation_note.md (READ-FIRST + EDIT in T3)" — should be T5), line 444 ("run_figure_suite.py (READ-FIRST in T4...)" — should be T6), line 448 ("T4 invokes the existing render path") — should be T6, line 453 ("T4 only appends a plan_14_16_verification field") — should be T6, line 457 ("cross_model_emd (RE-RENDERED in T4)" — should be T6), line 463 ("CONDITIONALLY TOUCHED in T4)" — should be T6), line 468 ("T4 invokes it against all 10 paper-facing docs") — should be T6, line 471 ("peer_review_remediation.md (READ-FIRST + EDIT in T5)" — should be T7), line 478 ("completeness_sweep_manifest.md (READ-FIRST + EDIT in T5)" — should be T7), line 501 ("**T3:** run_model_info.py:220-302") — should be T5, line 509 ("**T4:** run_figure_suite.py") — should be T6. **Frontmatter `depends_on` chain inferred**: lines 36, 49 ("After T6, v2.1 gate ... runs PASSING") are correctly T6, but line 49 also says the gate runs against welch_pairwise.json "produced by T3" — that's correct. Total stale references identified: **~22 surviving stale T-N references** misaligned with the authoritative 7-task scheme (more than the 14 the prior pass identified — the renumbering pass appears to have been partial). |
-| 5 | D-14-16 symmetry: all 7 task verify gates assert `git diff revision/verify_number_provenance.py` empty | **CLOSED** | `grep -n 'git diff revision/verify_number_provenance.py' PLAN.md` returns hits in all 7 task `<automated>` blocks: T1 line 681, T2 line 1024, T3 line 1234, T4 line 1402, T5 line 1548, T6 line 1682, T7 line 2005. Each task also lists this in its `<done>` block (lines 689, 1039, 1248, 1411, 1557, 1690, 2014). Line 2014 explicitly states "D-14-16 v2.1 byte-freeze preserved across all 7 tasks". |
+| 5 | D-14-16 symmetry: all 7 task verify gates assert `git diff verify_number_provenance.py` empty | **CLOSED** | `grep -n 'git diff verify_number_provenance.py' PLAN.md` returns hits in all 7 task `<automated>` blocks: T1 line 681, T2 line 1024, T3 line 1234, T4 line 1402, T5 line 1548, T6 line 1682, T7 line 2005. Each task also lists this in its `<done>` block (lines 689, 1039, 1248, 1411, 1557, 1690, 2014). Line 2014 explicitly states "D-14-16 v2.1 byte-freeze preserved across all 7 tasks". |
 
 ### Severity calibration
 

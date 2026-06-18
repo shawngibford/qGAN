@@ -65,7 +65,7 @@ completed: 2026-05-22
 - Resolved the stale headline DTW 0.6843 at all 3 occurrences (one removed via PAPER-02b, two labelled as a frozen pre-v1.0 checkpoint with matched-budget ~0.30 stated alongside) and re-anchored the Orlandi ~6.5x comparison to the matched-budget value
 - Added a Zenodo DOI placeholder string in both Data Availability sections for plan 14-07
 - Fixed PAPER-11 notation/typo/LUCY defects: unified return notation on `r_t`, removed the malformed mid-sentence `\label{fig:lucy}`, fixed the 20L/300L mismatch, corrected the LUCY caption to `\textregistered`/20L
-- Ran `verify_number_provenance.py` over both `.tex` files: PASS (45 distinct literals in main, 19 in supp — all resolve to `revision/results/*.json`)
+- Ran `verify_number_provenance.py` over both `.tex` files: PASS (45 distinct literals in main, 19 in supp — all resolve to `results/*.json`)
 
 ## Task Commits
 
@@ -100,7 +100,7 @@ Each task was committed atomically:
 
 **2. [Rule 3 - Blocking] Symbolic DOI placeholder to keep the provenance gate green**
 - **Found during:** Task 3 (running `verify_number_provenance.py` over the `.tex`)
-- **Issue:** The literal placeholder `10.5281/zenodo.XXXXXX` introduced `10.5281` as a numeric literal that does not resolve to any `revision/results/*.json` value; the gate flagged it (the only unresolved literal in either file).
+- **Issue:** The literal placeholder `10.5281/zenodo.XXXXXX` introduced `10.5281` as a numeric literal that does not resolve to any `results/*.json` value; the gate flagged it (the only unresolved literal in either file).
 - **Fix:** Replaced the literal-prefix placeholder with a fully symbolic token `ZENODO-DOI-PLACEHOLDER` in both Data Availability sections. The token is digit-free, gate-clean, and a clear substitution anchor for plan 14-07.
 - **Files modified:** `main (4) copy.tex`, `supp_material.tex`
 - **Verification:** `verify_number_provenance.py --target "main (4) copy.tex"` and `--target supp_material.tex` both exit 0 / PASS.
@@ -115,8 +115,8 @@ Each task was committed atomically:
 
 `verify_number_provenance.py` **accepts a `.tex` `--target`** (its `--help` documents "regenerated doc or paper LaTeX-blocks file"). It was run over both manuscript files after all Task 1-3 edits:
 
-- `main (4) copy.tex`: **PASS** — 45 distinct numeric literals all resolve to `revision/results/*.json` (schema v2.1).
-- `supp_material.tex`: **PASS** — 19 distinct numeric literals all resolve to `revision/results/*.json` (schema v2.1).
+- `main (4) copy.tex`: **PASS** — 45 distinct numeric literals all resolve to `results/*.json` (schema v2.1).
+- `supp_material.tex`: **PASS** — 19 distinct numeric literals all resolve to `results/*.json` (schema v2.1).
 
 The `.tex` numbers are therefore NOT gate-exempt by silence. The numeric literals introduced by Tasks 1-3 resolve as follows:
 - PAPER-03 structural numbers (`5` qubits, `3` layers, `55` params, `2` observables, `10` window, `75`/`135` ansatz params, `4`/`8` depths, `2000` epochs) → `canonical_config_lock.json` / `model_info.json` / `ansatz_comparison.json`.
@@ -131,7 +131,7 @@ The `.tex` numbers are therefore NOT gate-exempt by silence. The numeric literal
 The `.bib` file (`bib.bib`) is not in the repo working tree. The following `.bib`-entry additions from PAPER-06/07/11 are recorded as Overleaf-side actions and do NOT block this plan or 14-07:
 - Add `@article{esteban2017realvaluedmedicaltimeseries}` verification (classical RCGAN), `@article{havlicek2019supervised}`, `@article{schuld2019quantum}`, `@book{rasmussen2006gaussian}`, `@article{bernal2022perspectives}`.
 - PAPER-11 item 7/8: `.bib` title typo "Approac"→"Approach" and [51] title-capitalization standardization.
-- PAPER-11 item 1/11: regenerated high-DPI ACF/result figures (`revision/results/figures/*.pdf`) replace the Overleaf-embedded bitmaps; the "Laas"→"Lags" x-axis label and Figure 2-6 enlargement are figure-asset swaps, not `.tex` text edits.
+- PAPER-11 item 1/11: regenerated high-DPI ACF/result figures (`results/figures/*.pdf`) replace the Overleaf-embedded bitmaps; the "Laas"→"Lags" x-axis label and Figure 2-6 enlargement are figure-asset swaps, not `.tex` text edits.
 
 ## Next Phase Readiness
 - The manuscript `.tex` files now carry the complete r1/r2/r3 revision and are consistent with the certified JSON evidence base.

@@ -4,14 +4,14 @@ plan: 02
 subsystem: sensitivity-sweep
 tags: [pennylane, shot-noise, noise-channels, xargs, idempotent-sweep, sens-01, sens-02]
 requires:
-  - revision/run_sensitivity.py (Plan 12-01 per-cell driver)
-  - revision/results/transform_ablation/runs/<pipeline>/<seed>/{samples.npy,inverse_kwargs.npz} (frozen 09.1 reference)
-  - revision/results/fidelity_dualscale.json (quantum B/42 OD baseline-cell reference)
+  - run_sensitivity.py (Plan 12-01 per-cell driver)
+  - results/transform_ablation/runs/<pipeline>/<seed>/{samples.npy,inverse_kwargs.npz} (frozen 09.1 reference)
+  - results/fidelity_dualscale.json (quantum B/42 OD baseline-cell reference)
 provides:
-  - revision/run_sensitivity_sweep.sh (idempotent xargs -P 2 grid orchestrator, atomic sweep_status.json)
-  - revision/results/sensitivity/runs/<11 conditions>/<B,A>/<42,43,44>/{config.yaml,samples.npy,metrics.json} (66 per-cell bundles)
-  - revision/results/shot_noise_sensitivity.json (SENS-01 deliverable)
-  - revision/results/noise_model_sensitivity.json (SENS-02 deliverable)
+  - run_sensitivity_sweep.sh (idempotent xargs -P 2 grid orchestrator, atomic sweep_status.json)
+  - results/sensitivity/runs/<11 conditions>/<B,A>/<42,43,44>/{config.yaml,samples.npy,metrics.json} (66 per-cell bundles)
+  - results/shot_noise_sensitivity.json (SENS-01 deliverable)
+  - results/noise_model_sensitivity.json (SENS-02 deliverable)
 affects:
   - Plan 12-03 (5-seed roll-up — consumes the same driver + per-cell bundles)
   - Manuscript R1-M4 / R2-1 robustness rebuttal (reads the two headline JSONs)
@@ -24,12 +24,12 @@ tech-stack:
     - "extend-not-replace long-form aggregation (six-key baseline_comparison contract preserved)"
 key-files:
   created:
-    - revision/run_sensitivity_sweep.sh
-    - revision/results/shot_noise_sensitivity.json
-    - revision/results/noise_model_sensitivity.json
-    - revision/results/sensitivity/runs/* (66 per-cell config.yaml/samples.npy/metrics.json bundles + sweep_status.json + sweep.log + per-cell _stdout/_stderr logs)
+    - run_sensitivity_sweep.sh
+    - results/shot_noise_sensitivity.json
+    - results/noise_model_sensitivity.json
+    - results/sensitivity/runs/* (66 per-cell config.yaml/samples.npy/metrics.json bundles + sweep_status.json + sweep.log + per-cell _stdout/_stderr logs)
   modified:
-    - revision/run_sensitivity.py
+    - run_sensitivity.py
 decisions:
   - "depol_0.0 and ampdamp_0.0 (same physical p=0/gamma=0 baseline) kept as TWO distinct rows in noise_model_sensitivity.json — one per noise_model — so each degradation curve owns its own zero anchor (Plan grants this choice; documented in sweep header + JSON zero_anchor_note)"
   - "Aggregation added as aggregate() + --emit-rollup flag inside run_sensitivity.py (NOT a third driver file) — files_modified declares run_sensitivity.py"
@@ -48,7 +48,7 @@ per-cell bundles into the two headline manuscript deliverables
 
 ## What Was Built
 
-- **Task 1** (`9781f85`): `revision/run_sensitivity_sweep.sh` — copied
+- **Task 1** (`9781f85`): `run_sensitivity_sweep.sh` — copied
   near-verbatim from `run_baselines_sweep.sh` (485 lines). 11 conditions × 2
   pipelines × 3 seeds = 66-cell worklist; atomic `sweep_status.json`
   (tmpfile + `os.fsync` + `os.rename` under `flock -x 9`); `--parallel`
@@ -57,13 +57,13 @@ per-cell bundles into the two headline manuscript deliverables
   selects system `python3` (PennyLane 0.44.0), does NOT prefer the project
   venv (0.43.0); the driver's import-time `assert qml.__version__=="0.44.0"`
   is the fail-loud backstop (T-12-05 / Pitfall 5 / RESEARCH Open Q1(a)).**
-- **Task 2** (`cc1b1f1`): executed `bash revision/run_sensitivity_sweep.sh
+- **Task 2** (`cc1b1f1`): executed `bash run_sensitivity_sweep.sh
   --parallel 2`. 66/66 cells complete, 0 failed; 2 cells skipped-already-done
   (the pre-existing analytic/B/42 smoke cell + a depol_0.001/B/42 single-cell
   sanity run). **Sweep wall time: 8m 22s** (Success Criterion 4: under the
   10-min local-Mac budget).
 - **Task 3** (`d7e07d7`): added `aggregate()` + `--emit-rollup` mode to
-  `revision/run_sensitivity.py` (no third driver file). Emitted
+  `run_sensitivity.py` (no third driver file). Emitted
   `shot_noise_sensitivity.json` (270 rows) and `noise_model_sensitivity.json`
   (720 rows).
 
@@ -153,7 +153,7 @@ no authentication gates.
 
 ## Verification Status
 
-- `bash -n revision/run_sensitivity_sweep.sh` exits 0; `xargs -P "$PARALLEL" -L 1`;
+- `bash -n run_sensitivity_sweep.sh` exits 0; `xargs -P "$PARALLEL" -L 1`;
   `flock`/`os.fsync`/`os.rename` atomic status; `--parallel 3` exits 3;
   `! grep qgan_env` and `! grep -i multiprocessing` both clean; dry-run lists
   exactly 66 cells; CONDITIONS has all 11 tokens incl. `ampdamp_0.01`;
@@ -167,7 +167,7 @@ no authentication gates.
   per-model noise_level {0,0.001,0.01,0.05} (incl. γ=0.01), seeds {42,43,44},
   both pipelines, dual-scale, six-key contract intact, per-layer
   channel-insertion provenance.
-- `git diff --stat revision/core/` empty (CORE_CLEAN) across all three tasks.
+- `git diff --stat core/` empty (CORE_CLEAN) across all three tasks.
 - No third driver file created; aggregation lives in `run_sensitivity.py`.
 
 ## Known Stubs
@@ -183,10 +183,10 @@ limit reached.
 
 ## Self-Check: PASSED
 
-- FOUND: revision/run_sensitivity_sweep.sh
-- FOUND: revision/results/shot_noise_sensitivity.json
-- FOUND: revision/results/noise_model_sensitivity.json
-- FOUND: revision/results/sensitivity/sweep_status.json (all_complete true, 66/66)
+- FOUND: run_sensitivity_sweep.sh
+- FOUND: results/shot_noise_sensitivity.json
+- FOUND: results/noise_model_sensitivity.json
+- FOUND: results/sensitivity/sweep_status.json (all_complete true, 66/66)
 - FOUND commit 9781f85 (Task 1)
 - FOUND commit cc1b1f1 (Task 2)
 - FOUND commit d7e07d7 (Task 3)

@@ -45,17 +45,17 @@ re_verification: false
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `revision/core/models/classical.py` | WGANMLPGenerator(74), WGANCNNGenerator(73), WGANLSTMGenerator(78) with `params_pqc` + `count_params` | VERIFIED | 8857 bytes; empirical counts 74/73/78 confirmed; single `nn.Parameter`, autograd live |
-| `revision/core/models/nonadversarial.py` | VAEBaseline (~562 params) + ARBaseline (p=2, 3 params) | VERIFIED | 7773 bytes; VAE=562 params, AR count_params=3; both ELBO-ready, no training loop in file |
-| `revision/core/models/__init__.py` | Barrel exposing `classical`, `nonadversarial` | VERIFIED | `from revision.core.models import quantum, critic, classical, nonadversarial`; `__all__` matches |
-| `revision/run_baselines.py` | Per-(model,pipeline,seed) CLI driver with WGAN/VAE/AR branches + 5-file bundle + data_hash | VERIFIED | 19629 bytes; `train_wgan_gp` imported and called verbatim; HPO constants from `revision.core`; argparse choices A/B only |
-| `revision/run_baselines_sweep.sh` | Resumable 50-run sweep, `.npz`-aware, `xargs -P`, atomic `flock` status | VERIFIED | 17444 bytes; executable; syntax-clean; all required properties confirmed |
-| `revision/06_baseline_comparison.ipynb` | Aggregation notebook executed end-to-end | VERIFIED | 55189 bytes; 20-cell notebook; emits all 4 result artifacts |
-| `revision/results/baseline_comparison.json` | BASE-03: long-form rows[] + models[] + tstr, 6 models × A/B | VERIFIED | 311841 bytes; 1710 rows; 6 models; 12 TSTR entries; data_hash verified |
-| `revision/results/baseline_comparison.md` | BASE-03: markdown table, one row per model per pipeline | VERIFIED | 2214 bytes; all 6 model rows per pipeline; required columns present; no Phase-10 recommendation |
-| `revision/results/baseline_classical_wgan.json` | BASE-01: {wgan_mlp,wgan_cnn,wgan_lstm} subset | VERIFIED | 157272 bytes; correct model set |
-| `revision/results/baseline_nonadversarial.json` | BASE-02: {vae,ar} subset with train_protocol_notes | VERIFIED | 101767 bytes; correct model set; protocol notes present |
-| `revision/results/baselines/sweep_status.json` | 50/50 runs complete, 0 failures | VERIFIED | 50 run records, all `status=complete`, all `return_code=0`, epochs=1000 |
+| `core/models/classical.py` | WGANMLPGenerator(74), WGANCNNGenerator(73), WGANLSTMGenerator(78) with `params_pqc` + `count_params` | VERIFIED | 8857 bytes; empirical counts 74/73/78 confirmed; single `nn.Parameter`, autograd live |
+| `core/models/nonadversarial.py` | VAEBaseline (~562 params) + ARBaseline (p=2, 3 params) | VERIFIED | 7773 bytes; VAE=562 params, AR count_params=3; both ELBO-ready, no training loop in file |
+| `core/models/__init__.py` | Barrel exposing `classical`, `nonadversarial` | VERIFIED | `from revision.core.models import quantum, critic, classical, nonadversarial`; `__all__` matches |
+| `run_baselines.py` | Per-(model,pipeline,seed) CLI driver with WGAN/VAE/AR branches + 5-file bundle + data_hash | VERIFIED | 19629 bytes; `train_wgan_gp` imported and called verbatim; HPO constants from `revision.core`; argparse choices A/B only |
+| `run_baselines_sweep.sh` | Resumable 50-run sweep, `.npz`-aware, `xargs -P`, atomic `flock` status | VERIFIED | 17444 bytes; executable; syntax-clean; all required properties confirmed |
+| `06_baseline_comparison.ipynb` | Aggregation notebook executed end-to-end | VERIFIED | 55189 bytes; 20-cell notebook; emits all 4 result artifacts |
+| `results/baseline_comparison.json` | BASE-03: long-form rows[] + models[] + tstr, 6 models × A/B | VERIFIED | 311841 bytes; 1710 rows; 6 models; 12 TSTR entries; data_hash verified |
+| `results/baseline_comparison.md` | BASE-03: markdown table, one row per model per pipeline | VERIFIED | 2214 bytes; all 6 model rows per pipeline; required columns present; no Phase-10 recommendation |
+| `results/baseline_classical_wgan.json` | BASE-01: {wgan_mlp,wgan_cnn,wgan_lstm} subset | VERIFIED | 157272 bytes; correct model set |
+| `results/baseline_nonadversarial.json` | BASE-02: {vae,ar} subset with train_protocol_notes | VERIFIED | 101767 bytes; correct model set; protocol notes present |
+| `results/baselines/sweep_status.json` | 50/50 runs complete, 0 failures | VERIFIED | 50 run records, all `status=complete`, all `return_code=0`, epochs=1000 |
 
 ---
 
@@ -63,11 +63,11 @@ re_verification: false
 
 | From | To | Via | Status | Details |
 |------|----|-----|--------|---------|
-| `revision/core/models/classical.py` | `revision/core/training.py::train_wgan_gp` | `params_pqc` single `nn.Parameter` + `forward((5,B))->(B,10)` | VERIFIED | Interface contract satisfied empirically; `run_baselines.py` passes generator directly to `train_wgan_gp` |
-| `revision/run_baselines.py` | `revision/core/training.py::train_wgan_gp` | WGAN branch calls `train_wgan_gp(gen, Critic(), loader, ...HPO consts...)` | VERIFIED | `grep -n "train_wgan_gp"` shows import at line 90 and call at line 249 with verbatim HPO constants |
-| `revision/run_baselines.py` | `revision/core/preprocessing.py` | `build_dataset_for_pipeline` A/B + `inverse_kwargs.npz` | VERIFIED | `inverse_kwargs` referenced in `build_dataset_for_pipeline` (lines 135/152/171); `_save_inverse_kwargs` writes `inverse_kwargs.npz`; all 50 on-disk dirs confirmed to have this file |
-| `revision/run_baselines_sweep.sh` | `revision/run_baselines.py` | `run_one()` invokes `python -m revision.run_baselines --model --pipeline --seed --epochs` | VERIFIED | `grep` confirms `revision.run_baselines` invocation in `run_one()` |
-| `revision/06_baseline_comparison.ipynb` | `revision/results/baselines/runs + transform_ablation/runs` | `reconstruct_od` + `eval.py` over all 60 run dirs | VERIFIED | `baseline_comparison.json` rows include quantum (from `transform_ablation/runs`) and all 5 new models; 1710 rows total covers all combinations |
+| `core/models/classical.py` | `core/training.py::train_wgan_gp` | `params_pqc` single `nn.Parameter` + `forward((5,B))->(B,10)` | VERIFIED | Interface contract satisfied empirically; `run_baselines.py` passes generator directly to `train_wgan_gp` |
+| `run_baselines.py` | `core/training.py::train_wgan_gp` | WGAN branch calls `train_wgan_gp(gen, Critic(), loader, ...HPO consts...)` | VERIFIED | `grep -n "train_wgan_gp"` shows import at line 90 and call at line 249 with verbatim HPO constants |
+| `run_baselines.py` | `core/preprocessing.py` | `build_dataset_for_pipeline` A/B + `inverse_kwargs.npz` | VERIFIED | `inverse_kwargs` referenced in `build_dataset_for_pipeline` (lines 135/152/171); `_save_inverse_kwargs` writes `inverse_kwargs.npz`; all 50 on-disk dirs confirmed to have this file |
+| `run_baselines_sweep.sh` | `run_baselines.py` | `run_one()` invokes `python -m revision.run_baselines --model --pipeline --seed --epochs` | VERIFIED | `grep` confirms `revision.run_baselines` invocation in `run_one()` |
+| `06_baseline_comparison.ipynb` | `results/baselines/runs + transform_ablation/runs` | `reconstruct_od` + `eval.py` over all 60 run dirs | VERIFIED | `baseline_comparison.json` rows include quantum (from `transform_ablation/runs`) and all 5 new models; 1710 rows total covers all combinations |
 
 ---
 
@@ -112,8 +112,8 @@ re_verification: false
 
 | File | Pattern | Severity | Impact |
 |------|---------|----------|--------|
-| `revision/core/training.py:390-392` | `acf_avg/vol_avg/lev_avg` emitted as `0.0` placeholder | INFO (IN-05 from review) | Downstream readers of per-epoch metrics see flat zeros; does not affect final deliverables which use `revision.core.eval` on final samples |
-| `revision/core/training.py:510-514` | `_NOISE_HIGH_LITERAL = 4 * math.pi` sentinel for grep verification | INFO (IN-03 from review) | Dead constant; no functional impact |
+| `core/training.py:390-392` | `acf_avg/vol_avg/lev_avg` emitted as `0.0` placeholder | INFO (IN-05 from review) | Downstream readers of per-epoch metrics see flat zeros; does not affect final deliverables which use `revision.core.eval` on final samples |
+| `core/training.py:510-514` | `_NOISE_HIGH_LITERAL = 4 * math.pi` sentinel for grep verification | INFO (IN-03 from review) | Dead constant; no functional impact |
 
 No `TBD`, `FIXME`, or `XXX` markers found in any Phase-10 modified files.
 

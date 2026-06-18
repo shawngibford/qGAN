@@ -44,7 +44,7 @@ W1 (Main-Reframer) inspects the current title against the §4.1 prohibition on "
 
 ## Cross-Cutting Constraints (every agent)
 
-1. **Numeric literals**: every value in the .tex must trace to a JSON cell in `revision/results/`. The provenance gate (`revision/verify_number_provenance.py`) enforces this. Writers must include a `json_source` reference in their return for every new literal.
+1. **Numeric literals**: every value in the .tex must trace to a JSON cell in `results/`. The provenance gate (`verify_number_provenance.py`) enforces this. Writers must include a `json_source` reference in their return for every new literal.
 2. **Prohibition list (§4.1)**: 8 hard rules. A2 enforces deterministically. Hard-blocking phrases:
    - "posterior collapse" (VAE characterization)
    - "4×10⁻⁴" / `4 \times 10^{-4}` (the withdrawn VAE std)
@@ -61,7 +61,7 @@ W1 (Main-Reframer) inspects the current title against the §4.1 prohibition on "
 
 ---
 
-## Reference numbers (load-bearing, from `revision/results/*.json`)
+## Reference numbers (load-bearing, from `results/*.json`)
 
 ### OD-EMD (matched 2000 epochs, n=5 seeds)
 - iqp_sel_55_repro: 0.02753 ± 0.00513
@@ -90,7 +90,7 @@ W1 (Main-Reframer) inspects the current title against the §4.1 prohibition on "
 - 2000 epochs (NOT 1000)
 - n=5 seeds: {42, 43, 44, 45, 46}
 - Shared 250881-parameter critic
-- Adam β₁=0.0, β₂=0.9 (per `revision/results/model_info.json#models[*].optimizer_betas`; handoff §3 had stale β₁=0.5 transcription); LR_gen = 6.9173×10⁻⁵; LR_critic = 1.8046×10⁻⁵
+- Adam β₁=0.0, β₂=0.9 (per `results/model_info.json#models[*].optimizer_betas`; handoff §3 had stale β₁=0.5 transcription); LR_gen = 6.9173×10⁻⁵; LR_critic = 1.8046×10⁻⁵
 - n_critic = 9; λ_gp = 2.16; batch = 12
 
 ### Robustness sweeps

@@ -4,13 +4,13 @@ reviewed: 2026-05-19T00:00:00Z
 depth: standard
 files_reviewed: 16
 files_reviewed_list:
-  - revision/core/models/quantum.py
-  - revision/core/training.py
-  - revision/run_ansatz.py
-  - revision/run_ansatz_comparison.py
-  - revision/run_ansatz_sweep.sh
-  - revision/run_introspect.py
-  - revision/run_introspect_figures.py
+  - core/models/quantum.py
+  - core/training.py
+  - run_ansatz.py
+  - run_ansatz_comparison.py
+  - run_ansatz_sweep.sh
+  - run_introspect.py
+  - run_introspect_figures.py
   - pytest.ini
   - tests/__init__.py
   - tests/conftest.py
@@ -42,8 +42,8 @@ Reviewed the Phase-13 architecture-introspection deliverables: the topology-sele
 drivers, the introspection training/figure drivers, and the new regression suite.
 
 **Byte-unchanged invariant (core reproducibility) — verdict: PRESERVED for the forward
-path, with one caveat.** I diffed `revision/core/models/quantum.py` and
-`revision/core/training.py` against `b7c84d3`:
+path, with one caveat.** I diffed `core/models/quantum.py` and
+`core/training.py` against `b7c84d3`:
 
 - `quantum.py`: the `range` CNOT block is wrapped verbatim inside
   `if self.topology == "range"` with `topology="range"` as the constructor default.
@@ -60,21 +60,21 @@ path, with one caveat.** I diffed `revision/core/models/quantum.py` and
   for the record).
 
 The two BLOCKERs below are correctness/metadata defects in the Phase-13 driver layer, not
-in `revision/core/`.
+in `core/`.
 
 ## Critical Issues
 
 ### CR-01: `run_ansatz.py` silently ignores `--epochs`; trains 1000 epochs but records the requested count in config.yaml
 
 **status:** fixed (commit f2671d6 — `num_epochs=int(epochs)` threaded; protocol-notes text now interpolates `{epochs}`; default stays 1000)
-**File:** `revision/run_ansatz.py:214-264`, `revision/run_ansatz.py:344-356`
+**File:** `run_ansatz.py:214-264`, `run_ansatz.py:344-356`
 **Issue:**
 `main()` parses `--epochs` (default 1000), passes it as `_train_wgan(args.variant, bundle,
 args.epochs, args.seed)`, and writes `"epochs": int(args.epochs)` into `config.yaml`
 (line 356). But `_train_wgan` receives `epochs` as a parameter and **never uses it** — the
 `train_wgan_gp` call hardcodes `num_epochs=1000` (line 257). Consequences:
 
-1. `revision/run_ansatz_sweep.sh` forwards `--epochs "$EPOCHS"` (line 312-317) and supports
+1. `run_ansatz_sweep.sh` forwards `--epochs "$EPOCHS"` (line 312-317) and supports
    a `--epochs M` override; that override is silently dead — every sweep run trains exactly
    1000 epochs regardless.
 2. If anyone runs `--epochs 500` (or the sweep with `--epochs 2000`), `config.yaml` records
@@ -116,7 +116,7 @@ expose a knob that is silently ignored.
 ### CR-02: `run_ansatz.py` writes `checkpoint.pt`, but `run_ansatz_comparison.py` requires `inverse_kwargs.npz` keys that the saved scalar encoding breaks at read time
 
 **status:** fixed (commit 046dfad — added FileNotFoundError + KeyError schema guard in `reconstruct_dualscale` before scoring; on-disk format unchanged)
-**File:** `revision/run_ansatz.py:189-201` and `revision/run_ansatz_comparison.py:147-160`
+**File:** `run_ansatz.py:189-201` and `run_ansatz_comparison.py:147-160`
 **Issue:**
 `_save_inverse_kwargs` stores scalar entries via `np.asarray(v)` → 0-D arrays
 (`r_min`, `r_max`, `mu`, `sigma`). `reconstruct_dualscale` reads them back with
@@ -164,7 +164,7 @@ def reconstruct_dualscale(variant, seed, ansatz_root):
 ### WR-01: `_load_checkpoint` rewrite changes the early-stopped numeric path vs. pre-Phase-13 (reproducibility caveat)
 
 **status:** fixed (commit c1e779d — documentation-only docstring caveat added to `_load_checkpoint`; NO behavior change, pin test green)
-**File:** `revision/core/training.py:163-195`
+**File:** `core/training.py:163-195`
 **Issue:**
 The pre-`b7c84d3` `_load_checkpoint` did `model.params_pqc.data = checkpoint["params_pqc"]`
 (no device/dtype recast) and did not iterate optimizer state. The new version recasts
@@ -174,7 +174,7 @@ the default headline runs (early-stop OFF, D-13-05) are unaffected. However, any
 phase that ran with `early_stopper` set and then resumed/early-stopped now follows a
 different code path than it did pre-Phase-13. The change is correct and well-justified
 (CR-02 docstring), and Phase-13 headline runs do not use early stopping — but the
-"`revision/core/` byte-behavior-unchanged for Phases 8-12" invariant is technically only
+"`core/` byte-behavior-unchanged for Phases 8-12" invariant is technically only
 preserved because early stopping is off by default. This is acceptable, but should be
 recorded explicitly in the phase decision log so a future early-stopped reproduction is not
 mistakenly expected to match a pre-Phase-13 trace.
@@ -185,7 +185,7 @@ compared bit-for-bit against pre-Phase-13 outputs.
 ### WR-02: `_spectral_psd_loss` has no length-match guard between fake and real
 
 **status:** fixed (commit 9872e00 — ValueError raised on `fake_flat.numel() != real_flat.numel()`; on the spectral_loss_weight>0 path, OFF by default; pin test green)
-**File:** `revision/core/training.py:511-520`
+**File:** `core/training.py:511-520`
 **Issue:**
 `psd_fake = torch.fft.rfft(fake_flat)` and `psd_real = torch.fft.rfft(real_flat)` produce
 tensors of length `len//2 + 1`. If `fake_flat.numel() != real_flat.numel()`, the final
@@ -208,7 +208,7 @@ or assert `fake_flat.numel() == real_flat.numel()` with a clear message.
 ### WR-03: monkey-patching `torch.backends.mps.is_available` is global and non-restoring in `run_ansatz.py`
 
 **status:** fixed (commit 43f807e — added restoring `_force_cpu_for_quantum` context manager mirroring run_introspect; wraps only the train_wgan_gp call)
-**File:** `revision/run_ansatz.py:243`
+**File:** `run_ansatz.py:243`
 **Issue:**
 `torch.backends.mps.is_available = lambda: False` permanently replaces a global torch
 function for the lifetime of the process and is never restored. `run_introspect.py`
@@ -226,7 +226,7 @@ of mutating the global at function-body top level.
 ### WR-04: snapshot closure mutates the live generator's device mid-training (re-entrancy / exception risk)
 
 **status:** fixed (commit 2717491 — `orig_device` captured before mutation; `.to("cpu")` moved inside the `try` so `finally` device-restore always runs)
-**File:** `revision/run_introspect.py:114-161`
+**File:** `run_introspect.py:114-161`
 **Issue:**
 `cb` does `gen_model = generator.to("cpu")` (in-place for nn.Module), regenerates, then
 restores with `generator.to(orig_device)` in a `finally`. The `finally` covers the normal
@@ -249,7 +249,7 @@ state surfaces instead of producing silent NaNs.
 ### WR-05: `run_introspect.py --assemble` indexes `inter["quantum"]` keys that only exist for the quantum target, with no presence check
 
 **status:** fixed (commit 7ec0577 — added is_quantum/bipartition + per-snapshot key validation in `_assemble` with actionable re-run message)
-**File:** `revision/run_introspect.py:308`, `334`, `355`
+**File:** `run_introspect.py:308`, `334`, `355`
 **Issue:**
 `_assemble` does `snap_epochs = inter["quantum"]["snapshot_epochs"]`, then
 `inter["quantum"]["bipartition"]` (line 355) and `q = inter["quantum"]["snapshots"]` and
@@ -283,7 +283,7 @@ for s in q_doc["snapshots"]:
 
 **status:** deferred (Info, out of fix scope)
 
-**File:** `revision/core/training.py:191`
+**File:** `core/training.py:191`
 **Issue:** `checkpoint = ckpt` exists only so the trailing `print(f"... {checkpoint['epoch']
 ...}")` keeps its original variable name. This is dead-style aliasing that obscures intent.
 **Fix:** Use `ckpt` directly in the print and delete the alias line.
@@ -304,20 +304,20 @@ intended; no functional change needed.
 
 **status:** deferred (Info, out of fix scope)
 
-**File:** `revision/run_ansatz_comparison.py:50-58` and `115-121`
+**File:** `run_ansatz_comparison.py:50-58` and `115-121`
 **Issue:** Two functions independently walk parents looking for
-`revision/core/preprocessing.py` — one for `sys.path` bootstrap, one for path resolution.
+`core/preprocessing.py` — one for `sys.path` bootstrap, one for path resolution.
 This duplicated traversal logic also appears verbatim in `run_introspect.py:193-199` and
 `run_introspect_figures.py:51-57`. Code duplication across four driver modules.
 **Fix:** Factor a single `repo_root()` helper into a shared module (e.g.
-`revision/core/_paths.py`) and import it; low priority since drivers are intentionally
+`core/_paths.py`) and import it; low priority since drivers are intentionally
 self-contained.
 
 ### IN-04: `run_ansatz.py` `--epochs` default (1000) and hardcoded `_train_wgan` 1000 create a misleading "consistent" appearance
 
 **status:** deferred (Info, out of fix scope — note: CR-01 fix removed the underlying hardcode)
 
-**File:** `revision/run_ansatz.py:313`, `257`
+**File:** `run_ansatz.py:313`, `257`
 **Issue:** Because both the argparse default and the hardcoded `train_wgan_gp(num_epochs=
 1000)` are 1000, the CR-01 bug is invisible in the default invocation and in every test —
 the values only diverge when a non-default `--epochs` is supplied. This coincidental

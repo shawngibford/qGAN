@@ -1,10 +1,10 @@
 """Pytest configuration for the Phase 13 regression suite.
 
 The ``tests/`` package is greenfield (Phase 13 Wave 0). Tests import the
-shared modules under ``revision.core`` directly. Pytest is normally launched
+shared modules under `core` directly. Pytest is normally launched
 from the repo root via ``./qgan_env/bin/python -m pytest tests/ -q`` — this
 conftest guarantees the repo root is on ``sys.path`` regardless of the
-invocation cwd so ``import revision.core...`` always resolves.
+invocation cwd so ``import core...`` always resolves.
 """
 from __future__ import annotations
 

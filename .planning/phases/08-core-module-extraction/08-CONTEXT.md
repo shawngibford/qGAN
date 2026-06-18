@@ -7,12 +7,12 @@
 <domain>
 ## Phase Boundary
 
-This phase extracts the data pipeline, quantum generator, classical critic, WGAN-GP training loop, and evaluation metrics from `qgan_pennylane.ipynb` into importable Python modules under `revision/core/`. It verifies parity: running the main notebook with the imported modules produces numerically identical (within tolerance) evaluation metrics compared to the pre-extraction baseline.
+This phase extracts the data pipeline, quantum generator, classical critic, WGAN-GP training loop, and evaluation metrics from `qgan_pennylane.ipynb` into importable Python modules under `core/`. It verifies parity: running the main notebook with the imported modules produces numerically identical (within tolerance) evaluation metrics compared to the pre-extraction baseline.
 
 **In scope:**
-- Create `revision/core/` package with modules: `data.py`, `eval.py`, `training.py`, `models/quantum.py`, `models/critic.py`
-- Replace inline notebook code paths with imports from `revision/core/` where safe (or add a parallel `revision/01_parity_check.ipynb` that imports modules and runs the same pipeline)
-- Write a parity-check artifact (`revision/results/parity_check.json`) comparing pre/post metrics
+- Create `core/` package with modules: `data.py`, `eval.py`, `training.py`, `models/quantum.py`, `models/critic.py`
+- Replace inline notebook code paths with imports from `core/` where safe (or add a parallel `01_parity_check.ipynb` that imports modules and runs the same pipeline)
+- Write a parity-check artifact (`results/parity_check.json`) comparing pre/post metrics
 
 **Explicitly OUT of scope for this phase** (deferred to later phases):
 - `models/classical_wgan.py` → Phase 10 (Classical Baselines)
@@ -26,9 +26,9 @@ This phase extracts the data pipeline, quantum generator, classical critic, WGAN
 ## Implementation Decisions (LOCKED)
 
 ### Package Structure
-- Root path: `revision/core/` (project root relative)
-- `revision/core/__init__.py` exposes top-level API
-- `revision/core/models/__init__.py` for submodule
+- Root path: `core/` (project root relative)
+- `core/__init__.py` exposes top-level API
+- `core/models/__init__.py` for submodule
 - Modules created in Phase 8: `data.py`, `eval.py`, `training.py`, `models/quantum.py`, `models/critic.py`
 - Future modules (stubbed only in Phase 8 if needed for imports): `models/classical_wgan.py`, `models/vae.py`
 
@@ -40,8 +40,8 @@ This phase extracts the data pipeline, quantum generator, classical critic, WGAN
 - `eval.py`: EMD (wasserstein_distance on raw samples, not histograms — v1.0 decision), ACF, moment statistics (mean, std, kurtosis), DTW, JSD, PSD comparison
 
 ### Notebook Orchestration Contract
-- No business logic in notebooks — notebooks only: (a) import from `revision/core/`, (b) call high-level functions, (c) plot, (d) write JSON to `revision/results/`
-- Main notebook `qgan_pennylane.ipynb` stays where it is but its code cells may be refactored to import from `revision/core/` (minimal edits; do not restructure the notebook)
+- No business logic in notebooks — notebooks only: (a) import from `core/`, (b) call high-level functions, (c) plot, (d) write JSON to `results/`
+- Main notebook `qgan_pennylane.ipynb` stays where it is but its code cells may be refactored to import from `core/` (minimal edits; do not restructure the notebook)
 
 ### Parity Tolerance (Success Criterion)
 - EMD: |EMD_pre − EMD_post| ≤ 1e-4
@@ -49,7 +49,7 @@ This phase extracts the data pipeline, quantum generator, classical critic, WGAN
 - Rationale: float32 accumulation plus any reordering of operations may introduce small numerical drift; hard equality is too brittle
 
 ### Parity Check Artifact
-- Path: `revision/results/parity_check.json`
+- Path: `results/parity_check.json`
 - Schema: `{"pre": {...metrics...}, "post": {...metrics...}, "delta": {...}, "pass": bool, "tolerance": {...}, "seed": int, "git_sha_pre": str, "git_sha_post": str}`
 - At least one seed; ≥5 seed multi-run deferred to Phase 12
 
@@ -67,7 +67,7 @@ This phase extracts the data pipeline, quantum generator, classical critic, WGAN
 
 ### Claude's Discretion
 - Exact file-level breakdown within modules (which functions go in `data.py` vs `eval.py`, etc.)
-- Whether to refactor main notebook in place OR add a parallel `revision/01_parity_check.ipynb` that imports modules and produces the parity artifact (either satisfies INFRA-02)
+- Whether to refactor main notebook in place OR add a parallel `01_parity_check.ipynb` that imports modules and produces the parity artifact (either satisfies INFRA-02)
 - Whether the training loop exposes a callback API for Phase 13 introspection (nice-to-have; add hook points if cheap, but don't over-engineer)
 - Type hints, docstrings, any light code-quality improvement that does not change behavior
 
